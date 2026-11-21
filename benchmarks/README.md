@@ -98,3 +98,25 @@ On 178 recorded projects, 90 gained at least one expected product and 63 still h
 | No registered product name or known alias matched the expected name | 0 | 103 |
 
 Maestro can be identified by a flow file and SwiftUI by a Swift import. An integration can also call an endpoint directly over HTTP. SMTP appears as a service in 23 projects. A protocol label alone cannot identify a particular mail provider.
+
+## Startup
+
+`startup.mjs` runs one CLI five times on one project and prints the five times and their median, in milliseconds, each measured from spawn to exit of the whole process. It exits with 1 when the median is above `--max-ms`. Every run happens in an empty temporary folder, so the CLI's output file never lands in the repository, and a run that fails or writes no output is an error (exit 2), never a fast time.
+
+`npm run build` writes two entry points. `dist/cli.js` is the compiled modules, more than a thousand small files that Node has to find, read and parse on every start. `dist/cli.mjs` is the same CLI, every rule and every dependency in one file made by esbuild (`src/scripts/bundle.ts`). Only `@cdktf/hcl2json` stays outside it: it reads its WebAssembly file by a path relative to its own module. The two give the same output, which `src/cli.test.ts` checks on `tests/__fixtures__`.
+
+```sh
+node benchmarks/startup.mjs dist/cli.js ../daodan/benchmarks/project-model/fixtures/py-fastapi-compose
+node benchmarks/startup.mjs dist/cli.mjs ../daodan/benchmarks/project-model/fixtures/py-fastapi-compose --max-ms 1000
+```
+
+Measured on 21 November 2026 on Windows 11 with Node 24.14.1 and 22 logical cores, on the `py-fastapi-compose` fixture of the project-model corpus. Unrelated work was running on the machine (60 to 85 percent CPU), so the figures are noisy.
+
+| Entry point | Five runs (ms) | Median (ms) |
+| --- | --- | ---: |
+| `dist/cli.js` | 4459, 4680, 5494, 3535, 4842 | 4680 |
+| `dist/cli.mjs` | 898, 974, 966, 962, 1057 | 966 |
+
+Earlier runs the same day, with less other work running, gave medians between 1978 and 2428 ms for `dist/cli.js` and between 736 and 881 ms for `dist/cli.mjs`. Every median of the bundle was under 1,000 ms, but on a busy machine the margin is thin, because a fixed part of the time is not loading. `node dist/cli.mjs --version` loads the whole bundle and exits in about 190 ms, against about 2,200 ms for `dist/cli.js`, and an empty Node process takes about 50 ms.
+
+A `node --cpu-prof` run of the bundle (764 ms of profile) spent 432 ms idle, which is the `await timer.setTimeout(500)` in `src/cli.ts` that keeps the spinner on screen before the analysis starts. The rest is small: about 32 ms compiling the bundle, about 23 ms to decompress the Terraform WebAssembly that `@cdktf/hcl2json` loads as soon as it is imported (plus about 15 ms of WebAssembly start), and the analysis itself. Cutting the remaining time further means shortening that pause or loading `@cdktf/hcl2json` only when a Terraform file is found.

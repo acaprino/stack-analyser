@@ -1,4 +1,5 @@
 import { execFile } from 'node:child_process';
+import { existsSync } from 'node:fs';
 import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
@@ -99,3 +100,48 @@ it.each([
   const found = new Set<string>(output.techs);
   expect(['react', 'express', 'vitest'].filter((tech) => found.has(tech))).toEqual(expected);
 }, 20_000);
+
+const dist = path.join(import.meta.dirname, '..', 'dist');
+const fixtures = path.join(import.meta.dirname, '..', 'tests', '__fixtures__');
+const hasBuild = existsSync(path.join(dist, 'cli.js')) && existsSync(path.join(dist, 'cli.mjs'));
+
+interface FlatNode {
+  id: string;
+  inComponent: string | null;
+  edges: { target: string; read: boolean; write: boolean }[];
+  childs: FlatNode[];
+}
+
+/** Blanks the random ids, and every field that points at one, so that two runs of the same analysis can be compared. */
+function withoutIds(node: FlatNode): unknown {
+  return {
+    ...node,
+    id: undefined,
+    inComponent: undefined,
+    edges: node.edges.map((edge) => ({ ...edge, target: undefined })),
+    childs: node.childs.map((child) => withoutIds(child)),
+  };
+}
+
+async function runBuilt(file: string): Promise<FlatNode> {
+  const cwd = await fs.mkdtemp(path.join(os.tmpdir(), 'stack-analyser-built-'));
+  try {
+    await promisify(execFile)(process.execPath, [path.join(dist, file), fixtures, '--flat'], { cwd });
+    return JSON.parse(await fs.readFile(path.join(cwd, 'output.json'), 'utf8')) as FlatNode;
+  } finally {
+    await fs.rm(cwd, { recursive: true, force: true });
+  }
+}
+
+// The build is not committed, so a fresh checkout has nothing to compare: the title says why the test is skipped.
+it.skipIf(!hasBuild)(
+  hasBuild
+    ? 'gives the same output from the one-file bundle as from the compiled modules'
+    : 'gives the same output from the bundle as from the compiled modules (skipped: dist/cli.js or dist/cli.mjs is missing, run npm run build)',
+  async () => {
+    const [modules, bundle] = await Promise.all([runBuilt('cli.js'), runBuilt('cli.mjs')]);
+    expect(modules.childs.length).toBeGreaterThan(0);
+    expect(withoutIds(bundle)).toEqual(withoutIds(modules));
+  },
+  60_000
+);
