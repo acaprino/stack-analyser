@@ -1,6 +1,5 @@
 import path from 'node:path';
 
-import { matchDependencies } from '../../matchDependencies.js';
 import { Payload } from '../../payload/index.js';
 
 import type { SupportedDeps } from '../../types/rule.js';
@@ -13,14 +12,16 @@ export function isRecord(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === 'object' && !Array.isArray(value);
 }
 
+/** `file` is the manifest that holds the requirements: it is the evidence of every technology they match. */
 export function packageComponent(
   name: string,
   folderPath: string,
   ecosystem: SupportedDeps,
-  requirements: Map<string, string>
+  requirements: Map<string, string>,
+  file: string
 ): Payload {
   const payload = new Payload({ name, folderPath });
   payload.dependencies = [...requirements].map(([pkg, version]) => [ecosystem, pkg, version]);
-  payload.addTechs(matchDependencies([...requirements.keys()], ecosystem));
+  payload.addDependencyTechs([...requirements.keys()], ecosystem, file);
   return payload;
 }

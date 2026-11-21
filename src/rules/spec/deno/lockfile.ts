@@ -1,5 +1,4 @@
 import { l } from '../../../common/log.js';
-import { matchDependencies } from '../../../matchDependencies.js';
 import { Payload } from '../../../payload/index.js';
 
 import type { Analyser } from '../../../types/index.js';
@@ -39,7 +38,6 @@ export const detectDenoLockfile: ComponentMatcher = async (files, provider) => {
       ...json.remote,
     };
 
-    const techs = matchDependencies(Object.keys(deps), 'deno');
     const depsFlatten: Analyser['dependencies'] = Object.entries(deps).map((dep) => {
       return ['deno', dep[0], dep[1]];
     });
@@ -49,7 +47,7 @@ export const detectDenoLockfile: ComponentMatcher = async (files, provider) => {
       folderPath: file.fp,
       dependencies: depsFlatten,
     });
-    pl.addTechs(techs);
+    pl.addDependencyTechs(Object.keys(deps), 'deno', file.fp);
 
     return pl;
   }

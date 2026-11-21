@@ -1,5 +1,4 @@
 import { l } from '../../../common/log.js';
-import { matchDependencies } from '../../../matchDependencies.js';
 import { Payload } from '../../../payload/index.js';
 import { detectLicense } from '../licenses/index.js';
 import { isRecord } from '../packageManifest.js';
@@ -57,7 +56,7 @@ export const detectNodeComponent: ComponentMatcher = async (files, provider) => 
       folderPath: file.fp,
       dependencies: declared,
     });
-    pl.addTechs(matchDependencies([...external], 'npm'));
+    pl.addDependencyTechs([...external], 'npm', file.fp);
 
     if (json.license && typeof json.license === 'string') {
       const lic = detectLicense(json.license);

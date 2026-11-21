@@ -58,6 +58,7 @@ export const detectDockerComponent: ComponentMatcher = async (files, provider) =
           parent: pl,
           dependencies: [['docker', imageName, imageVersion || 'latest']],
           reason: tech ? tech[1] : `matched: ${imageName}`,
+          evidence: [{ kind: 'image', value: imageName, path: file.fp }],
         })
       );
     }

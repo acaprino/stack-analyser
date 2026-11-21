@@ -5,6 +5,7 @@ import { detectLang } from '../common/languages.js';
 import { nid } from '../common/nid.js';
 import { rulesComponents } from '../loader.js';
 import { matchAllFiles } from '../matchAllFiles.js';
+import { evidenceKind, matchDependencies, matchedPackages } from '../matchDependencies.js';
 import { findHostMentions } from '../rules/spec/hosts/index.js';
 import { IGNORED_DIVE_PATHS } from '../provider/base.js';
 import { listIndexed } from '../register.js';
@@ -13,6 +14,7 @@ import { detectInDotEnv } from '../rules/spec/dotenv/index.js';
 
 import type { BaseProvider } from '../provider/base.js';
 import type { Analyser, AnalyserJson, Dependency, Evidence, EvidenceItem, HostMention } from '../types/index.js';
+import type { SupportedDeps } from '../types/rule.js';
 import type { AllowedLicenses } from '../types/licenses.js';
 import type { AllowedKeys } from '../types/techs.js';
 
@@ -193,6 +195,22 @@ export class Payload implements Analyser {
   addTechs(tech: Map<AllowedKeys, string[]>): void {
     for (const [key, reason] of tech.entries()) {
       this.addTech(key, reason);
+    }
+  }
+
+  /**
+   * Register the techs that declared packages, images, actions or Terraform resources point to.
+   * Every name that matched is recorded as evidence, with the file that declares it.
+   */
+  addDependencyTechs(names: string[], type: SupportedDeps, file: string): void {
+    const kind = evidenceKind(type);
+    const matched = matchedPackages(names, type);
+    for (const [tech, reason] of matchDependencies(names, type)) {
+      this.addTech(
+        tech,
+        reason,
+        (matched.get(tech) ?? []).map((value) => ({ kind, value, path: file }))
+      );
     }
   }
 

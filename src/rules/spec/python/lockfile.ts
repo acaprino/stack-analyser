@@ -3,7 +3,6 @@ import path from 'node:path';
 import { parse as parseToml } from 'smol-toml';
 
 import { l } from '../../../common/log.js';
-import { matchDependencies } from '../../../matchDependencies.js';
 import { Payload } from '../../../payload/index.js';
 import { detectLicense } from '../licenses/index.js';
 import { isRecord } from '../packageManifest.js';
@@ -46,7 +45,7 @@ export const detectPythonLockfile: ComponentMatcher = async (files, provider) =>
         name: 'virtual',
         folderPath: path.dirname(file.fp),
       });
-      parseRequirementsTxt(content, pl);
+      parseRequirementsTxt(content, pl, file.fp);
 
       manifests.push(pl);
     } else {
@@ -71,10 +70,10 @@ function requirements(lines: unknown[]): Dependency[] {
   return dependencies;
 }
 
-export function parseRequirementsTxt(content: string, pl: Payload): void {
+export function parseRequirementsTxt(content: string, pl: Payload, file: string): void {
   const lines = content.replace(/\\\r?\n/g, ' ').split(/\r?\n/).map((line) => line.replace(/\s+--hash[=\s].*$/, ''));
   pl.dependencies = requirements(lines);
-  pl.addTechs(matchDependencies(pl.dependencies.map(([, name]) => name), 'python'));
+  pl.addDependencyTechs(pl.dependencies.map(([, name]) => name), 'python', file);
 }
 
 export function parsePyproject({
@@ -132,6 +131,6 @@ export function parsePyproject({
   }
 
   pl.dependencies = [...new Map(dependencies.map((dep) => [JSON.stringify(dep), dep])).values()];
-  pl.addTechs(matchDependencies(pl.dependencies.map(([, name]) => name), 'python'));
+  pl.addDependencyTechs(pl.dependencies.map(([, name]) => name), 'python', file.fp);
   return true;
 }

@@ -1,7 +1,6 @@
 import path from 'node:path';
 
 import { parseProjectXml, xmlChildren } from '../../../common/xml.js';
-import { matchDependencies } from '../../../matchDependencies.js';
 import { isRecord, packageComponent, projectPath } from '../packageManifest.js';
 
 import type { BaseProvider, ProviderFile } from '../../../provider/base.js';
@@ -178,7 +177,7 @@ export const detectNugetComponent: ComponentMatcher = async (files, provider) =>
         if (!version && supplied) requirements.set(id, supplied);
       }
     }
-    const payload = packageComponent(path.parse(file.name).name, file.fp, 'nuget', requirements);
+    const payload = packageComponent(path.parse(file.name).name, file.fp, 'nuget', requirements, file.fp);
     payload.addTech('nuget', [`MSBuild project: ${projectPath(provider.basePath, file.fp)}`]);
     if (enablesWinUI(project)) {
       payload.addTech('winui', [`MSBuild UseWinUI=true in ${projectPath(provider.basePath, file.fp)}`]);
@@ -188,11 +187,11 @@ export const detectNugetComponent: ComponentMatcher = async (files, provider) =>
         project['@_Sdk'].split(';').some((sdk) => sdk.split('/')[0].trim() === 'Microsoft.NET.Sdk.Web')) {
       frameworks.set('Microsoft.AspNetCore.App', '');
     }
-    payload.addTechs(matchDependencies([...frameworks.keys()], 'nuget'));
+    payload.addDependencyTechs([...frameworks.keys()], 'nuget', file.fp);
     payloads.push(payload);
   }
   if (payloads.length) return payloads;
   const source = legacy || lock;
   if (!source || (!installed.size && !pinned.size)) return false;
-  return packageComponent('virtual', source.fp, 'nuget', new Map([...installed, ...pinned]));
+  return packageComponent('virtual', source.fp, 'nuget', new Map([...installed, ...pinned]), source.fp);
 };

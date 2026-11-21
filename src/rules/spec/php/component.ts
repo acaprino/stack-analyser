@@ -37,7 +37,7 @@ export const detectPhpComponent: ComponentMatcher = async (files, provider) => {
       if (typeof version === 'string') requirements.set(id, version);
     }
   }
-  const component = packageComponent(name ?? (path.basename(path.dirname(file.fp)) || 'virtual'), file.fp, 'php', requirements);
+  const component = packageComponent(name ?? (path.basename(path.dirname(file.fp)) || 'virtual'), file.fp, 'php', requirements, file.fp);
   component.addTech('phpcomposer', ['matched file: composer.json']);
   const licenses = Array.isArray(json.license) ? json.license : [json.license];
   for (const license of licenses) {

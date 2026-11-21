@@ -112,7 +112,7 @@ export const detectRubyLockfile: ComponentMatcher = async (files, provider) => {
       const pinned = lockedDirectGems((await sourceText(provider, lock.fp)) || '');
       for (const [name, version] of packages) if (version === 'latest' && pinned.has(name)) packages.set(name, pinned.get(name)!);
     }
-    const pl = packageComponent('virtual', file.fp, 'ruby', packages);
+    const pl = packageComponent('virtual', file.fp, 'ruby', packages, file.fp);
     if (gemspec) pl.addTech('ruby', ['gemspec: ' + projectPath(provider.basePath, file.fp)]);
     else pl.addTech('bundler', ['matched file: ' + file.name]);
     components.push(pl);
@@ -123,7 +123,7 @@ export const detectRubyLockfile: ComponentMatcher = async (files, provider) => {
     for (const file of available.filter((entry) => [...locks.values()].includes(entry.name))) {
       const packages = lockedDirectGems((await sourceText(provider, file.fp)) || '');
       if (!packages.size) continue;
-      const pl = packageComponent('virtual', file.fp, 'ruby', packages);
+      const pl = packageComponent('virtual', file.fp, 'ruby', packages, file.fp);
       pl.addTech('bundler', ['matched file: ' + file.name]);
       pl.addTech('ruby', ['Bundler lock: ' + projectPath(provider.basePath, file.fp)]);
       components.push(pl);

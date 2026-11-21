@@ -1,7 +1,6 @@
 import { DockerfileParser } from 'dockerfile-ast';
 
 import { imageReference } from '../../../common/packageIdentity.js';
-import { matchDependencies } from '../../../matchDependencies.js';
 import { Payload } from '../../../payload/index.js';
 
 import type { ComponentMatcher } from '../../../types/rule.js';
@@ -33,7 +32,7 @@ export const detectDockerfile: ComponentMatcher = async (files, provider) => {
       if (!name || name === 'scratch' || name.includes('$')) continue;
       component.dependencies.push(['docker', name, version]);
     }
-    component.addTechs(matchDependencies(component.dependencies.map(([, name]) => name), 'docker'));
+    component.addDependencyTechs(component.dependencies.map(([, name]) => name), 'docker', file.fp);
     group.addChild(component);
     group.path.add(file.fp);
   }

@@ -63,6 +63,7 @@ export const detectTerraformLockfile: ComponentMatcher = async (files, provider)
           parent: pl,
           dependencies: [['terraform', name, json.provider[name][0].version || 'latest']],
           reason: tech[1][0],
+          evidence: [{ kind: 'terraform', value: name, path: file.fp }],
         })
       );
     }

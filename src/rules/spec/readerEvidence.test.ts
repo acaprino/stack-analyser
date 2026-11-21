@@ -96,3 +96,40 @@ it('reads dependencies declared in a Kotlin source set and ignores conditional o
     ['maven', 'com.example:shared', '1'], ['maven', 'com.example:tests', '2'],
   ]);
 });
+
+it('records where each package, image, action and resource was declared', async () => {
+  const result = await scan({
+    'package.json': JSON.stringify({ name: 'api', dependencies: { react: '18', pg: '8' } }),
+    'docker-compose.yml': 'services:\n  cache:\n    image: redis:7\n',
+    '.github/workflows/ci.yml': 'on: push\njobs:\n  build:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/setup-node@v4\n',
+    'main.tf': 'resource "aws_s3_bucket" "b" {}\n',
+  });
+  const all = [result, ...result.childs].flatMap((c) => c.toJson('').evidence);
+  expect(all).toEqual(expect.arrayContaining([
+    { tech: 'react', kind: 'package', value: 'react', path: '/package.json', source: 'stack-analyser' },
+    { tech: 'postgresql', kind: 'package', value: 'pg', path: '/package.json', source: 'stack-analyser' },
+    { tech: 'redis', kind: 'image', value: 'redis', path: '/docker-compose.yml', source: 'stack-analyser' },
+    { tech: 'nodejs', kind: 'action', value: 'actions/setup-node', path: '/.github/workflows/ci.yml', source: 'stack-analyser' },
+    { tech: 'aws.s3', kind: 'terraform', value: 'aws_s3_bucket', path: '/main.tf', source: 'stack-analyser' },
+  ]));
+});
+
+it('records the manifest of every other ecosystem that declares packages or images', async () => {
+  const result = await scan({
+    'requirements.txt': 'pytest==8\n',
+    'py/pyproject.toml': '[project]\nname = "svc"\ndependencies = ["fastapi>=0.100"]\n',
+    'go.mod': 'module example.com/app\n\ngo 1.22\n\nrequire github.com/gin-gonic/gin v1.9.0\n',
+    'rs/Cargo.toml': '[package]\nname = "app"\nversion = "1.0.0"\n[dependencies]\ntokio = "1"\n',
+    'Dockerfile': 'FROM node:20\n',
+    'java/pom.xml': '<project xmlns="http://maven.apache.org/POM/4.0.0"><artifactId>app</artifactId><dependencies><dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-web</artifactId></dependency></dependencies></project>',
+  });
+  const all = result.toJson('').evidence;
+  expect(all).toEqual(expect.arrayContaining([
+    { tech: 'pytest', kind: 'package', value: 'pytest', path: '/requirements.txt', source: 'stack-analyser' },
+    { tech: 'fastapi', kind: 'package', value: 'fastapi', path: '/py/pyproject.toml', source: 'stack-analyser' },
+    { tech: 'gin', kind: 'package', value: 'github.com/gin-gonic/gin', path: '/go.mod', source: 'stack-analyser' },
+    { tech: 'tokio', kind: 'package', value: 'tokio', path: '/rs/Cargo.toml', source: 'stack-analyser' },
+    { tech: 'nodejs', kind: 'image', value: 'node', path: '/Dockerfile', source: 'stack-analyser' },
+    { tech: 'spring-boot', kind: 'package', value: 'org.springframework.boot:spring-boot-starter-web', path: '/java/pom.xml', source: 'stack-analyser' },
+  ]));
+});

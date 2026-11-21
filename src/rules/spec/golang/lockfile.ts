@@ -27,5 +27,5 @@ export const detectGolangLockfile: ComponentMatcher = async (files, provider) =>
   if (!file) return false;
   const content = await provider.open(file.fp);
   if (!content) return false;
-  return packageComponent('virtual', file.fp, 'golang', directModules(content));
+  return packageComponent('virtual', file.fp, 'golang', directModules(content), file.fp);
 };

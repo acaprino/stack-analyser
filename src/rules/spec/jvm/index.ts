@@ -1,6 +1,5 @@
 import path from 'node:path';
 
-import { matchDependencies } from '../../../matchDependencies.js';
 import { Payload } from '../../../payload/index.js';
 import { gradleCatalog, gradleDependencies } from './gradle.js';
 import { mavenProject } from './maven.js';
@@ -13,7 +12,7 @@ function component(tool: 'maven' | 'gradle', name: string, file: string, deps: D
   const dependencies = [...new Map(deps.map((d) => [JSON.stringify(d), d])).values()];
   const pl = new Payload({ name, folderPath: file, dependencies });
   pl.addTech(tool, [`build manifest: ${path.basename(file)}`]);
-  pl.addTechs(matchDependencies(dependencies.map(([, key]) => key), 'maven'));
+  pl.addDependencyTechs(dependencies.map(([, key]) => key), 'maven', file);
   return pl;
 }
 

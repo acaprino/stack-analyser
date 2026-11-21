@@ -3,7 +3,6 @@ import path from 'node:path';
 import { parse as parseToml } from 'smol-toml';
 
 import { l } from '../../../common/log.js';
-import { matchDependencies } from '../../../matchDependencies.js';
 import { Payload } from '../../../payload/index.js';
 import { detectLicense } from '../licenses/index.js';
 import { isRecord } from '../packageManifest.js';
@@ -118,7 +117,7 @@ export const detectRustComponent: ComponentMatcher = async (files, provider) => 
         }
       }
     }
-    pl.addTechs(matchDependencies([...external], 'rust'));
+    pl.addDependencyTechs([...external], 'rust', file.fp);
     pl.addTech('cargo', ['matched file: Cargo.toml']);
     pl.dependencies = dependencies;
 

@@ -1,4 +1,3 @@
-import { matchDependencies } from '../../../matchDependencies.js';
 import { Payload } from '../../../payload/index.js';
 import { closing, sourceText, tokens } from '../manifestTokens.js';
 import { isRecord, packageComponent, projectPath } from '../packageManifest.js';
@@ -103,8 +102,8 @@ export const detectSwiftComponent: ComponentMatcher = async (files, provider) =>
     }
     if (manifest || packages.size) {
       const file = manifest || resolved!;
-      const pl = packageComponent(name, file.fp, 'swiftpm', packages);
-      pl.addTechs(matchDependencies([...remotes.values()], 'swiftpm'));
+      const pl = packageComponent(name, file.fp, 'swiftpm', packages, file.fp);
+      pl.addDependencyTechs([...remotes.values()], 'swiftpm', file.fp);
       pl.addTech('swift', ['Swift package: ' + projectPath(provider.basePath, file.fp)]);
       payloads.push(pl);
     }

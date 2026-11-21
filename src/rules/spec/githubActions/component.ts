@@ -2,7 +2,6 @@ import { parse } from 'yaml';
 
 import { l } from '../../../common/log.js';
 import { imageReference } from '../../../common/packageIdentity.js';
-import { matchDependencies } from '../../../matchDependencies.js';
 import { Payload } from '../../../payload/index.js';
 import { isRecord, projectPath } from '../packageManifest.js';
 
@@ -10,19 +9,19 @@ import type { ComponentMatcher } from '../../../types/rule.js';
 
 const workflowFile = /^\.github\/workflows\/[^/]+\.ya?ml$/;
 
-function addImage(pl: Payload, value: unknown): void {
+function addImage(pl: Payload, value: unknown, file: string): void {
   const image = isRecord(value) ? value.image : value;
   if (typeof image !== 'string' || !image.trim()) return;
   const { name, version } = imageReference(image);
   if (!name || /[\s$]/.test(name)) return;
   pl.dependencies.push(['docker', name, version]);
-  pl.addTechs(matchDependencies([name], 'docker'));
+  pl.addDependencyTechs([name], 'docker', file);
 }
 
-function addAction(pl: Payload, uses: unknown): void {
+function addAction(pl: Payload, uses: unknown, file: string): void {
   if (typeof uses !== 'string') return;
   if (uses.startsWith('docker://')) {
-    addImage(pl, uses.slice('docker://'.length));
+    addImage(pl, uses.slice('docker://'.length), file);
     return;
   }
   if (uses.startsWith('./') && !/[\s$]/.test(uses)) {
@@ -33,7 +32,7 @@ function addAction(pl: Payload, uses: unknown): void {
   if (!action) return;
   const [, name, version] = action;
   pl.dependencies.push(['githubAction', name, version]);
-  pl.addTechs(matchDependencies([name], 'githubAction'));
+  pl.addDependencyTechs([name], 'githubAction', file);
 }
 
 export const detectGithubActionsComponent: ComponentMatcher = async (files, provider) => {
@@ -56,14 +55,14 @@ export const detectGithubActionsComponent: ComponentMatcher = async (files, prov
     const pl = new Payload({ name: 'virtual', folderPath: file.fp });
     pl.addTech('github.actions', [`GitHub Actions workflow: ${relative}`]);
     for (const job of jobs) {
-      addAction(pl, job.uses);
+      addAction(pl, job.uses, file.fp);
       if (Array.isArray(job.steps)) {
-        for (const step of job.steps) if (isRecord(step)) addAction(pl, step.uses);
+        for (const step of job.steps) if (isRecord(step)) addAction(pl, step.uses, file.fp);
       }
-      addImage(pl, job.container);
+      addImage(pl, job.container, file.fp);
       if (isRecord(job.services)) {
         for (const service of Object.values(job.services)) {
-          if (isRecord(service)) addImage(pl, service.image);
+          if (isRecord(service)) addImage(pl, service.image, file.fp);
         }
       }
     }

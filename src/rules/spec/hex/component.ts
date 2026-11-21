@@ -81,7 +81,7 @@ export const detectHexComponent: ComponentMatcher = async (files, provider) => {
     }
     if (manifest || packages.size) {
       const file = manifest || lock!;
-      const pl = packageComponent(name, file.fp, 'hex', packages);
+      const pl = packageComponent(name, file.fp, 'hex', packages, file.fp);
       pl.addTech('elixir', ['Mix package: ' + projectPath(provider.basePath, file.fp)]);
       payloads.push(pl);
     }

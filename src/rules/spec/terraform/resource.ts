@@ -65,6 +65,7 @@ export const detectTerraformResource: ComponentMatcher = async (files, provider)
           parent: pl,
           dependencies: [['terraform.resource', name, 'unknown']],
           reason: tech[1][0],
+          evidence: [{ kind: 'terraform', value: name, path: file.fp }],
         })
       );
     }
