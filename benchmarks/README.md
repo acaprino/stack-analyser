@@ -68,6 +68,27 @@ Run the four steps in this order. The labels must exist before anyone looks at a
 
 No results from this review are recorded here yet.
 
+## Registry port
+
+A service registry can hold recognition signs that no rule here has: package names, expressions, variables, hosts and file names, and some are the work of hand rather than of an older release of these rules. `port-registry.mjs` settles every one of them against the built package in `dist/`: the package recognises it already, it becomes a rule, or it is a difference with a reason. It reads a registry of schema `daodan/service-registry/v1` and never runs anything.
+
+```sh
+npm run build
+node benchmarks/port-registry.mjs ../daodan/daodan/data/service-registry.json           # prints the report, writes nothing
+node benchmarks/port-registry.mjs ../daodan/daodan/data/service-registry.json --write   # writes the rules, src/types/techs.ts and the report
+npm run build   # regenerates the index files; then run the script again: a second run changes nothing
+```
+
+Without `--write` the script prints the report on stdout and what is left to do on stderr. The exit code is 0 only when every sign is a rule or a difference, and the dry run counts what `--write` would still add as left to do. `registry-port.json` is that report:
+
+- `registry` is the sha256 of the registry file that was read.
+- `new` lists the ids that became a rule file, `extended` the signs added to a rule that already existed, by id, and `renamed` the registry ids that are the same technology as a rule of the fork and join it under the id it has. A registry entry is a duplicate of a rule when they have the same name, without case and punctuation, or a package in common; of the two ids the one release 1.27.6 already had stays, and otherwise the registry's.
+- `differences` is written by hand and kept by the script. Each entry is `{ id, sign, reason }` for a sign of the registry that is not a rule, and a test shows that it still is not.
+
+A sign reads `<type>:<name>` for a package of that dependency type (`npm:vite`, `maven:org.mongodb:mongodb-driver-sync`), and `pattern:<type>:<expression>`, `env:<name>`, `host:<name>`, `file:<name>` or `source:<kind>:<name>`. The registry writes a directory without the slash that marks it in a rule, so `.github` is covered by `.github/`; it writes package names without regard to case and in lower case, so a rule that spells the name as published (`github.com/DataDog/dd-trace-go`) covers it. A sign that the fork already recognises under another technology is a difference, never a second owner for the package.
+
+The registry's additions also name signs they declare wrong. The fork holds none of them, except two cases. Eight Gradle plugin ids (`com.android.application` and seven more) are declared wrong as packages and held by the additions as the same anchored expression, which the fork has. And `postman-collection` is declared wrong for postman; the fork keeps it, because dropping it loses postman on the recorded project `real-app-hoppscotch` (whose expected labels do not include Postman), and the replay allows no loss.
+
 ## Measured results
 
 The baseline was upstream release 1.27.6, commit `14b97f27855679ec02bfae28ed8aa2af03704547`, with 743 registered technologies. The extension had 1,066. The CLI checks used unchanged manifests from Daodan `ca89d6387` and Imago `1e1a48ce`. The expected product IDs for each manifest are recorded in `workspace-manifests.json`.
@@ -98,6 +119,26 @@ On 178 recorded projects, 90 gained at least one expected product and 63 still h
 | No registered product name or known alias matched the expected name | 0 | 103 |
 
 Maestro can be identified by a flow file and SwiftUI by a Swift import. An integration can also call an endpoint directly over HTTP. SMTP appears as a service in 23 projects. A protocol label alone cannot identify a particular mail provider.
+
+After the port the package registers 1,218 technologies, 142 more than the 1,076 before it. The new ones are 142 rules with 187 packages, 132 existing rules gained 153 packages and 2 expressions, and 80 signs are differences. Three registry ids (`kafka`, `react-email`, `vault`) join the rules `apache_kafka`, `reactemail` and `hashicorp_vault`, and the rule `jinja2`, born in this branch, is now `jinja`, the registry's id. The 80 differences are 40 expressions the fork already holds in a stricter form (anchored, or ending the name), 14 packages that the fork gives to another rule (a test fixes most of them), 11 signs that its readers recognise (Dockerfile, Compose files, Swift imports and ExUnit calls), 7 signs it dropped or narrowed on purpose (the App Service resources of Static Web Apps, `jenkins-docker`, `mongoose` for MongoDB, `^io.quarkus:`, the scope `@trayio-app`), 6 misspellings in the registry or in the older release, and the two Jekyll files `_config.yml` and `_config.yaml`, which are not signs of GitHub Pages.
+
+| Replay before and after the port | Before | After | Lost |
+| --- | ---: | ---: | ---: |
+| Frameworks, libraries and tools | 478 / 569 | 478 / 569 | 0 |
+| Services | 219 / 518 | 219 / 518 | 0 |
+
+No expected name is gained: 51 detections on 20 of the 178 recorded projects gain an id (`ruff`, `gunicorn`, `jinja` and a few other Python tools; none completes an expected name). An emulation of the registry's own matching on the same declarations (names without regard to case, every expression, the same scoring of names) reaches no expected name that the fork misses. The services total is 219 here; an earlier estimate of at least 232 came from a different scorer. No id recognised before is lost, except `jinja2`, which is renamed `jinja`. The names left unmatched are the ones of the table above, with one fewer unknown name among the services:
+
+| Why expected labels remain unmatched after the port | Frameworks, libraries and tools | Services |
+| --- | ---: | ---: |
+| The product has a package rule, but none of its known packages matched | 85 | 162 |
+| The product has no package rule | 6 | 35 |
+| No registered product name or known alias matched the expected name | 0 | 102 |
+
+```sh
+node benchmarks/replay-declarations.mjs . . ../daodan/benchmarks/project-model coverage-after.json
+node benchmarks/port-registry.mjs ../daodan/daodan/data/service-registry.json
+```
 
 ## Startup
 
