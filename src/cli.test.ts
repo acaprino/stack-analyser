@@ -25,3 +25,53 @@ it('writes a stack for a Maven project using the normal CLI', async () => {
     await fs.rm(cwd, { recursive: true, force: true });
   }
 }, 20_000);
+
+async function runCli(files: Record<string, string>, args: string[]) {
+  const cwd = await fs.mkdtemp(path.join(os.tmpdir(), 'stack-analyser-cli-'));
+  try {
+    for (const [name, content] of Object.entries(files)) await fs.writeFile(path.join(cwd, name), content);
+    const file = path.join(import.meta.dirname, 'cli.ts');
+    const result = await promisify(execFile)(process.execPath, [
+      '--import', import.meta.resolve('tsx'), file, '.', ...args,
+    ], { cwd, env: { ...process.env, LOG_LEVEL: 'info' } }).then(
+      (done) => ({ code: 0, out: done.stdout + done.stderr }),
+      (err: { code: number; stdout: string; stderr: string }) => ({ code: err.code, out: err.stdout + err.stderr })
+    );
+    const output = await fs.readFile(path.join(cwd, 'output.json'), 'utf8').then((json) => JSON.parse(json), () => null);
+    return { ...result, output };
+  } finally {
+    await fs.rm(cwd, { recursive: true, force: true });
+  }
+}
+
+const manifest = JSON.stringify({ name: 'app', dependencies: { react: '18' } });
+
+it('reads declarations from a file and keeps their source', async () => {
+  const declarations = JSON.stringify([
+    { type: 'python', name: 'requests', version: '>=2', path: 'setup.cfg', line: 4, source: 'python-build' },
+  ]);
+  const { code, output } = await runCli(
+    { 'package.json': manifest, 'declarations.json': declarations }, ['--flat', '--declarations', 'declarations.json']);
+  expect(code).toBe(0);
+  expect(output.evidence).toContainEqual(
+    { tech: 'requests', kind: 'package', value: 'requests', path: '/setup.cfg', line: 4, source: 'python-build' });
+}, 20_000);
+
+it.each([
+  ['a file that is not an array', '{"type":"npm"}', /must be an array/],
+  ['a file that is not JSON', 'type: npm', /Declarations/],
+  ['an invalid entry', JSON.stringify([{ type: 'npm', name: 'react', path: 'package.json', source: 'x' }, { type: 'cobol', name: 'a', path: 'b', source: 'x' }]), /declaration 1/],
+  ['a path outside the root', JSON.stringify([{ type: 'npm', name: 'react', path: '../package.json', source: 'x' }]), /declaration 0/],
+])('exits with 1 and writes nothing for %s', async (_label, content, message) => {
+  const { code, out, output } = await runCli(
+    { 'package.json': manifest, 'declarations.json': content }, ['--declarations', 'declarations.json']);
+  expect(code).toBe(1);
+  expect(out).toMatch(message);
+  expect(output).toBeNull();
+}, 20_000);
+
+it('exits with 1 and writes nothing when the declarations file does not exist', async () => {
+  const { code, output } = await runCli({ 'package.json': manifest }, ['--declarations', 'missing.json']);
+  expect(code).toBe(1);
+  expect(output).toBeNull();
+}, 20_000);

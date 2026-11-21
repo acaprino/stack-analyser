@@ -46,6 +46,7 @@ export { FSProvider } from './provider/fs.js';
 export type {
   Analyser,
   AnalyserJson,
+  Declaration,
   Dependency,
   Evidence,
   EvidenceItem,

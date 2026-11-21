@@ -22,7 +22,7 @@ It can be helpful for other to get all dependencies or SaaS used in a given git 
 ## CLI
 
 ```bash
-npx @specfy/stack-analyser <PATH> [--output=<filename>]
+npx @specfy/stack-analyser <PATH> [--output=<filename>] [--flat] [--declarations=<file>]
 ```
 
 ```sh
@@ -43,6 +43,37 @@ applying the Spring Boot plugin gets the technology ID `spring-boot`. A version 
 management or a Gradle plugin declared with `apply false` does not establish module use. The scanner reads static
 declarations without invoking project builds. In the JSON, `techs` contains detected technologies and an optional
 `mentions` array records known service endpoints with the source file and line.
+
+### Declarations read by other tools
+
+Another tool may already have read packages, images or actions from the project. `--declarations <FILE>` takes
+a JSON array of them, and they are recognised with the same rules as the manifests the analyser reads itself.
+
+```sh
+node dist/cli.js /my/project --declarations declarations.json
+```
+
+```json
+[
+  { "type": "python", "name": "requests", "version": ">=2", "path": "setup.cfg", "line": 4, "source": "python-build" },
+  { "type": "npm", "name": "react", "path": "package.json", "source": "renovate" }
+]
+```
+
+| Field     | Required | Meaning                                                                                      |
+| --------- | -------- | -------------------------------------------------------------------------------------------- |
+| `type`    | yes      | One of `deno`, `docker`, `githubAction`, `golang`, `hex`, `maven`, `npm`, `nuget`, `php`, `pub`, `python`, `ruby`, `rust`, `swiftpm`, `terraform`, `terraform.resource` |
+| `name`    | yes      | The package, image repository or action, as the rules of that `type` expect it               |
+| `path`    | yes      | The file that declares it, relative to the analysed folder and inside it                     |
+| `source`  | yes      | Who read it. It is reported as is in the `source` of the evidence                            |
+| `version` | no       | The declared version                                                                         |
+| `line`    | no       | A positive line number in `path`                                                             |
+
+The technologies and their evidence go on the root component, with the `path`, `line` and `source` of the declaration.
+A name that no rule knows adds nothing. When the analyser reads the same package itself, both pieces of evidence are
+kept, each with its own `source`; what the analyser reads has the source `stack-analyser`. The CLI exits with code 1,
+prints the number of the entry and writes no output when the file is not a JSON array, when an entry has an unknown
+`type` or a missing field, or when a `path` is absolute or leaves the analysed folder.
 
 ## Programmatic Usage
 
@@ -72,6 +103,25 @@ const flat = flatten(result);
 ```
 
 `flatten` returns a new graph and leaves `result` untouched, so it can be called more than once.
+
+`analyser` also accepts `declarations`, the packages, images and actions that another tool already read from the
+project (see [Declarations read by other tools](#declarations-read-by-other-tools)). The `Declaration` type is exported.
+
+```ts
+import { analyser, FSProvider, type Declaration } from "@specfy/stack-analyser"
+
+const declarations: Declaration[] = [
+  { type: 'npm', name: 'react', path: 'package.json', line: 12, source: 'renovate' },
+];
+
+const result = await analyser({
+  provider: new FSProvider({ path: '/my/repository/path/' }),
+  declarations,
+});
+```
+
+The promise rejects with an error that starts with `declaration <index>` when an entry has a `type` that is not a
+supported one, a missing field, or a `path` that is absolute or outside the project.
 
 ### Filesystem provider
 

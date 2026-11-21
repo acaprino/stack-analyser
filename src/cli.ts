@@ -10,10 +10,12 @@ import figureSet from 'figures';
 import kleur from 'kleur';
 import ora from 'ora';
 
-import { analyser } from './analyser/index.js';
+import { analyser, parseDeclarations } from './analyser/index.js';
 import { l } from './common/log.js';
 import { flatten } from './payload/helpers.js';
 import { FSProvider } from './provider/fs.js';
+
+import type { Declaration } from './types/index.js';
 
 import './autoload.js';
 
@@ -32,8 +34,9 @@ program
   .argument('<path>', 'repository to analyze')
   .option('-o, --output <FILENAME>', 'output json to a file', 'output.json')
   .option('--flat', 'flatten the output', false)
+  .option('--declarations <FILE>', 'JSON file with an array of declarations that other tools already read')
   .version(pkg.version)
-  .action(async (arg: string, options: { output?: string; flat: boolean }) => {
+  .action(async (arg: string, options: { output?: string; flat: boolean; declarations?: string }) => {
     const pathAtExecution = process.cwd();
     const root = path.isAbsolute(arg) ? arg : path.join(pathAtExecution, arg);
 
@@ -52,11 +55,24 @@ program
 
     l.log(kleur.bold().magenta(figureSet.triangleRight), 'Path', kleur.cyan(root));
 
+    // Checked before anything is analysed, so a bad file never leaves an output behind.
+    let declarations: Declaration[] | undefined;
+    if (options.declarations) {
+      const declarationsFile = path.resolve(pathAtExecution, options.declarations);
+      try {
+        declarations = parseDeclarations(JSON.parse(await fs.readFile(declarationsFile, 'utf8')));
+      } catch (err) {
+        l.log(kleur.bold().red(figureSet.cross), `Declarations "${declarationsFile}":`, (err as Error).message);
+        process.exit(1);
+      }
+    }
+
     const spinner = ora(`Analysing`).start();
 
     await timer.setTimeout(500);
     const res = await analyser({
       provider: new FSProvider({ path: root, ignorePaths: [] }),
+      declarations,
     });
     spinner.succeed('Analysed');
 

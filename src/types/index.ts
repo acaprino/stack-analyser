@@ -37,6 +37,18 @@ export interface Evidence {
 /** Evidence as a reader reports it: `tech` comes from the receiver, a missing `source` means `stack-analyser`. */
 export type EvidenceItem = Omit<Evidence, 'tech' | 'source'> & { source?: string };
 
+/** A package, image or action that another tool has already read from the project. */
+export interface Declaration {
+  type: SupportedDeps;
+  name: string;
+  version?: string;
+  /** Relative to the analysed root, with `/`. */
+  path: string;
+  line?: number;
+  /** Who read it: reported as is in the evidence. */
+  source: string;
+}
+
 export interface Analyser {
   /** Service endpoints referred to in source or configuration, with their evidence. */
   mentions?: HostMention[];

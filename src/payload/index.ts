@@ -206,15 +206,21 @@ export class Payload implements Analyser {
   /**
    * Register the techs that declared packages, images, actions or Terraform resources point to.
    * Every name that matched is recorded as evidence, with the file that declares it.
+   * `origin` is for names another tool already read: its `line` and `source` go in the evidence.
    */
-  addDependencyTechs(names: string[], type: SupportedDeps, file: string): void {
+  addDependencyTechs(
+    names: string[],
+    type: SupportedDeps,
+    file: string,
+    origin: { line?: number; source?: string } = {}
+  ): void {
     const kind = evidenceKind(type);
     const matched = matchedPackages(names, type);
     for (const [tech, reason] of matchDependencies(names, type)) {
       this.addTech(
         tech,
         reason,
-        (matched.get(tech) ?? []).map((value) => ({ kind, value, path: file }))
+        (matched.get(tech) ?? []).map((value) => ({ kind, value, path: file, line: origin.line, source: origin.source }))
       );
     }
   }
