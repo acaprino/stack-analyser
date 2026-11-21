@@ -59,7 +59,7 @@ it('keeps unowned folder evidence visible when multiple manifests share a direct
 });
 
 it('toJson makes evidence paths relative and portable', () => {
-  const base = path.resolve('repo'); // un percorso della piattaforma: con il separatore di Windows su Windows
+  const base = path.resolve('repo'); // a path of the platform: with the Windows separator on Windows
   const root = new Payload({ name: 'main', folderPath: base });
   root.addTech('react', ['react matched: /^react$/'], [{ kind: 'package', value: 'react', path: path.join(base, 'web', 'package.json') }]);
   root.addEvidence('react', [{ kind: 'extension', value: '.tsx', path: base }]);

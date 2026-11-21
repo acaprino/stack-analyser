@@ -31,6 +31,7 @@ export const lang = {
 
 export { analyser } from './analyser/index.js';
 export type { LangListItem } from './common/languages.js';
+export type { TechMatch } from './matchAllFiles.js';
 export {
   findEdgesInDependencies,
   findHosting,
