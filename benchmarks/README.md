@@ -20,6 +20,54 @@ node benchmarks/replay-declarations.mjs ../stack-analyser-upstream . ../daodan/b
 
 The report counts each expected product name once per project and facet. It compares both IDs and display names, with the same explicit spelling equivalences on both sides. It also lists every emitted ID, gained and lost names, and outstanding labels per project. This measurement isolates package rules. Whole-project traversal, manifest extraction, files, source references, URLs and module ownership require a separate analyser run.
 
+## GitHub review
+
+The `github-review-*` scripts compare two built packages on pinned public repositories. They read files and
+never run repository code. `github-review-projects.json` pins 112 repositories by commit, tree and file
+count: 14 each for JavaScript, TypeScript and Python, and 7 each for Java, Kotlin, Go, Rust, PHP, Ruby,
+Elixir, Dart, C# and Swift. Each one is marked `development` (80) or `holdout` (32).
+
+Run the four steps in this order. The labels must exist before anyone looks at a scan result.
+
+1. **Fetch the snapshots.** Each commit is fetched at depth 1 into a temporary bare repository and its blobs
+   are written out directly, so no checkout filter or hook runs. Every blob is verified against the tree.
+   A snapshot lands in `SNAPSHOTS/owner--repo`, and `--inventory` records the path, hash, size and mode of
+   every file.
+
+   ```sh
+   node benchmarks/github-review-fetch.mjs ../snapshots --jobs 4 --inventory ../inventory.json
+   ```
+
+2. **Derive the labels.** This step reads the original manifests and configuration files and loads neither
+   package nor its rules. `github-review-panel.json` lists, per package registry, the packages that identify
+   each product. A product counts once per project, preferring a manifest over source and the shallowest
+   path. Eligible projects also get one CI system that is verifiably absent, as a negative control. Files
+   the script could not parse are listed under `oracleWarnings`.
+
+   ```sh
+   node benchmarks/github-review-labels.mjs ../snapshots benchmarks/github-review-projects.json ../labelled.json ../inventory.json
+   ```
+
+3. **Run both CLIs.** The runner re-verifies each snapshot against its pin, runs `dist/cli.js` from the
+   baseline and from the candidate, and scores every label as `tp`, `fn`, `fp`, `tn` or `unscored`. A
+   detection without a label is left unjudged. The report records a hash of both builds and fails if either
+   changed during the run. Raw graphs go to `--raw-dir`, by default `review-runs` next to the snapshots.
+   The exit code is 1 when any project failed on either side.
+
+   ```sh
+   node benchmarks/github-review-runner.mjs ../stack-analyser-upstream . ../snapshots ../labelled.json ../report.json --jobs 4 --timeout-ms 120000
+   ```
+
+4. **Sample predictions for manual review.** This prints up to 60 repository and technology pairs from the
+   candidate, spread across technology groups and languages in a fixed pseudo-random order. Expected labels
+   and detection reasons play no part in the selection.
+
+   ```sh
+   node benchmarks/github-review-sample.mjs ../report.json . > ../review-sheet.json
+   ```
+
+No results from this review are recorded here yet.
+
 ## Measured results
 
 The baseline was upstream release 1.27.6, commit `14b97f27855679ec02bfae28ed8aa2af03704547`, with 743 registered technologies. The extension had 1,066. The CLI checks used unchanged manifests from Daodan `ca89d6387` and Imago `1e1a48ce`. The expected product IDs for each manifest are recorded in `workspace-manifests.json`.

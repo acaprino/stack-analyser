@@ -71,6 +71,38 @@ const json = result.toJson();
 const flat = flatten(result);
 ```
 
+`flatten` returns a new graph and leaves `result` untouched, so it can be called more than once.
+
+### Filesystem provider
+
+`FSProvider` accepts two optional settings.
+
+```ts
+new FSProvider({
+  path: '/my/repository/path/',
+  // Names relative to `path`, or regular expressions. Ignoring a directory excludes everything below it.
+  ignorePaths: ['generated', /^packages\/[^/]+\/dist$/],
+  // Largest single file the analyser reads, in bytes. The default is 32 MiB.
+  maxFileBytes: 64 * 1024 * 1024,
+});
+```
+
+The provider reads only inside `path`. A path that resolves outside it, directly or through a symbolic link,
+is reported as missing. A symbolic link to a file inside the repository is read as a file. A symbolic link to
+a directory is not followed. A file larger than `maxFileBytes` is skipped with a warning, so raise the limit
+for a repository with an unusually large lockfile.
+
+### How evidence is assigned
+
+- **Hosting.** A module is placed in a hosting component (`inComponent`) only when its directory contains that
+  platform's deployment configuration, such as `vercel.json`. A cloud SDK in the dependencies adds the
+  technology to `techs` without making it the host. When two deployment configurations match, none is chosen.
+- **Shared directories.** When one directory holds a single manifest, the technologies and endpoint mentions
+  found there belong to that module. When it holds several, for example `package.json` next to `Cargo.toml`,
+  they stay on the parent, because nothing in the directory says which module owns them.
+- **Files.** Rules match regular files and, where a rule names one, directories. A symbolic link never counts
+  as evidence, and neither does a directory whose name looks like a file extension.
+
 ## GitHub Actions
 
 ```yaml

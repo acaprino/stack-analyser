@@ -75,6 +75,21 @@ Provide as much dependencies as possible when creating the rule.
 - Rust: <https://crates.io/>
 - Terraform: <https://registry.terraform.io/>
 
+#### Fields that match evidence
+
+- `dependencies`: a string name matches the whole package name. For `githubAction`, the `owner/repo` part
+  ignores case and any path after it is case-sensitive, as on GitHub. An empty name is rejected when the
+  rule is loaded.
+- `files`: a list of literal names, or one regular expression. End a name with `/` to match a directory,
+  e.g. `.circleci/`. With `matchFullPath`, the name is compared with the path relative to the analysed root.
+  A regular expression only ever matches regular files.
+- `dotenv`: variable names, compared exactly. End a name with `_` to match every variable in that
+  namespace, e.g. `ANTHROPIC_` matches `ANTHROPIC_API_KEY`.
+- `hosts`: exact HTTP(S) hostnames. A match is reported under `mentions` and does not add the technology.
+- `deploymentConfig: true`: the rule's `files` are a deployment configuration. Only such a rule can place a
+  module inside a hosting component. Set it on a platform whose file commits the project to deploying
+  there, e.g. `vercel.json` or `fly.toml`.
+
 #### Naming
 
 A rule name should be:

@@ -4,7 +4,7 @@
 import { createHash } from 'node:crypto';
 import { readFile, readdir, writeFile } from 'node:fs/promises';
 import { basename, join, resolve } from 'node:path';
-import TOML from '@iarna/toml';
+import { parse as parseToml } from 'smol-toml';
 import { SaxesParser } from 'saxes';
 import { parseDocument } from 'yaml';
 
@@ -87,7 +87,7 @@ function readDeclarations(file, text, mark) {
     const manager = /^(npm|yarn|pnpm)@\d/.exec(data.packageManager ?? '');
     if (manager) mark(manager[1], 'npm', 'toolchain', 'packageManager = ' + data.packageManager);
   } else if (name === 'pyproject.toml') {
-    const data = TOML.parse(text);
+    const data = parseToml(text);
     for (const item of data.project?.dependencies ?? []) py(item, 'runtime', 'project.dependencies');
     for (const [group, deps] of Object.entries(data.project?.['optional-dependencies'] ?? {}))
       for (const item of deps) py(item, 'optional', 'project.optional-dependencies.' + group);
@@ -105,7 +105,7 @@ function readDeclarations(file, text, mark) {
   } else if (/^requirements[^/]*\.txt$/.test(name)) {
     for (const line of text.split(/\r?\n/)) py(line.split(/\s+#/)[0], /dev|test/i.test(name) ? 'development' : 'declared', name);
   } else if (name === 'Cargo.toml') {
-    const data = TOML.parse(text);
+    const data = parseToml(text);
     if (mapping(data.package) || mapping(data.workspace)) mark('cargo', 'cargo', 'toolchain', 'Cargo.toml defines a package or workspace');
     for (const scope of [data, ...Object.values(data.target ?? {})]) {
       for (const [field, role] of [['dependencies','runtime'], ['dev-dependencies','development'], ['build-dependencies','build']]) {
