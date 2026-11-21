@@ -4,12 +4,15 @@ exports[`golang (lockfile) > should match everything 1`] = `
 [
   "algorand",
   "aliyun-oss",
+  "amplitude",
   "anthropic",
   "apache-beam",
   "apache_thrift",
   "apideck",
+  "apify",
   "appwrite",
   "asana",
+  "auth0",
   "aws",
   "aws.apigateway",
   "aws.athena",
@@ -62,6 +65,7 @@ exports[`golang (lockfile) > should match everything 1`] = `
   "azure.sql",
   "brevo",
   "bugsnag",
+  "caddy",
   "casbin",
   "chargebee",
   "chi",
@@ -73,15 +77,23 @@ exports[`golang (lockfile) > should match everything 1`] = `
   "cockroach-labs",
   "cohereai",
   "connectrpc",
+  "consul",
   "containerd",
+  "couchbase",
   "coveralls",
   "dapr",
+  "databricks",
+  "datadog",
   "datadome",
+  "docker",
+  "duckdb",
   "echo",
   "elasticsearch",
   "envoy",
+  "esbuild",
   "etcd",
   "event-store",
+  "fastly",
   "fiber",
   "firecrawl",
   "flagd",
@@ -100,6 +112,7 @@ exports[`golang (lockfile) > should match everything 1`] = `
   "gcp.dataproc",
   "gcp.datastore",
   "gcp.dialogflow",
+  "gcp.dns",
   "gcp.functions",
   "gcp.gce",
   "gcp.gcs",
@@ -112,6 +125,7 @@ exports[`golang (lockfile) > should match everything 1`] = `
   "gcp.secretmanager",
   "gcp.spanner",
   "gcp.speech",
+  "gcp.sql",
   "gcp.tasks",
   "gcp.translate",
   "gcp.vision",
@@ -125,11 +139,14 @@ exports[`golang (lockfile) > should match everything 1`] = `
   "gorm",
   "grpc",
   "grpc-gateway",
+  "hashicorp_vault",
+  "helm",
   "hetzner",
   "honeybadger",
   "honeycomb",
   "huawei-obs",
   "hyperdx",
+  "influxdb",
   "inngest",
   "ionos",
   "jaeger",
@@ -156,6 +173,8 @@ exports[`golang (lockfile) > should match everything 1`] = `
   "mongodb",
   "mysql",
   "nats",
+  "neo4j",
+  "newrelic",
   "nomad",
   "novu",
   "oapi-codegen",
@@ -181,15 +200,18 @@ exports[`golang (lockfile) > should match everything 1`] = `
   "propelauth",
   "protobuf",
   "pulumi",
+  "pusher",
   "qdrant",
   "qmgo",
   "qovery",
   "questdb",
   "razorpay",
   "redis",
+  "replicate",
   "resend",
   "rethinkdb",
   "rollbar",
+  "scaleway",
   "segment",
   "selenium",
   "sendgrid",
@@ -209,7 +231,9 @@ exports[`golang (lockfile) > should match everything 1`] = `
   "terraform",
   "testcontainers",
   "testify",
+  "traefik",
   "twilio",
+  "typescript",
   "typesense",
   "urfave-cli",
   "valkey",
@@ -425,6 +449,11 @@ exports[`golang (lockfile) > should match everything 2`] = `
   ],
   [
     "golang",
+    "github.com/DataDog/dd-trace-go",
+    "v1.0.0",
+  ],
+  [
+    "golang",
     "github.com/EventStore/EventStore-Client-Go",
     "v1.0.0",
   ],
@@ -436,6 +465,11 @@ exports[`golang (lockfile) > should match everything 2`] = `
   [
     "golang",
     "github.com/Gaardsholt/go-gitguardian",
+    "v1.0.0",
+  ],
+  [
+    "golang",
+    "github.com/GoogleCloudPlatform/google-cloud-go",
     "v1.0.0",
   ],
   [
@@ -456,6 +490,11 @@ exports[`golang (lockfile) > should match everything 2`] = `
   [
     "golang",
     "github.com/aliyun/aliyun-oss-go-sdk",
+    "v1.0.0",
+  ],
+  [
+    "golang",
+    "github.com/amplitude/amplitude-go",
     "v1.0.0",
   ],
   [
@@ -485,7 +524,17 @@ exports[`golang (lockfile) > should match everything 2`] = `
   ],
   [
     "golang",
+    "github.com/apify/apify-client-go",
+    "v1.0.0",
+  ],
+  [
+    "golang",
     "github.com/appwrite/sdk-for-go",
+    "v1.0.0",
+  ],
+  [
+    "golang",
+    "github.com/auth0/go-auth0",
     "v1.0.0",
   ],
   [
@@ -730,6 +779,11 @@ exports[`golang (lockfile) > should match everything 2`] = `
   ],
   [
     "golang",
+    "github.com/caddyserver/caddy/v2",
+    "v1.0.0",
+  ],
+  [
+    "golang",
     "github.com/casbin/casbin",
     "v1.0.0",
   ],
@@ -775,12 +829,27 @@ exports[`golang (lockfile) > should match everything 2`] = `
   ],
   [
     "golang",
+    "github.com/couchbase/go-couchbase",
+    "v1.0.0",
+  ],
+  [
+    "golang",
     "github.com/dapr/go-sdk",
     "v1.0.0",
   ],
   [
     "golang",
+    "github.com/databricks/databricks-sdk-go",
+    "v1.0.0",
+  ],
+  [
+    "golang",
     "github.com/datadome/fraud-sdk-go-package",
+    "v1.0.0",
+  ],
+  [
+    "golang",
+    "github.com/duckdb/duckdb-go",
     "v1.0.0",
   ],
   [
@@ -801,6 +870,16 @@ exports[`golang (lockfile) > should match everything 2`] = `
   [
     "golang",
     "github.com/envoyproxy/go-control-plane",
+    "v1.0.0",
+  ],
+  [
+    "golang",
+    "github.com/evanw/esbuild",
+    "v1.0.0",
+  ],
+  [
+    "golang",
+    "github.com/fastly/fastly-go",
     "v1.0.0",
   ],
   [
@@ -905,6 +984,11 @@ exports[`golang (lockfile) > should match everything 2`] = `
   ],
   [
     "golang",
+    "github.com/googleapis/google-cloud-go",
+    "v1.0.0",
+  ],
+  [
+    "golang",
     "github.com/grpc-ecosystem/go-grpc-prometheus",
     "v1.0.0",
   ],
@@ -915,12 +999,22 @@ exports[`golang (lockfile) > should match everything 2`] = `
   ],
   [
     "golang",
+    "github.com/hashicorp/consul/api",
+    "v1.0.0",
+  ],
+  [
+    "golang",
     "github.com/hashicorp/nomad/api",
     "v1.0.0",
   ],
   [
     "golang",
     "github.com/hashicorp/terraform-plugin-sdk/v2",
+    "v1.0.0",
+  ],
+  [
+    "golang",
+    "github.com/hashicorp/vault/api",
     "v1.0.0",
   ],
   [
@@ -946,6 +1040,11 @@ exports[`golang (lockfile) > should match everything 2`] = `
   [
     "golang",
     "github.com/hyperdxio/hyperdx-go",
+    "v1.0.0",
+  ],
+  [
+    "golang",
+    "github.com/influxdata/influxdb-client-go/v2",
     "v1.0.0",
   ],
   [
@@ -1055,6 +1154,11 @@ exports[`golang (lockfile) > should match everything 2`] = `
   ],
   [
     "golang",
+    "github.com/microsoft/typescript-go",
+    "v1.0.0",
+  ],
+  [
+    "golang",
     "github.com/milvus-io/milvus-sdk-go/v2",
     "v1.0.0",
   ],
@@ -1085,6 +1189,16 @@ exports[`golang (lockfile) > should match everything 2`] = `
   ],
   [
     "golang",
+    "github.com/neo4j/neo4j-go-driver/v5",
+    "v1.0.0",
+  ],
+  [
+    "golang",
+    "github.com/newrelic/go-agent/v3",
+    "v1.0.0",
+  ],
+  [
+    "golang",
     "github.com/novuhq/go-novu",
     "v1.0.0",
   ],
@@ -1096,6 +1210,11 @@ exports[`golang (lockfile) > should match everything 2`] = `
   [
     "golang",
     "github.com/open-feature/go-sdk-contrib/providers/flagd",
+    "v1.0.0",
+  ],
+  [
+    "golang",
+    "github.com/openai/openai-go",
     "v1.0.0",
   ],
   [
@@ -1170,7 +1289,17 @@ exports[`golang (lockfile) > should match everything 2`] = `
   ],
   [
     "golang",
+    "github.com/pulumi/pulumi-docker",
+    "v1.0.0",
+  ],
+  [
+    "golang",
     "github.com/pulumi/pulumi/sdk/v3",
+    "v1.0.0",
+  ],
+  [
+    "golang",
+    "github.com/pusher/pusher-http-go/v5",
     "v1.0.0",
   ],
   [
@@ -1205,6 +1334,11 @@ exports[`golang (lockfile) > should match everything 2`] = `
   ],
   [
     "golang",
+    "github.com/replicate/replicate-go",
+    "v1.0.0",
+  ],
+  [
+    "golang",
     "github.com/resend/resend-go/v2",
     "v1.0.0",
   ],
@@ -1216,6 +1350,11 @@ exports[`golang (lockfile) > should match everything 2`] = `
   [
     "golang",
     "github.com/rollbar/rollbar-go",
+    "v1.0.0",
+  ],
+  [
+    "golang",
+    "github.com/scaleway/scaleway-sdk-go",
     "v1.0.0",
   ],
   [
@@ -1291,6 +1430,11 @@ exports[`golang (lockfile) > should match everything 2`] = `
   [
     "golang",
     "github.com/testcontainers/testcontainers-go",
+    "v1.0.0",
+  ],
+  [
+    "golang",
+    "github.com/traefik/traefik/v3",
     "v1.0.0",
   ],
   [
@@ -1406,6 +1550,11 @@ exports[`golang (lockfile) > should match everything 2`] = `
   [
     "golang",
     "goveralls",
+    "v1.0.0",
+  ],
+  [
+    "golang",
+    "helm.sh/helm/v3",
     "v1.0.0",
   ],
   [

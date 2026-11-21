@@ -18,5 +18,6 @@ register({
       type: 'githubAction',
       name: 'google-github-actions/deploy-appengine',
     },
+    { type: 'python', name: 'google-cloud-appengine-admin' },
   ],
 });

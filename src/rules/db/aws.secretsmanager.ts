@@ -19,5 +19,6 @@ register({
       example: 'aws_secretsmanager_secret',
     },
     { type: 'terraform.resource', name: 'airbyte_destination_secretsmanager' },
+    { type: 'python', name: 'aws-cdk-aws-secretsmanager' },
   ],
 });

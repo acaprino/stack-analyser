@@ -15,5 +15,6 @@ register({
       name: /^aws_glue_/,
       example: 'aws_glue_crawler',
     },
+    { type: 'python', name: 'aws-cdk-aws-glue' },
   ],
 });

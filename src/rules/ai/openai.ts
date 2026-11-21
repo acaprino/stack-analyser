@@ -16,6 +16,7 @@ register({
     { type: 'python', name: 'langchain-openai' },
     { type: 'python', name: 'openai' },
     { type: 'golang', name: 'github.com/openai/openai-go/v3' },
+    { type: 'golang', name: 'github.com/openai/openai-go' },
   ],
   hosts: ['api.openai.com'],
 });

@@ -22,5 +22,6 @@ register({
       type: 'githubAction',
       name: 'aws-actions/aws-cloudformation-github-deploy',
     },
+    { type: 'python', name: 'aws-cdk-aws-cloudformation' },
   ],
 });

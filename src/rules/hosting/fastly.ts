@@ -18,5 +18,7 @@ register({
       example: '@fastly/performance-observer-polyfill',
     },
     { type: 'npm', name: 'fastly/fastly' },
+    { type: 'python', name: 'fastly' },
+    { type: 'golang', name: 'github.com/fastly/fastly-go' },
   ],
 });

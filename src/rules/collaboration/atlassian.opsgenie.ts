@@ -7,5 +7,6 @@ register({
   dependencies: [
     { type: 'npm', name: 'opsgenie-sdk' },
     { type: 'npm', name: '@pulumi/opsgenie' },
+    { type: 'python', name: 'opsgenie-sdk' },
   ],
 });

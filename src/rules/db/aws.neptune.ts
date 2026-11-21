@@ -15,5 +15,6 @@ register({
       name: /^aws_neptune_/,
       example: 'aws_neptune_cluster',
     },
+    { type: 'python', name: 'aws-cdk-aws-neptune' },
   ],
 });

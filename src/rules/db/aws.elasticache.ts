@@ -19,5 +19,6 @@ register({
       example: 'aws_elasticache_cluster',
     },
     { type: 'php', name: 'atyagi/elasticache-laravel' },
+    { type: 'python', name: 'aws-cdk-aws-elasticache' },
   ],
 });

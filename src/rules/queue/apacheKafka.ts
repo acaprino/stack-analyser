@@ -23,5 +23,6 @@ register({
     { type: 'docker', name: 'apache/kafka-native' },
     { type: 'maven', name: 'org.apache.kafka:kafka-clients' },
     { type: 'nuget', name: 'Confluent.Kafka' },
+    { type: 'maven', name: 'org.springframework.kafka:spring-kafka' },
   ],
 });

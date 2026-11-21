@@ -19,5 +19,6 @@ register({
       type: 'githubAction',
       name: 'bitovi/github-actions-deploy-docker-to-ec2',
     },
+    { type: 'python', name: 'aws-cdk-aws-ec2' },
   ],
 });

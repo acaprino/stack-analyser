@@ -7,5 +7,8 @@ register({
   files: /^tsconfig(?:\.[\w-]+)*\.json$/,
   example: 'tsconfig.json',
   extensions: ['.ts', '.tsx', '.mts', '.cts'],
-  dependencies: [{ type: 'npm', name: 'typescript' }],
+  dependencies: [
+    { type: 'npm', name: 'typescript' },
+    { type: 'golang', name: 'github.com/microsoft/typescript-go' },
+  ],
 });

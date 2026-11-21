@@ -9,5 +9,6 @@ register({
     { type: 'githubAction', name: 'ansible-community/ansible-test-gh-action' },
     { type: 'docker', name: 'pipelinecomponents/ansible-lint' },
     { type: 'docker', name: 'alpinelinux/ansible' },
+    { type: 'python', name: 'ansible' },
   ],
 });

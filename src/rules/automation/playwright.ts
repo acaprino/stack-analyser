@@ -14,5 +14,6 @@ register({
     { type: 'maven', name: 'io.quarkiverse.playwright:quarkus-playwright' },
     { type: 'nuget', name: 'Microsoft.Playwright' },
     { type: 'python', name: 'playwright' },
+    { type: 'maven', name: 'com.microsoft.playwright:playwright' },
   ],
 });

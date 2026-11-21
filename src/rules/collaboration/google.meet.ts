@@ -9,5 +9,6 @@ register({
     { type: 'ruby', name: 'google-apis-meet_v2' },
     { type: 'ruby', name: 'google-apps-meet-v2' },
     { type: 'ruby', name: 'google-apps-meet' },
+    { type: 'python', name: 'google-apps-meet' },
   ],
 });

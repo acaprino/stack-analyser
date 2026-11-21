@@ -8,5 +8,6 @@ register({
     { type: 'githubAction', name: 'tailscale/github-action' },
     { type: 'githubAction', name: 'tailscale/gitops-acl-action' },
     { type: 'npm', name: '@pulumi/tailscale' },
+    { type: 'python', name: 'pulumi-tailscale' },
   ],
 });

@@ -9,5 +9,6 @@ register({
     { type: 'rust', name: 'discord-cassandra-cpp' },
     { type: 'rust', name: 'cassandra-cpp' },
     { type: 'npm', name: '@opentelemetry/instrumentation-cassandra-driver' },
+    { type: 'python', name: 'cassandra-driver' },
   ],
 });

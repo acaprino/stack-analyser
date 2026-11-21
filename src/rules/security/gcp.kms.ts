@@ -18,5 +18,6 @@ register({
     },
     { type: 'golang', name: 'cloud.google.com/go/kms' },
     { type: 'php', name: 'google/cloud-kms' },
+    { type: 'python', name: 'google-cloud-kms' },
   ],
 });

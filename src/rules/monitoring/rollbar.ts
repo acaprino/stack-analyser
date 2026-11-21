@@ -18,5 +18,6 @@ register({
     { type: 'ruby', name: 'rollbar' },
     { type: 'githubAction', name: 'rollbar/github-deploy-action' },
     { type: 'terraform', name: 'registry.terraform.io/rollbar/rollbar' },
+    { type: 'python', name: 'rollbar' },
   ],
 });

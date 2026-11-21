@@ -10,5 +10,6 @@ register({
     { type: 'python', name: 'stytch' },
     { type: 'golang', name: 'github.com/stytchauth/stytch-go/v16' },
     { type: 'ruby', name: 'stytch' },
+    { type: 'rust', name: 'stytch' },
   ],
 });

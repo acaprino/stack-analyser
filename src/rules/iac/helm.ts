@@ -9,5 +9,6 @@ register({
     { type: 'terraform', name: 'registry.terraform.io/hashicorp/helm' },
     { type: 'ruby', name: 'helm-rb' },
     { type: 'githubAction', name: 'azure/setup-helm' },
+    { type: 'golang', name: 'helm.sh/helm/v3' },
   ],
 });

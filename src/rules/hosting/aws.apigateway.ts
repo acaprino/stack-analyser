@@ -15,5 +15,6 @@ register({
       name: /^aws_api_gateway_/,
       example: 'aws_api_gateway_deployment',
     },
+    { type: 'python', name: 'aws-cdk-aws-apigateway' },
   ],
 });

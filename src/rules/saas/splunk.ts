@@ -8,5 +8,6 @@ register({
   dependencies: [
     { type: 'terraform', name: 'registry.terraform.io/splunk/splunk' },
     { type: 'terraform', name: 'registry.terraform.io/splunk/splunkconfig' },
+    { type: 'python', name: 'splunk-sdk' },
   ],
 });

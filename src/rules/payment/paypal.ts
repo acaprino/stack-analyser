@@ -19,5 +19,6 @@ register({
     { type: 'ruby', name: 'paypal-checkout-sdk' },
     { type: 'rust', name: 'paypal-rs' },
     { type: 'golang', name: 'github.com/markbates/goth/providers/paypal' },
+    { type: 'python', name: 'paypalrestsdk' },
   ],
 });

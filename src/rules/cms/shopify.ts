@@ -13,5 +13,6 @@ register({
     { type: 'ruby', name: 'shopify_api' },
     { type: 'ruby', name: 'shopify_app' },
     { type: 'ruby', name: 'shopify-cli' },
+    { type: 'python', name: 'ShopifyAPI' },
   ],
 });

@@ -4,5 +4,8 @@ register({
   tech: 'rolldown',
   name: 'Rolldown',
   type: 'builder',
-  dependencies: [{ type: 'npm', name: 'rolldown' }],
+  dependencies: [
+    { type: 'npm', name: 'rolldown' },
+    { type: 'rust', name: 'rolldown' },
+  ],
 });

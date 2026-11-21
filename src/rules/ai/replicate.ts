@@ -8,5 +8,6 @@ register({
   dependencies: [
     { type: 'npm', name: 'replicate' },
     { type: 'python', name: 'replicate' },
+    { type: 'golang', name: 'github.com/replicate/replicate-go' },
   ],
 });

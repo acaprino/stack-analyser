@@ -4,5 +4,8 @@ register({
   tech: 'apache_spark',
   name: 'Apache Spark',
   type: 'db',
-  dependencies: [{ type: 'docker', name: 'apache/spark' }],
+  dependencies: [
+    { type: 'docker', name: 'apache/spark' },
+    { type: 'python', name: 'pyspark' },
+  ],
 });

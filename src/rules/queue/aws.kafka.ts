@@ -10,5 +10,6 @@ register({
     { type: 'terraform.resource', name: 'aws_msk_cluster' },
     { type: 'terraform.resource', name: 'aws_msk_configuration' },
     { type: 'terraform.resource', name: 'aws_mskconnect_connector' },
+    { type: 'python', name: 'pulumi-kafka' },
   ],
 });

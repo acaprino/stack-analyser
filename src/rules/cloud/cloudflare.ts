@@ -16,5 +16,6 @@ register({
     { type: 'rust', name: 'cloudflare' },
     { type: 'ruby', name: 'cloudflare-rails' },
     { type: 'php', name: 'cloudflare/sdk' },
+    { type: 'python', name: 'pulumi-cloudflare' },
   ],
 });

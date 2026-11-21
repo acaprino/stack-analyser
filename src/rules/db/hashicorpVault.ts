@@ -12,5 +12,7 @@ register({
     { type: 'ruby', name: 'vault' },
     { type: 'php', name: 'csharpru/vault-php' },
     { type: 'githubAction', name: 'hashicorp/vault-action' },
+    { type: 'python', name: 'pulumi-vault' },
+    { type: 'golang', name: 'github.com/hashicorp/vault/api' },
   ],
 });

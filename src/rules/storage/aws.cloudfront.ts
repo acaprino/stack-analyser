@@ -20,5 +20,6 @@ register({
     { type: 'php', name: 'dreamonkey/laravel-cloudfront-url-signer' },
     { type: 'githubAction', name: 'chetan/invalidate-cloudfront-action' },
     { type: 'npm', name: '@aws-sdk/cloudfront-signer' },
+    { type: 'python', name: 'aws-cdk-aws-cloudfront' },
   ],
 });

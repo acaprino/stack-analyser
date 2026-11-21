@@ -5,5 +5,8 @@ register({
   name: 'LogSnag',
   type: 'analytics',
   dotenv: ['LOGSNAG_'],
-  dependencies: [{ type: 'npm', name: 'logsnag' }],
+  dependencies: [
+    { type: 'npm', name: 'logsnag' },
+    { type: 'python', name: 'logsnag' },
+  ],
 });

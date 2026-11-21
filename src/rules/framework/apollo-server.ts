@@ -6,5 +6,7 @@ register({
   type: 'framework',
   dependencies: [
     { type: 'npm', name: '@apollo/server' },
+    { type: 'npm', name: 'apollo-server' },
+    { type: 'npm', name: 'apollo-server-express' },
   ],
 });

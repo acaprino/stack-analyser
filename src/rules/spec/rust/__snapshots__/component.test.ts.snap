@@ -6,6 +6,9 @@ exports[`rust (component) > should match everything 1`] = `
   "algolia",
   "apache_cassandra",
   "apache_thrift",
+  "apify",
+  "atlassian",
+  "atlassian.jira",
   "auth0",
   "aws",
   "aws.apigateway",
@@ -57,11 +60,13 @@ exports[`rust (component) > should match everything 1`] = `
   "azure.postgres",
   "azure.redis",
   "azure.sql",
+  "azure.staticwebapps",
   "azure.storage",
   "cargo",
   "clap",
   "clickhouse",
   "cloudflare",
+  "cloudflare.workers",
   "convexdb",
   "couchbase",
   "datadog",
@@ -78,6 +83,7 @@ exports[`rust (component) > should match everything 1`] = `
   "gcp.gcs",
   "gcp.logging",
   "gcp.pubsub",
+  "gcp.spanner",
   "gitlab",
   "google",
   "google.drive",
@@ -87,6 +93,7 @@ exports[`rust (component) > should match everything 1`] = `
   "hashicorp_vault",
   "hyper-rust",
   "influxdb",
+  "inngest",
   "jsonschema",
   "juniper",
   "kubernetes",
@@ -125,6 +132,7 @@ exports[`rust (component) > should match everything 1`] = `
   "ratatui",
   "redis",
   "resend",
+  "rolldown",
   "rstest",
   "rust",
   "sea-orm",
@@ -136,13 +144,18 @@ exports[`rust (component) > should match everything 1`] = `
   "snowflake",
   "sqlite",
   "sqlx-rust",
+  "stytch",
+  "surrealdb",
+  "swc",
   "tauri",
   "tdengine",
   "telegram",
   "tempfile-rust",
+  "tensorflow",
   "tokio",
   "typesense",
   "vercel",
+  "vercel.blob",
   "webview2-com",
   "windows-rs",
   "wiremock-rs",
@@ -161,6 +174,11 @@ exports[`rust (component) > should match everything 2`] = `
   [
     "rust",
     "algoliasearch",
+    "1.0.0",
+  ],
+  [
+    "rust",
+    "apify-client",
     "1.0.0",
   ],
   [
@@ -385,6 +403,11 @@ exports[`rust (component) > should match everything 2`] = `
   ],
   [
     "rust",
+    "azure",
+    "1.0.0",
+  ],
+  [
+    "rust",
     "azure-functions",
     "1.0.0",
   ],
@@ -555,6 +578,11 @@ exports[`rust (component) > should match everything 2`] = `
   ],
   [
     "rust",
+    "google-cloud-spanner",
+    "1.0.0",
+  ],
+  [
+    "rust",
     "google-cloud-storage",
     "1.0.0",
   ],
@@ -586,6 +614,16 @@ exports[`rust (component) > should match everything 2`] = `
   [
     "rust",
     "influxdb2",
+    "1.0.0",
+  ],
+  [
+    "rust",
+    "inngest",
+    "1.0.0",
+  ],
+  [
+    "rust",
+    "jira",
     "1.0.0",
   ],
   [
@@ -820,6 +858,11 @@ exports[`rust (component) > should match everything 2`] = `
   ],
   [
     "rust",
+    "rolldown",
+    "1.0.0",
+  ],
+  [
+    "rust",
     "rs-snowflake",
     "1.0.0",
   ],
@@ -885,6 +928,21 @@ exports[`rust (component) > should match everything 2`] = `
   ],
   [
     "rust",
+    "stytch",
+    "1.0.0",
+  ],
+  [
+    "rust",
+    "surrealdb",
+    "1.0.0",
+  ],
+  [
+    "rust",
+    "swc-core",
+    "1.0.0",
+  ],
+  [
+    "rust",
     "taos",
     "1.0.0",
   ],
@@ -906,6 +964,11 @@ exports[`rust (component) > should match everything 2`] = `
   [
     "rust",
     "tempfile",
+    "1.0.0",
+  ],
+  [
+    "rust",
+    "tensorflow",
     "1.0.0",
   ],
   [
@@ -935,6 +998,11 @@ exports[`rust (component) > should match everything 2`] = `
   ],
   [
     "rust",
+    "vercel-blob",
+    "1.0.0",
+  ],
+  [
+    "rust",
     "vercel_runtime",
     "1.0.0",
   ],
@@ -956,6 +1024,11 @@ exports[`rust (component) > should match everything 2`] = `
   [
     "rust",
     "wiremock",
+    "1.0.0",
+  ],
+  [
+    "rust",
+    "wrangler",
     "1.0.0",
   ],
   [

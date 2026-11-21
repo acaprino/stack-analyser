@@ -27,5 +27,6 @@ register({
     { type: 'githubAction', name: 'datadog/agent-github-action' },
     { type: 'python', name: 'datadog' },
     { type: 'docker', name: 'datadog/agent' },
+    { type: 'golang', name: 'github.com/DataDog/dd-trace-go' },
   ],
 });

@@ -15,5 +15,6 @@ register({
     { type: 'npm', name: 'railway' },
     { type: 'npm', name: '@railway/cli' },
     { type: 'githubAction', name: 'bervProject/railway-deploy' },
+    { type: 'python', name: 'railway' },
   ],
 });

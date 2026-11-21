@@ -7,5 +7,7 @@ register({
   dependencies: [
     { type: 'docker', name: 'surrealdb/surrealdb' },
     { type: 'npm', name: 'surrealdb.js' },
+    { type: 'python', name: 'surrealdb' },
+    { type: 'rust', name: 'surrealdb' },
   ],
 });

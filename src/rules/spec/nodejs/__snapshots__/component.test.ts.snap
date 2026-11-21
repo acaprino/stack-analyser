@@ -345,6 +345,7 @@ exports[`npm > should match everything 1`] = `
   "kubernetes",
   "kysely",
   "lago",
+  "langchain",
   "langchain-corporate",
   "launchdarkly",
   "lemonsqueezy",
@@ -4237,6 +4238,16 @@ exports[`npm > should match everything 2`] = `
   ],
   [
     "npm",
+    "apollo-server",
+    "0.0.0",
+  ],
+  [
+    "npm",
+    "apollo-server-express",
+    "0.0.0",
+  ],
+  [
+    "npm",
     "apple-signin-auth",
     "0.0.0",
   ],
@@ -5202,6 +5213,11 @@ exports[`npm > should match everything 2`] = `
   ],
   [
     "npm",
+    "langchain",
+    "0.0.0",
+  ],
+  [
+    "npm",
     "langsmith",
     "0.0.0",
   ],
@@ -5848,6 +5864,11 @@ exports[`npm > should match everything 2`] = `
   [
     "npm",
     "puppeteer-core",
+    "0.0.0",
+  ],
+  [
+    "npm",
+    "pusher",
     "0.0.0",
   ],
   [

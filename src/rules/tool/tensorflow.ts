@@ -11,5 +11,6 @@ register({
     { type: 'npm', name: 'face-api.js' },
     { type: 'golang', name: 'github.com/wamuir/graft/tensorflow' },
     { type: 'python', name: 'tensorflow' },
+    { type: 'rust', name: 'tensorflow' },
   ],
 });

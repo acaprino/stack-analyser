@@ -19,5 +19,6 @@ register({
     { type: 'golang', name: 'github.com/slack-go/slack' },
     { type: 'docker', name: 'kasmweb/slack' },
     { type: 'npm', name: '@pulumi/slack' },
+    { type: 'python', name: 'slack-sdk' },
   ],
 });

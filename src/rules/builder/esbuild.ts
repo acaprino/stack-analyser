@@ -7,5 +7,6 @@ register({
   dependencies: [
     { type: 'npm', name: 'esbuild' },
     { type: 'hex', name: 'esbuild' },
+    { type: 'golang', name: 'github.com/evanw/esbuild' },
   ],
 });

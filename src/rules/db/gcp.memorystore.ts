@@ -18,5 +18,6 @@ register({
     },
     { type: 'golang', name: 'cloud.google.com/go/redis' },
     { type: 'php', name: 'google/cloud-redis' },
+    { type: 'python', name: 'google-cloud-redis' },
   ],
 });

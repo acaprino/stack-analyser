@@ -7,5 +7,6 @@ register({
   dependencies: [
     { type: 'terraform', name: 'registry.terraform.io/mongodb/mongodbatlas' },
     { type: 'npm', name: '@pulumi/mongodbatlas' },
+    { type: 'python', name: 'pulumi-mongodbatlas' },
   ],
 });

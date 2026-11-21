@@ -12,5 +12,7 @@ register({
     { type: 'php', name: 'ekino/newrelic-bundle' },
     { type: 'php', name: 'intouch/newrelic' },
     { type: 'npm', name: '@pulumi/newrelic' },
+    { type: 'python', name: 'newrelic' },
+    { type: 'golang', name: 'github.com/newrelic/go-agent/v3' },
   ],
 });

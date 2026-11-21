@@ -10,5 +10,6 @@ register({
     { type: 'php', name: 'contentful/contentful-management' },
     { type: 'npm', name: 'contentful' },
     { type: 'npm', name: 'contentful-management' },
+    { type: 'python', name: 'contentful' },
   ],
 });

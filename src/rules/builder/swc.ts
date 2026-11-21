@@ -4,5 +4,8 @@ register({
   tech: 'swc',
   name: 'SWC',
   type: 'builder',
-  dependencies: [{ type: 'npm', name: '@swc/core' }],
+  dependencies: [
+    { type: 'npm', name: '@swc/core' },
+    { type: 'rust', name: 'swc-core' },
+  ],
 });

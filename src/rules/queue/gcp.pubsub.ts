@@ -18,5 +18,6 @@ register({
     { type: 'php', name: 'gos/pubsub-router-bundle' },
     { type: 'php', name: 'petitpress/gps-messenger-bundle' },
     { type: 'terraform.resource', name: 'airbyte_destination_pubsub' },
+    { type: 'python', name: 'google-cloud-pubsub' },
   ],
 });

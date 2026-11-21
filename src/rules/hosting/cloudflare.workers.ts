@@ -17,5 +17,6 @@ register({
       example: 'cloudflare_workers_kv_namespace',
     },
     { type: 'githubAction', name: 'cloudflare/wrangler-action' },
+    { type: 'rust', name: 'wrangler' },
   ],
 });

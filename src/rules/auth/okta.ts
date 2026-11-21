@@ -11,5 +11,6 @@ register({
     { type: 'rust', name: 'okta' },
     { type: 'ruby', name: 'oktakit' },
     { type: 'npm', name: '@pulumi/okta' },
+    { type: 'python', name: 'pulumi-okta' },
   ],
 });

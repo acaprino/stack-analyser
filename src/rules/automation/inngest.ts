@@ -9,5 +9,6 @@ register({
     { type: 'npm', name: 'inngest' },
     { type: 'golang', name: 'github.com/inngest/inngestgo' },
     { type: 'python', name: 'inngest' },
+    { type: 'rust', name: 'inngest' },
   ],
 });

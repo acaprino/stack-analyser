@@ -16,5 +16,6 @@ register({
       example: 'aws_redshift_cluster',
     },
     { type: 'terraform.resource', name: 'airbyte_destination_redshift' },
+    { type: 'python', name: 'aws-cdk-aws-redshift' },
   ],
 });

@@ -22,5 +22,6 @@ register({
       type: 'githubAction',
       name: 'google-github-actions/get-secretmanager-secrets',
     },
+    { type: 'python', name: 'google-cloud-secret-manager' },
   ],
 });

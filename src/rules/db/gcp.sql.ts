@@ -17,5 +17,6 @@ register({
       example: 'google-apis-sqladmin_v1beta4',
     },
     { type: 'php', name: 'google/cloud-sql-admin' },
+    { type: 'golang', name: 'github.com/GoogleCloudPlatform/google-cloud-go' },
   ],
 });

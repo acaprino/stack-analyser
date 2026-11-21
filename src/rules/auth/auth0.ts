@@ -15,5 +15,7 @@ register({
     { type: 'ruby', name: 'omniauth-auth0' },
     { type: 'php', name: 'auth0/auth0-php' },
     { type: 'php', name: 'auth0/login' },
+    { type: 'golang', name: 'github.com/auth0/go-auth0' },
+    { type: 'python', name: 'auth0-python' },
   ],
 });

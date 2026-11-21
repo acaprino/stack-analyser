@@ -18,5 +18,6 @@ register({
     },
     { type: 'php', name: 'async-aws/rds-data-service' },
     { type: 'terraform.resource', name: 'airbyte_destination_rds' },
+    { type: 'python', name: 'aws-cdk-aws-rds' },
   ],
 });

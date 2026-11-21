@@ -15,5 +15,6 @@ register({
       name: /^aws_sagemaker_/,
       example: 'aws_sagemaker_app',
     },
+    { type: 'python', name: 'aws-cdk-aws-sagemaker' },
   ],
 });

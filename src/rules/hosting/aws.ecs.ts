@@ -15,5 +15,6 @@ register({
       name: /^aws_ecs/,
       example: 'aws_ecs_cluster',
     },
+    { type: 'python', name: 'aws-cdk-aws-ecs' },
   ],
 });

@@ -14,5 +14,6 @@ register({
     { type: 'ruby', name: 'meilisearch' },
     { type: 'ruby', name: 'meilisearch-rails' },
     { type: 'php', name: 'meilisearch/meilisearch-php' },
+    { type: 'python', name: 'meilisearch' },
   ],
 });

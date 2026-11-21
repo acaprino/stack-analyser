@@ -11,5 +11,6 @@ register({
     { type: 'npm', name: '@analytics/amplitude' },
     { type: 'php', name: 'zumba/amplitude-php' },
     { type: 'terraform.resource', name: 'airbyte_source_amplitude' },
+    { type: 'golang', name: 'github.com/amplitude/amplitude-go' },
   ],
 });

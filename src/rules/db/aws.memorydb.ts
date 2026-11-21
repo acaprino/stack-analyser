@@ -15,5 +15,6 @@ register({
       name: /^aws_memorydb_/,
       example: 'aws_memorydb_cluster',
     },
+    { type: 'python', name: 'aws-cdk-aws-memorydb' },
   ],
 });

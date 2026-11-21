@@ -13,5 +13,6 @@ register({
     },
     { type: 'golang', name: 'cloud.google.com/go/language' },
     { type: 'php', name: 'google/cloud-language' },
+    { type: 'python', name: 'google-cloud-language' },
   ],
 });

@@ -8,5 +8,6 @@ register({
   example: 'test.Caddyfile',
   dependencies: [
     { type: 'docker', name: /^caddy(?:\/|$)/, example: 'caddy' },
+    { type: 'golang', name: 'github.com/caddyserver/caddy/v2' },
   ],
 });

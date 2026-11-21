@@ -8,5 +8,6 @@ register({
   dependencies: [
     { type: 'docker', name: 'jenkins/jenkins' },
     { type: 'ruby', name: 'jenkins_api_client' },
+    { type: 'python', name: 'python-jenkins' },
   ],
 });

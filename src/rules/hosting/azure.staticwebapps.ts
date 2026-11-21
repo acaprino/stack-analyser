@@ -12,5 +12,6 @@ register({
     },
     { type: 'npm', name: '@azure/static-web-apps-cli' },
     { type: 'githubAction', name: 'Azure/static-web-apps-deploy' },
+    { type: 'rust', name: 'azure' },
   ],
 });

@@ -15,5 +15,6 @@ register({
     { type: 'ruby', name: 'adyen' },
     { type: 'ruby', name: 'adyen-ruby-api-library' },
     { type: 'ruby', name: 'adyen-cse-ruby' },
+    { type: 'python', name: 'adyen' },
   ],
 });

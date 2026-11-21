@@ -11,5 +11,7 @@ register({
     { type: 'npm', name: /^@apify\//, example: '@apify/utilities' },
     { type: 'python', name: 'apify' },
     { type: 'terraform.resource', name: 'airbyte_source_apify_dataset' },
+    { type: 'rust', name: 'apify-client' },
+    { type: 'golang', name: 'github.com/apify/apify-client-go' },
   ],
 });

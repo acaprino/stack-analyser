@@ -6,5 +6,6 @@ register({
   type: 'framework',
   dependencies: [
     { type: 'maven', name: 'de.codecentric:spring-boot-admin-starter-server' },
+    { type: 'maven', name: 'de.codecentric:spring-boot-admin-starter-client' },
   ],
 });

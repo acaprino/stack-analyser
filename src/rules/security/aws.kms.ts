@@ -15,5 +15,6 @@ register({
       name: /^aws_kms_/,
       example: 'aws_kms_alias',
     },
+    { type: 'python', name: 'aws-cdk-aws-kms' },
   ],
 });

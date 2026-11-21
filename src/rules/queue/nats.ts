@@ -15,5 +15,6 @@ register({
     { type: 'golang', name: 'github.com/nats-io/nats.go' },
     { type: 'golang', name: 'github.com/nats-io/stan.go' },
     { type: 'rust', name: 'nats' },
+    { type: 'python', name: 'nats-py' },
   ],
 });

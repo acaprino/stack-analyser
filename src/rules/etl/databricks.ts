@@ -12,5 +12,7 @@ register({
     },
     { type: 'githubAction', name: 'databricks/run-notebook' },
     { type: 'terraform.resource', name: 'airbyte_destination_databricks' },
+    { type: 'python', name: 'databricks-sdk' },
+    { type: 'golang', name: 'github.com/databricks/databricks-sdk-go' },
   ],
 });

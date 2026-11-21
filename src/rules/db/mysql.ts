@@ -23,5 +23,8 @@ register({
     { type: 'golang', name: 'github.com/go-sql-driver/mysql' },
     { type: 'golang', name: 'gorm.io/driver/mysql' },
     { type: 'maven', name: 'com.mysql:mysql-connector-j' },
+    { type: 'maven', name: 'mysql:mysql-connector-java' },
+    { type: 'nuget', name: 'MySql.Data' },
+    { type: 'nuget', name: 'Pomelo.EntityFrameworkCore.MySql' },
   ],
 });

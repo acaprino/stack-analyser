@@ -20,5 +20,6 @@ register({
       name: /^aws_kinesis_/,
       example: 'aws_kinesis_stream',
     },
+    { type: 'python', name: 'aws-cdk-aws-kinesis' },
   ],
 });

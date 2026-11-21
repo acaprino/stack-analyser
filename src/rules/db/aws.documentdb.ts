@@ -15,5 +15,6 @@ register({
       name: /^aws_docdb_/,
       example: 'aws_docdb_cluster',
     },
+    { type: 'python', name: 'aws-cdk-aws-docdb' },
   ],
 });

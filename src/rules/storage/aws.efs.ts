@@ -15,5 +15,6 @@ register({
       name: /^aws_efs_/,
       example: 'aws_efs_file_system',
     },
+    { type: 'python', name: 'aws-cdk-aws-efs' },
   ],
 });

@@ -15,5 +15,6 @@ register({
       name: /^aws_lightsail/,
       example: 'aws_lightsail_bucket',
     },
+    { type: 'python', name: 'aws-cdk-aws-lightsail' },
   ],
 });

@@ -6,5 +6,6 @@ register({
   type: 'framework',
   dependencies: [
     { type: 'maven', name: 'org.springframework.boot:spring-boot-starter-data-jpa' },
+    { type: 'maven', name: 'org.springframework.data:spring-data-jpa' },
   ],
 });

@@ -13,5 +13,6 @@ register({
       type: 'golang',
       name: 'github.com/aws/aws-sdk-go-v2/service/rekognition',
     },
+    { type: 'python', name: 'aws-cdk-aws-rekognition' },
   ],
 });

@@ -19,5 +19,6 @@ register({
       example: 'aws_timestream_database',
     },
     { type: 'terraform.resource', name: 'airbyte_destination_timestream' },
+    { type: 'python', name: 'aws-cdk-aws-timestream' },
   ],
 });

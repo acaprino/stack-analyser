@@ -14,5 +14,6 @@ register({
     { type: 'npm', name: '@pulumi/snowflake' },
     { type: 'ruby', name: 'sequel-snowflake' },
     { type: 'terraform.resource', name: 'airbyte_destination_snowflake' },
+    { type: 'python', name: 'pulumi-snowflake' },
   ],
 });

@@ -17,5 +17,6 @@ register({
     },
     { type: 'php', name: 'aws/aws-php-sns-message-validator' },
     { type: 'php', name: 'async-aws/sns' },
+    { type: 'python', name: 'aws-cdk-aws-sns' },
   ],
 });

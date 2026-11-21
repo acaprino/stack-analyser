@@ -18,5 +18,6 @@ register({
       name: /^aws_cloudwatch_/,
       example: 'aws_cloudwatch_dashboard',
     },
+    { type: 'python', name: 'aws-cdk-aws-cloudwatch' },
   ],
 });

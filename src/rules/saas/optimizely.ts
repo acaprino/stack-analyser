@@ -17,5 +17,6 @@ register({
     { type: 'php', name: 'optimizely/optimizely-sdk' },
     { type: 'githubAction', name: 'optimizely/upload-custom-code-action' },
     { type: 'golang', name: 'github.com/optimizely/go-sdk' },
+    { type: 'python', name: 'optimizely' },
   ],
 });

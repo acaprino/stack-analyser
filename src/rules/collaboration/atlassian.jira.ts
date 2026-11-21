@@ -18,5 +18,6 @@ register({
     { type: 'ruby', name: 'jira-ruby' },
     { type: 'terraform.resource', name: 'gitlab_integration_jira' },
     { type: 'terraform.resource', name: 'airbyte_source_jira' },
+    { type: 'rust', name: 'jira' },
   ],
 });

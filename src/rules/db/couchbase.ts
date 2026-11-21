@@ -15,5 +15,7 @@ register({
     },
     { type: 'php', name: 'couchbase/couchbase' },
     { type: 'terraform.resource', name: 'airbyte_source_couchbase' },
+    { type: 'python', name: 'couchbase' },
+    { type: 'golang', name: 'github.com/couchbase/go-couchbase' },
   ],
 });

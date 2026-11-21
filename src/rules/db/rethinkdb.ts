@@ -10,5 +10,6 @@ register({
     { type: 'php', name: 'danielmewes/php-rql' },
     { type: 'ruby', name: 'rethinkdb' },
     { type: 'golang', name: 'github.com/rethinkdb/rethinkdb-go' },
+    { type: 'python', name: 'rethinkdb' },
   ],
 });

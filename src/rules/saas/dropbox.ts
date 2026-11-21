@@ -8,5 +8,6 @@ register({
   dependencies: [
     { type: 'php', name: 'spatie/dropbox-api' },
     { type: 'php', name: 'spatie/flysystem-dropbox' },
+    { type: 'python', name: 'dropbox' },
   ],
 });

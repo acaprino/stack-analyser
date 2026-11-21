@@ -5,5 +5,8 @@ register({
   name: 'OxLint',
   type: 'linter',
   files: ['.oxlintrc.json'],
-  dependencies: [{ type: 'npm', name: 'oxlint' }],
+  dependencies: [
+    { type: 'npm', name: 'oxlint' },
+    { type: 'python', name: 'oxlint' },
+  ],
 });

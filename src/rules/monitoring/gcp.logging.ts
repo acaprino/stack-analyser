@@ -15,5 +15,6 @@ register({
       name: /^google_logging_/,
       example: 'google_logging_metric',
     },
+    { type: 'python', name: 'google-cloud-logging' },
   ],
 });

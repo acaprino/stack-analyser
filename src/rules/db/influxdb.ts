@@ -11,5 +11,7 @@ register({
     { type: 'rust', name: 'influxdb2' },
     { type: 'ruby', name: 'influxdb-client' },
     { type: 'php', name: 'influxdata/influxdb-client-php' },
+    { type: 'python', name: 'influxdb-client' },
+    { type: 'golang', name: 'github.com/influxdata/influxdb-client-go/v2' },
   ],
 });

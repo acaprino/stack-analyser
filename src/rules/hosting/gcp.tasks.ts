@@ -18,5 +18,6 @@ register({
     },
     { type: 'golang', name: 'cloud.google.com/go/tasks' },
     { type: 'php', name: 'google/cloud-tasks' },
+    { type: 'python', name: 'google-cloud-tasks' },
   ],
 });

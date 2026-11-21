@@ -15,5 +15,6 @@ register({
     { type: 'golang', name: 'cloud.google.com/go/compute' },
     { type: 'php', name: 'google/cloud-compute' },
     { type: 'githubAction', name: 'google-github-actions/ssh-compute' },
+    { type: 'python', name: 'google-cloud-compute' },
   ],
 });

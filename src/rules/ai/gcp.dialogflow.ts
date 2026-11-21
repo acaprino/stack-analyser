@@ -18,5 +18,6 @@ register({
     },
     { type: 'golang', name: 'cloud.google.com/go/dialogflow' },
     { type: 'php', name: 'google/cloud-dialogflow' },
+    { type: 'python', name: 'google-cloud-dialogflow' },
   ],
 });

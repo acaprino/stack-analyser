@@ -16,5 +16,6 @@ register({
       example: 'aws_ecr_repository',
     },
     { type: 'githubAction', name: 'aws-actions/amazon-ecr-login' },
+    { type: 'python', name: 'aws-cdk-aws-ecr' },
   ],
 });

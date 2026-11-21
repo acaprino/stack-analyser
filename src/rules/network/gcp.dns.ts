@@ -12,5 +12,7 @@ register({
       example: 'google_dns_record_set',
     },
     { type: 'ruby', name: 'google-cloud-dns' },
+    { type: 'python', name: 'google-cloud-dns' },
+    { type: 'golang', name: 'github.com/googleapis/google-cloud-go' },
   ],
 });

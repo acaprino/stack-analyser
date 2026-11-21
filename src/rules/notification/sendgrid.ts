@@ -13,5 +13,6 @@ register({
     { type: 'ruby', name: 'sendgrid-rails' },
     { type: 'ruby', name: 'sendgrid' },
     { type: 'golang', name: 'github.com/sendgrid/sendgrid-go' },
+    { type: 'python', name: 'sendgrid' },
   ],
 });

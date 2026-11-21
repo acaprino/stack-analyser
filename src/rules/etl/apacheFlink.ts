@@ -4,5 +4,8 @@ register({
   tech: 'apache_flink',
   name: 'Apache Flink',
   type: 'etl',
-  dependencies: [{ type: 'docker', name: 'apache/flink' }],
+  dependencies: [
+    { type: 'docker', name: 'apache/flink' },
+    { type: 'python', name: 'apache-flink' },
+  ],
 });

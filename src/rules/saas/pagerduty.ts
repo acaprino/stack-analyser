@@ -12,6 +12,7 @@ register({
     { type: 'ruby', name: 'pagerduty' },
     { type: 'php', name: 'adilbaig/pagerduty' },
     { type: 'npm', name: '@pulumi/pagerduty' },
+    { type: 'python', name: 'pdpyras' },
   ],
   hosts: ['events.pagerduty.com'],
 });

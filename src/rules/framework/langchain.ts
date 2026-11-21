@@ -6,5 +6,6 @@ register({
   type: 'framework',
   dependencies: [
     { type: 'python', name: 'langchain' },
+    { type: 'npm', name: 'langchain' },
   ],
 });

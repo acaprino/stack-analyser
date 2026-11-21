@@ -28,5 +28,7 @@ register({
     { type: 'python', name: 'redis' },
     { type: 'golang', name: 'github.com/redis/go-redis/v9' },
     { type: 'nuget', name: 'StackExchange.Redis' },
+    { type: 'maven', name: 'io.lettuce:lettuce-core' },
+    { type: 'maven', name: 'redis.clients:jedis' },
   ],
 });

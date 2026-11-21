@@ -18,5 +18,7 @@ register({
     },
     { type: 'golang', name: 'cloud.google.com/go/spanner' },
     { type: 'php', name: 'google/cloud-spanner' },
+    { type: 'python', name: 'google-cloud-spanner' },
+    { type: 'rust', name: 'google-cloud-spanner' },
   ],
 });

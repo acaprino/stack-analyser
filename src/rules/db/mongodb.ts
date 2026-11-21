@@ -27,5 +27,7 @@ register({
     { type: 'golang', name: 'go.mongodb.org/mongo-driver' },
     { type: 'npm', name: '@nestjs/mongoose' },
     { type: 'npm', name: 'mongoose-autopopulate' },
+    { type: 'maven', name: 'org.mongodb:mongodb-driver-sync' },
+    { type: 'nuget', name: 'MongoDB.Driver' },
   ],
 });

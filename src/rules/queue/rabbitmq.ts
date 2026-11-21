@@ -17,5 +17,7 @@ register({
     { type: 'php', name: 'php-amqplib/rabbitmq-bundle' },
     { type: 'nuget', name: 'Aspire.Hosting.RabbitMQ' },
     { type: 'nuget', name: 'Aspire.RabbitMQ.Client' },
+    { type: 'maven', name: 'com.rabbitmq:amqp-client' },
+    { type: 'nuget', name: 'RabbitMQ.Client' },
   ],
 });

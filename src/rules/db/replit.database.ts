@@ -4,5 +4,8 @@ register({
   tech: 'replit.database',
   name: 'Replit Database',
   type: 'db',
-  dependencies: [{ type: 'npm', name: '@replit/database' }],
+  dependencies: [
+    { type: 'npm', name: '@replit/database' },
+    { type: 'python', name: 'replit' },
+  ],
 });

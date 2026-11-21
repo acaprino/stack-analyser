@@ -9,5 +9,6 @@ register({
     { type: 'npm', name: '@questdb/nodejs-client' },
     { type: 'golang', name: 'github.com/questdb/go-questdb-client' },
     { type: 'rust', name: 'questdb-rs' },
+    { type: 'python', name: 'questdb' },
   ],
 });

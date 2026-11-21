@@ -14,5 +14,6 @@ register({
       name: /^google_artifact_/,
       example: 'google_artifact_registry_repository',
     },
+    { type: 'python', name: 'google-cloud-artifact-registry' },
   ],
 });

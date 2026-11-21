@@ -21,5 +21,6 @@ register({
     },
     { type: 'php', name: 'async-aws/ses' },
     { type: 'npm', name: '@aws-sdk/client-sesv2' },
+    { type: 'python', name: 'aws-cdk-aws-ses' },
   ],
 });

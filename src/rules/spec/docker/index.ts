@@ -11,5 +11,7 @@ register({
   dependencies: [
     { type: 'githubAction', name: 'docker/login-action' },
     { type: 'npm', name: '@pulumi/docker' },
+    { type: 'python', name: 'pulumi-docker' },
+    { type: 'golang', name: 'github.com/pulumi/pulumi-docker' },
   ],
 });
