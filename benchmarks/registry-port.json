@@ -412,9 +412,6 @@
     "meilisearch": [
       "python:meilisearch"
     ],
-    "micronaut": [
-      "pattern:maven:^io\\.micronaut"
-    ],
     "mongodb": [
       "maven:org.mongodb:mongodb-driver-sync",
       "nuget:MongoDB.Driver"
@@ -825,6 +822,11 @@
       "id": "memcached",
       "sign": "pattern:docker:memcached",
       "reason": "The fork holds this image name anchored, as `/^memcached(?:\\/|$)/`, so that the image repository itself identifies the technology. The registry's unanchored `memcached` would also accept any image whose name merely contains it, such as an unrelated organisation's repository."
+    },
+    {
+      "id": "micronaut",
+      "sign": "pattern:maven:^io\\.micronaut",
+      "reason": "The fork holds a stricter form, `/^io\\.micronaut(?:[.:]|$)/`: it ends the name after `io.micronaut`, where the registry's `^io\\.micronaut` accepts any continuation, so a group that merely starts the same way, such as `io.micronautfoo`, would identify the technology. A test fixes it (`io.micronautfoo:x` is nothing)."
     },
     {
       "id": "mongodb",
