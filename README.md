@@ -116,6 +116,10 @@ for a repository with an unusually large lockfile.
 
 The exact types `AnalyserJson` can be found [here](./src/types/index.ts)
 
+Every technology of a component has at least one `evidence` item: the `kind` of what was found (`package`,
+`image`, `action`, `terraform`, `file`, `extension`, `env` or `source`), its `value`, the `path` where it was found
+and, when the reader knows it, the `line`. The `reason` sentences are unchanged and stay next to the evidence.
+
 <details>
   <summary>Output</summary>
 
@@ -156,6 +160,13 @@ The exact types `AnalyserJson` can be found [here](./src/types/index.ts)
         [ "npm", "fastify", "4.17.0" ],
         [ "npm", "prisma", "4.13.0" ],
         [ "npm", "typescript", "5.0.4" ]
+      ],
+      "evidence": [
+        { "tech": "datadog", "kind": "package", "value": "dd-trace", "path": "/pkgs/api/package.json", "source": "stack-analyser" },
+        { "tech": "fastify", "kind": "package", "value": "fastify", "path": "/pkgs/api/package.json", "source": "stack-analyser" },
+        { "tech": "nodejs", "kind": "file", "value": "package.json", "path": "/pkgs/api/package.json", "source": "stack-analyser" },
+        { "tech": "prisma", "kind": "package", "value": "prisma", "path": "/pkgs/api/package.json", "source": "stack-analyser" },
+        { "tech": "typescript", "kind": "package", "value": "typescript", "path": "/pkgs/api/package.json", "source": "stack-analyser" }
       ]
     },
     {
@@ -185,6 +196,14 @@ The exact types `AnalyserJson` can be found [here](./src/types/index.ts)
         [ "npm", "react", "4.17.0" ],
         [ "npm", "typescript", "5.0.4" ],
         [ "npm", "vite", "4.3.3" ]
+      ],
+      "evidence": [
+        { "tech": "nodejs", "kind": "file", "value": "package.json", "path": "/pkgs/app/package.json", "source": "stack-analyser" },
+        { "tech": "react", "kind": "package", "value": "react", "path": "/pkgs/app/package.json", "source": "stack-analyser" },
+        { "tech": "scss", "kind": "extension", "value": ".scss", "path": "/pkgs/app/src", "source": "stack-analyser" },
+        { "tech": "typescript", "kind": "package", "value": "typescript", "path": "/pkgs/app/package.json", "source": "stack-analyser" },
+        { "tech": "vercel", "kind": "file", "value": ".vercel", "path": "/pkgs/app/.vercel", "source": "stack-analyser" },
+        { "tech": "vite", "kind": "package", "value": "vite", "path": "/pkgs/app/package.json", "source": "stack-analyser" }
       ]
     },
     {
@@ -201,6 +220,9 @@ The exact types `AnalyserJson` can be found [here](./src/types/index.ts)
       "languages": {},
       "dependencies": [
         [ "terraform", "registry.terraform.io/hashicorp/google", "4.61.0" ]
+      ],
+      "evidence": [
+        { "tech": "gcp", "kind": "terraform", "value": "registry.terraform.io/hashicorp/google", "path": "/terraform/.terraform.lock.hcl", "source": "stack-analyser" }
       ]
     },
     {
@@ -215,7 +237,10 @@ The exact types `AnalyserJson` can be found [here](./src/types/index.ts)
       "childs": [],
       "techs": [],
       "languages": {},
-      "dependencies": []
+      "dependencies": [],
+      "evidence": [
+        { "tech": "datadog", "kind": "package", "value": "dd-trace", "path": "/pkgs/api/package.json", "source": "stack-analyser" }
+      ]
     },
     {
       "id": "PLIJw7dSPiYm",
@@ -231,6 +256,9 @@ The exact types `AnalyserJson` can be found [here](./src/types/index.ts)
       "languages": {},
       "dependencies": [
         [ "docker", "postgres", "14.5-alpine" ]
+      ],
+      "evidence": [
+        { "tech": "postgresql", "kind": "image", "value": "postgres", "path": "/docker-compose.yml", "source": "stack-analyser" }
       ]
     },
     {
@@ -255,6 +283,14 @@ The exact types `AnalyserJson` can be found [here](./src/types/index.ts)
         [ "npm", "eslint", "8.39.0" ],
         [ "npm", "prettier", "2.8.7" ],
         [ "npm", "typescript", "4.9.5" ]
+      ],
+      "evidence": [
+        { "tech": "docker", "kind": "file", "value": "docker-compose.yml", "path": "/docker-compose.yml", "source": "stack-analyser" },
+        { "tech": "eslint", "kind": "package", "value": "eslint", "path": "/package.json", "source": "stack-analyser" },
+        { "tech": "nodejs", "kind": "file", "value": "package.json", "path": "/package.json", "source": "stack-analyser" },
+        { "tech": "prettier", "kind": "package", "value": "prettier", "path": "/package.json", "source": "stack-analyser" },
+        { "tech": "terraform", "kind": "file", "value": ".terraform.lock.hcl", "path": "/terraform/.terraform.lock.hcl", "source": "stack-analyser" },
+        { "tech": "typescript", "kind": "package", "value": "typescript", "path": "/package.json", "source": "stack-analyser" }
       ]
     },
     {
@@ -271,6 +307,9 @@ The exact types `AnalyserJson` can be found [here](./src/types/index.ts)
       "languages": {},
       "dependencies": [
         [ "docker", "redis", "7.0.4-alpine" ]
+      ],
+      "evidence": [
+        { "tech": "redis", "kind": "image", "value": "redis", "path": "/docker-compose.yml", "source": "stack-analyser" }
       ]
     },
     {
@@ -287,7 +326,8 @@ The exact types `AnalyserJson` can be found [here](./src/types/index.ts)
       "languages": {},
       "dependencies": [
         [ "docker", "unknown", "7.17.5" ]
-      ]
+      ],
+      "evidence": []
     },
     {
       "id": "MXFXwFMcCeaa",
@@ -304,6 +344,10 @@ The exact types `AnalyserJson` can be found [here](./src/types/index.ts)
       "languages": {},
       "dependencies": [
         [ "terraform", "registry.terraform.io/vercel/vercel", "4.61.0" ]
+      ],
+      "evidence": [
+        { "tech": "vercel", "kind": "file", "value": ".vercel", "path": "/pkgs/app/.vercel", "source": "stack-analyser" },
+        { "tech": "vercel", "kind": "terraform", "value": "registry.terraform.io/vercel/vercel", "path": "/terraform/.terraform.lock.hcl", "source": "stack-analyser" }
       ]
     }
   ]

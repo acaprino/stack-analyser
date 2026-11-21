@@ -7,7 +7,15 @@ exports[`golang > should match a service 1`] = `
       "childs": [],
       "dependencies": [],
       "edges": [],
-      "evidence": [],
+      "evidence": [
+        {
+          "kind": "file",
+          "path": "/cmd/server/main.go",
+          "source": "stack-analyser",
+          "tech": "golang",
+          "value": "main.go",
+        },
+      ],
       "id": "",
       "inComponent": "",
       "languages": {

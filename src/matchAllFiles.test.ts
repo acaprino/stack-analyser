@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { matchAllFiles } from './matchAllFiles.js';
+import { matchAllFiles, matchAllFilesWithEvidence } from './matchAllFiles.js';
 import './autoload.js';
 
 describe('matchAllFiles', () => {
@@ -27,5 +27,33 @@ describe('matchAllFiles', () => {
     exp.set('nodejs', ['matched file: package.json']);
 
     expect(res).toStrictEqual(exp);
+  });
+
+  it('keeps the reasons of matchAllFiles when it adds the evidence', () => {
+    const files = [
+      { fp: '/app/package.json', name: 'package.json', type: 'file' as const },
+      { fp: '/app/index.tsx', name: 'index.tsx', type: 'file' as const },
+    ];
+    const withEvidence = matchAllFilesWithEvidence(files, '/', '/app');
+
+    expect([...withEvidence].map(([tech, match]) => [tech, match.reason])).toStrictEqual([...matchAllFiles(files, '/')]);
+  });
+
+  it('should give the file found as evidence of a file rule', () => {
+    const res = matchAllFilesWithEvidence([{ fp: '/app/package.json', name: 'package.json', type: 'file' }], '/', '/app');
+
+    expect(res.get('nodejs')).toStrictEqual({
+      reason: ['matched file: package.json'],
+      evidence: [{ kind: 'file', value: 'package.json', path: '/app/package.json' }],
+    });
+  });
+
+  it('should give the analysed folder as evidence of an extension rule', () => {
+    const res = matchAllFilesWithEvidence([{ fp: '/app/index.tsx', name: 'index.tsx', type: 'file' }], '/', '/app');
+
+    expect(res.get('typescript')).toStrictEqual({
+      reason: ['matched extension: .tsx'],
+      evidence: [{ kind: 'extension', value: '.tsx', path: '/app' }],
+    });
   });
 });

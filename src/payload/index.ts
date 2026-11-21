@@ -4,7 +4,7 @@ import { cleanPath } from '../common/helpers.js';
 import { detectLang } from '../common/languages.js';
 import { nid } from '../common/nid.js';
 import { rulesComponents } from '../loader.js';
-import { matchAllFiles } from '../matchAllFiles.js';
+import { matchAllFilesWithEvidence } from '../matchAllFiles.js';
 import { evidenceKind, matchDependencies, matchedPackages } from '../matchDependencies.js';
 import { findHostMentions } from '../rules/spec/hosts/index.js';
 import { IGNORED_DIVE_PATHS } from '../provider/base.js';
@@ -17,6 +17,7 @@ import type { Analyser, AnalyserJson, Dependency, Evidence, EvidenceItem, HostMe
 import type { SupportedDeps } from '../types/rule.js';
 import type { AllowedLicenses } from '../types/licenses.js';
 import type { AllowedKeys } from '../types/techs.js';
+import type { TechMatch } from '../matchAllFiles.js';
 
 export class Payload implements Analyser {
   public id;
@@ -115,7 +116,7 @@ export class Payload implements Analyser {
     }
 
     // Detect Tech
-    const matched = matchAllFiles(files, provider.basePath);
+    const matched = matchAllFilesWithEvidence(files, provider.basePath, filePath);
     ctx.addTechs(matched);
     if (modules.size === 1 || (!modules.size && filePath === provider.basePath)) findHosting(ctx, matched);
     ctx.mentions.push(...(await findHostMentions(files, provider)));
@@ -192,9 +193,13 @@ export class Payload implements Analyser {
   /**
    * Register a tech.
    */
-  addTechs(tech: Map<AllowedKeys, string[]>): void {
-    for (const [key, reason] of tech.entries()) {
-      this.addTech(key, reason);
+  addTechs(tech: Map<AllowedKeys, string[] | TechMatch>): void {
+    for (const [key, match] of tech.entries()) {
+      if (Array.isArray(match)) {
+        this.addTech(key, match);
+      } else {
+        this.addTech(key, match.reason, match.evidence);
+      }
     }
   }
 

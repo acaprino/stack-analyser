@@ -36,7 +36,7 @@ export const detectDockerComponent: ComponentMatcher = async (files, provider) =
     });
     if (!services.length) continue;
     const pl = new Payload({ name: 'virtual', folderPath: file.fp });
-    pl.addTech('docker', [`Compose services in ${file.name}`]);
+    pl.addTech('docker', [`Compose services in ${file.name}`], [{ kind: 'file', value: file.name, path: file.fp }]);
 
     for (const [name, service] of services) {
       if (typeof service.image !== 'string' || !service.image.trim()) {

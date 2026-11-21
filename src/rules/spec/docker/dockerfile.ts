@@ -26,7 +26,7 @@ export const detectDockerfile: ComponentMatcher = async (files, provider) => {
     }
 
     const component = new Payload({ name: file.name, folderPath: file.fp });
-    component.addTech('docker', [`FROM in ${file.name}`]);
+    component.addTech('docker', [`FROM in ${file.name}`], [{ kind: 'file', value: file.name, path: file.fp }]);
     for (const reference of images) {
       const { name, version } = imageReference(reference);
       if (!name || name === 'scratch' || name.includes('$')) continue;

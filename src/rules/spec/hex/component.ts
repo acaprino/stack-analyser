@@ -82,7 +82,11 @@ export const detectHexComponent: ComponentMatcher = async (files, provider) => {
     if (manifest || packages.size) {
       const file = manifest || lock!;
       const pl = packageComponent(name, file.fp, 'hex', packages, file.fp);
-      pl.addTech('elixir', ['Mix package: ' + projectPath(provider.basePath, file.fp)]);
+      pl.addTech(
+        'elixir',
+        ['Mix package: ' + projectPath(provider.basePath, file.fp)],
+        [{ kind: 'file', value: file.name, path: file.fp }]
+      );
       payloads.push(pl);
     }
   }
@@ -98,7 +102,11 @@ export const detectHexComponent: ComponentMatcher = async (files, provider) => {
       if ((['start', 'configuration'].includes(items[i + 2].value) && items[i + 3]?.value === '(') ||
           (items[i - 1]?.value === 'use' && items[i + 2].value === 'Case')) {
         pl.path.add(file.fp);
-        pl.addTech('exunit', ['ExUnit.' + items[i + 2].value + ' at ' + projectPath(provider.basePath, file.fp) + ':' + items[i].line]);
+        pl.addTech(
+          'exunit',
+          ['ExUnit.' + items[i + 2].value + ' at ' + projectPath(provider.basePath, file.fp) + ':' + items[i].line],
+          [{ kind: 'source', value: 'ExUnit.' + items[i + 2].value, path: file.fp, line: items[i].line }]
+        );
       }
     }
     if (pl.techs.size && !payloads.length) payloads.push(pl);

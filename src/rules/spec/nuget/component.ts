@@ -178,9 +178,17 @@ export const detectNugetComponent: ComponentMatcher = async (files, provider) =>
       }
     }
     const payload = packageComponent(path.parse(file.name).name, file.fp, 'nuget', requirements, file.fp);
-    payload.addTech('nuget', [`MSBuild project: ${projectPath(provider.basePath, file.fp)}`]);
+    payload.addTech(
+      'nuget',
+      [`MSBuild project: ${projectPath(provider.basePath, file.fp)}`],
+      [{ kind: 'file', value: file.name, path: file.fp }]
+    );
     if (enablesWinUI(project)) {
-      payload.addTech('winui', [`MSBuild UseWinUI=true in ${projectPath(provider.basePath, file.fp)}`]);
+      payload.addTech(
+        'winui',
+        [`MSBuild UseWinUI=true in ${projectPath(provider.basePath, file.fp)}`],
+        [{ kind: 'file', value: file.name, path: file.fp }]
+      );
     }
     const frameworks = packageVersions(groups, 'FrameworkReference');
     if (typeof project['@_Sdk'] === 'string' &&

@@ -118,7 +118,7 @@ export const detectRustComponent: ComponentMatcher = async (files, provider) => 
       }
     }
     pl.addDependencyTechs([...external], 'rust', file.fp);
-    pl.addTech('cargo', ['matched file: Cargo.toml']);
+    pl.addTech('cargo', ['matched file: Cargo.toml'], [{ kind: 'file', value: file.name, path: file.fp }]);
     pl.dependencies = dependencies;
 
     if (typeof json.package?.license === 'string') {

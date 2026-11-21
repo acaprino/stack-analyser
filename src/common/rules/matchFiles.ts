@@ -19,12 +19,12 @@ export function matchFiles({
   matches: string[];
   matchFullPath?: boolean;
   basePath?: string;
-}): [Rule, string] | false {
+}): [Rule, string, string] | false {
   for (const file of files) {
     if (file.isSymbolicLink) continue;
     const name = matchFullPath ? portablePath(basePath ? path.relative(basePath, file.fp) : file.fp) : file.name;
     if (matches.includes(file.type === 'dir' ? name + '/' : name)) {
-      return [listIndexed[key], matchFullPath ? file.fp : file.name];
+      return [listIndexed[key], matchFullPath ? file.fp : file.name, file.fp];
     }
   }
 
@@ -43,13 +43,13 @@ export function matchFilesRegex({
   match: RegExp;
   matchFullPath?: boolean;
   basePath?: string;
-}): [Rule, string] | false {
+}): [Rule, string, string] | false {
   for (const file of files) {
     if (file.type !== 'file' || file.isSymbolicLink) continue;
     const name = matchFullPath ? portablePath(basePath ? path.relative(basePath, file.fp) : file.fp) : file.name;
     match.lastIndex = 0;
     if (match.test(name)) {
-      return [listIndexed[key], matchFullPath ? file.fp : file.name];
+      return [listIndexed[key], matchFullPath ? file.fp : file.name, file.fp];
     }
   }
 

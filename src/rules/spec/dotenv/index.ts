@@ -35,7 +35,11 @@ export const detectInDotEnv = async (
     for (const rule of rulesDotEnv) {
       const matched = rule(variables);
       if (matched !== false) {
-        payload.addTech(matched[0].tech, [`${matched[0].tech} matched env: ${matched[1]}`]);
+        payload.addTech(
+          matched[0].tech,
+          [`${matched[0].tech} matched env: ${matched[1]}`],
+          [{ kind: 'env', value: matched[1], path: file.fp }]
+        );
       }
     }
   }

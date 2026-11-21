@@ -53,7 +53,11 @@ export const detectGithubActionsComponent: ComponentMatcher = async (files, prov
     const jobs = Object.values(parsed.jobs).filter(isRecord);
     if (!jobs.length) continue;
     const pl = new Payload({ name: 'virtual', folderPath: file.fp });
-    pl.addTech('github.actions', [`GitHub Actions workflow: ${relative}`]);
+    pl.addTech(
+      'github.actions',
+      [`GitHub Actions workflow: ${relative}`],
+      [{ kind: 'file', value: file.name, path: file.fp }]
+    );
     for (const job of jobs) {
       addAction(pl, job.uses, file.fp);
       if (Array.isArray(job.steps)) {

@@ -113,8 +113,9 @@ export const detectRubyLockfile: ComponentMatcher = async (files, provider) => {
       for (const [name, version] of packages) if (version === 'latest' && pinned.has(name)) packages.set(name, pinned.get(name)!);
     }
     const pl = packageComponent('virtual', file.fp, 'ruby', packages, file.fp);
-    if (gemspec) pl.addTech('ruby', ['gemspec: ' + projectPath(provider.basePath, file.fp)]);
-    else pl.addTech('bundler', ['matched file: ' + file.name]);
+    const found = [{ kind: 'file' as const, value: file.name, path: file.fp }];
+    if (gemspec) pl.addTech('ruby', ['gemspec: ' + projectPath(provider.basePath, file.fp)], found);
+    else pl.addTech('bundler', ['matched file: ' + file.name], found);
     components.push(pl);
   }
   // When a manifest exists it is authoritative. A stale lock cannot create a new
@@ -124,8 +125,9 @@ export const detectRubyLockfile: ComponentMatcher = async (files, provider) => {
       const packages = lockedDirectGems((await sourceText(provider, file.fp)) || '');
       if (!packages.size) continue;
       const pl = packageComponent('virtual', file.fp, 'ruby', packages, file.fp);
-      pl.addTech('bundler', ['matched file: ' + file.name]);
-      pl.addTech('ruby', ['Bundler lock: ' + projectPath(provider.basePath, file.fp)]);
+      const found = [{ kind: 'file' as const, value: file.name, path: file.fp }];
+      pl.addTech('bundler', ['matched file: ' + file.name], found);
+      pl.addTech('ruby', ['Bundler lock: ' + projectPath(provider.basePath, file.fp)], found);
       components.push(pl);
     }
   }

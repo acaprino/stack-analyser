@@ -11,7 +11,7 @@ import type { ComponentMatcher } from '../../../types/rule.js';
 function component(tool: 'maven' | 'gradle', name: string, file: string, deps: Dependency[]): Payload {
   const dependencies = [...new Map(deps.map((d) => [JSON.stringify(d), d])).values()];
   const pl = new Payload({ name, folderPath: file, dependencies });
-  pl.addTech(tool, [`build manifest: ${path.basename(file)}`]);
+  pl.addTech(tool, [`build manifest: ${path.basename(file)}`], [{ kind: 'file', value: path.basename(file), path: file }]);
   pl.addDependencyTechs(dependencies.map(([, key]) => key), 'maven', file);
   return pl;
 }

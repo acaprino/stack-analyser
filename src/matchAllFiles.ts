@@ -4,9 +4,22 @@ import { rulesExtensions, rulesTechs } from './loader.js';
 import { cleanPath } from './common/helpers.js';
 
 import type { AllowedKeys, ProviderFile } from './index.js';
+import type { EvidenceItem } from './types/index.js';
 
-export function matchAllFiles(files: ProviderFile[], basePath: string): Map<AllowedKeys, string[]> {
-  const matched = new Map<AllowedKeys, string[]>();
+/** What matched a technology in a folder: the reason sentences and the evidence behind them. */
+export type TechMatch = { reason: string[]; evidence: EvidenceItem[] };
+
+/**
+ * Same matching as `matchAllFiles`, with the evidence.
+ * A file rule gives a `file` evidence on the file (or directory) it found,
+ * an extension rule gives an `extension` evidence on `folder`.
+ */
+export function matchAllFilesWithEvidence(
+  files: ProviderFile[],
+  basePath: string,
+  folder: string
+): Map<AllowedKeys, TechMatch> {
+  const matched = new Map<AllowedKeys, TechMatch>();
 
   // Match files
   for (const rule of rulesTechs) {
@@ -15,7 +28,11 @@ export function matchAllFiles(files: ProviderFile[], basePath: string): Map<Allo
       continue;
     }
 
-    matched.set(res[0].tech, [`matched file: ${cleanPath([res[1]], basePath)[0]}`]);
+    const name = cleanPath([res[1]], basePath)[0];
+    matched.set(res[0].tech, {
+      reason: [`matched file: ${name}`],
+      evidence: [{ kind: 'file', value: name, path: res[2] }],
+    });
   }
 
   // Match extensions
@@ -38,7 +55,19 @@ export function matchAllFiles(files: ProviderFile[], basePath: string): Map<Allo
       continue;
     }
 
-    matched.set(res[0].tech, [`matched extension: ${res[1]}`]);
+    matched.set(res[0].tech, {
+      reason: [`matched extension: ${res[1]}`],
+      evidence: [{ kind: 'extension', value: res[1], path: folder }],
+    });
+  }
+
+  return matched;
+}
+
+export function matchAllFiles(files: ProviderFile[], basePath: string): Map<AllowedKeys, string[]> {
+  const matched = new Map<AllowedKeys, string[]>();
+  for (const [tech, match] of matchAllFilesWithEvidence(files, basePath, basePath)) {
+    matched.set(tech, match.reason);
   }
 
   return matched;

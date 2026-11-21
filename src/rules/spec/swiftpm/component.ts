@@ -104,7 +104,11 @@ export const detectSwiftComponent: ComponentMatcher = async (files, provider) =>
       const file = manifest || resolved!;
       const pl = packageComponent(name, file.fp, 'swiftpm', packages, file.fp);
       pl.addDependencyTechs([...remotes.values()], 'swiftpm', file.fp);
-      pl.addTech('swift', ['Swift package: ' + projectPath(provider.basePath, file.fp)]);
+      pl.addTech(
+        'swift',
+        ['Swift package: ' + projectPath(provider.basePath, file.fp)],
+        [{ kind: 'file', value: file.name, path: file.fp }]
+      );
       payloads.push(pl);
     }
   }
@@ -120,7 +124,11 @@ export const detectSwiftComponent: ComponentMatcher = async (files, provider) =>
       const id = module?.kind === 'word' ? SDK_MODULES.get(module.value) : undefined;
       if (id) {
         pl.path.add(file.fp);
-        pl.addTech(id, ['Swift import ' + module.value + ' at ' + projectPath(provider.basePath, file.fp) + ':' + module.line]);
+        pl.addTech(
+          id,
+          ['Swift import ' + module.value + ' at ' + projectPath(provider.basePath, file.fp) + ':' + module.line],
+          [{ kind: 'source', value: module.value, path: file.fp, line: module.line }]
+        );
       }
     }
     if (pl.techs.size && !payloads.length) payloads.push(pl);

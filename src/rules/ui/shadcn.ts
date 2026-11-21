@@ -34,7 +34,7 @@ const detectShadcn: ComponentMatcher = async (files, provider) => {
     }
 
     const pl = new Payload({ name: 'virtual', folderPath: file.fp });
-    pl.addTech('shadcn', ['components.json']);
+    pl.addTech('shadcn', ['components.json'], [{ kind: 'file', value: file.name, path: file.fp }]);
     return pl;
   }
 

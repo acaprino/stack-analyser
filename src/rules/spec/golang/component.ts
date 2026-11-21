@@ -15,6 +15,7 @@ export const detectGolangComponent: ComponentMatcher = (files) => {
       name: folderName,
       folderPath: file.fp,
       tech: 'golang',
+      evidence: [{ kind: 'file', value: file.name, path: file.fp }],
     });
 
     return pl;

@@ -107,7 +107,7 @@ export function compareEvidence(a: Evidence, b: Evidence): number {
   );
 }
 
-export function findHosting(pl: Payload, fileMatches: Map<AllowedKeys, string[]>): void {
+export function findHosting(pl: Payload, fileMatches: ReadonlyMap<AllowedKeys, unknown>): void {
   const candidates = pl.childs.filter((child) => child.tech && listIndexed[child.tech].deploymentConfig && fileMatches.has(child.tech));
   if (candidates.length === 1) pl.inComponent = candidates[0];
 }
