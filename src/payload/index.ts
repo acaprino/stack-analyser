@@ -5,7 +5,7 @@ import { detectLang } from '../common/languages.js';
 import { nid } from '../common/nid.js';
 import { rulesComponents } from '../loader.js';
 import { matchAllFilesWithEvidence } from '../matchAllFiles.js';
-import { evidenceKind, matchDependencies, matchedPackages } from '../matchDependencies.js';
+import { evidenceKind, matchDependenciesWithNames } from '../matchDependencies.js';
 import { findHostMentions } from '../rules/spec/hosts/index.js';
 import { IGNORED_DIVE_PATHS } from '../provider/base.js';
 import { listIndexed } from '../register.js';
@@ -216,8 +216,8 @@ export class Payload implements Analyser {
     origin: { line?: number; source?: string } = {}
   ): void {
     const kind = evidenceKind(type);
-    const matched = matchedPackages(names, type);
-    for (const [tech, reason] of matchDependencies(names, type)) {
+    const { reasons, names: matched } = matchDependenciesWithNames(names, type);
+    for (const [tech, reason] of reasons) {
       this.addTech(
         tech,
         reason,

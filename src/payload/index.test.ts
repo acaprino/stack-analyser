@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import { matchAllFiles } from '../matchAllFiles.js';
+import { matchDependencies } from '../matchDependencies.js';
 import { Payload } from './index.js';
 import '../autoload.js';
 
@@ -53,5 +54,19 @@ describe('payload', () => {
 
     expect(root.techs).toStrictEqual(new Set(['typescript']));
     expect(root.reason).toStrictEqual(new Set(['matched extension: .ts']));
+  });
+
+  it('runs the dependency rules once for the names it is given', () => {
+    const test = vi.spyOn(RegExp.prototype, 'test');
+    try {
+      matchDependencies(['pg', 'left-pad'], 'npm');
+      const once = test.mock.calls.length;
+      test.mockClear();
+      new Payload({ name: 'root', folderPath: '/' }).addDependencyTechs(['pg', 'left-pad'], 'npm', '/package.json');
+      expect(once).toBeGreaterThan(0);
+      expect(test.mock.calls.length).toBeLessThanOrEqual(once);
+    } finally {
+      test.mockRestore();
+    }
   });
 });

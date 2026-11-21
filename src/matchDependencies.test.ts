@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import './autoload.js';
-import { evidenceKind, matchDependencies, matchedPackages } from './matchDependencies.js';
+import { evidenceKind, matchDependencies, matchDependenciesWithNames, matchedPackages } from './matchDependencies.js';
 
 describe('matchedPackages', () => {
   it('lists, for every technology, the names that matched it in input order', () => {
@@ -22,6 +22,21 @@ describe('matchedPackages', () => {
 
   it('finds nothing for an unknown name', () => {
     expect(matchedPackages(['left-pad'], 'npm')).toEqual(new Map());
+  });
+});
+
+describe('matchDependenciesWithNames', () => {
+  it.each([
+    [['left-pad', 'pg', 'postgres', 'react'], 'npm'],
+    [['redis:6', 'docker.io/library/redis:7', 'node'], 'docker'],
+    [['actions/setup-node'], 'githubAction'],
+    [['left-pad'], 'npm'],
+    [[], 'python'],
+  ] as const)('gives what matchDependencies and matchedPackages give for %j (%s)', (names, type) => {
+    expect(matchDependenciesWithNames([...names], type)).toEqual({
+      reasons: matchDependencies([...names], type),
+      names: matchedPackages([...names], type),
+    });
   });
 });
 

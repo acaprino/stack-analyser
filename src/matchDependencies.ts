@@ -25,9 +25,11 @@ function matchRules(pkgs: string[], type: SupportedDeps): { name: string; ref: D
   return hits;
 }
 
-export function matchDependencies(pkgs: string[], type: SupportedDeps): Map<AllowedKeys, string[]> {
+type Hits = ReturnType<typeof matchRules>;
+
+function reasonsOf(hits: Hits): Map<AllowedKeys, string[]> {
   const matched = new Map<AllowedKeys, string[]>();
-  for (const { ref } of matchRules(pkgs, type)) {
+  for (const { ref } of hits) {
     if (matched.has(ref.tech)) {
       matched.set(ref.tech, [...matched.get(ref.tech)!, `matched: ${ref.tech}`]);
     } else {
@@ -38,10 +40,9 @@ export function matchDependencies(pkgs: string[], type: SupportedDeps): Map<Allo
   return matched;
 }
 
-/** For every technology, the names that made it match, in input order and without repeats. */
-export function matchedPackages(pkgs: string[], type: SupportedDeps): Map<AllowedKeys, string[]> {
+function namesOf(hits: Hits): Map<AllowedKeys, string[]> {
   const matched = new Map<AllowedKeys, string[]>();
-  for (const { name, ref } of matchRules(pkgs, type)) {
+  for (const { name, ref } of hits) {
     const names = matched.get(ref.tech);
     if (!names) {
       matched.set(ref.tech, [name]);
@@ -51,6 +52,27 @@ export function matchedPackages(pkgs: string[], type: SupportedDeps): Map<Allowe
   }
 
   return matched;
+}
+
+export function matchDependencies(pkgs: string[], type: SupportedDeps): Map<AllowedKeys, string[]> {
+  return reasonsOf(matchRules(pkgs, type));
+}
+
+/** For every technology, the names that made it match, in input order and without repeats. */
+export function matchedPackages(pkgs: string[], type: SupportedDeps): Map<AllowedKeys, string[]> {
+  return namesOf(matchRules(pkgs, type));
+}
+
+/**
+ * What `matchDependencies` and `matchedPackages` give, from a single pass over the rules:
+ * matching is the expensive part, and a caller that needs both should not pay for it twice.
+ */
+export function matchDependenciesWithNames(
+  pkgs: string[],
+  type: SupportedDeps
+): { reasons: Map<AllowedKeys, string[]>; names: Map<AllowedKeys, string[]> } {
+  const hits = matchRules(pkgs, type);
+  return { reasons: reasonsOf(hits), names: namesOf(hits) };
 }
 
 /** What a name of this ecosystem is evidence of: an image, an action, a Terraform resource or provider, or a package. */
