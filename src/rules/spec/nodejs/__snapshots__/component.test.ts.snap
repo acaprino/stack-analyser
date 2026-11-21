@@ -5818,11 +5818,6 @@ exports[`npm > should match everything 2`] = `
   ],
   [
     "npm",
-    "postman-collection",
-    "0.0.0",
-  ],
-  [
-    "npm",
     "postman-request",
     "0.0.0",
   ],

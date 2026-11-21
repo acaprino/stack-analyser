@@ -87,7 +87,7 @@ Without `--write` the script prints the report on stdout and what is left to do 
 
 A sign reads `<type>:<name>` for a package of that dependency type (`npm:vite`, `maven:org.mongodb:mongodb-driver-sync`), and `pattern:<type>:<expression>`, `env:<name>`, `host:<name>`, `file:<name>` or `source:<kind>:<name>`. The registry writes a directory without the slash that marks it in a rule, so `.github` is covered by `.github/`; it writes package names without regard to case and in lower case, so a rule that spells the name as published (`github.com/DataDog/dd-trace-go`) covers it. A sign that the fork already recognises under another technology is a difference, never a second owner for the package.
 
-The registry's additions also name signs they declare wrong. The fork holds none of them, except two cases. Eight Gradle plugin ids (`com.android.application` and seven more) are declared wrong as packages and held by the additions as the same anchored expression, which the fork has. And `postman-collection` is declared wrong for postman; the fork keeps it, because dropping it loses postman on the recorded project `real-app-hoppscotch` (whose expected labels do not include Postman), and the replay allows no loss.
+The registry's additions also name signs they declare wrong. The fork holds none of them, except eight Gradle plugin ids (`com.android.application` and seven more): the additions declare them wrong as packages and hold the same anchored expression, which the fork has too. Dropping `postman-collection` from postman is the one accepted loss: `postman` is no longer recognised on the recorded project `real-app-hoppscotch`, whose expected labels do not include Postman.
 
 ## Measured results
 

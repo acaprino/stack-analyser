@@ -90,9 +90,8 @@ const cases: [SupportedDeps, string, string[]][] = [
 
 // Signs that the registry additions declare wrong and that the fork must not hold as a package. The bare
 // Gradle plugin ids (com.android.application, org.springframework.boot and six more) are not here: the additions
-// replace that package by the same anchored pattern, which the fork has. postman-collection is also on the list
-// and stays in the postman rule: dropping it loses postman on a recorded project (real-app-hoppscotch), and no
-// recognition may be lost.
+// replace that package by the same anchored pattern, which the fork has. Dropping postman-collection loses postman
+// on one recorded project, real-app-hoppscotch, whose expected labels do not include Postman: an accepted loss.
 const wrongSigns: [string, SupportedDeps, string][] = [
   ['angular', 'npm', 'angular'],
   ['azure.storage', 'npm', '@azure/storage-blob'],
@@ -106,6 +105,7 @@ const wrongSigns: [string, SupportedDeps, string][] = [
   ['azure.storage', 'python', 'azure-storage-blob'],
   ['azure.storage', 'golang', 'github.com/azure/azure-storage-blob-go'],
   ['gcp', 'npm', 'passport-google-oauth20'],
+  ['postman', 'npm', 'postman-collection'],
 ];
 
 describe('package identities', () => {
