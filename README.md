@@ -37,6 +37,17 @@ npm run build
 node dist/cli.js /my/project --flat --output=stack.json
 ```
 
+`npm run build` also writes `dist/cli.mjs`, the same CLI with every rule and every dependency bundled into one file.
+Node reads one file instead of more than a thousand, so it starts several times faster (see
+[Startup](./benchmarks/README.md#startup)), and the output is the same. Run it the same way:
+
+```sh
+node dist/cli.mjs /my/project --flat --output=stack.json
+```
+
+Only `@cdktf/hcl2json` stays outside the bundle, because it loads a WebAssembly file by a path relative to its own
+module: it has to stay installed in a `node_modules` folder that Node finds from `dist`.
+
 The CLI reads Maven, Gradle, NuGet, Pub, Hex and SwiftPM manifests alongside the existing package readers.
 For example, a Maven module declaring `org.springframework.boot:spring-boot-starter-web` or a Gradle module
 applying the Spring Boot plugin gets the technology ID `spring-boot`. A version listed only in Maven dependency
@@ -66,16 +77,18 @@ node dist/cli.js /my/project --declarations declarations.json
 | `name`    | yes      | The package, image repository or action, as the rules of that `type` expect it               |
 | `path`    | yes      | The file that declares it, relative to the analysed folder and inside it                     |
 | `source`  | yes      | Who read it. It is reported as is in the `source` of the evidence                            |
-| `version` | no       | The declared version                                                                         |
+| `version` | no       | Checked, and it must be a string. It is not used and not reported: the output holds no version of a declaration |
 | `line`    | no       | A positive line number in `path`                                                             |
 
 The technologies and their evidence go on the root component, with the `path`, `line` and `source` of the declaration.
 A name that no rule knows adds nothing. When the analyser reads the same package itself, both pieces of evidence are
-kept, each with its own `source`; what the analyser reads has the source `stack-analyser`. The CLI exits with code 1,
-prints the number of the entry and writes no output when the file is not a JSON array, when an entry has an unknown
-`type` or a missing field, or when a `path` is absolute or leaves the analysed folder. It exits with code 1 and
-writes no output too when the value of `--declarations` is empty. A UTF-8 byte order mark at the start of the file
-is ignored.
+kept, each with its own `source`; what the analyser reads has the source `stack-analyser`.
+
+The CLI exits with code 1 and writes no output when the file is not a JSON array (the message says
+`declarations must be an array`), and when an entry is not valid: an unknown `type`, a missing field, or a `path` that
+is absolute or leaves the analysed folder. For an entry the message starts with `declaration <index>`, the position
+of the entry in the array counted from 0. It also exits with code 1 and writes no output when the value of
+`--declarations` is empty. A UTF-8 byte order mark at the start of the file is ignored.
 
 ### Choosing which folders are skipped
 
@@ -151,7 +164,8 @@ const result = await analyser({
 ```
 
 The promise rejects with an error that starts with `declaration <index>` when an entry has a `type` that is not a
-supported one, a missing field, or a `path` that is absolute or outside the project.
+supported one, a missing field, or a `path` that is absolute or outside the project. When `declarations` is not an
+array, it rejects with `declarations must be an array`, which names no entry.
 
 ### Filesystem provider
 
@@ -232,6 +246,7 @@ and, when the reader knows it, the `line`. The `reason` sentences are unchanged 
   "techs": [],
   "languages": {},
   "dependencies": [],
+  "evidence": [],
   "childs": [
     {
       "id": "XAPpH2jgrRQq",

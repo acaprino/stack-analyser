@@ -83,9 +83,11 @@ Without `--write` the script prints the report on stdout and what is left to do 
 
 - `registry` is the sha256 of the registry file that was read.
 - `new` lists the ids that became a rule file, `extended` the signs added to a rule that already existed, by id, and `renamed` the registry ids that are the same technology as a rule of the fork and join it under the id it has. A registry entry is a duplicate of a rule when they have the same name, without case and punctuation, or a package in common; of the two ids the one release 1.27.6 already had stays, and otherwise the registry's.
-- `differences` is written by hand and kept by the script. Each entry is `{ id, sign, reason }` for a sign of the registry that is not a rule, and a test shows that it still is not.
+- `differences` is written by hand and kept by the script. Each entry is `{ id, sign, reason }` for a sign of the registry that is not a rule. `src/rules/registryPort.test.ts` checks that the rule still does not take it for the package signs (14), the file names (8) and the variable (1), and that every difference has a reason of its own. The 49 `pattern:` expressions and the 8 `source:` signs have no such check: for those the reason is the only record, and a rule could take the expression without a test failing.
 
 A sign reads `<type>:<name>` for a package of that dependency type (`npm:vite`, `maven:org.mongodb:mongodb-driver-sync`), and `pattern:<type>:<expression>`, `env:<name>`, `host:<name>`, `file:<name>` or `source:<kind>:<name>`. The registry writes a directory without the slash that marks it in a rule, so `.github` is covered by `.github/`; it writes package names without regard to case and in lower case, so a rule that spells the name as published (`github.com/DataDog/dd-trace-go`) covers it. A sign that the fork already recognises under another technology is a difference, never a second owner for the package.
+
+Where a registry id is the same technology as a rule of the fork, it joins that rule instead of becoming a second one (`renamed`): `kafka` joins `apache_kafka`, `vault` joins `hashicorp_vault`, and `react-email` joins `reactemail`. Four pairs of ids are near-duplicates at the level of the vendor, and the port keeps each pair as two ids, because the registry has them as two entries: `saas/perplexity` and `ai/perplexityai`, `saas/jira-software` and `collaboration/atlassian.jira`, `db/cockroach-labs` and `db/cockroachdb`, and `saas/langchain-corporate` and `framework/langchain` (the paths are the rule files under `src/rules`). Each rule of a pair has its own packages.
 
 The registry's additions also name signs they declare wrong. The fork holds none of them, except eight Gradle plugin ids (`com.android.application` and seven more): the additions declare them wrong as packages and hold the same anchored expression, which the fork has too. Dropping `postman-collection` from postman is the one accepted loss: `postman` is no longer recognised on the recorded project `real-app-hoppscotch`, whose expected labels do not include Postman.
 
@@ -163,3 +165,16 @@ Measured on 21 November 2026 on Windows 11 with Node 24.14.1 and 22 logical core
 Two other pairs taken minutes apart gave medians of 7885 and 4519 ms for `dist/cli.js` and 746 and 526 ms for `dist/cli.mjs`. Before the pause was removed, runs on a less loaded machine gave medians between 1978 and 2428 ms for `dist/cli.js` and between 736 and 881 ms for `dist/cli.mjs`. Every median of the bundle was under 1,000 ms. A run of `node dist/cli.mjs --version`, which loads the whole bundle and registers every rule, takes about 190 ms on a less loaded machine, against about 2,200 ms for `dist/cli.js`, and an empty Node process takes about 50 ms.
 
 A `node --cpu-prof` run of the bundle with the pause still in place (764 ms of profile) spent 432 ms idle in it. Of the rest, about 32 ms went to compiling the bundle, about 23 ms to decompressing the Terraform WebAssembly that `@cdktf/hcl2json` loads as soon as it is imported (plus about 15 ms of WebAssembly start), and the remainder to reading files and the analysis, none of it above 10 ms per function. Cutting the time further means loading `@cdktf/hcl2json` only when a Terraform file is found.
+
+## Packed package
+
+`verify-package.mjs` proves that the package, as `npm pack` makes it, runs from an empty folder with plain Node and no `npm install`. It takes no argument and installs nothing.
+
+```sh
+npm run build
+node benchmarks/verify-package.mjs
+```
+
+It runs `npm pack` in the repository, unpacks the `.tgz` into a temporary folder outside it, and runs `node package/dist/cli.mjs tests/__fixtures__ --output out.json` from there with `NODE_PATH` empty. `npm pack` does not build, so run `npm run build` first or the CLI is not in the package. Before it runs anything, the script checks that no `node_modules` folder exists above the unpacked package, because Node would find from there a dependency that the `.tgz` does not carry. It needs `tar` on the path.
+
+It exits with 1 when the command fails, or when no component of the output has evidence of kind `terraform` (the WebAssembly file of `@cdktf/hcl2json` did not load, or `.terraform.lock.hcl` was not parsed) or of kind `package` (the `package.json` of the fixtures was not read). When it succeeds it prints the path of the `.tgz`, its sha256 and its size. The `.tgz` stays where it is, so that it can be uploaded; a failed run removes it, and the unpacked folder is always removed.
