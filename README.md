@@ -21,6 +21,8 @@ It can be helpful for other to get all dependencies or SaaS used in a given git 
 
 ## CLI
 
+The CLI and the library need Node.js 20 or later.
+
 ```bash
 npx @specfy/stack-analyser <PATH> [--output=<filename>] [--flat] [--declarations=<file>] [--skip-dirs=<names>] [--ignore=<paths>]
 ```
