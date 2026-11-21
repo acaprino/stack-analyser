@@ -15,5 +15,6 @@ register({
     { type: 'ruby', name: 'stripe-rails' },
     { type: 'ruby', name: 'stripe_event' },
     { type: 'golang', name: 'github.com/stripe/stripe-go' },
+    { type: 'python', name: 'stripe' },
   ],
 });

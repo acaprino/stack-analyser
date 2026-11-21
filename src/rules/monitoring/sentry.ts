@@ -42,5 +42,8 @@ register({
     { type: 'githubAction', name: 'getsentry/action-release' },
     { type: 'golang', name: 'github.com/getsentry/sentry-go' },
     { type: 'python', name: 'sentry_sdk' },
+    { type: 'npm', name: '@sentry/profiling-node' },
+    { type: 'npm', name: '@sentry/react-router' },
+    { type: 'hex', name: 'sentry' },
   ],
 });

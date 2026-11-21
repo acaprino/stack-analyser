@@ -10,5 +10,6 @@ register({
     { type: 'ruby', name: 'postmark-rails' },
     { type: 'ruby', name: 'postmark' },
     { type: 'php', name: 'wildbit/postmark-php' },
+    { type: 'hex', name: 'bamboo_postmark' },
   ],
 });

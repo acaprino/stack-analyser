@@ -2,6 +2,8 @@ import './asdf.js';
 import './bundler.js';
 import './cargo.js';
 import './goenv.js';
+import './gradle.js';
+import './maven.js';
 import './npm.js';
 import './nuget.js';
 import './nvm.js';

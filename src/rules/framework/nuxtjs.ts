@@ -4,7 +4,7 @@ register({
   tech: 'nuxtjs',
   name: 'Nuxt.js',
   type: 'framework',
-  files: ['nuxt.config.js'],
+  files: ['nuxt.config.js', 'nuxt.config.mjs', 'nuxt.config.ts'],
   dependencies: [
     { type: 'npm', name: 'nuxt' },
     { type: 'npm', name: 'nuxt-edge' },

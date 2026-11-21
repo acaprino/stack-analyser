@@ -11,6 +11,7 @@ Payload {
       "inComponent": null,
       "languages": {},
       "licenses": Set {},
+      "mentions": [],
       "name": "2",
       "parent": undefined,
       "path": Set {
@@ -40,6 +41,7 @@ Payload {
             "inComponent": null,
             "languages": {},
             "licenses": Set {},
+            "mentions": [],
             "name": "2",
             "parent": undefined,
             "path": Set {
@@ -56,6 +58,7 @@ Payload {
       "inComponent": null,
       "languages": {},
       "licenses": Set {},
+      "mentions": [],
       "name": "3",
       "parent": undefined,
       "path": Set {
@@ -72,6 +75,7 @@ Payload {
   "inComponent": null,
   "languages": {},
   "licenses": Set {},
+  "mentions": [],
   "name": "main",
   "parent": undefined,
   "path": Set {

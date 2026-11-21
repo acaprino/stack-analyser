@@ -16,5 +16,7 @@ register({
       type: 'githubAction',
       name: 'wzieba/Firebase-Distribution-Github-Action',
     },
+    { type: 'python', name: 'firebase-admin' },
+    { type: 'swiftpm', name: 'github.com/firebase/firebase-ios-sdk' },
   ],
 });

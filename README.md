@@ -5,12 +5,12 @@
 
 This library provide a simple way to extract from any repository: dependencies, languages, infrastructure, SaaS, databases, etc.
 
-Detect more than **+700 technologies** in your code base.
+Detect more than **1,000 technologies** in your codebase.
 
 - **Full Support:** NodeJS, Docker, Typescript, PHP, Github Actions, Python, Ruby, Rust, Golang
 - Partial Support: Deno, Terraform, Zig, Clojure, c, c++, c#, dart, elixir, java
 
-Look at [all supported tech here](https://github.com/specfy/stack-analyser/tree/main/src/rules).
+See the [catalog of supported technologies](./src/rules) and the [detection benchmarks](./benchmarks/README.md).
 
 ---
 
@@ -28,6 +28,21 @@ npx @specfy/stack-analyser <PATH> [--output=<filename>]
 ```sh
 npx @specfy/stack-analyser /my/folder
 ```
+
+To run the rules from this checkout, build the package and invoke its CLI directly.
+
+```sh
+npm ci
+npm run build
+node dist/cli.js /my/project --flat --output=stack.json
+```
+
+The CLI reads Maven, Gradle, NuGet, Pub, Hex and SwiftPM manifests alongside the existing package readers.
+For example, a Maven module declaring `org.springframework.boot:spring-boot-starter-web` or a Gradle module
+applying the Spring Boot plugin gets the technology ID `spring-boot`. A version listed only in Maven dependency
+management or a Gradle plugin declared with `apply false` does not establish module use. The scanner reads static
+declarations without invoking project builds. In the JSON, `techs` contains detected technologies and an optional
+`mentions` array records known service endpoints with the source file and line.
 
 ## Programmatic Usage
 

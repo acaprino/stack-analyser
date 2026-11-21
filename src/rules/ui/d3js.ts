@@ -9,5 +9,7 @@ register({
     { type: 'npm', name: 'd3-shape' },
     { type: 'npm', name: '@types/d3' },
     { type: 'npm', name: '@types/d3-shape' },
+    { type: 'npm', name: 'd3-selection' },
+    { type: 'npm', name: 'd3-zoom' },
   ],
 });

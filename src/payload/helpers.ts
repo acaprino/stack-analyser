@@ -134,6 +134,7 @@ export function flatten(src: Payload, options: { merge?: boolean } = {}): Payloa
   // Generate a flat list of childs
   const merge = options.merge || false;
   const dest = new Payload({ name: 'flatten', folderPath: '/' });
+  dest.mentions = [...src.mentions];
   pushChilds(src, dest);
 
   // Find and merge duplicates

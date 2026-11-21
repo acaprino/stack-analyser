@@ -1,6 +1,7 @@
 import path from 'node:path';
 
 import { rulesExtensions, rulesTechs } from './loader.js';
+import { cleanPath } from './common/helpers.js';
 
 import type { AllowedKeys, ProviderFile } from './index.js';
 
@@ -14,7 +15,7 @@ export function matchAllFiles(files: ProviderFile[], basePath: string): Map<Allo
       continue;
     }
 
-    matched.set(res[0].tech, [`matched file: ${res[1].replace(basePath, '')}`]);
+    matched.set(res[0].tech, [`matched file: ${cleanPath([res[1]], basePath)[0]}`]);
   }
 
   // Match extensions

@@ -56,6 +56,7 @@ exports[`ruby (component) > should match everything 1`] = `
   "aws.timestream",
   "aws.translate",
   "azure",
+  "azure.blobstorage",
   "azure.cosmosdb",
   "azure.functions",
   "azure.mariadb",
@@ -70,6 +71,7 @@ exports[`ruby (component) > should match everything 1`] = `
   "browserstack",
   "bugsnag",
   "bundler",
+  "capybara",
   "chargebee",
   "circleci",
   "clerk",
@@ -136,6 +138,7 @@ exports[`ruby (component) > should match everything 1`] = `
   "heroku",
   "hetzner",
   "honeybadger",
+  "hotwire-turbo",
   "influxdb",
   "intercom",
   "jekyll",
@@ -184,10 +187,12 @@ exports[`ruby (component) > should match everything 1`] = `
   "postmark",
   "prometheus",
   "rabbitmq",
+  "rails",
   "redis",
   "resend",
   "rethinkdb",
   "rollbar",
+  "rspec",
   "ruby",
   "scoutapm",
   "segment",
@@ -197,8 +202,11 @@ exports[`ruby (component) > should match everything 1`] = `
   "sequelruby",
   "servicenow",
   "shopify",
+  "sidekiq",
+  "sinatra",
   "slack",
   "snowflake",
+  "solid-queue",
   "splitio",
   "sqlite",
   "sqreen",
@@ -502,6 +510,11 @@ exports[`ruby (component) > should match everything 2`] = `
   ],
   [
     "ruby",
+    "azure-blob",
+    "1.0.0",
+  ],
+  [
+    "ruby",
     "azure-storage",
     "1.0.0",
   ],
@@ -588,6 +601,11 @@ exports[`ruby (component) > should match everything 2`] = `
   [
     "ruby",
     "bunny",
+    "1.0.0",
+  ],
+  [
+    "ruby",
+    "capybara",
     "1.0.0",
   ],
   [
@@ -1367,6 +1385,11 @@ exports[`ruby (component) > should match everything 2`] = `
   ],
   [
     "ruby",
+    "rails",
+    "1.0.0",
+  ],
+  [
+    "ruby",
     "redis",
     "1.0.0",
   ],
@@ -1388,6 +1411,21 @@ exports[`ruby (component) > should match everything 2`] = `
   [
     "ruby",
     "rollbar",
+    "1.0.0",
+  ],
+  [
+    "ruby",
+    "rspec",
+    "1.0.0",
+  ],
+  [
+    "ruby",
+    "rspec-core",
+    "1.0.0",
+  ],
+  [
+    "ruby",
+    "rspec-rails",
     "1.0.0",
   ],
   [
@@ -1497,12 +1535,27 @@ exports[`ruby (component) > should match everything 2`] = `
   ],
   [
     "ruby",
+    "sidekiq",
+    "1.0.0",
+  ],
+  [
+    "ruby",
+    "sinatra",
+    "1.0.0",
+  ],
+  [
+    "ruby",
     "site-search-ruby",
     "1.0.0",
   ],
   [
     "ruby",
     "slack-ruby-client",
+    "1.0.0",
+  ],
+  [
+    "ruby",
+    "solid_queue",
     "1.0.0",
   ],
   [
@@ -1568,6 +1621,11 @@ exports[`ruby (component) > should match everything 2`] = `
   [
     "ruby",
     "travis",
+    "1.0.0",
+  ],
+  [
+    "ruby",
+    "turbo-rails",
     "1.0.0",
   ],
   [

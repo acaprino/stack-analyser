@@ -1,4 +1,5 @@
 import { listIndexed } from '../../register.js';
+import { portablePath } from '../helpers.js';
 
 import type { Rule } from '../../index.js';
 import type { ProviderFile } from '../../provider/base.js';
@@ -16,7 +17,7 @@ export function matchFiles({
   matchFullPath?: boolean;
 }): [Rule, string] | false {
   for (const file of files) {
-    const name = matchFullPath ? file.fp : file.name;
+    const name = matchFullPath ? portablePath(file.fp) : file.name;
     if (matches.includes(name)) {
       return [listIndexed[key], name];
     }
@@ -37,7 +38,7 @@ export function matchFilesRegex({
   matchFullPath?: boolean;
 }): [Rule, string] | false {
   for (const file of files) {
-    const name = matchFullPath ? file.fp : file.name;
+    const name = matchFullPath ? portablePath(file.fp) : file.name;
     if (match.test(name)) {
       return [listIndexed[key], name];
     }

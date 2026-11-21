@@ -12,4 +12,5 @@ register({
     { type: 'php', name: 'cdaguerre/php-trello-api' },
     { type: 'githubAction', name: 'jessicazu/trello-github-actions' },
   ],
+  hosts: ['api.trello.com'],
 });

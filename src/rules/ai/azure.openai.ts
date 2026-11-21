@@ -7,5 +7,6 @@ register({
   dependencies: [
     { type: 'npm', name: '@ai-sdk/azure' },
     { type: 'npm', name: 'genkitx-azure-openai' },
+    { type: 'nuget', name: 'Aspire.Azure.AI.OpenAI' },
   ],
 });

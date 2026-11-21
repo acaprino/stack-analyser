@@ -7,5 +7,6 @@ register({
   dependencies: [
     { type: 'npm', name: /@rails\//, example: '@rails/actioncable' },
     { type: 'npm', name: 'rails' },
+    { type: 'ruby', name: 'rails' },
   ],
 });

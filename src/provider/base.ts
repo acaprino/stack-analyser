@@ -2,6 +2,7 @@ export interface ProviderFile {
   name: string;
   type: 'dir' | 'file';
   fp: string;
+  isSymbolicLink?: boolean;
 }
 
 export interface BaseProvider {
@@ -15,6 +16,11 @@ export const IGNORED_DIVE_PATHS = [
   'node_modules',
   'dist',
   'build',
+  '_build',
+  '.build',
+  '.dart_tool',
+  'obj',
+  'Pods',
   'bin',
   'static',
   'public',

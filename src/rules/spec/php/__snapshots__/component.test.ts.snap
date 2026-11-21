@@ -28,10 +28,12 @@ exports[`php > should match everything 1`] = `
   "aws.sns",
   "aws.sqs",
   "azure",
+  "azure.blobstorage",
   "azure.storage",
   "betterstack",
   "bigcommerce",
   "blackfire",
+  "bootstrap",
   "box",
   "brevo",
   "browerbase",
@@ -47,6 +49,7 @@ exports[`php > should match everything 1`] = `
   "datadog",
   "datadome",
   "datastax",
+  "discord.oauth",
   "doctrinephp",
   "docusign",
   "dropbox",
@@ -85,6 +88,7 @@ exports[`php > should match everything 1`] = `
   "gcp.vision",
   "github",
   "gitlab",
+  "gitlab.oauth",
   "google",
   "google.analytics",
   "google.calendar",
@@ -96,13 +100,16 @@ exports[`php > should match everything 1`] = `
   "hostinger",
   "hubspot",
   "influxdb",
+  "instana",
   "intercom",
+  "jms-serializer",
   "joomla",
   "jsonschema",
   "kinde",
   "klaviyo",
   "kubernetes",
   "laravel",
+  "laravel-nightwatch",
   "launchdarkly",
   "lemonsqueezy",
   "libsql",
@@ -115,6 +122,7 @@ exports[`php > should match everything 1`] = `
   "meilisearch",
   "mergedev",
   "microsoft",
+  "microsoft-entra-oauth",
   "microsoft.onedrive",
   "mixpanel",
   "mongodb",
@@ -122,7 +130,7 @@ exports[`php > should match everything 1`] = `
   "newrelic",
   "notion",
   "novu",
-  "okta",
+  "okta.oauth",
   "openai",
   "openapi",
   "opentelemetry",
@@ -160,7 +168,11 @@ exports[`php > should match everything 1`] = `
   "sentry",
   "shopify",
   "slack",
+  "slim",
+  "spotify",
+  "sqlite",
   "squareup",
+  "stimulus",
   "storyblok",
   "stripe",
   "supabase",
@@ -171,6 +183,7 @@ exports[`php > should match everything 1`] = `
   "tencentcloud",
   "twigphp",
   "twilio",
+  "twitch.oauth",
   "typesense",
   "woocommerce",
   "wordpress",
@@ -527,6 +540,11 @@ exports[`php > should match everything 2`] = `
   ],
   [
     "php",
+    "ext-pdo_sqlite",
+    "0.0.0",
+  ],
+  [
+    "php",
     "fastly/magento2",
     "0.0.0",
   ],
@@ -762,6 +780,11 @@ exports[`php > should match everything 2`] = `
   ],
   [
     "php",
+    "instana/instana-php-sdk",
+    "0.0.0",
+  ],
+  [
+    "php",
     "intercom/intercom-php",
     "0.0.0",
   ],
@@ -782,6 +805,16 @@ exports[`php > should match everything 2`] = `
   ],
   [
     "php",
+    "jms/serializer",
+    "0.0.0",
+  ],
+  [
+    "php",
+    "jms/serializer-bundle",
+    "0.0.0",
+  ],
+  [
+    "php",
     "johnpbloch/wordpress",
     "0.0.0",
   ],
@@ -798,6 +831,11 @@ exports[`php > should match everything 2`] = `
   [
     "php",
     "justinrainbow/json-schema",
+    "0.0.0",
+  ],
+  [
+    "php",
+    "jwilsson/spotify-web-api-php",
     "0.0.0",
   ],
   [
@@ -838,6 +876,11 @@ exports[`php > should match everything 2`] = `
   [
     "php",
     "laravel/framework",
+    "0.0.0",
+  ],
+  [
+    "php",
+    "laravel/nightwatch",
     "0.0.0",
   ],
   [
@@ -1107,6 +1150,11 @@ exports[`php > should match everything 2`] = `
   ],
   [
     "php",
+    "php-amqplib/rabbitmq-bundle",
+    "0.0.0",
+  ],
+  [
+    "php",
     "php-webdriver/webdriver",
     "0.0.0",
   ],
@@ -1292,6 +1340,11 @@ exports[`php > should match everything 2`] = `
   ],
   [
     "php",
+    "slim/slim",
+    "0.0.0",
+  ],
+  [
+    "php",
     "smi2/phpclickhouse",
     "0.0.0",
   ],
@@ -1307,7 +1360,27 @@ exports[`php > should match everything 2`] = `
   ],
   [
     "php",
+    "socialiteproviders/discord",
+    "0.0.0",
+  ],
+  [
+    "php",
+    "socialiteproviders/gitlab",
+    "0.0.0",
+  ],
+  [
+    "php",
+    "socialiteproviders/microsoft-azure",
+    "0.0.0",
+  ],
+  [
+    "php",
     "socialiteproviders/okta",
+    "0.0.0",
+  ],
+  [
+    "php",
+    "socialiteproviders/twitch",
     "0.0.0",
   ],
   [
@@ -1318,6 +1391,11 @@ exports[`php > should match everything 2`] = `
   [
     "php",
     "spatie/dropbox-api",
+    "0.0.0",
+  ],
+  [
+    "php",
+    "spatie/flysystem-dropbox",
     "0.0.0",
   ],
   [
@@ -1372,12 +1450,27 @@ exports[`php > should match everything 2`] = `
   ],
   [
     "php",
+    "symfony/framework-bundle",
+    "0.0.0",
+  ],
+  [
+    "php",
     "symfony/panther",
     "0.0.0",
   ],
   [
     "php",
+    "symfony/stimulus-bundle",
+    "0.0.0",
+  ],
+  [
+    "php",
     "symfony/symfony",
+    "0.0.0",
+  ],
+  [
+    "php",
+    "symfony/twig-bundle",
     "0.0.0",
   ],
   [
@@ -1393,6 +1486,11 @@ exports[`php > should match everything 2`] = `
   [
     "php",
     "turso/libsql",
+    "0.0.0",
+  ],
+  [
+    "php",
+    "twbs/bootstrap",
     "0.0.0",
   ],
   [

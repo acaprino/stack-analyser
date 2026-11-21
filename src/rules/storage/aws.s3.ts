@@ -21,5 +21,7 @@ register({
     { type: 'php', name: 'league/flysystem-aws-s3-v3' },
     { type: 'php', name: 'league/flysystem-async-aws-s3' },
     { type: 'terraform.resource', name: 'airbyte_destination_s3' },
+    { type: 'golang', name: 'github.com/aws/aws-sdk-go-v2/feature/s3/manager' },
+    { type: 'hex', name: 'ex_aws_s3' },
   ],
 });

@@ -5,7 +5,7 @@ register({
   name: 'Zookeeper',
   type: 'app',
   dependencies: [
-    { type: 'docker', name: /zookeeper/, example: 'zookeeper:0.0.0' },
+    { type: 'docker', name: /^zookeeper(?:\/|$)/, example: 'zookeeper' },
     { type: 'rust', name: 'zookeeper' },
     { type: 'ruby', name: 'zookeeper' },
     { type: 'php', name: 'sparkinfluence/zookeeper' },

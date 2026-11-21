@@ -12,4 +12,5 @@ register({
     { type: 'python', name: 'langchain-google-genai' },
     { type: 'python', name: 'google-generativeai' },
   ],
+  hosts: ['generativelanguage.googleapis.com'],
 });

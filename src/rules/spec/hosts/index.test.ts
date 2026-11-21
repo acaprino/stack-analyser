@@ -1,0 +1,80 @@
+import path from 'node:path';
+
+import { describe, expect, it, vi } from 'vitest';
+
+import { analyser } from '../../../analyser/index.js';
+import { loadOne } from '../../../loader.js';
+import { flatten } from '../../../payload/helpers.js';
+import { FakeProvider } from '../../../provider/fake.js';
+import { findHostMentions } from './index.js';
+
+const host = 'api.telegram.org';
+
+function fixture(files: Record<string, string>) {
+  return new FakeProvider({
+    paths: { '/': Object.keys(files) },
+    files: Object.fromEntries(Object.entries(files).map(([k, v]) => [path.join('/', k), v])),
+  });
+}
+
+describe('service endpoint mentions', () => {
+  loadOne({ tech: 'telegram', name: 'Telegram', type: 'communication', hosts: [host] });
+
+  it('preserves source evidence through analysis and flattening without declaring a service edge', async () => {
+    const provider = fixture({
+      'transport.py': '# endpoint\nurl = f"https://API.TELEGRAM.ORG:443/bot{token}/sendMessage?a=private"\n',
+      'config.yml': 'services:\n  api: https://api.telegram.org/path?q=private\n',
+      '.env.example': 'ENDPOINT="https://api.telegram.org:443/bot"\n',
+      'service.json': '{"endpoint":"https://api.telegram.org"}',
+    });
+    const result = await analyser({ provider });
+    const expected = [
+      { tech: 'telegram', host, path: '.env.example', line: 1 },
+      { tech: 'telegram', host, path: 'config.yml', line: 2 },
+      { tech: 'telegram', host, path: 'service.json', line: 1 },
+      { tech: 'telegram', host, path: 'transport.py', line: 2 },
+    ];
+    expect(result.toJson().mentions).toStrictEqual(expected);
+    expect(flatten(result, { merge: true }).toJson().mentions).toStrictEqual(expected);
+    expect(result.techs.has('telegram')).toBe(false);
+    expect(result.dependencies).toStrictEqual([]);
+    expect(result.edges).toStrictEqual([]);
+  });
+
+  it('ignores documentation, package metadata, lookalike URLs, comments and credentials', async () => {
+    const provider = fixture({
+      'guide.md': 'https://api.telegram.org',
+      'package.json': '{"homepage":"https://api.telegram.org"}',
+      'client.ts': [
+        '// obsolete: "https://api.telegram.org"',
+        '/* fetch("https://api.telegram.org") */',
+        'const urls = ["https://api.telegram.org.example", "https://bad@api.telegram.org",',
+        '  "http://elsewhere.test/?redirect=https://api.telegram.org", "https://api.telegram.org:70000"];',
+        'const message = "see https://api.telegram.org";',
+      ].join('\n'),
+      'doc.py': '"""\nExample: "https://api.telegram.org"\n"""\n# "https://api.telegram.org"',
+      'app.yaml': '# url: https://api.telegram.org\n"https://api.telegram.org": none',
+      '.env.example': '#URL=https://api.telegram.org\nURL=https://proxy.test/api.telegram.org',
+    });
+    expect(await findHostMentions(await provider.listDir('/'), provider)).toStrictEqual([]);
+  });
+
+  it('does not read excluded paths, symlinks or oversized files', async () => {
+    const provider = fixture({ 'docs/help.ts': '', 'large.ts': '', 'linked.py': '' });
+    vi.spyOn(provider, 'stat').mockResolvedValue({ size: 600_000 });
+    const open = vi.spyOn(provider, 'open');
+    const files = await provider.listDir('/');
+    for (const file of files) file.isSymbolicLink = file.name === 'linked.py';
+    expect(await findHostMentions(files, provider)).toStrictEqual([]);
+    expect(open).not.toHaveBeenCalled();
+    expect(provider.stat).toHaveBeenCalledOnce();
+  });
+
+  it('continues after provider errors while obtaining a source size or text', async () => {
+    const provider = fixture({ 'a.ts': '', 'b.ts': '', 'c.ts': 'fetch("https://api.telegram.org")' });
+    vi.spyOn(provider, 'stat').mockRejectedValueOnce(new Error('metadata unavailable'));
+    vi.spyOn(provider, 'open').mockRejectedValueOnce(new Error('content unavailable'));
+    const result = await analyser({ provider });
+    expect(result.toJson().mentions).toStrictEqual([{ tech: 'telegram', host, path: 'c.ts', line: 1 }]);
+  });
+});

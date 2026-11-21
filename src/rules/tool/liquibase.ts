@@ -10,5 +10,6 @@ register({
     { type: 'githubAction', name: 'liquibase/liquibase-github-action' },
     { type: 'githubAction', name: 'liquibase-github-actions/init-start-h2' },
     { type: 'githubAction', name: 'liquibase-github-actions/update' },
+    { type: 'maven', name: 'org.liquibase:liquibase-core' },
   ],
 });

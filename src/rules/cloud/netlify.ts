@@ -15,5 +15,6 @@ register({
     { type: 'npm', name: '@netlify/cache-utils' },
     { type: 'npm', name: '@netlify/run-utils' },
     { type: 'githubAction', name: 'nwtgck/actions-netlify' },
+    { type: 'npm', name: '@netlify/plugin-nextjs' },
   ],
 });

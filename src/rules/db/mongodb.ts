@@ -7,7 +7,6 @@ register({
   dotenv: ['MONGODB_'],
   dependencies: [
     { type: 'npm', name: 'mongodb' },
-    { type: 'npm', name: /mongoose/, example: 'mongoose' },
     { type: 'npm', name: '@mikro-orm/mongodb', example: '@mikro-orm/mongodb' },
     { type: 'npm', name: '@opentelemetry/instrumentation-mongodb' },
     { type: 'npm', name: '@opentelemetry/instrumentation-mongoose' },
@@ -25,5 +24,8 @@ register({
     { type: 'python', name: 'pymongo' },
     { type: 'terraform.resource', name: 'airbyte_destination_mongodb' },
     { type: 'python', name: 'langchain-mongodb' },
+    { type: 'golang', name: 'go.mongodb.org/mongo-driver' },
+    { type: 'npm', name: '@nestjs/mongoose' },
+    { type: 'npm', name: 'mongoose-autopopulate' },
   ],
 });

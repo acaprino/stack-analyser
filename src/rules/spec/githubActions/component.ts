@@ -1,4 +1,5 @@
 import { parse } from 'yaml';
+import { portablePath } from '../../../common/helpers.js';
 
 import { l } from '../../../common/log.js';
 import { matchDependencies } from '../../../matchDependencies.js';
@@ -39,7 +40,7 @@ interface GitHubActionsFile {
 
 export const detectGithubActionsComponent: ComponentMatcher = async (files, provider) => {
   for (const file of files) {
-    if (!FILE_REG.test(file.fp)) {
+    if (!FILE_REG.test(portablePath(file.fp))) {
       continue;
     }
 

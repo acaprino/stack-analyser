@@ -10,9 +10,9 @@ exports[`python lockfile: pyproject.toml > should match everything 1`] = `
   "appsignal",
   "asana",
   "atlassian",
-  "aws",
-  "aws.opensearch",
   "azure",
+  "azure.blobstorage",
+  "azure.documentintelligence",
   "box",
   "browerbase",
   "browseruse",
@@ -32,9 +32,16 @@ exports[`python lockfile: pyproject.toml > should match everything 1`] = `
   "dataiku",
   "deepseek",
   "django",
+  "django-channels",
+  "django-rest-framework",
   "elasticsearch",
   "elevenlabs",
+  "fastapi",
+  "fastmcp",
+  "firebase",
+  "firebase.functions",
   "firecrawl",
+  "flask",
   "freshdesk",
   "frontegg",
   "fusionauth",
@@ -54,62 +61,98 @@ exports[`python lockfile: pyproject.toml > should match everything 1`] = `
   "google",
   "google.analytics",
   "google.calendar",
+  "google.recaptcha",
+  "gotenberg",
   "gradio",
   "groq",
+  "grpc",
+  "hatchling",
   "hetzner",
   "honeybadger",
   "hostinger",
   "huggingface",
   "inngest",
+  "instana",
+  "internet-archive",
   "jsonschema",
+  "keycloak",
+  "keyring",
   "kinde",
   "kubernetes",
   "lago",
+  "langchain",
+  "lets-encrypt",
   "libsql",
   "linear",
+  "livekit",
+  "locust",
   "logtoio",
   "mapbox",
+  "marshmallow",
   "mcp",
   "mergedev",
   "milvusdb",
   "mistralai",
   "mixpanel",
   "mkdocs",
+  "mkdocs-material",
   "mongodb",
   "mysql",
   "neondb",
   "novu",
   "ollama",
+  "open-food-facts",
   "openai",
   "openapi",
+  "openrouter",
+  "opensearch",
+  "openstack.swift",
   "opentelemetry",
+  "oracledatabase",
   "paddle",
   "pinecone",
   "playwright",
   "polarsh",
+  "postgresql",
   "posthog",
+  "prometheus",
   "propelauth",
+  "protobuf",
   "pulumi",
+  "pydantic",
+  "pytest",
   "pytorch",
+  "pyyaml",
   "qdrant",
   "rabbitmq",
+  "redis",
   "replicate",
   "resend",
+  "rq",
   "sas",
   "segment",
   "selenium",
   "sentry",
   "socketio",
+  "sphinx",
   "sqlalchemy",
+  "sqlglot",
+  "sqlmodel",
   "storyblok",
+  "strawberry-graphql",
+  "stripe",
   "stytch",
   "supabase",
   "supertokens",
   "swiftype",
   "tencentcloud",
   "tensorflow",
+  "testcontainers",
+  "tree-sitter",
+  "tree-sitter-language-pack",
   "twitter",
   "valkey",
+  "wagtail",
   "wikipedia",
   "withorb",
   "wolframalpha",
@@ -144,7 +187,17 @@ exports[`python lockfile: pyproject.toml > should match everything 2`] = `
   ],
   [
     "python",
+    "PyYAML",
+    "1.0.0",
+  ],
+  [
+    "python",
     "SQLAlchemy",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "acme",
     "1.0.0",
   ],
   [
@@ -199,7 +252,17 @@ exports[`python lockfile: pyproject.toml > should match everything 2`] = `
   ],
   [
     "python",
+    "azure-ai-documentintelligence",
+    "1.0.0",
+  ],
+  [
+    "python",
     "azure-identity",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "azure-storage-blob",
     "1.0.0",
   ],
   [
@@ -225,6 +288,16 @@ exports[`python lockfile: pyproject.toml > should match everything 2`] = `
   [
     "python",
     "celery",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "channels",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "channels-redis",
     "1.0.0",
   ],
   [
@@ -294,7 +367,32 @@ exports[`python lockfile: pyproject.toml > should match everything 2`] = `
   ],
   [
     "python",
+    "django-prometheus",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "django-recaptcha",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "django-redis",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "django-storage-swift",
+    "1.0.0",
+  ],
+  [
+    "python",
     "django-workos",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "djangorestframework",
     "1.0.0",
   ],
   [
@@ -314,7 +412,32 @@ exports[`python lockfile: pyproject.toml > should match everything 2`] = `
   ],
   [
     "python",
+    "fastapi",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "fastmcp",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "firebase-admin",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "firebase-functions",
+    "1.0.0",
+  ],
+  [
+    "python",
     "firecrawl-py",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "flask",
     "1.0.0",
   ],
   [
@@ -399,12 +522,27 @@ exports[`python lockfile: pyproject.toml > should match everything 2`] = `
   ],
   [
     "python",
+    "gotenberg-client",
+    "1.0.0",
+  ],
+  [
+    "python",
     "gradio",
     "1.0.0",
   ],
   [
     "python",
     "groq",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "grpcio",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "hatchling",
     "1.0.0",
   ],
   [
@@ -434,7 +572,22 @@ exports[`python lockfile: pyproject.toml > should match everything 2`] = `
   ],
   [
     "python",
+    "instana",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "internetarchive",
+    "1.0.0",
+  ],
+  [
+    "python",
     "jsonschema",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "keyring",
     "1.0.0",
   ],
   [
@@ -450,6 +603,11 @@ exports[`python lockfile: pyproject.toml > should match everything 2`] = `
   [
     "python",
     "lago-python-client",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "langchain",
     "1.0.0",
   ],
   [
@@ -524,12 +682,37 @@ exports[`python lockfile: pyproject.toml > should match everything 2`] = `
   ],
   [
     "python",
+    "livekit-api",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "llama-index-embeddings-ollama",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "llama-index-llms-ollama",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "locust",
+    "1.0.0",
+  ],
+  [
+    "python",
     "logto",
     "1.0.0",
   ],
   [
     "python",
     "mapbox-tilesets",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "marshmallow",
     "1.0.0",
   ],
   [
@@ -550,6 +733,11 @@ exports[`python lockfile: pyproject.toml > should match everything 2`] = `
   [
     "python",
     "mkdocs",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "mkdocs-material",
     "1.0.0",
   ],
   [
@@ -589,12 +777,27 @@ exports[`python lockfile: pyproject.toml > should match everything 2`] = `
   ],
   [
     "python",
+    "openfoodfacts",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "openrouter",
+    "1.0.0",
+  ],
+  [
+    "python",
     "opensearch-py",
     "1.0.0",
   ],
   [
     "python",
     "opentelemetry-distro",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "oracledb",
     "1.0.0",
   ],
   [
@@ -614,6 +817,11 @@ exports[`python lockfile: pyproject.toml > should match everything 2`] = `
   ],
   [
     "python",
+    "playwright",
+    "1.0.0",
+  ],
+  [
+    "python",
     "polar-sdk",
     "1.0.0",
   ],
@@ -629,7 +837,37 @@ exports[`python lockfile: pyproject.toml > should match everything 2`] = `
   ],
   [
     "python",
+    "protobuf",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "psycopg",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "psycopg-c",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "psycopg-pool",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "psycopg2-binary",
+    "1.0.0",
+  ],
+  [
+    "python",
     "pulumi",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "pydantic",
     "1.0.0",
   ],
   [
@@ -649,12 +887,22 @@ exports[`python lockfile: pyproject.toml > should match everything 2`] = `
   ],
   [
     "python",
+    "pytest",
+    "1.0.0",
+  ],
+  [
+    "python",
     "pytest-playwright",
     "1.0.0",
   ],
   [
     "python",
     "python-gitlab",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "python-keycloak",
     "1.0.0",
   ],
   [
@@ -679,12 +927,22 @@ exports[`python lockfile: pyproject.toml > should match everything 2`] = `
   ],
   [
     "python",
+    "redis",
+    "1.0.0",
+  ],
+  [
+    "python",
     "replicate",
     "1.0.0",
   ],
   [
     "python",
     "resend",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "rq",
     "1.0.0",
   ],
   [
@@ -699,12 +957,47 @@ exports[`python lockfile: pyproject.toml > should match everything 2`] = `
   ],
   [
     "python",
+    "sentence-transformers",
+    "4.0.2",
+  ],
+  [
+    "python",
     "sentry_sdk",
     "1.0.0",
   ],
   [
     "python",
+    "sphinx",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "sqlglot",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "sqlmodel",
+    "1.0.0",
+  ],
+  [
+    "python",
     "storyblok",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "strawberry-graphql",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "strawberry-graphql-django",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "stripe",
     "1.0.0",
   ],
   [
@@ -734,7 +1027,27 @@ exports[`python lockfile: pyproject.toml > should match everything 2`] = `
   ],
   [
     "python",
+    "testcontainers",
+    "1.0.0",
+  ],
+  [
+    "python",
     "tika",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "tika-client",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "tree-sitter",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "tree-sitter-language-pack",
     "1.0.0",
   ],
   [
@@ -755,6 +1068,11 @@ exports[`python lockfile: pyproject.toml > should match everything 2`] = `
   [
     "python",
     "vertexai",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "wagtail",
     "1.0.0",
   ],
   [
@@ -795,9 +1113,9 @@ exports[`python lockfile: requirements.txt > should match everything 1`] = `
   "appsignal",
   "asana",
   "atlassian",
-  "aws",
-  "aws.opensearch",
   "azure",
+  "azure.blobstorage",
+  "azure.documentintelligence",
   "box",
   "browerbase",
   "browseruse",
@@ -817,9 +1135,16 @@ exports[`python lockfile: requirements.txt > should match everything 1`] = `
   "dataiku",
   "deepseek",
   "django",
+  "django-channels",
+  "django-rest-framework",
   "elasticsearch",
   "elevenlabs",
+  "fastapi",
+  "fastmcp",
+  "firebase",
+  "firebase.functions",
   "firecrawl",
+  "flask",
   "freshdesk",
   "frontegg",
   "fusionauth",
@@ -839,63 +1164,99 @@ exports[`python lockfile: requirements.txt > should match everything 1`] = `
   "google",
   "google.analytics",
   "google.calendar",
+  "google.recaptcha",
+  "gotenberg",
   "gradio",
   "groq",
+  "grpc",
+  "hatchling",
   "hetzner",
   "honeybadger",
   "hostinger",
   "huggingface",
   "inngest",
+  "instana",
+  "internet-archive",
   "jsonschema",
+  "keycloak",
+  "keyring",
   "kinde",
   "kubernetes",
   "lago",
+  "langchain",
+  "lets-encrypt",
   "libsql",
   "linear",
+  "livekit",
+  "locust",
   "logtoio",
   "mapbox",
+  "marshmallow",
   "mcp",
   "mergedev",
   "milvusdb",
   "mistralai",
   "mixpanel",
   "mkdocs",
+  "mkdocs-material",
   "mongodb",
   "mysql",
   "neondb",
   "novu",
   "ollama",
+  "open-food-facts",
   "openai",
   "openapi",
+  "openrouter",
+  "opensearch",
+  "openstack.swift",
   "opentelemetry",
+  "oracledatabase",
   "paddle",
   "pinecone",
   "playwright",
   "polarsh",
+  "postgresql",
   "posthog",
+  "prometheus",
   "propelauth",
+  "protobuf",
   "pulumi",
+  "pydantic",
+  "pytest",
   "python",
   "pytorch",
+  "pyyaml",
   "qdrant",
   "rabbitmq",
+  "redis",
   "replicate",
   "resend",
+  "rq",
   "sas",
   "segment",
   "selenium",
   "sentry",
   "socketio",
+  "sphinx",
   "sqlalchemy",
+  "sqlglot",
+  "sqlmodel",
   "storyblok",
+  "strawberry-graphql",
+  "stripe",
   "stytch",
   "supabase",
   "supertokens",
   "swiftype",
   "tencentcloud",
   "tensorflow",
+  "testcontainers",
+  "tree-sitter",
+  "tree-sitter-language-pack",
   "twitter",
   "valkey",
+  "wagtail",
   "wikipedia",
   "withorb",
   "wolframalpha",
@@ -930,7 +1291,17 @@ exports[`python lockfile: requirements.txt > should match everything 2`] = `
   ],
   [
     "python",
+    "PyYAML",
+    "1.0.0",
+  ],
+  [
+    "python",
     "SQLAlchemy",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "acme",
     "1.0.0",
   ],
   [
@@ -985,7 +1356,17 @@ exports[`python lockfile: requirements.txt > should match everything 2`] = `
   ],
   [
     "python",
+    "azure-ai-documentintelligence",
+    "1.0.0",
+  ],
+  [
+    "python",
     "azure-identity",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "azure-storage-blob",
     "1.0.0",
   ],
   [
@@ -1011,6 +1392,16 @@ exports[`python lockfile: requirements.txt > should match everything 2`] = `
   [
     "python",
     "celery",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "channels",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "channels-redis",
     "1.0.0",
   ],
   [
@@ -1080,7 +1471,32 @@ exports[`python lockfile: requirements.txt > should match everything 2`] = `
   ],
   [
     "python",
+    "django-prometheus",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "django-recaptcha",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "django-redis",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "django-storage-swift",
+    "1.0.0",
+  ],
+  [
+    "python",
     "django-workos",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "djangorestframework",
     "1.0.0",
   ],
   [
@@ -1100,7 +1516,32 @@ exports[`python lockfile: requirements.txt > should match everything 2`] = `
   ],
   [
     "python",
+    "fastapi",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "fastmcp",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "firebase-admin",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "firebase-functions",
+    "1.0.0",
+  ],
+  [
+    "python",
     "firecrawl-py",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "flask",
     "1.0.0",
   ],
   [
@@ -1185,12 +1626,27 @@ exports[`python lockfile: requirements.txt > should match everything 2`] = `
   ],
   [
     "python",
+    "gotenberg-client",
+    "1.0.0",
+  ],
+  [
+    "python",
     "gradio",
     "1.0.0",
   ],
   [
     "python",
     "groq",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "grpcio",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "hatchling",
     "1.0.0",
   ],
   [
@@ -1220,7 +1676,22 @@ exports[`python lockfile: requirements.txt > should match everything 2`] = `
   ],
   [
     "python",
+    "instana",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "internetarchive",
+    "1.0.0",
+  ],
+  [
+    "python",
     "jsonschema",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "keyring",
     "1.0.0",
   ],
   [
@@ -1236,6 +1707,11 @@ exports[`python lockfile: requirements.txt > should match everything 2`] = `
   [
     "python",
     "lago-python-client",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "langchain",
     "1.0.0",
   ],
   [
@@ -1310,12 +1786,37 @@ exports[`python lockfile: requirements.txt > should match everything 2`] = `
   ],
   [
     "python",
+    "livekit-api",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "llama-index-embeddings-ollama",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "llama-index-llms-ollama",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "locust",
+    "1.0.0",
+  ],
+  [
+    "python",
     "logto",
     "1.0.0",
   ],
   [
     "python",
     "mapbox-tilesets",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "marshmallow",
     "1.0.0",
   ],
   [
@@ -1336,6 +1837,11 @@ exports[`python lockfile: requirements.txt > should match everything 2`] = `
   [
     "python",
     "mkdocs",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "mkdocs-material",
     "1.0.0",
   ],
   [
@@ -1375,12 +1881,27 @@ exports[`python lockfile: requirements.txt > should match everything 2`] = `
   ],
   [
     "python",
+    "openfoodfacts",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "openrouter",
+    "1.0.0",
+  ],
+  [
+    "python",
     "opensearch-py",
     "1.0.0",
   ],
   [
     "python",
     "opentelemetry-distro",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "oracledb",
     "1.0.0",
   ],
   [
@@ -1400,6 +1921,11 @@ exports[`python lockfile: requirements.txt > should match everything 2`] = `
   ],
   [
     "python",
+    "playwright",
+    "1.0.0",
+  ],
+  [
+    "python",
     "polar-sdk",
     "1.0.0",
   ],
@@ -1415,7 +1941,37 @@ exports[`python lockfile: requirements.txt > should match everything 2`] = `
   ],
   [
     "python",
+    "protobuf",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "psycopg",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "psycopg-c",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "psycopg-pool",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "psycopg2-binary",
+    "1.0.0",
+  ],
+  [
+    "python",
     "pulumi",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "pydantic",
     "1.0.0",
   ],
   [
@@ -1435,12 +1991,22 @@ exports[`python lockfile: requirements.txt > should match everything 2`] = `
   ],
   [
     "python",
+    "pytest",
+    "1.0.0",
+  ],
+  [
+    "python",
     "pytest-playwright",
     "1.0.0",
   ],
   [
     "python",
     "python-gitlab",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "python-keycloak",
     "1.0.0",
   ],
   [
@@ -1465,12 +2031,22 @@ exports[`python lockfile: requirements.txt > should match everything 2`] = `
   ],
   [
     "python",
+    "redis",
+    "1.0.0",
+  ],
+  [
+    "python",
     "replicate",
     "1.0.0",
   ],
   [
     "python",
     "resend",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "rq",
     "1.0.0",
   ],
   [
@@ -1490,7 +2066,37 @@ exports[`python lockfile: requirements.txt > should match everything 2`] = `
   ],
   [
     "python",
+    "sphinx",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "sqlglot",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "sqlmodel",
+    "1.0.0",
+  ],
+  [
+    "python",
     "storyblok",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "strawberry-graphql",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "strawberry-graphql-django",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "stripe",
     "1.0.0",
   ],
   [
@@ -1520,7 +2126,27 @@ exports[`python lockfile: requirements.txt > should match everything 2`] = `
   ],
   [
     "python",
+    "testcontainers",
+    "1.0.0",
+  ],
+  [
+    "python",
     "tika",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "tika-client",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "tree-sitter",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "tree-sitter-language-pack",
     "1.0.0",
   ],
   [
@@ -1541,6 +2167,11 @@ exports[`python lockfile: requirements.txt > should match everything 2`] = `
   [
     "python",
     "vertexai",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "wagtail",
     "1.0.0",
   ],
   [

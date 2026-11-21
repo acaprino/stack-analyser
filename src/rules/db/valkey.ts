@@ -12,5 +12,7 @@ register({
     { type: 'npm', name: 'iovalkey' },
     { type: 'golang', name: 'github.com/valkey-io/valkey-glide/go' },
     { type: 'golang', name: 'github.com/valkey-io/valkey-go' },
+    { type: 'docker', name: 'valkey/valkey' },
+    { type: 'docker', name: 'ghcr.io/valkey-io/valkey' },
   ],
 });

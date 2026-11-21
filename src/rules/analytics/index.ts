@@ -3,6 +3,7 @@ import './amplitude.js';
 import './databuddy.js';
 import './datafast.js';
 import './fathom.js';
+import './firebase.analytics.js';
 import './google.analytics.js';
 import './hotjar.js';
 import './koalaanalytics.js';

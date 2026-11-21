@@ -17,7 +17,9 @@ exports[`golang > should match a service 1`] = `
       "path": [
         "/cmd/server/main.go",
       ],
-      "reason": [],
+      "reason": [
+        "matched file: main.go",
+      ],
       "tech": "golang",
       "techs": [
         "golang",

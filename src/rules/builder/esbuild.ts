@@ -4,5 +4,8 @@ register({
   tech: 'esbuild',
   name: 'Esbuild',
   type: 'builder',
-  dependencies: [{ type: 'npm', name: 'esbuild' }],
+  dependencies: [
+    { type: 'npm', name: 'esbuild' },
+    { type: 'hex', name: 'esbuild' },
+  ],
 });

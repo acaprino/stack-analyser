@@ -15,4 +15,5 @@ register({
     { type: 'python', name: 'PyGithub' },
     { type: 'terraform.resource', name: 'airbyte_source_github' },
   ],
+  hosts: ['api.github.com'],
 });

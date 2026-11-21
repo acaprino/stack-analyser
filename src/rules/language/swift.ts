@@ -1,3 +1,4 @@
+import { detectSwiftComponent } from '../spec/swiftpm/component.js';
 import { register } from '../../register.js';
 
 register({
@@ -5,4 +6,5 @@ register({
   name: 'Swift',
   type: 'language',
   extensions: ['.swift'],
+  detect: detectSwiftComponent,
 });

@@ -24,4 +24,5 @@ register({
     { type: 'ruby', name: 'telegram-bot-ruby' },
     { type: 'rust', name: 'teloxide' },
   ],
+  hosts: ['api.telegram.org'],
 });

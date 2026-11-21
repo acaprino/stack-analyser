@@ -5,5 +5,7 @@ register({
   name: 'Kibana',
   type: 'app',
   dotenv: ['KIBANA_'],
-  dependencies: [{ type: 'docker', name: /kibana/, example: 'kibana:0.0.0' }],
+  dependencies: [
+    { type: 'docker', name: /^kibana(?:\/|$)/, example: 'kibana' },
+  ],
 });

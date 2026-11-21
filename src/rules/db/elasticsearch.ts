@@ -7,7 +7,7 @@ register({
   dotenv: ['ELASTICSEARCH_'],
   dependencies: [
     { type: 'npm', name: '@elastic/elasticsearch' },
-    { type: 'docker', name: /elasticsearch/, example: 'elasticsearch:0.0.0' },
+    { type: 'docker', name: /^elasticsearch(?:\/|$)/, example: 'elasticsearch' },
     {
       type: 'terraform',
       name: 'registry.terraform.io/phillbaker/elasticsearch',

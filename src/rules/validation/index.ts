@@ -1,6 +1,10 @@
 import './arktype.js';
+import './class-transformer.js';
+import './class-validator.js';
 import './joijs.js';
 import './jsonschema.js';
+import './marshmallow.js';
+import './pydantic.js';
 import './superstruct.js';
 import './typebox.js';
 import './valibot.js';

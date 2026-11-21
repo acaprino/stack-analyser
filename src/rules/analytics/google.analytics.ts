@@ -23,4 +23,5 @@ register({
     { type: 'terraform.resource', name: 'airbyte_source_google_analytics_data_api' },
     { type: 'python', name: 'google-analytics-data' },
   ],
+  hosts: ['analyticsadmin.googleapis.com', 'analyticsdata.googleapis.com'],
 });

@@ -14,4 +14,5 @@ register({
     { type: 'ruby', name: 'twilio-ruby' },
     { type: 'terraform.resource', name: 'airbyte_source_twilio' },
   ],
+  hosts: ['api.twilio.com'],
 });

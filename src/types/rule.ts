@@ -8,11 +8,16 @@ export type SupportedDeps =
   | 'docker'
   | 'githubAction'
   | 'golang'
+  | 'hex'
+  | 'maven'
   | 'npm'
+  | 'nuget'
   | 'php'
+  | 'pub'
   | 'python'
   | 'ruby'
   | 'rust'
+  | 'swiftpm'
   | 'terraform.resource'
   | 'terraform';
 
@@ -29,6 +34,8 @@ export type Rule = {
   tech: AllowedKeys;
   name: string;
   type: TechType;
+  /** Exact HTTP(S) endpoint hostnames; a reference alone does not establish a dependency. */
+  hosts?: string[];
   dotenv?: string[];
   dependencies?: RuleDependency[];
   detect?: ComponentMatcher | ComponentMatcher[];

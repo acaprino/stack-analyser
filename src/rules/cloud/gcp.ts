@@ -14,7 +14,6 @@ register({
     { type: 'githubAction', name: 'google-github-actions/setup-gcloud' },
     { type: 'npm', name: '@pulumi/gcp' },
     { type: 'npm', name: 'google-auth-library' },
-    { type: 'npm', name: 'passport-google-oauth20' },
     { type: 'npm', name: 'passport-google-oauth' },
     { type: 'python', name: 'google-api-python-client' },
   ],

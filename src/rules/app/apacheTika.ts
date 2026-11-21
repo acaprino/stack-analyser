@@ -7,5 +7,6 @@ register({
   dependencies: [
     { type: 'docker', name: 'apache/tika' },
     { type: 'python', name: 'tika' },
+    { type: 'python', name: 'tika-client' },
   ],
 });

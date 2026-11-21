@@ -9,11 +9,14 @@ exports[`npm > should match everything 1`] = `
   "adyen",
   "aircall",
   "airtable",
+  "akahu",
   "akamai",
   "algolia",
+  "alipay",
   "alpinejs",
   "amplitude",
   "angular",
+  "angularjs",
   "antd",
   "antdicons",
   "anthropic",
@@ -24,13 +27,18 @@ exports[`npm > should match everything 1`] = `
   "apideck",
   "apify",
   "apiplatform",
+  "apollo-server",
+  "apple",
+  "apple.signin",
   "appsignal",
   "ariakitui",
   "arktype",
   "arkui",
+  "artillery",
   "asana",
   "assemble",
   "astro",
+  "astro-compiler",
   "atlassian",
   "atlassian.confluence",
   "atlassian.jira",
@@ -84,6 +92,7 @@ exports[`npm > should match everything 1`] = `
   "aws.transcribe",
   "aws.translate",
   "azure",
+  "azure.blobstorage",
   "azure.cosmosdb",
   "azure.functions",
   "azure.maps",
@@ -97,6 +106,7 @@ exports[`npm > should match everything 1`] = `
   "azure.storage",
   "babel",
   "base44",
+  "basecoat",
   "baseui",
   "beehiiv",
   "betterauth",
@@ -110,16 +120,20 @@ exports[`npm > should match everything 1`] = `
   "brevo",
   "browserstack",
   "bugsnag",
+  "bullmq",
   "calcom",
   "calendly",
   "capacitorjs",
   "chakraui",
   "chargebee",
+  "class-transformer",
+  "class-validator",
   "clerk",
   "clickhouse",
   "clicksend",
   "cloudflare",
   "cloudflare.r2",
+  "cloudflare.turnstile",
   "cloudflare.workers",
   "cloudinary",
   "codemirror",
@@ -130,6 +144,7 @@ exports[`npm > should match everything 1`] = `
   "convexdb",
   "couchbase",
   "coveralls",
+  "create-react-app",
   "crowdin",
   "cypressci",
   "d3js",
@@ -139,24 +154,31 @@ exports[`npm > should match everything 1`] = `
   "datadome",
   "datocms",
   "deepseek",
+  "detox",
   "digitalocean",
   "discord",
   "docker",
   "docsify",
+  "docus",
   "docusaurus",
   "docusign",
+  "dompurify",
   "drizzleorm",
   "duckdb",
   "dynatrace",
   "effectjs",
+  "eideasy",
   "elasticsearch",
   "electron",
+  "element-plus",
   "elevenlabs",
   "eleventy",
+  "elkjs",
   "elysiajs",
   "emberjs",
   "esbuild",
   "eslint",
+  "expo-router",
   "expojs",
   "express",
   "facebook",
@@ -166,9 +188,11 @@ exports[`npm > should match everything 1`] = `
   "feathericons",
   "figma",
   "firebase",
+  "firebase.functions",
   "fluentui",
   "fontawesome",
   "freshdesk",
+  "friendly-captcha",
   "frontegg",
   "fumadocs",
   "fusionauth",
@@ -207,6 +231,8 @@ exports[`npm > should match everything 1`] = `
   "ghost",
   "gitbook",
   "github",
+  "github-catalyst",
+  "github.oauth",
   "gitlab",
   "google",
   "google.analytics",
@@ -217,12 +243,15 @@ exports[`npm > should match everything 1`] = `
   "google.forms",
   "google.gmail",
   "google.meet",
+  "google.oauth",
   "google.pay",
   "google.sheets",
   "google.slides",
   "google.tasks",
+  "graphiql",
   "gridsome",
   "groq",
+  "grpc",
   "hanko",
   "hashicorp_vault",
   "headlessui",
@@ -234,26 +263,32 @@ exports[`npm > should match everything 1`] = `
   "honojs",
   "hostinger",
   "hotjar",
+  "hotwire-turbo",
   "htmx",
   "hubspot",
   "hugeicons",
   "huggingface",
   "hugo",
   "hyperdx",
+  "hyperscript",
   "hypertune",
+  "imago",
   "infernojs",
   "infisical",
   "influxdb",
   "inngest",
+  "instana",
   "integrationapp",
   "intercom",
   "ionic",
   "ionicons",
   "jest",
+  "jhipster",
   "joijs",
   "jsonschema",
   "k6",
   "kentico",
+  "keycloak",
   "kinde",
   "knex",
   "koa",
@@ -264,11 +299,15 @@ exports[`npm > should match everything 1`] = `
   "lago",
   "launchdarkly",
   "lemonsqueezy",
+  "less",
   "lexicaleditor",
   "libsql",
   "lighthouse",
+  "likec4",
   "linear",
+  "litefs",
   "litjs",
+  "livekit",
   "logrocket",
   "logsnag",
   "logstash",
@@ -278,13 +317,17 @@ exports[`npm > should match everything 1`] = `
   "lucideicons",
   "magento",
   "mailchimp",
+  "maildev",
   "mailgun",
   "mailjet",
   "mantineui",
   "mapbox",
   "mariadb",
+  "marked",
   "materialdesignicons",
+  "materialize-css",
   "materialui",
+  "matrix",
   "mattermost",
   "mcp",
   "meilisearch",
@@ -293,6 +336,7 @@ exports[`npm > should match everything 1`] = `
   "metabase",
   "meteorjs",
   "microsoft",
+  "microsoft.oauth",
   "microsoft.onedrive",
   "milvusdb",
   "mintlify",
@@ -305,6 +349,7 @@ exports[`npm > should match everything 1`] = `
   "monday",
   "mongodb",
   "mongodbatlas",
+  "mongoose",
   "mssql",
   "muiicons",
   "mysql",
@@ -328,6 +373,7 @@ exports[`npm > should match everything 1`] = `
   "onlineornot",
   "openai",
   "openapi",
+  "openrouter",
   "opentelemetry",
   "optimizely",
   "oraclecloud",
@@ -338,17 +384,22 @@ exports[`npm > should match everything 1`] = `
   "pagerduty",
   "papertrail",
   "parceljs",
+  "passport",
   "payloadcms",
   "paypal",
   "paystack",
   "perplexityai",
   "phaserjs",
   "phosphoreicons",
+  "pico-css",
   "pinecone",
+  "pinia",
   "pirschanalytics",
   "placekit",
+  "plain",
   "plausible",
   "playwright",
+  "pluggy",
   "polarsh",
   "postgresql",
   "posthog",
@@ -359,8 +410,10 @@ exports[`npm > should match everything 1`] = `
   "prisma",
   "prometheus",
   "propelauth",
+  "protobuf",
   "pulumi",
   "puppeteer",
+  "pusher",
   "qdrant",
   "qovery",
   "questdb",
@@ -371,6 +424,11 @@ exports[`npm > should match everything 1`] = `
   "rails",
   "railway",
   "react",
+  "react-dom",
+  "react-flow",
+  "react-native",
+  "react-native-elements",
+  "react-navigation",
   "reactemail",
   "reacticons",
   "reactrouterdom",
@@ -391,6 +449,7 @@ exports[`npm > should match everything 1`] = `
   "resend",
   "rethinkdb",
   "revenuecat",
+  "rocket-chat",
   "rollbar",
   "rolldown",
   "rollup",
@@ -399,6 +458,7 @@ exports[`npm > should match everything 1`] = `
   "sandpackeditor",
   "sanity",
   "sap",
+  "sass-parser",
   "scaleway",
   "scoutapm",
   "segment",
@@ -424,10 +484,12 @@ exports[`npm > should match everything 1`] = `
   "sqreen",
   "squarespace",
   "stenciljs",
+  "stimulus",
   "storyblok",
   "storybook",
   "strapi",
   "stripe",
+  "stylus",
   "stytch",
   "supabase",
   "supabase.auth",
@@ -442,6 +504,7 @@ exports[`npm > should match everything 1`] = `
   "sveltekit",
   "swc",
   "swiftype",
+  "tabler",
   "tablericons",
   "tailscale",
   "tailwind",
@@ -455,6 +518,7 @@ exports[`npm > should match everything 1`] = `
   "tinybird",
   "tiptap",
   "trpc",
+  "ts-rest",
   "turborepo",
   "tursodb",
   "twilio",
@@ -466,10 +530,12 @@ exports[`npm > should match everything 1`] = `
   "typesense",
   "ultracite",
   "umijs",
+  "unocss",
   "upstash",
   "upstash.kafka",
   "upstash.qstash",
   "upstash.redis",
+  "urql",
   "useautumn",
   "useparagon",
   "valibot",
@@ -484,12 +550,18 @@ exports[`npm > should match everything 1`] = `
   "vercel.postgres",
   "veriff",
   "vite",
+  "vite-plus",
   "vitepress",
   "vitest",
   "vue",
+  "vue-router",
+  "vue-sfc-compiler",
   "vuepress",
+  "vuetify",
+  "watermelondb",
   "webflow",
   "webpack",
+  "webpack-encore",
   "whatsapp",
   "wikipedia",
   "withorb",
@@ -510,6 +582,11 @@ exports[`npm > should match everything 2`] = `
   [
     "npm",
     "@11ty/eleventy",
+    "0.0.0",
+  ],
+  [
+    "npm",
+    "@acaprino/imago",
     "0.0.0",
   ],
   [
@@ -684,6 +761,11 @@ exports[`npm > should match everything 2`] = `
   ],
   [
     "npm",
+    "@apollo/server",
+    "0.0.0",
+  ],
+  [
+    "npm",
     "@appsignal/angular",
     "0.0.0",
   ],
@@ -740,6 +822,11 @@ exports[`npm > should match everything 2`] = `
   [
     "npm",
     "@asteasolutions/zod-to-openapi",
+    "0.0.0",
+  ],
+  [
+    "npm",
+    "@astrojs/compiler",
     "0.0.0",
   ],
   [
@@ -1149,6 +1236,11 @@ exports[`npm > should match everything 2`] = `
   ],
   [
     "npm",
+    "@aws-sdk/client-sesv2",
+    "0.0.0",
+  ],
+  [
+    "npm",
     "@aws-sdk/client-sfn",
     "0.0.0",
   ],
@@ -1180,6 +1272,11 @@ exports[`npm > should match everything 2`] = `
   [
     "npm",
     "@aws-sdk/client-translate",
+    "0.0.0",
+  ],
+  [
+    "npm",
+    "@aws-sdk/cloudfront-signer",
     "0.0.0",
   ],
   [
@@ -1315,6 +1412,11 @@ exports[`npm > should match everything 2`] = `
   [
     "npm",
     "@biomejs/biome",
+    "0.0.0",
+  ],
+  [
+    "npm",
+    "@bufbuild/protobuf",
     "0.0.0",
   ],
   [
@@ -1524,6 +1626,11 @@ exports[`npm > should match everything 2`] = `
   ],
   [
     "npm",
+    "@eid-easy/eideasy-widget",
+    "0.0.0",
+  ],
+  [
+    "npm",
     "@elastic/elasticsearch",
     "0.0.0",
   ],
@@ -1579,6 +1686,11 @@ exports[`npm > should match everything 2`] = `
   ],
   [
     "npm",
+    "@friendlycaptcha/sdk",
+    "0.0.0",
+  ],
+  [
+    "npm",
     "@frontegg/js",
     "0.0.0",
   ],
@@ -1605,6 +1717,11 @@ exports[`npm > should match everything 2`] = `
   [
     "npm",
     "@gitbook/api",
+    "0.0.0",
+  ],
+  [
+    "npm",
+    "@github/catalyst",
     "0.0.0",
   ],
   [
@@ -1824,6 +1941,11 @@ exports[`npm > should match everything 2`] = `
   ],
   [
     "npm",
+    "@grpc/grpc-js",
+    "0.0.0",
+  ],
+  [
+    "npm",
     "@headlessui/react",
     "0.0.0",
   ],
@@ -1850,6 +1972,21 @@ exports[`npm > should match everything 2`] = `
   [
     "npm",
     "@hotjar/browser",
+    "0.0.0",
+  ],
+  [
+    "npm",
+    "@hotwired/stimulus",
+    "0.0.0",
+  ],
+  [
+    "npm",
+    "@hotwired/turbo",
+    "0.0.0",
+  ],
+  [
+    "npm",
+    "@hotwired/turbo-rails",
     "0.0.0",
   ],
   [
@@ -1999,6 +2136,11 @@ exports[`npm > should match everything 2`] = `
   ],
   [
     "npm",
+    "@instana/collector",
+    "0.0.0",
+  ],
+  [
+    "npm",
     "@integration-app/sdk",
     "0.0.0",
   ],
@@ -2079,7 +2221,17 @@ exports[`npm > should match everything 2`] = `
   ],
   [
     "npm",
+    "@likec4/core",
+    "0.0.0",
+  ],
+  [
+    "npm",
     "@linear/sdk",
+    "0.0.0",
+  ],
+  [
+    "npm",
+    "@livekit/react-native",
     "0.0.0",
   ],
   [
@@ -2149,6 +2301,16 @@ exports[`npm > should match everything 2`] = `
   ],
   [
     "npm",
+    "@marsidev/react-turnstile",
+    "0.0.0",
+  ],
+  [
+    "npm",
+    "@materializecss/materialize",
+    "0.0.0",
+  ],
+  [
+    "npm",
     "@mattermost/client",
     "0.0.0",
   ],
@@ -2199,7 +2361,17 @@ exports[`npm > should match everything 2`] = `
   ],
   [
     "npm",
+    "@modelcontextprotocol/client",
+    "0.0.0",
+  ],
+  [
+    "npm",
     "@modelcontextprotocol/sdk",
+    "0.0.0",
+  ],
+  [
+    "npm",
+    "@modelcontextprotocol/server",
     "0.0.0",
   ],
   [
@@ -2255,6 +2427,11 @@ exports[`npm > should match everything 2`] = `
   [
     "npm",
     "@nestjs/cli",
+    "0.0.0",
+  ],
+  [
+    "npm",
+    "@nestjs/mongoose",
     "0.0.0",
   ],
   [
@@ -2324,6 +2501,11 @@ exports[`npm > should match everything 2`] = `
   ],
   [
     "npm",
+    "@nozbe/watermelondb",
+    "0.0.0",
+  ],
+  [
+    "npm",
     "@nuxtjs/algolia",
     "0.0.0",
   ],
@@ -2345,6 +2527,11 @@ exports[`npm > should match everything 2`] = `
   [
     "npm",
     "@okta/okta-signin-widget",
+    "0.0.0",
+  ],
+  [
+    "npm",
+    "@openrouter/sdk",
     "0.0.0",
   ],
   [
@@ -2545,6 +2732,11 @@ exports[`npm > should match everything 2`] = `
   [
     "npm",
     "@phosphor-icons/webcomponents",
+    "0.0.0",
+  ],
+  [
+    "npm",
+    "@picocss/pico",
     "0.0.0",
   ],
   [
@@ -2769,6 +2961,31 @@ exports[`npm > should match everything 2`] = `
   ],
   [
     "npm",
+    "@react-email/components",
+    "0.0.0",
+  ],
+  [
+    "npm",
+    "@react-navigation/bottom-tabs",
+    "0.0.0",
+  ],
+  [
+    "npm",
+    "@react-navigation/native",
+    "0.0.0",
+  ],
+  [
+    "npm",
+    "@react-navigation/native-stack",
+    "0.0.0",
+  ],
+  [
+    "npm",
+    "@react-navigation/stack",
+    "0.0.0",
+  ],
+  [
+    "npm",
     "@redwoodjs/api",
     "0.0.0",
   ],
@@ -2860,6 +3077,16 @@ exports[`npm > should match everything 2`] = `
   [
     "npm",
     "@revenuecat/react-native-purchases",
+    "0.0.0",
+  ],
+  [
+    "npm",
+    "@rneui/base",
+    "0.0.0",
+  ],
+  [
+    "npm",
+    "@rocket.chat/sdk",
     "0.0.0",
   ],
   [
@@ -2969,12 +3196,22 @@ exports[`npm > should match everything 2`] = `
   ],
   [
     "npm",
+    "@sentry/profiling-node",
+    "0.0.0",
+  ],
+  [
+    "npm",
     "@sentry/react",
     "0.0.0",
   ],
   [
     "npm",
     "@sentry/react-native",
+    "0.0.0",
+  ],
+  [
+    "npm",
+    "@sentry/react-router",
     "0.0.0",
   ],
   [
@@ -3059,6 +3296,11 @@ exports[`npm > should match everything 2`] = `
   ],
   [
     "npm",
+    "@sqlite.org/sqlite-wasm",
+    "0.0.0",
+  ],
+  [
+    "npm",
     "@squarespace/server",
     "0.0.0",
   ],
@@ -3139,6 +3381,16 @@ exports[`npm > should match everything 2`] = `
   ],
   [
     "npm",
+    "@symfony/webpack-encore",
+    "0.0.0",
+  ],
+  [
+    "npm",
+    "@tabler/core",
+    "0.0.0",
+  ],
+  [
+    "npm",
     "@tabler/icons",
     "0.0.0",
   ],
@@ -3150,6 +3402,11 @@ exports[`npm > should match everything 2`] = `
   [
     "npm",
     "@tabler/icons-vue",
+    "0.0.0",
+  ],
+  [
+    "npm",
+    "@tailwindcss/vite",
     "0.0.0",
   ],
   [
@@ -3175,6 +3432,11 @@ exports[`npm > should match everything 2`] = `
   [
     "npm",
     "@tdengine/rest",
+    "0.0.0",
+  ],
+  [
+    "npm",
+    "@team-plain/typescript-sdk",
     "0.0.0",
   ],
   [
@@ -3239,6 +3501,21 @@ exports[`npm > should match everything 2`] = `
   ],
   [
     "npm",
+    "@ts-rest/core",
+    "0.0.0",
+  ],
+  [
+    "npm",
+    "@ts-rest/open-api",
+    "0.0.0",
+  ],
+  [
+    "npm",
+    "@ts-rest/serverless",
+    "0.0.0",
+  ],
+  [
+    "npm",
     "@tursodatabase/api",
     "0.0.0",
   ],
@@ -3294,6 +3571,16 @@ exports[`npm > should match everything 2`] = `
   ],
   [
     "npm",
+    "@unocss/nuxt",
+    "0.0.0",
+  ],
+  [
+    "npm",
+    "@unocss/vite",
+    "0.0.0",
+  ],
+  [
+    "npm",
     "@uppy/google-drive-picker",
     "0.0.0",
   ],
@@ -3320,6 +3607,16 @@ exports[`npm > should match everything 2`] = `
   [
     "npm",
     "@upstash/redis",
+    "0.0.0",
+  ],
+  [
+    "npm",
+    "@urql/core",
+    "0.0.0",
+  ],
+  [
+    "npm",
+    "@urql/vue",
     "0.0.0",
   ],
   [
@@ -3419,6 +3716,11 @@ exports[`npm > should match everything 2`] = `
   ],
   [
     "npm",
+    "@vue/compiler-sfc",
+    "0.0.0",
+  ],
+  [
+    "npm",
     "@vuepress/core",
     "0.0.0",
   ],
@@ -3474,6 +3776,11 @@ exports[`npm > should match everything 2`] = `
   ],
   [
     "npm",
+    "@xyflow/react",
+    "0.0.0",
+  ],
+  [
+    "npm",
     "@zilliz/milvus2-sdk-node",
     "0.0.0",
   ],
@@ -3514,12 +3821,22 @@ exports[`npm > should match everything 2`] = `
   ],
   [
     "npm",
+    "akahu",
+    "0.0.0",
+  ],
+  [
+    "npm",
     "akamai-edgegrid",
     "0.0.0",
   ],
   [
     "npm",
     "algoliasearch",
+    "0.0.0",
+  ],
+  [
+    "npm",
+    "alipay-sdk",
     "0.0.0",
   ],
   [
@@ -3569,12 +3886,22 @@ exports[`npm > should match everything 2`] = `
   ],
   [
     "npm",
+    "apple-signin-auth",
+    "0.0.0",
+  ],
+  [
+    "npm",
     "appsignal",
     "0.0.0",
   ],
   [
     "npm",
     "arktype",
+    "0.0.0",
+  ],
+  [
+    "npm",
+    "artillery",
     "0.0.0",
   ],
   [
@@ -3644,6 +3971,11 @@ exports[`npm > should match everything 2`] = `
   ],
   [
     "npm",
+    "basecoat-css",
+    "0.0.0",
+  ],
+  [
+    "npm",
     "better-auth",
     "0.0.0",
   ],
@@ -3689,6 +4021,11 @@ exports[`npm > should match everything 2`] = `
   ],
   [
     "npm",
+    "bullmq",
+    "0.0.0",
+  ],
+  [
+    "npm",
     "bunyan-logstash-tcp",
     "0.0.0",
   ],
@@ -3710,6 +4047,16 @@ exports[`npm > should match everything 2`] = `
   [
     "npm",
     "chatgpt",
+    "0.0.0",
+  ],
+  [
+    "npm",
+    "class-transformer",
+    "0.0.0",
+  ],
+  [
+    "npm",
+    "class-validator",
     "0.0.0",
   ],
   [
@@ -3824,7 +4171,17 @@ exports[`npm > should match everything 2`] = `
   ],
   [
     "npm",
+    "d3-selection",
+    "0.0.0",
+  ],
+  [
+    "npm",
     "d3-shape",
+    "0.0.0",
+  ],
+  [
+    "npm",
+    "d3-zoom",
     "0.0.0",
   ],
   [
@@ -3864,6 +4221,11 @@ exports[`npm > should match everything 2`] = `
   ],
   [
     "npm",
+    "detox",
+    "0.0.0",
+  ],
+  [
+    "npm",
     "discord-interactions",
     "0.0.0",
   ],
@@ -3884,12 +4246,22 @@ exports[`npm > should match everything 2`] = `
   ],
   [
     "npm",
+    "docus",
+    "0.0.0",
+  ],
+  [
+    "npm",
     "docusaurus",
     "0.0.0",
   ],
   [
     "npm",
     "docusign-esign",
+    "0.0.0",
+  ],
+  [
+    "npm",
+    "dompurify",
     "0.0.0",
   ],
   [
@@ -3915,6 +4287,16 @@ exports[`npm > should match everything 2`] = `
   [
     "npm",
     "electron",
+    "0.0.0",
+  ],
+  [
+    "npm",
+    "element-plus",
+    "0.0.0",
+  ],
+  [
+    "npm",
+    "elkjs",
     "0.0.0",
   ],
   [
@@ -3955,6 +4337,11 @@ exports[`npm > should match everything 2`] = `
   [
     "npm",
     "expo",
+    "0.0.0",
+  ],
+  [
+    "npm",
+    "expo-router",
     "0.0.0",
   ],
   [
@@ -4000,6 +4387,11 @@ exports[`npm > should match everything 2`] = `
   [
     "npm",
     "firebase",
+    "0.0.0",
+  ],
+  [
+    "npm",
+    "firebase-functions",
     "0.0.0",
   ],
   [
@@ -4079,6 +4471,11 @@ exports[`npm > should match everything 2`] = `
   ],
   [
     "npm",
+    "generator-jhipster",
+    "0.0.0",
+  ],
+  [
+    "npm",
     "genkitx-anthropic",
     "0.0.0",
   ],
@@ -4154,6 +4551,11 @@ exports[`npm > should match everything 2`] = `
   ],
   [
     "npm",
+    "graphiql",
+    "0.0.0",
+  ],
+  [
+    "npm",
     "gridsome",
     "0.0.0",
   ],
@@ -4200,6 +4602,11 @@ exports[`npm > should match everything 2`] = `
   [
     "npm",
     "hugo-lunr-indexer",
+    "0.0.0",
+  ],
+  [
+    "npm",
+    "hyperscript.org",
     "0.0.0",
   ],
   [
@@ -4319,6 +4726,11 @@ exports[`npm > should match everything 2`] = `
   ],
   [
     "npm",
+    "keycloak-js",
+    "0.0.0",
+  ],
+  [
+    "npm",
     "knex",
     "0.0.0",
   ],
@@ -4354,6 +4766,11 @@ exports[`npm > should match everything 2`] = `
   ],
   [
     "npm",
+    "less",
+    "0.0.0",
+  ],
+  [
+    "npm",
     "lexical",
     "0.0.0",
   ],
@@ -4365,6 +4782,21 @@ exports[`npm > should match everything 2`] = `
   [
     "npm",
     "lit",
+    "0.0.0",
+  ],
+  [
+    "npm",
+    "litefs-js",
+    "0.0.0",
+  ],
+  [
+    "npm",
+    "livekit-client",
+    "0.0.0",
+  ],
+  [
+    "npm",
+    "livekit-server-sdk",
     "0.0.0",
   ],
   [
@@ -4409,6 +4841,11 @@ exports[`npm > should match everything 2`] = `
   ],
   [
     "npm",
+    "maildev",
+    "0.0.0",
+  ],
+  [
+    "npm",
     "mailgun.js",
     "0.0.0",
   ],
@@ -4420,6 +4857,16 @@ exports[`npm > should match everything 2`] = `
   [
     "npm",
     "mariadb",
+    "0.0.0",
+  ],
+  [
+    "npm",
+    "marked",
+    "0.0.0",
+  ],
+  [
+    "npm",
+    "matrix-js-sdk",
     "0.0.0",
   ],
   [
@@ -4499,6 +4946,11 @@ exports[`npm > should match everything 2`] = `
   ],
   [
     "npm",
+    "mongoose-autopopulate",
+    "0.0.0",
+  ],
+  [
+    "npm",
     "mssql",
     "0.0.0",
   ],
@@ -4560,6 +5012,11 @@ exports[`npm > should match everything 2`] = `
   [
     "npm",
     "next",
+    "0.0.0",
+  ],
+  [
+    "npm",
+    "next-plausible",
     "0.0.0",
   ],
   [
@@ -4719,7 +5176,17 @@ exports[`npm > should match everything 2`] = `
   ],
   [
     "npm",
+    "passport",
+    "0.0.0",
+  ],
+  [
+    "npm",
     "passport-facebook",
+    "0.0.0",
+  ],
+  [
+    "npm",
+    "passport-github2",
     "0.0.0",
   ],
   [
@@ -4730,6 +5197,11 @@ exports[`npm > should match everything 2`] = `
   [
     "npm",
     "passport-google-oauth20",
+    "0.0.0",
+  ],
+  [
+    "npm",
+    "passport-microsoft",
     "0.0.0",
   ],
   [
@@ -4774,6 +5246,11 @@ exports[`npm > should match everything 2`] = `
   ],
   [
     "npm",
+    "pinia",
+    "0.0.0",
+  ],
+  [
+    "npm",
     "pino-papertrail",
     "0.0.0",
   ],
@@ -4790,6 +5267,11 @@ exports[`npm > should match everything 2`] = `
   [
     "npm",
     "playwright",
+    "0.0.0",
+  ],
+  [
+    "npm",
+    "pluggy-sdk",
     "0.0.0",
   ],
   [
@@ -4874,6 +5356,11 @@ exports[`npm > should match everything 2`] = `
   ],
   [
     "npm",
+    "pusher-js",
+    "0.0.0",
+  ],
+  [
+    "npm",
     "qovery-typescript-axios",
     "0.0.0",
   ],
@@ -4929,6 +5416,11 @@ exports[`npm > should match everything 2`] = `
   ],
   [
     "npm",
+    "react-dom",
+    "0.0.0",
+  ],
+  [
+    "npm",
     "react-email",
     "0.0.0",
   ],
@@ -4964,6 +5456,16 @@ exports[`npm > should match everything 2`] = `
   ],
   [
     "npm",
+    "react-native",
+    "0.0.0",
+  ],
+  [
+    "npm",
+    "react-native-elements",
+    "0.0.0",
+  ],
+  [
+    "npm",
     "react-native-feather",
     "0.0.0",
   ],
@@ -4975,6 +5477,11 @@ exports[`npm > should match everything 2`] = `
   [
     "npm",
     "react-router-dom",
+    "0.0.0",
+  ],
+  [
+    "npm",
+    "react-scripts",
     "0.0.0",
   ],
   [
@@ -4995,6 +5502,11 @@ exports[`npm > should match everything 2`] = `
   [
     "npm",
     "reka-ui",
+    "0.0.0",
+  ],
+  [
+    "npm",
+    "remix-auth-github",
     "0.0.0",
   ],
   [
@@ -5055,6 +5567,11 @@ exports[`npm > should match everything 2`] = `
   [
     "npm",
     "sanity",
+    "0.0.0",
+  ],
+  [
+    "npm",
+    "sass-parser",
     "0.0.0",
   ],
   [
@@ -5170,6 +5687,11 @@ exports[`npm > should match everything 2`] = `
   [
     "npm",
     "stripe",
+    "0.0.0",
+  ],
+  [
+    "npm",
+    "stylus",
     "0.0.0",
   ],
   [
@@ -5299,6 +5821,16 @@ exports[`npm > should match everything 2`] = `
   ],
   [
     "npm",
+    "unocss",
+    "0.0.0",
+  ],
+  [
+    "npm",
+    "urql",
+    "0.0.0",
+  ],
+  [
+    "npm",
     "valibot",
     "0.0.0",
   ],
@@ -5310,6 +5842,11 @@ exports[`npm > should match everything 2`] = `
   [
     "npm",
     "vite",
+    "0.0.0",
+  ],
+  [
+    "npm",
+    "vite-plus",
     "0.0.0",
   ],
   [
@@ -5339,7 +5876,17 @@ exports[`npm > should match everything 2`] = `
   ],
   [
     "npm",
+    "vue-router",
+    "0.0.0",
+  ],
+  [
+    "npm",
     "vuepress",
+    "0.0.0",
+  ],
+  [
+    "npm",
+    "vuetify",
     "0.0.0",
   ],
   [

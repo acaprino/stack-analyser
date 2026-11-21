@@ -50,6 +50,7 @@ exports[`terraform (resource) > should match everything 1`] = `
   "aws.timestream",
   "azure",
   "azure.aks",
+  "azure.blobstorage",
   "azure.cosmosdb",
   "azure.functions",
   "azure.maps",

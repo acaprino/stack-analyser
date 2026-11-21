@@ -5,5 +5,8 @@ register({
   name: 'Spotify',
   type: 'saas',
   dotenv: ['SPOTIFY_'],
-  dependencies: [{ type: 'npm', name: 'spotify-web-api-node' }],
+  dependencies: [
+    { type: 'npm', name: 'spotify-web-api-node' },
+    { type: 'php', name: 'jwilsson/spotify-web-api-php' },
+  ],
 });

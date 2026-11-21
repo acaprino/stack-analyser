@@ -4,5 +4,8 @@ register({
   tech: 'reactemail',
   name: 'React Email',
   type: 'tool',
-  dependencies: [{ type: 'npm', name: 'react-email' }],
+  dependencies: [
+    { type: 'npm', name: 'react-email' },
+    { type: 'npm', name: '@react-email/components' },
+  ],
 });

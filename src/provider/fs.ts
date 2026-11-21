@@ -30,6 +30,7 @@ export class FSProvider implements BaseProvider {
         name: file.name,
         type: file.isDirectory() ? 'dir' : 'file',
         fp: path.join(pathRelative, file.name),
+        ...(file.isSymbolicLink() && { isSymbolicLink: true }),
       };
     });
 

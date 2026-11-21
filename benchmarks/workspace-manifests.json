@@ -1,0 +1,18 @@
+{
+  "daodan": {
+    "pyproject.toml": ["hatchling", "keyring", "mcp", "pyyaml", "sqlglot", "tree-sitter", "tree-sitter-language-pack"],
+    "daodan/core/requirements.txt": ["pyyaml", "sqlglot", "tree-sitter", "tree-sitter-language-pack"],
+    "daodan/core/dynamic/dotnet_record/record/Daodan.Record.csproj": [],
+    "daodan/core/dynamic/dotnet_record/rewrite/Daodan.Rewrite.csproj": ["mono-cecil"],
+    "daodan/core/indexers/css_engines/package.json": ["astro-compiler", "less", "sass-parser", "stylus", "sveltejs", "typescript", "vue-sfc-compiler"],
+    "viewer/package.json": ["elkjs", "imago", "lucideicons", "playwright", "react", "react-dom", "vite"],
+    "benchmarks/codebase-explorer/likec4-probe/package.json": ["likec4"],
+    "benchmarks/codebase-explorer/reactflow-probe/package.json": ["elkjs", "lucideicons", "react", "react-dom", "react-flow", "vite"]
+  },
+  "imago": {
+    "Cargo.toml": [],
+    "package.json": ["d3js", "playwright", "react", "tauri", "typescript", "vite"],
+    "crates/imago-shell/Cargo.toml": ["serde", "serde-json", "tauri", "tempfile-rust", "webview2-com", "windows-rs"],
+    "examples/demo/src-tauri/Cargo.toml": ["tauri"]
+  }
+}

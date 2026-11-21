@@ -13,16 +13,20 @@ import type { ComponentMatcher } from '../../../types/rule.js';
 
 const LOCKFILE = 'requirements.txt';
 const PROJECT = 'pyproject.toml';
-const lineReg = /(^([a-zA-Z0-9._-]+)$|^([a-zA-Z0-9._-]+)(([>=]+)([0-9.]+)))/;
+// A bare URL, directive or local path cannot establish a distribution name.
+const requirement = /^([A-Za-z0-9](?:[A-Za-z0-9._-]*[A-Za-z0-9])?)(?:\[[\w., -]+\])?\s*(?=$|[<>=!~;@(])/;
 
 interface Pyproject {
   project?: {
     license?: { file?: string; text?: string } | string;
     dependencies?: string[];
+    'optional-dependencies'?: Record<string, string[]>;
   };
+  'build-system'?: { requires?: string[] };
 }
 
 export const detectPythonLockfile: ComponentMatcher = async (files, provider) => {
+  const manifests: Payload[] = [];
   for (const file of files) {
     if (file.name === PROJECT) {
       const content = await provider.open(file.fp);
@@ -39,7 +43,7 @@ export const detectPythonLockfile: ComponentMatcher = async (files, provider) =>
         continue;
       }
 
-      return pl;
+      manifests.push(pl);
     } else if (file.name === LOCKFILE) {
       const content = await provider.open(file.fp);
       if (!content) {
@@ -52,45 +56,32 @@ export const detectPythonLockfile: ComponentMatcher = async (files, provider) =>
       });
       parseRequirementsTxt(content, pl);
 
-      return pl;
+      manifests.push(pl);
     } else {
       continue;
     }
   }
 
-  return false;
+  return manifests.length ? manifests : false;
 };
 
-export function parseRequirementsTxt(content: string, pl: Payload): void {
+function addRequirements(lines: string[], pl: Payload): void {
   const dependencies: Dependency[] = [];
-
-  for (const line of content.split(/\r?\n/)) {
-    if (line.startsWith('#')) {
-      continue;
-    }
-
-    const match = line.match(lineReg);
-    if (!match) {
-      continue;
-    }
-
-    const name = match[2] || match[3];
-    const version = match[6] || 'latest';
-
-    if (!name) {
-      continue;
-    }
-
-    dependencies.push(['python', name, version || 'latest']);
-    const matched = matchDependencies([name], 'python');
-    if (matched.size <= 0) {
-      continue;
-    }
-
-    pl.addTechs(matched);
+  for (const raw of lines) {
+    if (typeof raw !== 'string') continue;
+    const line = raw.trim().replace(/\s+#.*$/, '');
+    const match = requirement.exec(line);
+    if (!match) continue;
+    const specifier = line.slice(match[0].length).split(';', 1)[0].trim();
+    const version = /^[~!=<>]+\s*([^,\s)]+)/.exec(specifier)?.[1] || 'latest';
+    dependencies.push(['python', match[1], version]);
   }
+  pl.addTechs(matchDependencies(dependencies.map(([, name]) => name), 'python'));
+  pl.dependencies = dependencies;
+}
 
-  pl.dependencies = [...dependencies];
+export function parseRequirementsTxt(content: string, pl: Payload): void {
+  addRequirements(content.split(/\r?\n/), pl);
 }
 
 export function parsePyproject({
@@ -110,11 +101,11 @@ export function parsePyproject({
     return false;
   }
 
-  if (!('project' in json) || !json.project) {
+  if (!json.project && !Array.isArray(json['build-system']?.requires)) {
     return false;
   }
 
-  const prj = json.project;
+  const prj = json.project ?? {};
   if ('license' in prj) {
     const tmp = typeof prj.license === 'string' ? prj.license : prj.license?.text;
     if (tmp) {
@@ -125,30 +116,7 @@ export function parsePyproject({
     }
   }
 
-  if (prj.dependencies) {
-    const dependencies: Dependency[] = [];
-    for (const dep of prj.dependencies) {
-      const match = dep.match(lineReg);
-      if (!match) {
-        continue;
-      }
-
-      const name = match[2] || match[3];
-      const version = match[6] || 'latest';
-      if (!name) {
-        continue;
-      }
-
-      dependencies.push(['python', name, version || 'latest']);
-      const matched = matchDependencies([name], 'python');
-      if (matched.size <= 0) {
-        continue;
-      }
-
-      pl.addTechs(matched);
-    }
-
-    pl.dependencies = [...dependencies];
-  }
+  const groups = [prj.dependencies, json['build-system']?.requires, ...Object.values(prj['optional-dependencies'] ?? {})];
+  addRequirements(groups.filter((group): group is string[] => Array.isArray(group)).flat(), pl);
   return true;
 }

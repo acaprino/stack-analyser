@@ -2,7 +2,7 @@ import { register } from '../../register.js';
 
 register({
   tech: 'honojs',
-  name: 'HonoJS',
+  name: 'Hono',
   type: 'tool',
   dependencies: [{ type: 'npm', name: 'hono' }],
 });

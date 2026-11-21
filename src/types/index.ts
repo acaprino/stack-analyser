@@ -12,7 +12,17 @@ export interface GraphEdge {
 
 export type Dependency = [SupportedDeps, string, string];
 
+export interface HostMention {
+  tech: AllowedKeys;
+  host: string;
+  /** Path relative to the analysed project. */
+  path: string;
+  line: number;
+}
+
 export interface Analyser {
+  /** Service endpoints referred to in source or configuration, with their evidence. */
+  mentions?: HostMention[];
   /**
    * Unique random id for this payload
    */

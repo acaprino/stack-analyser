@@ -5,5 +5,8 @@ register({
   name: 'Dropbox',
   type: 'saas',
   dotenv: ['DROPBOX_'],
-  dependencies: [{ type: 'php', name: 'spatie/dropbox-api' }],
+  dependencies: [
+    { type: 'php', name: 'spatie/dropbox-api' },
+    { type: 'php', name: 'spatie/flysystem-dropbox' },
+  ],
 });

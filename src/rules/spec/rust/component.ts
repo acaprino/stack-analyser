@@ -10,29 +10,19 @@ import type { ComponentMatcher } from '../../../types/rule.js';
 
 const FILES = new Set(['Cargo.toml']);
 
-type Dependency =
-  | {
-      git: string;
-      rev?: string;
-      branch?: string;
-    }
-  | {
-      path: string;
-      version?: string;
-    }
-  | {
-      version?: string;
-    }
-  | string;
-interface RustCargo {
+type Dependency = string | { package?: string; git?: string; rev?: string; branch?: string; path?: string; version?: string };
+
+interface Dependencies {
+  dependencies?: Record<string, Dependency>;
+  'dev-dependencies'?: Record<string, Dependency>;
+  'build-dependencies'?: Record<string, Dependency>;
+}
+interface RustCargo extends Dependencies {
   package?: {
     name: string;
     license?: string;
   };
-  dependencies: Record<string, Dependency>;
-  'dev-dependencies'?: Record<string, Dependency>;
-  'build-dependencies'?: Record<string, Dependency>;
-  'workspace.dependencies': Record<string, Dependency>;
+  target?: Record<string, Dependencies>;
 }
 
 export const detectRustComponent: ComponentMatcher = async (files, provider) => {
@@ -65,29 +55,28 @@ export const detectRustComponent: ComponentMatcher = async (files, provider) => 
       pl = new Payload({ name: 'virtual', folderPath: file.fp });
     }
 
-    const deps: Record<string, Dependency> = {
-      ...json.dependencies,
-      ...json['dev-dependencies'],
-      ...json['build-dependencies'],
-      ...json['workspace.dependencies'],
-    };
-    const techs = matchDependencies(Object.keys(deps), 'rust');
-    const depsFlatten: Analyser['dependencies'] = Object.entries(deps).map(([name, value]) => {
-      if (typeof value === 'string') {
-        return ['rust', name, value];
+    const dependencies: Analyser['dependencies'] = [];
+    const external = new Set<string>();
+    // Workspace catalogs list available versions. Members declare what they actually use.
+    for (const table of [json, ...Object.values(json.target ?? {})]) {
+      for (const group of [table.dependencies, table['dev-dependencies'], table['build-dependencies']]) {
+        for (const [alias, value] of Object.entries(group ?? {})) {
+          const spec = typeof value === 'string' ? { version: value } : value;
+          const name = spec.package ?? alias;
+          let version = spec.version || 'latest';
+          if (spec.path) {
+            version = `path:${spec.path}${spec.version ? `:${spec.version}` : ''}`;
+          } else {
+            external.add(name);
+            if (spec.git) version = `git:${spec.git}#${spec.branch || spec.rev || 'latest'}`;
+          }
+          dependencies.push(['rust', name, version]);
+        }
       }
-      if ('path' in value) {
-        return ['rust', name, `path:${value.path}${value.version ? `:${value.version}` : ''}`];
-      }
-      if ('git' in value) {
-        return ['rust', name, `git:${value.git}#${value.branch || value.rev || 'latest'}`];
-      }
-      return ['rust', name, value.version || 'latest'];
-    });
-
-    pl.addTechs(techs);
+    }
+    pl.addTechs(matchDependencies([...external], 'rust'));
     pl.addTech('cargo', ['matched file: Cargo.toml']);
-    pl.dependencies = depsFlatten;
+    pl.dependencies = dependencies;
 
     if (json.package?.license) {
       const lic = detectLicense(json.package.license);

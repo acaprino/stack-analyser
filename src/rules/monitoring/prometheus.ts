@@ -31,5 +31,10 @@ register({
     },
     { type: 'golang', name: 'github.com/go-kit/kit/metrics/prometheus' },
     { type: 'golang', name: 'github.com/grpc-ecosystem/go-grpc-prometheus' },
+    { type: 'docker', name: 'quay.io/prometheus/prometheus' },
+    { type: 'rust', name: 'metrics-exporter-prometheus' },
+    { type: 'python', name: 'django-prometheus' },
+    { type: 'maven', name: 'io.prometheus:prometheus-metrics-core' },
+    { type: 'maven', name: 'io.prometheus:prometheus-metrics-exporter-httpserver' },
   ],
 });

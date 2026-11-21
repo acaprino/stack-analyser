@@ -11,4 +11,5 @@ register({
     { type: 'golang', name: 'github.com/NdoleStudio/lemonsqueezy-go' },
     { type: 'php', name: 'lemonsqueezy/laravel' },
   ],
+  hosts: ['api.lemonsqueezy.com'],
 });

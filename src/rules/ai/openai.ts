@@ -15,5 +15,7 @@ register({
     { type: 'npm', name: 'genkitx-openai' },
     { type: 'python', name: 'langchain-openai' },
     { type: 'python', name: 'openai' },
+    { type: 'golang', name: 'github.com/openai/openai-go/v3' },
   ],
+  hosts: ['api.openai.com'],
 });

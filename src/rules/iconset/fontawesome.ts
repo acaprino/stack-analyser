@@ -11,5 +11,6 @@ register({
     { type: 'npm', name: '@iconify-json/fa6-regular' },
     { type: 'npm', name: '@iconify-json/fa6-solid' },
     { type: 'npm', name: '@iconify-json/fa' },
+    { type: 'maven', name: 'org.webjars.npm:font-awesome' },
   ],
 });

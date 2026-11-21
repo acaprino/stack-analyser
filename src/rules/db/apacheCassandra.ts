@@ -5,7 +5,7 @@ register({
   name: 'Apache Cassandra',
   type: 'db',
   dependencies: [
-    { type: 'docker', name: /cassandra/, example: 'cassandra:0.0.0' },
+    { type: 'docker', name: /^cassandra(?:\/|$)/, example: 'cassandra' },
     { type: 'rust', name: 'discord-cassandra-cpp' },
     { type: 'rust', name: 'cassandra-cpp' },
     { type: 'npm', name: '@opentelemetry/instrumentation-cassandra-driver' },

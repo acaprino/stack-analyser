@@ -6,7 +6,7 @@ register({
   type: 'db',
   dependencies: [
     { type: 'npm', name: 'couchbase' },
-    { type: 'docker', name: /couchbase/, example: 'couchbase:0.0.0' },
+    { type: 'docker', name: /^couchbase(?:\/|$)/, example: 'couchbase' },
     { type: 'rust', name: 'couchbase' },
     { type: 'ruby', name: 'couchbase' },
     {

@@ -22,5 +22,11 @@ register({
     { type: 'rust', name: 'opentelemetry' },
     { type: 'githubAction', name: 'plengauer/Thoth' },
     { type: 'golang', name: 'github.com/getsentry/sentry-go/otel' },
+    { type: 'nuget', name: 'OpenTelemetry.Exporter.OpenTelemetryProtocol' },
+    { type: 'nuget', name: 'OpenTelemetry.Extensions.Hosting' },
+    { type: 'nuget', name: 'OpenTelemetry.Instrumentation.AspNetCore' },
+    { type: 'nuget', name: 'OpenTelemetry.Instrumentation.GrpcNetClient' },
+    { type: 'nuget', name: 'OpenTelemetry.Instrumentation.Http' },
+    { type: 'nuget', name: 'OpenTelemetry.Instrumentation.Runtime' },
   ],
 });

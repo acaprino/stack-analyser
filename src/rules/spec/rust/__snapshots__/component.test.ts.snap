@@ -2,6 +2,7 @@
 
 exports[`rust (component) > should match everything 1`] = `
 [
+  "actixweb",
   "algolia",
   "apache_cassandra",
   "apache_thrift",
@@ -46,7 +47,9 @@ exports[`rust (component) > should match everything 1`] = `
   "aws.sqs",
   "aws.timestream",
   "aws.translate",
+  "axum",
   "azure",
+  "azure.blobstorage",
   "azure.cosmosdb",
   "azure.functions",
   "azure.mariadb",
@@ -56,6 +59,7 @@ exports[`rust (component) > should match everything 1`] = `
   "azure.sql",
   "azure.storage",
   "cargo",
+  "clap",
   "clickhouse",
   "cloudflare",
   "convexdb",
@@ -67,6 +71,8 @@ exports[`rust (component) > should match everything 1`] = `
   "fastly",
   "firebase",
   "firecrawl",
+  "flagd",
+  "flutter-rust-bridge",
   "gcp",
   "gcp.bigquery",
   "gcp.gcs",
@@ -76,9 +82,13 @@ exports[`rust (component) > should match everything 1`] = `
   "google",
   "google.drive",
   "google.sheets",
+  "graphql-client-rust",
+  "grpc",
   "hashicorp_vault",
+  "hyper-rust",
   "influxdb",
   "jsonschema",
+  "juniper",
   "kubernetes",
   "launchdarkly",
   "libsql",
@@ -88,6 +98,8 @@ exports[`rust (component) > should match everything 1`] = `
   "memcached",
   "microsoft",
   "microsoft.onedrive",
+  "minijinja",
+  "mockall",
   "mongodb",
   "mysql",
   "nats",
@@ -103,28 +115,47 @@ exports[`rust (component) > should match everything 1`] = `
   "posthog",
   "prometheus",
   "propelauth",
+  "proptest",
+  "protobuf",
   "qdrant",
   "questdb",
   "rabbitmq",
+  "ratatui",
   "redis",
   "resend",
+  "rstest",
   "rust",
+  "sea-orm",
   "selenium",
   "sentry",
+  "serde",
+  "serde-json",
   "slack",
   "snowflake",
   "sqlite",
+  "sqlx-rust",
   "tauri",
   "tdengine",
   "telegram",
+  "tempfile-rust",
+  "tokio",
   "typesense",
   "vercel",
+  "webview2-com",
+  "windows-rs",
+  "wiremock-rs",
+  "yew",
   "zookeeper",
 ]
 `;
 
 exports[`rust (component) > should match everything 2`] = `
 [
+  [
+    "rust",
+    "actix-web",
+    "1.0.0",
+  ],
   [
     "rust",
     "algoliasearch",
@@ -347,6 +378,11 @@ exports[`rust (component) > should match everything 2`] = `
   ],
   [
     "rust",
+    "axum",
+    "1.0.0",
+  ],
+  [
+    "rust",
     "azure-functions",
     "1.0.0",
   ],
@@ -413,6 +449,11 @@ exports[`rust (component) > should match everything 2`] = `
   [
     "rust",
     "cassandra-cpp",
+    "1.0.0",
+  ],
+  [
+    "rust",
+    "clap",
     "1.0.0",
   ],
   [
@@ -487,6 +528,11 @@ exports[`rust (component) > should match everything 2`] = `
   ],
   [
     "rust",
+    "flutter_rust_bridge",
+    "1.0.0",
+  ],
+  [
+    "rust",
     "gcp-bigquery-client",
     "1.0.0",
   ],
@@ -517,7 +563,17 @@ exports[`rust (component) > should match everything 2`] = `
   ],
   [
     "rust",
+    "graphql_client",
+    "1.0.0",
+  ],
+  [
+    "rust",
     "hashicorp_vault",
+    "1.0.0",
+  ],
+  [
+    "rust",
+    "hyper",
     "1.0.0",
   ],
   [
@@ -533,6 +589,11 @@ exports[`rust (component) > should match everything 2`] = `
   [
     "rust",
     "jsonschema",
+    "1.0.0",
+  ],
+  [
+    "rust",
+    "juniper",
     "1.0.0",
   ],
   [
@@ -587,6 +648,21 @@ exports[`rust (component) > should match everything 2`] = `
   ],
   [
     "rust",
+    "metrics-exporter-prometheus",
+    "1.0.0",
+  ],
+  [
+    "rust",
+    "minijinja",
+    "1.0.0",
+  ],
+  [
+    "rust",
+    "mockall",
+    "1.0.0",
+  ],
+  [
+    "rust",
     "mongodb",
     "1.0.0",
   ],
@@ -618,6 +694,11 @@ exports[`rust (component) > should match everything 2`] = `
   [
     "rust",
     "onedrive-api",
+    "1.0.0",
+  ],
+  [
+    "rust",
+    "open-feature-flagd",
     "1.0.0",
   ],
   [
@@ -667,6 +748,26 @@ exports[`rust (component) > should match everything 2`] = `
   ],
   [
     "rust",
+    "proptest",
+    "1.0.0",
+  ],
+  [
+    "rust",
+    "prost",
+    "1.0.0",
+  ],
+  [
+    "rust",
+    "prost-types",
+    "1.0.0",
+  ],
+  [
+    "rust",
+    "protobuf",
+    "1.0.0",
+  ],
+  [
+    "rust",
     "qdrant-client",
     "1.0.0",
   ],
@@ -678,6 +779,16 @@ exports[`rust (component) > should match everything 2`] = `
   [
     "rust",
     "rabbitmq-stream-client",
+    "1.0.0",
+  ],
+  [
+    "rust",
+    "ratatui",
+    "1.0.0",
+  ],
+  [
+    "rust",
+    "ratatui-core",
     "1.0.0",
   ],
   [
@@ -702,7 +813,17 @@ exports[`rust (component) > should match everything 2`] = `
   ],
   [
     "rust",
+    "rstest",
+    "1.0.0",
+  ],
+  [
+    "rust",
     "rusqlite",
+    "1.0.0",
+  ],
+  [
+    "rust",
+    "sea-orm",
     "1.0.0",
   ],
   [
@@ -713,6 +834,16 @@ exports[`rust (component) > should match everything 2`] = `
   [
     "rust",
     "sentry",
+    "1.0.0",
+  ],
+  [
+    "rust",
+    "serde",
+    "1.0.0",
+  ],
+  [
+    "rust",
+    "serde_json",
     "1.0.0",
   ],
   [
@@ -737,6 +868,11 @@ exports[`rust (component) > should match everything 2`] = `
   ],
   [
     "rust",
+    "sqlx",
+    "1.0.0",
+  ],
+  [
+    "rust",
     "taos",
     "1.0.0",
   ],
@@ -747,7 +883,17 @@ exports[`rust (component) > should match everything 2`] = `
   ],
   [
     "rust",
+    "tauri-build",
+    "1.0.0",
+  ],
+  [
+    "rust",
     "teloxide",
+    "1.0.0",
+  ],
+  [
+    "rust",
+    "tempfile",
     "1.0.0",
   ],
   [
@@ -762,12 +908,47 @@ exports[`rust (component) > should match everything 2`] = `
   ],
   [
     "rust",
+    "tokio",
+    "1.0.0",
+  ],
+  [
+    "rust",
+    "tonic",
+    "1.0.0",
+  ],
+  [
+    "rust",
     "typesense",
     "1.0.0",
   ],
   [
     "rust",
     "vercel_runtime",
+    "1.0.0",
+  ],
+  [
+    "rust",
+    "webview2-com",
+    "1.0.0",
+  ],
+  [
+    "rust",
+    "windows-core",
+    "1.0.0",
+  ],
+  [
+    "rust",
+    "windows-sys",
+    "1.0.0",
+  ],
+  [
+    "rust",
+    "wiremock",
+    "1.0.0",
+  ],
+  [
+    "rust",
+    "yew",
     "1.0.0",
   ],
   [

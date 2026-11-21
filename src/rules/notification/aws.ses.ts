@@ -20,5 +20,6 @@ register({
       example: 'aws_ses_queue',
     },
     { type: 'php', name: 'async-aws/ses' },
+    { type: 'npm', name: '@aws-sdk/client-sesv2' },
   ],
 });

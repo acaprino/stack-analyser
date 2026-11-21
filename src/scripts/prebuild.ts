@@ -2,7 +2,6 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 
 import { registeredRules } from '../register.js';
-import '../rules/index.js';
 
 async function ensureIndexFiles(rulesFolder: string): Promise<void> {
   const folders = await fs.readdir(rulesFolder, { withFileTypes: true });
@@ -15,7 +14,7 @@ async function ensureIndexFiles(rulesFolder: string): Promise<void> {
     }
 
     const folderPath = path.join(rulesFolder, folder.name);
-    const files = await fs.readdir(folderPath);
+    const files = (await fs.readdir(folderPath)).sort();
     let imports = '';
 
     for (const file of files) {
@@ -31,21 +30,21 @@ async function ensureIndexFiles(rulesFolder: string): Promise<void> {
 
 // Ensure all rules folders have proper index.ts files
 await ensureIndexFiles(path.join(import.meta.dirname, '../rules'));
+await import('../rules/index.js');
 
 await (async (): Promise<void> => {
   const list: string[] = registeredRules
     .sort((a, b) => (a.tech > b.tech ? 1 : -1))
     .map(({ tech, name, type }) => {
-      return `{ key: '${tech}', name: '${name}', type: '${type}' }`;
+      return `listTech.push({ key: ${JSON.stringify(tech)}, name: ${JSON.stringify(name)}, type: ${JSON.stringify(type)} });`;
     });
 
   await fs.writeFile(
     './src/common/techs.generated.ts',
     `import type { AllowedKeys, TechItem } from '../types/techs.js';
 
-export const listTech: TechItem[] = [
-  ${list.join(',\n  ')},
-];
+export const listTech: TechItem[] = [];
+${list.join('\n')}
 
 export const listIndexed = {} as Record<AllowedKeys, TechItem>;
 for (const v of Object.values(listTech)) {

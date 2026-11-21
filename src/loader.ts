@@ -1,4 +1,5 @@
 import { matchExtensions, matchFiles, matchFilesRegex } from './common/rules/matchFiles.js';
+import { packagePattern } from './common/packageIdentity.js';
 import { registeredRules } from './register.js';
 import { matchDotEnv } from './rules/spec/dotenv/matcher.js';
 
@@ -18,6 +19,7 @@ import type { AllowedKeys } from './types/techs.js';
 export const rulesTechs: TechMatcher[] = [];
 export const rulesExtensions: ExtensionMatcher[] = [];
 export const rulesDotEnv: DotEnvMatcher[] = [];
+export const endpointHosts = new Map<string, Set<AllowedKeys>>();
 export const rulesComponents: ComponentMatcher[] = [];
 
 export const dependencies: Record<SupportedDeps, { match: RegExp; tech: AllowedKeys }[]> = {
@@ -25,11 +27,16 @@ export const dependencies: Record<SupportedDeps, { match: RegExp; tech: AllowedK
   deno: [],
   docker: [],
   golang: [],
+  hex: [],
+  maven: [],
   npm: [],
+  nuget: [],
   php: [],
+  pub: [],
   python: [],
   ruby: [],
   rust: [],
+  swiftpm: [],
   terraform: [],
   githubAction: [],
 };
@@ -50,13 +57,20 @@ export function loadAllRules(): void {
 }
 
 export function loadOne(rule: Rule): void {
+  for (const value of rule.hosts ?? []) {
+    const host = value.toLowerCase();
+    const techs = endpointHosts.get(host) ?? new Set<AllowedKeys>();
+    techs.add(rule.tech);
+    endpointHosts.set(host, techs);
+  }
+
   if (rule.dependencies) {
     rule.dependencies.map((dep) => {
       if (dep.name === '') {
         throw new Error(`empty dependency name for ${rule.name} (${rule.type} > ${rule.tech})`);
       }
       dependencies[dep.type].push({
-        match: typeof dep.name === 'string' ? new RegExp(`^${dep.name}$`) : dep.name,
+        match: typeof dep.name === 'string' ? packagePattern(dep.name, dep.type) : dep.name,
         tech: rule.tech,
       });
       rawList.push({ type: 'dependency', ref: dep });

@@ -19,5 +19,9 @@ register({
     { type: 'ruby', name: 'fluent-plugin-kafka' },
     { type: 'ruby', name: 'logstash-output-kafka' },
     { type: 'ruby', name: 'logstash-input-kafka' },
+    { type: 'docker', name: 'apache/kafka' },
+    { type: 'docker', name: 'apache/kafka-native' },
+    { type: 'maven', name: 'org.apache.kafka:kafka-clients' },
+    { type: 'nuget', name: 'Confluent.Kafka' },
   ],
 });

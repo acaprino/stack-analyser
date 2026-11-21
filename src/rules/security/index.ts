@@ -1,9 +1,16 @@
 import './aws.kms.js';
+import './azure.keyvault.js';
 import './checkov.js';
+import './cloudflare.turnstile.js';
 import './datadome.js';
+import './friendly-captcha.js';
 import './gcp.kms.js';
 import './gitguardian.js';
+import './google.recaptcha.js';
+import './hcaptcha.js';
 import './infisical.js';
+import './lets-encrypt.js';
+import './simplesamlphp.js';
 import './snyk.js';
 import './sqreen.js';
 import './wiz.js';

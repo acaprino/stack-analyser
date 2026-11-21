@@ -13,4 +13,5 @@ register({
     { type: 'php', name: 'adilbaig/pagerduty' },
     { type: 'npm', name: '@pulumi/pagerduty' },
   ],
+  hosts: ['events.pagerduty.com'],
 });

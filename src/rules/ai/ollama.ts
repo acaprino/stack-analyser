@@ -12,5 +12,9 @@ register({
     { type: 'npm', name: 'ollama' },
     { type: 'python', name: 'langchain-ollama' },
     { type: 'python', name: 'ollama' },
+    { type: 'python', name: 'llama-index-embeddings-ollama' },
+    { type: 'python', name: 'llama-index-llms-ollama' },
+    { type: 'nuget', name: 'CommunityToolkit.Aspire.Hosting.Ollama' },
+    { type: 'nuget', name: 'CommunityToolkit.Aspire.OllamaSharp' },
   ],
 });

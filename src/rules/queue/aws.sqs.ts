@@ -17,5 +17,7 @@ register({
     },
     { type: 'php', name: 'async-aws/sqs' },
     { type: 'terraform.resource', name: 'airbyte_source_amazon_sqs' },
+    { type: 'hex', name: 'broadway_sqs' },
+    { type: 'hex', name: 'ex_aws_sqs' },
   ],
 });

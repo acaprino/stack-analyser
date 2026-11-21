@@ -33,8 +33,10 @@ export const detectNodeComponent: ComponentMatcher = async (files, provider) => 
     }
 
     const deps = {
+      ...json.peerDependencies,
       ...json.dependencies,
       ...json.devDependencies,
+      ...json.optionalDependencies,
     };
     const techs = matchDependencies(Object.keys(deps), 'npm');
     const depsFlatten: Analyser['dependencies'] = Object.entries(deps).map(

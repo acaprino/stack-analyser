@@ -8,11 +8,14 @@ register({
   dependencies: [
     { type: 'npm', name: 'amqplib' },
     { type: 'npm', name: '@opentelemetry/instrumentation-amqplib' },
-    { type: 'docker', name: /rabbitmq/, example: 'rabbitmq:0.0.0' },
+    { type: 'docker', name: /^rabbitmq(?:\/|$)/, example: 'rabbitmq' },
     { type: 'rust', name: 'rabbitmq-stream-client' },
     { type: 'ruby', name: 'bunny' },
     { type: 'php', name: 'php-amqplib/php-amqplib' },
     { type: 'npm', name: '@pulumi/rabbitmq' },
     { type: 'python', name: 'amqp' },
+    { type: 'php', name: 'php-amqplib/rabbitmq-bundle' },
+    { type: 'nuget', name: 'Aspire.Hosting.RabbitMQ' },
+    { type: 'nuget', name: 'Aspire.RabbitMQ.Client' },
   ],
 });

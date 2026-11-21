@@ -18,6 +18,7 @@ exports[`docker > should match everything 1`] = `
   "apache_storm",
   "apache_thrift",
   "apachetika",
+  "apicurio-registry",
   "appsignal",
   "atlasgo",
   "atlassian",
@@ -29,12 +30,14 @@ exports[`docker > should match everything 1`] = `
   "aws.s3",
   "azure",
   "blackfire",
+  "browserless",
   "bytebase",
   "caddy",
   "checkov",
   "chef",
   "clickhouse",
   "consul",
+  "coredns",
   "couchbase",
   "cratedb",
   "crawl4ai",
@@ -47,36 +50,52 @@ exports[`docker > should match everything 1`] = `
   "droneci",
   "drupal",
   "elasticsearch",
+  "envoy",
+  "firepit",
+  "flagd",
+  "fluentd",
   "flyway",
   "ghost",
   "gitguardian",
   "goacmelego",
   "golang",
   "golangcilint",
+  "gotenberg",
   "grafana",
+  "grafana.lgtm",
+  "greenmail",
   "haproxy",
   "hashicorp_vault",
   "httpd",
   "hugo",
+  "inbucket",
   "infisical",
   "influxdb",
+  "instana",
+  "jaeger",
   "jenkins",
+  "jhipster-control-center",
   "joomla",
   "k6",
+  "keycloak",
   "kibana",
   "kong",
   "lago",
   "lighthouse",
   "liquibase",
+  "litefs",
   "logstash",
   "mailhog",
+  "mailpit",
   "mariadb",
   "matomo",
   "meilisearch",
   "memcached",
   "metabase",
   "milvusdb",
+  "minio",
   "mkdocs",
+  "mock-oauth2-server",
   "mongodb",
   "mongoexpress",
   "mysql",
@@ -90,7 +109,12 @@ exports[`docker > should match everything 1`] = `
   "nodejs",
   "novu",
   "oceanbase",
+  "openldap",
+  "opensearch",
   "opentelemetry",
+  "otel-collector",
+  "otel-ebpf-profiler",
+  "papercut-smtp",
   "percona",
   "php",
   "plausible",
@@ -112,6 +136,7 @@ exports[`docker > should match everything 1`] = `
   "selenium",
   "sentry",
   "signoz",
+  "simplesamlphp",
   "slack",
   "slatedocs",
   "snyk",
@@ -136,6 +161,7 @@ exports[`docker > should match everything 1`] = `
   "typesense",
   "uptimekuma",
   "vale",
+  "valkey",
   "victoriametrics",
   "wordpress",
   "zipkin",
@@ -178,7 +204,7 @@ exports[`docker > should match everything 2`] = `
   [
     "docker",
     "amazon/dynamodb-local",
-    "0.0.0",
+    "latest",
   ],
   [
     "docker",
@@ -203,6 +229,16 @@ exports[`docker > should match everything 2`] = `
   [
     "docker",
     "apache/hive",
+    "0.0.0",
+  ],
+  [
+    "docker",
+    "apache/kafka",
+    "0.0.0",
+  ],
+  [
+    "docker",
+    "apache/kafka-native",
     "0.0.0",
   ],
   [
@@ -253,6 +289,11 @@ exports[`docker > should match everything 2`] = `
   [
     "docker",
     "atlassian/jira-software",
+    "0.0.0",
+  ],
+  [
+    "docker",
+    "axllent/mailpit",
     "0.0.0",
   ],
   [
@@ -408,12 +449,12 @@ exports[`docker > should match everything 2`] = `
   [
     "docker",
     "caddy",
-    "0.0.0",
+    "latest",
   ],
   [
     "docker",
     "cassandra",
-    "0.0.0",
+    "latest",
   ],
   [
     "docker",
@@ -502,8 +543,13 @@ exports[`docker > should match everything 2`] = `
   ],
   [
     "docker",
-    "couchbase",
+    "coredns/coredns",
     "0.0.0",
+  ],
+  [
+    "docker",
+    "couchbase",
+    "latest",
   ],
   [
     "docker",
@@ -513,7 +559,7 @@ exports[`docker > should match everything 2`] = `
   [
     "docker",
     "cypress",
-    "0.0.0",
+    "latest",
   ],
   [
     "docker",
@@ -528,7 +574,7 @@ exports[`docker > should match everything 2`] = `
   [
     "docker",
     "denoland/deno",
-    "0.0.0",
+    "latest",
   ],
   [
     "docker",
@@ -558,6 +604,11 @@ exports[`docker > should match everything 2`] = `
   [
     "docker",
     "elasticsearch",
+    "latest",
+  ],
+  [
+    "docker",
+    "envoyproxy/envoy",
     "0.0.0",
   ],
   [
@@ -567,7 +618,22 @@ exports[`docker > should match everything 2`] = `
   ],
   [
     "docker",
+    "fluentd",
+    "0.0.0",
+  ],
+  [
+    "docker",
+    "flyio/litefs",
+    "0.0.0",
+  ],
+  [
+    "docker",
     "flyway/flyway",
+    "0.0.0",
+  ],
+  [
+    "docker",
+    "gcr.io/distroless/nodejs24-debian13",
     "0.0.0",
   ],
   [
@@ -602,6 +668,21 @@ exports[`docker > should match everything 2`] = `
   ],
   [
     "docker",
+    "ghcr.io/browserless/chromium",
+    "0.0.0",
+  ],
+  [
+    "docker",
+    "ghcr.io/florianl/firepit",
+    "0.0.0",
+  ],
+  [
+    "docker",
+    "ghcr.io/navikt/mock-oauth2-server",
+    "0.0.0",
+  ],
+  [
+    "docker",
     "ghcr.io/novuhq/novu/api",
     "0.0.0",
   ],
@@ -622,7 +703,27 @@ exports[`docker > should match everything 2`] = `
   ],
   [
     "docker",
+    "ghcr.io/open-feature/flagd",
+    "0.0.0",
+  ],
+  [
+    "docker",
+    "ghcr.io/open-telemetry/opentelemetry-collector-releases/opentelemetry-collector-contrib",
+    "0.0.0",
+  ],
+  [
+    "docker",
+    "ghcr.io/open-telemetry/opentelemetry-collector-releases/opentelemetry-collector-ebpf-profiler",
+    "0.0.0",
+  ],
+  [
+    "docker",
     "ghcr.io/plausible/community-edition",
+    "0.0.0",
+  ],
+  [
+    "docker",
+    "ghcr.io/valkey-io/valkey",
     "0.0.0",
   ],
   [
@@ -648,6 +749,11 @@ exports[`docker > should match everything 2`] = `
   [
     "docker",
     "golangci/golangci-lint",
+    "0.0.0",
+  ],
+  [
+    "docker",
+    "gotenberg/gotenberg",
     "0.0.0",
   ],
   [
@@ -687,7 +793,17 @@ exports[`docker > should match everything 2`] = `
   ],
   [
     "docker",
+    "grafana/otel-lgtm",
+    "0.0.0",
+  ],
+  [
+    "docker",
     "grafana/tempo",
+    "0.0.0",
+  ],
+  [
+    "docker",
+    "greenmail/standalone",
     "0.0.0",
   ],
   [
@@ -718,11 +834,16 @@ exports[`docker > should match everything 2`] = `
   [
     "docker",
     "httpd",
-    "0.0.0",
+    "latest",
   ],
   [
     "docker",
     "hugomods/hugo",
+    "0.0.0",
+  ],
+  [
+    "docker",
+    "inbucket/inbucket",
     "0.0.0",
   ],
   [
@@ -733,6 +854,11 @@ exports[`docker > should match everything 2`] = `
   [
     "docker",
     "influxdb",
+    "latest",
+  ],
+  [
+    "docker",
+    "instana/agent",
     "0.0.0",
   ],
   [
@@ -748,6 +874,16 @@ exports[`docker > should match everything 2`] = `
   [
     "docker",
     "jenkins-docker",
+    "latest",
+  ],
+  [
+    "docker",
+    "jhipster/jhipster-control-center",
+    "0.0.0",
+  ],
+  [
+    "docker",
+    "jijiechen/papercut",
     "0.0.0",
   ],
   [
@@ -772,8 +908,13 @@ exports[`docker > should match everything 2`] = `
   ],
   [
     "docker",
-    "kibana",
+    "kenchan0130/simplesamlphp",
     "0.0.0",
+  ],
+  [
+    "docker",
+    "kibana",
+    "latest",
   ],
   [
     "docker",
@@ -813,7 +954,7 @@ exports[`docker > should match everything 2`] = `
   [
     "docker",
     "mariadb",
-    "0.0.0",
+    "latest",
   ],
   [
     "docker",
@@ -828,7 +969,7 @@ exports[`docker > should match everything 2`] = `
   [
     "docker",
     "memcached",
-    "0.0.0",
+    "latest",
   ],
   [
     "docker",
@@ -843,6 +984,11 @@ exports[`docker > should match everything 2`] = `
   [
     "docker",
     "milvusdb/milvus-dev",
+    "0.0.0",
+  ],
+  [
+    "docker",
+    "minio/minio",
     "0.0.0",
   ],
   [
@@ -873,7 +1019,7 @@ exports[`docker > should match everything 2`] = `
   [
     "docker",
     "mysql",
-    "0.0.0",
+    "latest",
   ],
   [
     "docker",
@@ -903,7 +1049,7 @@ exports[`docker > should match everything 2`] = `
   [
     "docker",
     "neo4j",
-    "0.0.0",
+    "latest",
   ],
   [
     "docker",
@@ -978,7 +1124,7 @@ exports[`docker > should match everything 2`] = `
   [
     "docker",
     "nodejs",
-    "0.0.0",
+    "latest",
   ],
   [
     "docker",
@@ -993,6 +1139,11 @@ exports[`docker > should match everything 2`] = `
   [
     "docker",
     "okteto/php",
+    "0.0.0",
+  ],
+  [
+    "docker",
+    "opensearchproject/opensearch",
     "0.0.0",
   ],
   [
@@ -1018,6 +1169,11 @@ exports[`docker > should match everything 2`] = `
   [
     "docker",
     "percona",
+    "latest",
+  ],
+  [
+    "docker",
+    "pgsty/minio",
     "0.0.0",
   ],
   [
@@ -1082,13 +1238,33 @@ exports[`docker > should match everything 2`] = `
   ],
   [
     "docker",
+    "quay.io/apicurio/apicurio-registry",
+    "0.0.0",
+  ],
+  [
+    "docker",
+    "quay.io/jaegertracing/jaeger",
+    "0.0.0",
+  ],
+  [
+    "docker",
+    "quay.io/keycloak/keycloak",
+    "0.0.0",
+  ],
+  [
+    "docker",
+    "quay.io/prometheus/prometheus",
+    "0.0.0",
+  ],
+  [
+    "docker",
     "questdb/questdb",
     "0.0.0",
   ],
   [
     "docker",
     "rabbitmq",
-    "0.0.0",
+    "latest",
   ],
   [
     "docker",
@@ -1118,7 +1294,7 @@ exports[`docker > should match everything 2`] = `
   [
     "docker",
     "redis",
-    "0.0.0",
+    "latest",
   ],
   [
     "docker",
@@ -1127,8 +1303,13 @@ exports[`docker > should match everything 2`] = `
   ],
   [
     "docker",
-    "ruby",
+    "rroemhild/test-openldap",
     "0.0.0",
+  ],
+  [
+    "docker",
+    "ruby",
+    "latest",
   ],
   [
     "docker",
@@ -1288,7 +1469,7 @@ exports[`docker > should match everything 2`] = `
   [
     "docker",
     "strapi",
-    "0.0.0",
+    "latest",
   ],
   [
     "docker",
@@ -1412,6 +1593,11 @@ exports[`docker > should match everything 2`] = `
   ],
   [
     "docker",
+    "valkey/valkey",
+    "0.0.0",
+  ],
+  [
+    "docker",
     "vault",
     "0.0.0",
   ],
@@ -1478,7 +1664,7 @@ exports[`docker > should match everything 2`] = `
   [
     "docker",
     "zookeeper",
-    "0.0.0",
+    "latest",
   ],
 ]
 `;

@@ -13,8 +13,8 @@ register({
     },
     {
       type: 'docker',
-      name: /amazon\/dynamodb-local/,
-      example: 'amazon/dynamodb-local:0.0.0',
+      name: /^amazon\/dynamodb-local$/,
+      example: 'amazon/dynamodb-local',
     },
     { type: 'rust', name: 'aws-sdk-dynamodb' },
     {

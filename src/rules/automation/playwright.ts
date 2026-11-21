@@ -4,14 +4,15 @@ register({
   tech: 'playwright',
   name: 'Playwright',
   type: 'automation',
-  files: ['playwright.config.ts'],
+  files: ['playwright.config.ts', 'playwright.config.cjs', 'playwright.config.cts', 'playwright.config.js', 'playwright.config.mjs', 'playwright.config.mts'],
   dependencies: [
     { type: 'npm', name: 'playwright' },
     { type: 'npm', name: '@playwright/test' },
     { type: 'githubAction', name: 'microsoft/playwright-github-action' },
     { type: 'docker', name: 'mcr.microsoft.com/playwright' },
     { type: 'python', name: 'pytest-playwright' },
-    // {type: 'dotnet', name: 'Microsoft.Playwright.NUnit'},
-    // {type: 'java', name: 'com.microsoft.playwright.*'},
+    { type: 'maven', name: 'io.quarkiverse.playwright:quarkus-playwright' },
+    { type: 'nuget', name: 'Microsoft.Playwright' },
+    { type: 'python', name: 'playwright' },
   ],
 });

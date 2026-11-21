@@ -13,5 +13,6 @@ register({
     { type: 'ruby', name: 'plausible_api' },
     { type: 'php', name: 'vincentbean/laravel-plausible' },
     { type: 'golang', name: 'github.com/andrerfcsantos/go-plausible/plausible' },
+    { type: 'npm', name: 'next-plausible' },
   ],
 });

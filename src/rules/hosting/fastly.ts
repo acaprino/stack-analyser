@@ -4,7 +4,7 @@ register({
   tech: 'fastly',
   name: 'Fastly',
   type: 'hosting',
-  dotenv: ['FASTLY_'],
+  dotenv: ['FASTLY_', 'HEXPM_FASTLY_KEY'],
   dependencies: [
     { type: 'rust', name: 'fastly-api' },
     {

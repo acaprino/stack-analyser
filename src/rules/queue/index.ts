@@ -1,4 +1,5 @@
 import './apacheKafka.js';
+import './apicurio-registry.js';
 import './aws.kafka.js';
 import './aws.kinesis.js';
 import './aws.mq.js';

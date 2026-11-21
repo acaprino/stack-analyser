@@ -1,3 +1,4 @@
+import { detectNugetComponent } from '../spec/nuget/component.js';
 import { register } from '../../register.js';
 
 register({
@@ -5,4 +6,5 @@ register({
   name: 'NuGet',
   type: 'package_manager',
   files: ['.csproj'],
+  detect: detectNugetComponent,
 });

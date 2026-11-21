@@ -1,3 +1,4 @@
+import { detectPubComponent } from '../spec/pub/component.js';
 import { register } from '../../register.js';
 
 register({
@@ -5,4 +6,5 @@ register({
   name: 'Dart',
   type: 'language',
   extensions: ['.dart'],
+  detect: detectPubComponent,
 });

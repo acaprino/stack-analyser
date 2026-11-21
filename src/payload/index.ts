@@ -5,13 +5,14 @@ import { detectLang } from '../common/languages.js';
 import { nid } from '../common/nid.js';
 import { rulesComponents } from '../loader.js';
 import { matchAllFiles } from '../matchAllFiles.js';
+import { findHostMentions } from '../rules/spec/hosts/index.js';
 import { IGNORED_DIVE_PATHS } from '../provider/base.js';
 import { listIndexed } from '../register.js';
 import { findHosting, findImplicitComponent } from './helpers.js';
 import { detectInDotEnv } from '../rules/spec/dotenv/index.js';
 
 import type { BaseProvider } from '../provider/base.js';
-import type { Analyser, AnalyserJson, Dependency } from '../types/index.js';
+import type { Analyser, AnalyserJson, Dependency, HostMention } from '../types/index.js';
 import type { AllowedLicenses } from '../types/licenses.js';
 import type { AllowedKeys } from '../types/techs.js';
 
@@ -29,6 +30,7 @@ export class Payload implements Analyser {
   public edges: Analyser['edges'];
   public parent?: null | Payload;
   public reason: Set<string>;
+  public mentions: HostMention[] = [];
 
   constructor({
     id,
@@ -105,6 +107,7 @@ export class Payload implements Analyser {
     // Detect Tech
     const matched = matchAllFiles(files, provider.basePath);
     ctx.addTechs(matched);
+    ctx.mentions.push(...(await findHostMentions(files, provider)));
 
     // Recursively dive in folders
     for (const file of files) {
@@ -140,7 +143,7 @@ export class Payload implements Analyser {
     if (service.tech?.includes('.')) {
       const [host] = service.tech.split('.');
       const tech = listIndexed[host as AllowedKeys];
-      if (tech.type === 'hosting' || tech.type === 'cloud') {
+      if (tech?.type === 'hosting' || tech?.type === 'cloud') {
         const pl = new Payload({
           name: tech.name,
           folderPath: service.path,
@@ -264,6 +267,10 @@ export class Payload implements Analyser {
    * It's mostly used to flatten folders.
    */
   combine(pl: Payload): void {
+    for (const reason of pl.reason) this.reason.add(reason);
+    if (pl.mentions.length > 0) {
+      this.mentions = [...new Set([...this.mentions, ...pl.mentions])];
+    }
     // Log all paths were it was found
     this.path = new Set([...this.path, ...pl.path]);
 
@@ -299,8 +306,10 @@ export class Payload implements Analyser {
       dependencies: this.dependencies,
     });
     cp.techs = new Set(this.techs);
+    cp.reason = new Set(this.reason);
     cp.inComponent = this.inComponent;
     cp.edges = this.edges;
+    cp.mentions = [...this.mentions];
     cp.path = this.path;
     cp.languages = this.languages;
     cp.licenses = new Set(this.licenses);
@@ -339,6 +348,7 @@ export class Payload implements Analyser {
       licenses: [...this.licenses.values()],
       dependencies: this.dependencies,
       reason: [...this.reason.values()],
+      ...(this.mentions.length > 0 && { mentions: this.mentions.map((mention) => ({ ...mention })) }),
     };
   }
 }

@@ -12,4 +12,5 @@ register({
     { type: 'python', name: 'paddle-python-sdk' },
     { type: 'php', name: 'paddlehq/paddle-php-sdk' },
   ],
+  hosts: ['api.paddle.com', 'sandbox-api.paddle.com'],
 });

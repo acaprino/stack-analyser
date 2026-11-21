@@ -2,7 +2,7 @@ import { register } from '../../register.js';
 
 register({
   tech: 'tablericons',
-  name: 'Tabler',
+  name: 'Tabler Icons',
   type: 'iconset',
   dependencies: [
     { type: 'npm', name: '@tabler/icons-react' },

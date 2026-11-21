@@ -2,18 +2,23 @@ import path from 'node:path';
 
 import type { BaseProvider, ProviderFile } from './base.js';
 
+function fixturePath(value: string): string {
+  return value.replaceAll('\\', '/');
+}
+
 export class FakeProvider implements BaseProvider {
   basePath: string;
   private paths;
   private files;
 
   constructor(opts: { paths: Record<string, string[]>; files: Record<string, string> }) {
-    this.paths = opts.paths;
-    this.files = opts.files;
+    this.paths = Object.fromEntries(Object.entries(opts.paths).map(([key, value]) => [fixturePath(key), value]));
+    this.files = Object.fromEntries(Object.entries(opts.files).map(([key, value]) => [fixturePath(key), value]));
     this.basePath = '/';
   }
 
   listDir(pathRelative: string): Promise<ProviderFile[]> {
+    pathRelative = fixturePath(pathRelative);
     if (!(pathRelative in this.paths)) {
       return Promise.resolve([]);
     }
@@ -25,7 +30,7 @@ export class FakeProvider implements BaseProvider {
         return {
           name: isDir ? file.slice(0, Math.max(0, file.length - 1)) : file,
           type: isDir ? 'dir' : 'file',
-          fp: path.join(pathRelative, file),
+          fp: path.posix.join(pathRelative, file),
         };
       })
     );
@@ -36,6 +41,7 @@ export class FakeProvider implements BaseProvider {
   }
 
   open(pathRelative: string): Promise<string> {
+    pathRelative = fixturePath(pathRelative);
     if (!(pathRelative in this.files)) {
       throw new Error(`not found "${pathRelative}"`);
     }
