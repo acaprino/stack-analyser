@@ -77,11 +77,44 @@ const cases: [SupportedDeps, string, string[]][] = [
   ['docker', 'jenkins/jenkins:lts', ['jenkins']],
   ['docker', 'daprio/sentry', ['dapr']],
   ['docker', 'getsentry/sentry', ['sentry']],
+  ['maven', 'io.micronaut:micronaut-http-client', ['micronaut']],
+  ['maven', 'io.github.resilience4j:resilience4j-circuitbreaker', ['resilience4j']],
+  ['maven', 'io.quarkus:quarkus-rest', ['quarkus-rest']],
+  ['maven', 'org.springframework.kafka:spring-kafka', ['apache_kafka']],
+  ['golang', 'github.com/DataDog/dd-trace-go/v2', ['datadog']],
+  ['golang', 'github.com/hashicorp/vault/api', ['hashicorp_vault']],
+  ['python', 'pulumi-docker', ['docker']],
+  ['python', 'jinja2', ['jinja']],
+  ['npm', 'react-email', ['reactemail']],
+];
+
+// Signs that the registry additions declare wrong and that the fork must not hold as a package. The bare
+// Gradle plugin ids (com.android.application, org.springframework.boot and six more) are not here: the additions
+// replace that package by the same anchored pattern, which the fork has. postman-collection is also on the list
+// and stays in the postman rule: dropping it loses postman on a recorded project (real-app-hoppscotch), and no
+// recognition may be lost.
+const wrongSigns: [string, SupportedDeps, string][] = [
+  ['angular', 'npm', 'angular'],
+  ['azure.storage', 'npm', '@azure/storage-blob'],
+  ['azure.storage', 'ruby', 'azure-blob'],
+  ['azure.storage', 'ruby', 'azure-storage-blob'],
+  ['azure.storage', 'ruby', 'logstash-input-azureblob'],
+  ['azure.storage', 'php', 'microsoft/azure-storage-blob'],
+  ['azure.storage', 'php', 'league/flysystem-azure-blob-storage'],
+  ['azure.storage', 'rust', 'azure_storage_blobs'],
+  ['azure.storage', 'terraform.resource', 'airbyte_destination_azure_blob_storage'],
+  ['azure.storage', 'python', 'azure-storage-blob'],
+  ['azure.storage', 'golang', 'github.com/azure/azure-storage-blob-go'],
+  ['gcp', 'npm', 'passport-google-oauth20'],
 ];
 
 describe('package identities', () => {
   it.each(cases)('%s %s', (type, name, expected) => {
     expect([...matchDependencies([name], type).keys()].sort()).toEqual(expected);
+  });
+
+  it.each(wrongSigns)('%s is not identified by the wrong sign %s %s', (tech, type, name) => {
+    expect([...matchDependencies([name], type).keys()]).not.toContain(tech);
   });
 
   it('loading the default catalog again preserves matcher and component counts', () => {

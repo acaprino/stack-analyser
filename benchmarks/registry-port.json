@@ -1,0 +1,975 @@
+{
+  "registry": "e93c2970c83d892ff5cf8922fcc63f2d6037c459a8158652b3625319cda83f87",
+  "new": [
+    "1password",
+    "activeloop",
+    "aftership",
+    "agora",
+    "aiohttp",
+    "airbrake",
+    "alby",
+    "alchemy",
+    "alembic",
+    "algorand",
+    "apache-beam",
+    "apache-pulsar",
+    "app-store",
+    "appwrite",
+    "arcgis",
+    "awscdk",
+    "backblaze",
+    "backendless",
+    "binance",
+    "bitly",
+    "bitwarden",
+    "bluesky",
+    "boto3",
+    "braintree",
+    "braintrust",
+    "bunq",
+    "campaign-monitor",
+    "camunda",
+    "chartmogul",
+    "chromatic",
+    "civo",
+    "cockroach-labs",
+    "codesandbox",
+    "coinbase",
+    "conekta",
+    "containerd",
+    "contentstack",
+    "coze",
+    "d-wave-systems",
+    "dask",
+    "dbt",
+    "deepgram",
+    "deepl",
+    "directus",
+    "dodo-payments",
+    "etcd",
+    "event-store",
+    "evernote",
+    "formbricks",
+    "foundationdb",
+    "giphy",
+    "google-ads",
+    "google-earth-engine",
+    "gunicorn",
+    "honeycomb",
+    "immich",
+    "internet-computer",
+    "ionos",
+    "iota",
+    "jellyfin",
+    "jfrog",
+    "jira-software",
+    "jitsi",
+    "jupyter",
+    "kaggle",
+    "keeper",
+    "keras",
+    "langchain-corporate",
+    "line",
+    "livechat",
+    "llamaindex",
+    "lm-studio",
+    "looker",
+    "loom",
+    "loops",
+    "magic",
+    "mailtrap",
+    "maptiler",
+    "matplotlib",
+    "mercado-pago",
+    "microstrategy",
+    "mlflow",
+    "modal",
+    "modelscope",
+    "nhost",
+    "nomad",
+    "numpy",
+    "opencage",
+    "opencv",
+    "opensea",
+    "openzeppelin",
+    "pandas",
+    "patreon",
+    "percy",
+    "perplexity",
+    "pexels",
+    "pillow",
+    "pip",
+    "plotly",
+    "pocketbase",
+    "podman",
+    "poe",
+    "polars",
+    "polkadot",
+    "prismic",
+    "qase",
+    "qlik",
+    "rarible",
+    "ray",
+    "razorpay",
+    "readme",
+    "removebg",
+    "roboflow",
+    "ruff",
+    "sauce-labs",
+    "scikitlearn",
+    "scipy",
+    "scrapy",
+    "shortcut",
+    "smartthings",
+    "solana",
+    "spacy",
+    "sparkpost",
+    "streamlit",
+    "teradata",
+    "thirdweb",
+    "todoist",
+    "trino",
+    "typer",
+    "unsplash",
+    "uv",
+    "vimeo",
+    "viper",
+    "virustotal",
+    "vonage",
+    "wakatime",
+    "wandb",
+    "weaviate",
+    "webex",
+    "what3words",
+    "xendit",
+    "yandex-cloud"
+  ],
+  "extended": {
+    "adyen": [
+      "python:adyen"
+    ],
+    "amplitude": [
+      "golang:github.com/amplitude/amplitude-go"
+    ],
+    "ansible": [
+      "python:ansible"
+    ],
+    "apache_cassandra": [
+      "python:cassandra-driver"
+    ],
+    "apache_flink": [
+      "python:apache-flink"
+    ],
+    "apache_kafka": [
+      "maven:org.springframework.kafka:spring-kafka"
+    ],
+    "apache_spark": [
+      "python:pyspark"
+    ],
+    "apify": [
+      "golang:github.com/apify/apify-client-go",
+      "rust:apify-client"
+    ],
+    "apollo-server": [
+      "npm:apollo-server",
+      "npm:apollo-server-express"
+    ],
+    "atlassian.jira": [
+      "rust:jira"
+    ],
+    "atlassian.opsgenie": [
+      "python:opsgenie-sdk"
+    ],
+    "auth0": [
+      "golang:github.com/auth0/go-auth0",
+      "python:auth0-python"
+    ],
+    "aws.apigateway": [
+      "python:aws-cdk-aws-apigateway"
+    ],
+    "aws.athena": [
+      "python:aws-cdk-aws-athena"
+    ],
+    "aws.cloudformation": [
+      "python:aws-cdk-aws-cloudformation"
+    ],
+    "aws.cloudfront": [
+      "python:aws-cdk-aws-cloudfront"
+    ],
+    "aws.cloudwatch": [
+      "python:aws-cdk-aws-cloudwatch"
+    ],
+    "aws.documentdb": [
+      "python:aws-cdk-aws-docdb"
+    ],
+    "aws.dynamodb": [
+      "python:aws-cdk-aws-dynamodb"
+    ],
+    "aws.ec2": [
+      "python:aws-cdk-aws-ec2"
+    ],
+    "aws.ecr": [
+      "python:aws-cdk-aws-ecr"
+    ],
+    "aws.ecs": [
+      "python:aws-cdk-aws-ecs"
+    ],
+    "aws.efs": [
+      "python:aws-cdk-aws-efs"
+    ],
+    "aws.eks": [
+      "python:aws-cdk-aws-eks"
+    ],
+    "aws.elasticache": [
+      "python:aws-cdk-aws-elasticache"
+    ],
+    "aws.glue": [
+      "python:aws-cdk-aws-glue"
+    ],
+    "aws.kafka": [
+      "python:pulumi-kafka"
+    ],
+    "aws.kinesis": [
+      "python:aws-cdk-aws-kinesis"
+    ],
+    "aws.kms": [
+      "python:aws-cdk-aws-kms"
+    ],
+    "aws.lightsail": [
+      "python:aws-cdk-aws-lightsail"
+    ],
+    "aws.memorydb": [
+      "python:aws-cdk-aws-memorydb"
+    ],
+    "aws.neptune": [
+      "python:aws-cdk-aws-neptune"
+    ],
+    "aws.rds": [
+      "python:aws-cdk-aws-rds"
+    ],
+    "aws.redshift": [
+      "python:aws-cdk-aws-redshift"
+    ],
+    "aws.rekognition": [
+      "python:aws-cdk-aws-rekognition"
+    ],
+    "aws.sagemaker": [
+      "python:aws-cdk-aws-sagemaker"
+    ],
+    "aws.secretsmanager": [
+      "python:aws-cdk-aws-secretsmanager"
+    ],
+    "aws.ses": [
+      "python:aws-cdk-aws-ses"
+    ],
+    "aws.sns": [
+      "python:aws-cdk-aws-sns"
+    ],
+    "aws.sqs": [
+      "python:aws-cdk-aws-sqs"
+    ],
+    "aws.timestream": [
+      "python:aws-cdk-aws-timestream"
+    ],
+    "azure.staticwebapps": [
+      "rust:azure"
+    ],
+    "bigcommerce": [
+      "python:bigcommerce"
+    ],
+    "caddy": [
+      "golang:github.com/caddyserver/caddy/v2"
+    ],
+    "cloudflare": [
+      "python:pulumi-cloudflare"
+    ],
+    "cloudflare.workers": [
+      "rust:wrangler"
+    ],
+    "consul": [
+      "golang:github.com/hashicorp/consul/api"
+    ],
+    "contentful": [
+      "python:contentful"
+    ],
+    "couchbase": [
+      "golang:github.com/couchbase/go-couchbase",
+      "python:couchbase"
+    ],
+    "databricks": [
+      "golang:github.com/databricks/databricks-sdk-go",
+      "python:databricks-sdk"
+    ],
+    "datadog": [
+      "golang:github.com/datadog/dd-trace-go"
+    ],
+    "digitalocean": [
+      "python:pulumi-digitalocean"
+    ],
+    "docker": [
+      "golang:github.com/pulumi/pulumi-docker",
+      "python:pulumi-docker"
+    ],
+    "dropbox": [
+      "python:dropbox"
+    ],
+    "duckdb": [
+      "golang:github.com/duckdb/duckdb-go",
+      "python:duckdb"
+    ],
+    "esbuild": [
+      "golang:github.com/evanw/esbuild"
+    ],
+    "fastly": [
+      "golang:github.com/fastly/fastly-go",
+      "python:fastly"
+    ],
+    "gcp.appengine": [
+      "python:google-cloud-appengine-admin"
+    ],
+    "gcp.artifactregistry": [
+      "python:google-cloud-artifact-registry"
+    ],
+    "gcp.bigtable": [
+      "python:google-cloud-bigtable"
+    ],
+    "gcp.cloudrun": [
+      "python:google-cloud-run"
+    ],
+    "gcp.dataproc": [
+      "python:google-cloud-dataproc"
+    ],
+    "gcp.datastore": [
+      "python:google-cloud-datastore"
+    ],
+    "gcp.dialogflow": [
+      "python:google-cloud-dialogflow"
+    ],
+    "gcp.dns": [
+      "golang:github.com/googleapis/google-cloud-go",
+      "python:google-cloud-dns"
+    ],
+    "gcp.gce": [
+      "python:google-cloud-compute"
+    ],
+    "gcp.kms": [
+      "python:google-cloud-kms"
+    ],
+    "gcp.language": [
+      "python:google-cloud-language"
+    ],
+    "gcp.logging": [
+      "python:google-cloud-logging"
+    ],
+    "gcp.memorystore": [
+      "python:google-cloud-redis"
+    ],
+    "gcp.pubsub": [
+      "python:google-cloud-pubsub"
+    ],
+    "gcp.secretmanager": [
+      "python:google-cloud-secret-manager"
+    ],
+    "gcp.spanner": [
+      "python:google-cloud-spanner",
+      "rust:google-cloud-spanner"
+    ],
+    "gcp.sql": [
+      "golang:github.com/googlecloudplatform/google-cloud-go"
+    ],
+    "gcp.tasks": [
+      "python:google-cloud-tasks"
+    ],
+    "google.meet": [
+      "python:google-apps-meet"
+    ],
+    "hashicorp_vault": [
+      "golang:github.com/hashicorp/vault/api",
+      "python:pulumi-vault"
+    ],
+    "helm": [
+      "golang:helm.sh/helm/v3"
+    ],
+    "influxdb": [
+      "golang:github.com/influxdata/influxdb-client-go/v2",
+      "python:influxdb-client"
+    ],
+    "inngest": [
+      "rust:inngest"
+    ],
+    "jenkins": [
+      "python:python-jenkins"
+    ],
+    "langchain": [
+      "npm:langchain"
+    ],
+    "logsnag": [
+      "python:logsnag"
+    ],
+    "mailgun": [
+      "python:mailgun"
+    ],
+    "meilisearch": [
+      "python:meilisearch"
+    ],
+    "micronaut": [
+      "pattern:maven:^io\\.micronaut"
+    ],
+    "mongodb": [
+      "maven:org.mongodb:mongodb-driver-sync",
+      "nuget:MongoDB.Driver"
+    ],
+    "mongodbatlas": [
+      "python:pulumi-mongodbatlas"
+    ],
+    "mstest": [
+      "nuget:MSTest.TestFramework"
+    ],
+    "mysql": [
+      "maven:mysql:mysql-connector-java",
+      "nuget:MySql.Data",
+      "nuget:Pomelo.EntityFrameworkCore.MySql"
+    ],
+    "nats": [
+      "python:nats-py"
+    ],
+    "neo4j": [
+      "golang:github.com/neo4j/neo4j-go-driver/v5",
+      "python:neo4j-driver"
+    ],
+    "newrelic": [
+      "golang:github.com/newrelic/go-agent/v3",
+      "python:newrelic"
+    ],
+    "okta": [
+      "python:pulumi-okta"
+    ],
+    "openai": [
+      "golang:github.com/openai/openai-go"
+    ],
+    "optimizely": [
+      "python:optimizely"
+    ],
+    "oxlint": [
+      "python:oxlint"
+    ],
+    "pagerduty": [
+      "python:pdpyras"
+    ],
+    "paypal": [
+      "python:paypalrestsdk"
+    ],
+    "playwright": [
+      "maven:com.microsoft.playwright:playwright"
+    ],
+    "pusher": [
+      "golang:github.com/pusher/pusher-http-go/v5",
+      "npm:pusher",
+      "python:pusher"
+    ],
+    "questdb": [
+      "python:questdb"
+    ],
+    "rabbitmq": [
+      "maven:com.rabbitmq:amqp-client",
+      "nuget:RabbitMQ.Client"
+    ],
+    "railway": [
+      "python:railway"
+    ],
+    "redis": [
+      "maven:io.lettuce:lettuce-core",
+      "maven:redis.clients:jedis"
+    ],
+    "replicate": [
+      "golang:github.com/replicate/replicate-go"
+    ],
+    "replit.database": [
+      "python:replit"
+    ],
+    "resilience4j": [
+      "pattern:maven:^io\\.github\\.resilience4j:"
+    ],
+    "rethinkdb": [
+      "python:rethinkdb"
+    ],
+    "rollbar": [
+      "python:rollbar"
+    ],
+    "rolldown": [
+      "rust:rolldown"
+    ],
+    "scaleway": [
+      "golang:github.com/scaleway/scaleway-sdk-go",
+      "python:scaleway-sdk"
+    ],
+    "sendgrid": [
+      "python:sendgrid"
+    ],
+    "shopify": [
+      "python:ShopifyAPI"
+    ],
+    "slack": [
+      "python:slack-sdk"
+    ],
+    "snowflake": [
+      "python:pulumi-snowflake"
+    ],
+    "splunk": [
+      "python:splunk-sdk"
+    ],
+    "spring-boot-admin": [
+      "maven:de.codecentric:spring-boot-admin-starter-client"
+    ],
+    "spring-data-jpa": [
+      "maven:org.springframework.data:spring-data-jpa"
+    ],
+    "stytch": [
+      "rust:stytch"
+    ],
+    "surrealdb": [
+      "python:surrealdb",
+      "rust:surrealdb"
+    ],
+    "swc": [
+      "rust:swc-core"
+    ],
+    "tailscale": [
+      "python:pulumi-tailscale"
+    ],
+    "tensorflow": [
+      "rust:tensorflow"
+    ],
+    "terraform": [
+      "python:cdktf"
+    ],
+    "traefik": [
+      "golang:github.com/traefik/traefik/v3"
+    ],
+    "twilio": [
+      "python:twilio"
+    ],
+    "typescript": [
+      "golang:github.com/microsoft/typescript-go"
+    ],
+    "typesense": [
+      "python:typesense"
+    ],
+    "upstash.redis": [
+      "python:upstash-redis"
+    ],
+    "vercel.blob": [
+      "rust:vercel-blob"
+    ],
+    "webflow": [
+      "python:webflow"
+    ]
+  },
+  "renamed": {
+    "kafka": "apache_kafka",
+    "react-email": "reactemail",
+    "vault": "hashicorp_vault"
+  },
+  "differences": [
+    {
+      "id": "apache_cassandra",
+      "sign": "pattern:docker:cassandra",
+      "reason": "The fork holds this image name anchored, as `/^cassandra(?:\\/|$)/`, so that the image repository itself identifies the technology. The registry's unanchored `cassandra` would also accept any image whose name merely contains it, such as an unrelated organisation's repository."
+    },
+    {
+      "id": "archunit",
+      "sign": "pattern:maven:^com\\.tngtech\\.archunit:archunit",
+      "reason": "The fork holds a stricter form, `/^com\\.tngtech\\.archunit:archunit(?:-[a-z0-9.-]+)?$/`: it names the artifact and what may follow it, and ends the name, where the registry's `^com\\.tngtech\\.archunit:archunit` accepts any continuation, so a different artifact that starts the same way would identify the technology."
+    },
+    {
+      "id": "atlassian.bitbucketpipelines",
+      "sign": "file:bitbucket-pipeline.yml",
+      "reason": "The name is misspelled in the older release: Bitbucket reads bitbucket-pipelines.yml, which the fork lists, and files.test.ts checks that the misspelt name does not match."
+    },
+    {
+      "id": "aws.dynamodb",
+      "sign": "pattern:docker:amazon\\/dynamodb-local",
+      "reason": "The fork holds this image name anchored, as `/^amazon\\/dynamodb-local$/`, so that the image repository itself identifies the technology. The registry's unanchored `amazon\\/dynamodb-local` would also accept any image whose name merely contains it, such as an unrelated organisation's repository."
+    },
+    {
+      "id": "aws.opensearch",
+      "sign": "python:opensearch-py",
+      "reason": "The fork identifies opensearch-py as opensearch, the OpenSearch technology, and a test fixes it; giving it to aws.opensearch as well would make one package identify two technologies."
+    },
+    {
+      "id": "azure.staticwebapps",
+      "sign": "githubAction:Azure/appservice-build",
+      "reason": "Azure/appservice-build builds for App Service, which the fork gives to azure.appservice; Static Web Apps has its own action, Azure/static-web-apps-deploy."
+    },
+    {
+      "id": "azure.staticwebapps",
+      "sign": "githubAction:Azure/webapps-deploy",
+      "reason": "Azure/webapps-deploy deploys to App Service, which the fork gives to azure.appservice (a test fixes it); Static Web Apps has its own action, Azure/static-web-apps-deploy."
+    },
+    {
+      "id": "azure.staticwebapps",
+      "sign": "pattern:terraform.resource:^azurerm_app_service",
+      "reason": "The fork gives the azurerm_app_service resources to azure.appservice: App Service is not Static Web Apps. azure.staticwebapps keeps `/^azurerm_static_(?:web_app|site)(?:_|$)/` (azurerm_static_web_app and azurerm_static_site), a choice a test fixes (azurerm_linux_web_app is azure.appservice)."
+    },
+    {
+      "id": "azure.staticwebapps",
+      "sign": "pattern:terraform.resource:^azurerm_linux_web_app",
+      "reason": "The fork gives the azurerm_linux_web_app resources to azure.appservice: App Service is not Static Web Apps. azure.staticwebapps keeps `/^azurerm_static_(?:web_app|site)(?:_|$)/` (azurerm_static_web_app and azurerm_static_site), a choice a test fixes (azurerm_linux_web_app is azure.appservice)."
+    },
+    {
+      "id": "azure.staticwebapps",
+      "sign": "pattern:terraform.resource:^azurerm_windows_web_app",
+      "reason": "The fork gives the azurerm_windows_web_app resources to azure.appservice: App Service is not Static Web Apps. azure.staticwebapps keeps `/^azurerm_static_(?:web_app|site)(?:_|$)/` (azurerm_static_web_app and azurerm_static_site), a choice a test fixes (azurerm_linux_web_app is azure.appservice)."
+    },
+    {
+      "id": "azure.staticwebapps",
+      "sign": "ruby:azure_mgmt_web",
+      "reason": "The fork identifies the azure_mgmt_* gems as azure, not as Static Web Apps: azure_mgmt_web manages App Service as much as Static Web Apps."
+    },
+    {
+      "id": "caddy",
+      "sign": "pattern:docker:caddy",
+      "reason": "The fork holds this image name anchored, as `/^caddy(?:\\/|$)/`, so that the image repository itself identifies the technology. The registry's unanchored `caddy` would also accept any image whose name merely contains it, such as an unrelated organisation's repository."
+    },
+    {
+      "id": "cats",
+      "sign": "pattern:maven:^org\\.typelevel:cats-core",
+      "reason": "The fork holds a stricter form, `/^org\\.typelevel:cats-core(?:_[a-z0-9.]+)?$/`: it names the artifact and what may follow it, and ends the name, where the registry's `^org\\.typelevel:cats-core` accepts any continuation, so a different artifact that starts the same way would identify the technology."
+    },
+    {
+      "id": "codemirror",
+      "sign": "pattern:npm:@codemirror\\/",
+      "reason": "The fork holds the same scope anchored at the start of the name, as `/^@codemirror\\//`; the registry's `@codemirror\\/` has no anchor, so it would also accept a name that only contains the scope in the middle."
+    },
+    {
+      "id": "composio",
+      "sign": "pattern:npm:@composio\\/",
+      "reason": "The fork holds the same scope anchored at the start of the name, as `/^@composio\\//`; the registry's `@composio\\/` has no anchor, so it would also accept a name that only contains the scope in the middle."
+    },
+    {
+      "id": "couchbase",
+      "sign": "pattern:docker:couchbase",
+      "reason": "The fork holds this image name anchored, as `/^couchbase(?:\\/|$)/`, so that the image repository itself identifies the technology. The registry's unanchored `couchbase` would also accept any image whose name merely contains it, such as an unrelated organisation's repository."
+    },
+    {
+      "id": "cypressci",
+      "sign": "pattern:docker:cypress",
+      "reason": "The fork holds this image name anchored, as `/^cypress(?:\\/|$)/`, so that the image repository itself identifies the technology. The registry's unanchored `cypress` would also accept any image whose name merely contains it, such as an unrelated organisation's repository."
+    },
+    {
+      "id": "datadog",
+      "sign": "pattern:ruby:datadog",
+      "reason": "The fork holds `/^(?:datadog(?:[-_]|$)|dogstatsd-ruby$)/`: gems whose name starts with datadog followed by a separator, and dogstatsd-ruby. The registry's `datadog` has no anchor and would accept any gem that contains the word."
+    },
+    {
+      "id": "deno",
+      "sign": "pattern:docker:denoland\\/deno",
+      "reason": "The fork holds this image name anchored, as `/^denoland\\/deno$/`, so that the image repository itself identifies the technology. The registry's unanchored `denoland\\/deno` would also accept any image whose name merely contains it, such as an unrelated organisation's repository."
+    },
+    {
+      "id": "denodeploy",
+      "sign": "pattern:deno:\\/x\\/deploy(@[0-9.]+)?\\/deployctl.ts",
+      "reason": "The fork anchors the module URL to deno.land, as `/^https:\\/\\/deno\\.land\\/x\\/deploy(?:@[^/?#]+)?\\/deployctl\\.ts(?:[?#]|$)/`; the registry's `\\/x\\/deploy(@[0-9.]+)?\\/deployctl.ts` has no host and would accept the same path on any server (a test shows that another host's postgres module is not PostgreSQL)."
+    },
+    {
+      "id": "docker",
+      "sign": "file:Dockerfile",
+      "reason": "The fork reads it itself: its Dockerfile reader emits docker for a file named Dockerfile, with the file as evidence (readerEvidence.test.ts)."
+    },
+    {
+      "id": "docker",
+      "sign": "file:docker-compose.yaml",
+      "reason": "The fork reads it itself: its Compose reader emits docker for a docker-compose.yaml that declares services, with the file as evidence (readerEvidence.test.ts)."
+    },
+    {
+      "id": "docker",
+      "sign": "file:docker-compose.yml",
+      "reason": "The fork reads it itself: its Compose reader emits docker for a docker-compose.yml that declares services, with the file as evidence (readerEvidence.test.ts)."
+    },
+    {
+      "id": "duende-identityserver",
+      "sign": "pattern:nuget:^Duende\\.IdentityServer",
+      "reason": "The fork holds a stricter form, `/^Duende\\.IdentityServer(?:\\.|$)/i`: it names the artifact and what may follow it, and ends the name, where the registry's `^Duende\\.IdentityServer` accepts any continuation, so a different artifact that starts the same way would identify the technology."
+    },
+    {
+      "id": "elasticsearch",
+      "sign": "pattern:docker:elasticsearch",
+      "reason": "The fork holds this image name anchored, as `/^elasticsearch(?:\\/|$)/`, so that the image repository itself identifies the technology. The registry's unanchored `elasticsearch` would also accept any image whose name merely contains it, such as an unrelated organisation's repository."
+    },
+    {
+      "id": "exunit",
+      "sign": "source:elixir.call:ExUnit.configuration",
+      "reason": "The fork reads it itself: its Elixir reader emits exunit for a call to ExUnit.configuration in an .ex or .exs file, with the file and line as evidence (readerEvidence.test.ts)."
+    },
+    {
+      "id": "exunit",
+      "sign": "source:elixir.call:ExUnit.start",
+      "reason": "The fork reads it itself: its Elixir reader emits exunit for a call to ExUnit.start in an .ex or .exs file, with the file and line as evidence (readerEvidence.test.ts)."
+    },
+    {
+      "id": "firebase",
+      "sign": "source:swift.import:FirebaseCore",
+      "reason": "The fork reads it itself: its Swift reader emits firebase for `import FirebaseCore` in a .swift file, with the file and line as evidence (readerEvidence.test.ts)."
+    },
+    {
+      "id": "firebase",
+      "sign": "source:swift.import:FirebaseMessaging",
+      "reason": "The fork reads it itself: its Swift reader emits firebase for `import FirebaseMessaging` in a .swift file, with the file and line as evidence (readerEvidence.test.ts)."
+    },
+    {
+      "id": "flutter",
+      "sign": "source:swift.import:Flutter",
+      "reason": "The fork reads it itself: its Swift reader emits flutter for `import Flutter` in a .swift file, with the file and line as evidence (readerEvidence.test.ts)."
+    },
+    {
+      "id": "gatling",
+      "sign": "pattern:maven:^io\\.gatling",
+      "reason": "The fork holds a stricter form, `/^io\\.gatling(?:\\.[a-z0-9_-]+)*:[a-z0-9_.-]+$/`: it names the artifact and what may follow it, and ends the name, where the registry's `^io\\.gatling` accepts any continuation, so a different artifact that starts the same way would identify the technology."
+    },
+    {
+      "id": "gcp",
+      "sign": "npm:google-auth-library",
+      "reason": "The fork identifies google-auth-library as google, the Google APIs technology; giving it to gcp as well would make one package identify two technologies."
+    },
+    {
+      "id": "gcp",
+      "sign": "npm:googleapis",
+      "reason": "The fork identifies googleapis as google, the Google APIs technology; giving it to gcp as well would make one package identify two technologies."
+    },
+    {
+      "id": "gcp",
+      "sign": "npm:passport-google-oauth",
+      "reason": "The fork identifies the Passport Google strategies as google.oauth, and a test fixes it."
+    },
+    {
+      "id": "gcp",
+      "sign": "python:google-api-python-client",
+      "reason": "The fork identifies google-api-python-client as google, the Google APIs technology; giving it to gcp as well would make one package identify two technologies."
+    },
+    {
+      "id": "gcp.gke",
+      "sign": "pattern:terraform.resource:^google_container_",
+      "reason": "The registry's `^google_container_` also accepts google_container_registry, which the fork gives to gcp.containerregistry (a test fixes it). gcp.gke keeps `/^google_container_(?:(?:attached_|aws_|azure_)?cluster|(?:aws_|azure_)?node_pool)(?:_|$)/`: clusters and node pools only."
+    },
+    {
+      "id": "github.pages",
+      "sign": "file:_config.yaml",
+      "reason": "_config.yaml is the configuration of Jekyll and of other generators, not a sign of GitHub Pages hosting; the fork removed it from github.pages and files.test.ts checks that it does not match."
+    },
+    {
+      "id": "github.pages",
+      "sign": "file:_config.yml",
+      "reason": "_config.yml is the configuration of Jekyll and of other generators, not a sign of GitHub Pages hosting; the fork removed it from github.pages and files.test.ts checks that it does not match."
+    },
+    {
+      "id": "golangcilint",
+      "sign": "file:.golangcit.yml",
+      "reason": "The name is misspelled in the older release: golangci-lint reads .golangci.yml, which the fork lists with its yaml, toml and json forms, and files.test.ts checks that the misspelt name does not match."
+    },
+    {
+      "id": "google.analytics",
+      "sign": "pattern:npm:^@google-analytics\\\\",
+      "reason": "The registry's expression ends in two backslashes, which match a literal backslash and not the slash of a scoped package name, so it matches no real package. The fork holds `/^@google-analytics\\//`."
+    },
+    {
+      "id": "httpd",
+      "sign": "pattern:docker:httpd",
+      "reason": "The fork holds this image name anchored, as `/^httpd(?:\\/|$)/`, so that the image repository itself identifies the technology. The registry's unanchored `httpd` would also accept any image whose name merely contains it, such as an unrelated organisation's repository."
+    },
+    {
+      "id": "hubspot",
+      "sign": "pattern:npm:^@hubpost\\/",
+      "reason": "The registry's expression is misspelled (hubpost, not hubspot) and matches no real scope. The fork holds `/^@hubspot\\//`, and a test checks that @hubpost/api-client is not HubSpot."
+    },
+    {
+      "id": "influxdb",
+      "sign": "pattern:docker:influxdb",
+      "reason": "The fork holds this image name anchored, as `/^influxdb(?:\\/|$)/`, so that the image repository itself identifies the technology. The registry's unanchored `influxdb` would also accept any image whose name merely contains it, such as an unrelated organisation's repository."
+    },
+    {
+      "id": "ionic",
+      "sign": "pattern:npm:@ionic\\/",
+      "reason": "The fork holds the same scope anchored at the start of the name, as `/^@ionic\\//`; the registry's `@ionic\\/` has no anchor, so it would also accept a name that only contains the scope in the middle."
+    },
+    {
+      "id": "jenkins",
+      "sign": "pattern:docker:jenkins-docker",
+      "reason": "The older release matched any image whose name contains jenkins-docker, so an organisation's own image of that name was taken for Jenkins. The fork replaced it with the official repository jenkins/jenkins (a test fixes jenkins/jenkins:lts)."
+    },
+    {
+      "id": "kibana",
+      "sign": "pattern:docker:kibana",
+      "reason": "The fork holds this image name anchored, as `/^kibana(?:\\/|$)/`, so that the image repository itself identifies the technology. The registry's unanchored `kibana` would also accept any image whose name merely contains it, such as an unrelated organisation's repository."
+    },
+    {
+      "id": "launchdarkly",
+      "sign": "pattern:golang:github.com\\/launchdarkly\\/",
+      "reason": "The fork holds the same prefix anchored at the start of the module path, as `/^github\\.com\\/launchdarkly\\//`; the registry's `github.com\\/launchdarkly\\/` has no anchor."
+    },
+    {
+      "id": "launchdarkly",
+      "sign": "pattern:npm:launchdarkly-.+-client-sdk",
+      "reason": "The fork holds the same expression anchored at both ends, as `/^launchdarkly-[\\w-]+-client-sdk$/`; the registry's `launchdarkly-.+-client-sdk` would accept any name that merely contains the words."
+    },
+    {
+      "id": "mapkit",
+      "sign": "source:swift.import:MapKit",
+      "reason": "The fork reads it itself: its Swift reader emits mapkit for `import MapKit` in a .swift file, with the file and line as evidence (readerEvidence.test.ts)."
+    },
+    {
+      "id": "mariadb",
+      "sign": "pattern:docker:mariadb",
+      "reason": "The fork holds this image name anchored, as `/^mariadb(?:\\/|$)/`, so that the image repository itself identifies the technology. The registry's unanchored `mariadb` would also accept any image whose name merely contains it, such as an unrelated organisation's repository."
+    },
+    {
+      "id": "memcached",
+      "sign": "pattern:docker:memcached",
+      "reason": "The fork holds this image name anchored, as `/^memcached(?:\\/|$)/`, so that the image repository itself identifies the technology. The registry's unanchored `memcached` would also accept any image whose name merely contains it, such as an unrelated organisation's repository."
+    },
+    {
+      "id": "mongodb",
+      "sign": "maven:org.springframework.boot:spring-boot-starter-data-mongodb",
+      "reason": "A Spring Boot starter joins two technologies: the fork gives it to spring-boot and spring-data-mongodb (both named in the integrations of quality.test.ts), not to MongoDB itself."
+    },
+    {
+      "id": "mongodb",
+      "sign": "pattern:npm:mongoose",
+      "reason": "mongoose is a technology of its own in the fork (the mongoose rule). The registry's unanchored `mongoose` would make the package mongoose identify two technologies, so the fork removed it from mongodb and lists only the Mongoose companion packages (such as @nestjs/mongoose) there."
+    },
+    {
+      "id": "mysql",
+      "sign": "pattern:docker:mysql",
+      "reason": "The fork holds this image name anchored, as `/^mysql(?:\\/|$)/`, so that the image repository itself identifies the technology. The registry's unanchored `mysql` would also accept any image whose name merely contains it, such as an unrelated organisation's repository."
+    },
+    {
+      "id": "neo4j",
+      "sign": "pattern:docker:neo4j",
+      "reason": "The fork holds this image name anchored, as `/^neo4j(?:\\/|$)/`, so that the image repository itself identifies the technology. The registry's unanchored `neo4j` would also accept any image whose name merely contains it, such as an unrelated organisation's repository."
+    },
+    {
+      "id": "nodejs",
+      "sign": "pattern:docker:nodejs",
+      "reason": "The fork holds this image name anchored, as `/^nodejs(?:\\/|$)/`, so that the image repository itself identifies the technology. The registry's unanchored `nodejs` would also accept any image whose name merely contains it, such as an unrelated organisation's repository."
+    },
+    {
+      "id": "okta",
+      "sign": "php:socialiteproviders/okta",
+      "reason": "The fork identifies the Socialite Okta provider as okta.oauth, the sign-in with Okta, not as the Okta platform."
+    },
+    {
+      "id": "percona",
+      "sign": "pattern:docker:percona",
+      "reason": "The fork holds this image name anchored, as `/^percona(?:\\/|$)/`, so that the image repository itself identifies the technology. The registry's unanchored `percona` would also accept any image whose name merely contains it, such as an unrelated organisation's repository."
+    },
+    {
+      "id": "postgresql",
+      "sign": "pattern:deno:\\/x\\/postgres@",
+      "reason": "The fork anchors the module URL to deno.land, as `/^https:\\/\\/deno\\.land\\/x\\/postgres(?:@[^/?#]+)?\\//`; the registry's `\\/x\\/postgres@` has no host and would accept the same path on any server (a test shows that another host's postgres module is not PostgreSQL)."
+    },
+    {
+      "id": "quarkus",
+      "sign": "pattern:maven:^io\\.quarkus:",
+      "reason": "`^io\\.quarkus:` would give every Quarkus extension to quarkus. The fork gives the extensions that are technologies of their own to those (quarkus-rest, qute, panache and others), and a package identifies one technology, so quarkus lists only its core artifacts."
+    },
+    {
+      "id": "rabbitmq",
+      "sign": "maven:org.springframework.boot:spring-boot-starter-amqp",
+      "reason": "A Spring Boot starter joins two technologies: the fork gives it to spring-boot and spring-amqp (both named in the integrations of quality.test.ts), not to RabbitMQ itself."
+    },
+    {
+      "id": "rabbitmq",
+      "sign": "pattern:docker:rabbitmq",
+      "reason": "The fork holds this image name anchored, as `/^rabbitmq(?:\\/|$)/`, so that the image repository itself identifies the technology. The registry's unanchored `rabbitmq` would also accept any image whose name merely contains it, such as an unrelated organisation's repository."
+    },
+    {
+      "id": "rails",
+      "sign": "pattern:npm:@rails\\/",
+      "reason": "The fork holds the same scope anchored at the start of the name, as `/^@rails\\//`; the registry's `@rails\\/` has no anchor, so it would also accept a name that only contains the scope in the middle."
+    },
+    {
+      "id": "redis",
+      "sign": "maven:org.springframework.boot:spring-boot-starter-data-redis",
+      "reason": "A Spring Boot starter joins two technologies: the fork gives it to spring-boot and spring-data-redis (both named in the integrations of quality.test.ts), not to Redis itself."
+    },
+    {
+      "id": "redis",
+      "sign": "pattern:docker:redis",
+      "reason": "The fork holds this image name anchored, as `/^redis(?:\\/|$)/`, so that the image repository itself identifies the technology. The registry's unanchored `redis` would also accept any image whose name merely contains it, such as an unrelated organisation's repository."
+    },
+    {
+      "id": "replit",
+      "sign": "pattern:npm:@replit\\/",
+      "reason": "The fork holds the same scope anchored at the start, as `/^@replit\\//`, and gives @replit/database to its own technology, replit.database. The registry's `@replit\\/` has no anchor and would accept the scope anywhere in the name."
+    },
+    {
+      "id": "rollbar",
+      "sign": "env:ROOLBAR_",
+      "reason": "A misspelling in the older release (ROOLBAR_ for ROLLBAR_): no tool sets a variable by that name. The fork holds ROLLBAR_."
+    },
+    {
+      "id": "ruby",
+      "sign": "pattern:docker:ruby",
+      "reason": "The fork holds this image name anchored, as `/^ruby(?:\\/|$)/`, so that the image repository itself identifies the technology. The registry's unanchored `ruby` would also accept any image whose name merely contains it, such as an unrelated organisation's repository."
+    },
+    {
+      "id": "scalatest",
+      "sign": "pattern:maven:^org\\.scalatest:scalatest",
+      "reason": "The fork holds a stricter form, `/^org\\.scalatest:scalatest(?:[-_][a-z0-9._-]+)?$/`: it names the artifact and what may follow it, and ends the name, where the registry's `^org\\.scalatest:scalatest` accepts any continuation, so a different artifact that starts the same way would identify the technology."
+    },
+    {
+      "id": "sentry",
+      "sign": "docker:daprio/sentry",
+      "reason": "daprio/sentry is the Dapr sentry service, not Sentry: the fork identifies it as dapr and a test fixes it (getsentry/sentry is Sentry)."
+    },
+    {
+      "id": "sequelize",
+      "sign": "pattern:npm:sequelize(-cli)?",
+      "reason": "The fork lists sequelize, sequelize-cli and sequelize-typescript by name, and the @sequelize scope by an anchored expression. The registry's unanchored `sequelize(-cli)?` would accept any package that contains sequelize in its name (a test checks that unrelated-sequelize-fixture is not Sequelize)."
+    },
+    {
+      "id": "snyk",
+      "sign": "pattern:githubAction:^snyk\\/actions\\/",
+      "reason": "The fork holds `/^snyk\\/actions\\/[^/]/i`: the action path must continue after the last slash, and the owner and repository are compared without regard to case. The registry's `^snyk\\/actions\\/` has no anchor."
+    },
+    {
+      "id": "sonarqube",
+      "sign": "file:.sonar-project.properties",
+      "reason": "The name has a stray leading dot in the older release: SonarQube reads sonar-project.properties, which the fork lists, and files.test.ts checks that the dotted name does not match."
+    },
+    {
+      "id": "spring-mvc",
+      "sign": "maven:org.springframework.boot:spring-boot-starter-web",
+      "reason": "The fork identifies spring-boot-starter-web as spring-boot only, and a test fixes it; Spring MVC is identified by org.springframework:spring-webmvc and the webmvc starter."
+    },
+    {
+      "id": "sqlite",
+      "sign": "pattern:deno:\\/x\\/sqlite3@",
+      "reason": "The fork anchors the module URL to deno.land, as `/^https:\\/\\/deno\\.land\\/x\\/sqlite3(?:@[^/?#]+)?\\//`; the registry's `\\/x\\/sqlite3@` has no host and would accept the same path on any server (a test shows that another host's postgres module is not PostgreSQL)."
+    },
+    {
+      "id": "strapi",
+      "sign": "pattern:docker:strapi",
+      "reason": "The fork holds this image name anchored, as `/^strapi(?:\\/|$)/`, so that the image repository itself identifies the technology. The registry's unanchored `strapi` would also accept any image whose name merely contains it, such as an unrelated organisation's repository."
+    },
+    {
+      "id": "swiftui",
+      "sign": "source:swift.import:SwiftUI",
+      "reason": "The fork reads it itself: its Swift reader emits swiftui for `import SwiftUI` in a .swift file, with the file and line as evidence (readerEvidence.test.ts)."
+    },
+    {
+      "id": "trayio",
+      "sign": "pattern:npm:^@trayio-app\\/",
+      "reason": "The older release matched the scope @trayio-app; the fork replaced it with `/^@trayio\\//`, the published scope of the Tray.ai CDK (@trayio/cdk-cli), and a test fixes that."
+    },
+    {
+      "id": "uikit",
+      "sign": "source:swift.import:UIKit",
+      "reason": "The fork reads it itself: its Swift reader emits uikit for `import UIKit` in a .swift file, with the file and line as evidence (readerEvidence.test.ts)."
+    },
+    {
+      "id": "zookeeper",
+      "sign": "pattern:docker:zookeeper",
+      "reason": "The fork holds this image name anchored, as `/^zookeeper(?:\\/|$)/`, so that the image repository itself identifies the technology. The registry's unanchored `zookeeper` would also accept any image whose name merely contains it, such as an unrelated organisation's repository."
+    }
+  ]
+}

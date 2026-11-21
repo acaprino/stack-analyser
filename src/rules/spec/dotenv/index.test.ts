@@ -47,4 +47,12 @@ describe('dotenv', () => {
     expect([...hits]).toEqual(expect.arrayContaining(['supabase', 'rollbar', 'sentry']));
     for (const other of ['openai', 'stripe', 'redis', 'datadog', 'apple'] as const) expect(hits.has(other)).toBe(false);
   });
+
+  it('does not read a misspelt Rollbar variable', async () => {
+    const provider = new FakeProvider({
+      paths: { '/': ['.env.example'] },
+      files: { '/.env.example': 'ROOLBAR_TOKEN=x' },
+    });
+    expect(flatten(await analyser({ provider }), { merge: true }).techs.has('rollbar')).toBe(false);
+  });
 });

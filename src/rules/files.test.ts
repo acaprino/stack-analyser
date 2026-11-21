@@ -28,6 +28,11 @@ describe('all', () => {
       ['.storybook', 'dir', 'storybook', true],
       ['.storybook', 'file', 'storybook', false],
       ['_config.yml', 'file', 'github.pages', false],
+      ['_config.yaml', 'file', 'github.pages', false],
+      ['.golangcit.yml', 'file', 'golangcilint', false],
+      ['sonar-project.properties', 'file', 'sonarqube', true],
+      ['.sonar-project.properties', 'file', 'sonarqube', false],
+      ['regex', 'file', 'jest', false],
       ['main.rs.in', 'file', 'rust', true],
     ];
     for (const [relative, type, tech, expected] of cases) {
@@ -35,6 +40,18 @@ describe('all', () => {
       const found = [...matchAllFiles([{ fp: '/repo/' + relative, name, type }], '/repo').keys()];
       expect(found.includes(tech as typeof found[number]), relative).toBe(expected);
     }
+  });
+
+  // The registry writes a directory marker without the slash that the rules use for a directory.
+  it.each([
+    ['.circleci', 'circleci'], ['.github', 'github'], ['.lego', 'goacmelego'], ['.jekyll-cache', 'jekyll'],
+    ['.jenkins', 'jenkins'], ['.meteor', 'meteorjs'], ['.nango', 'nango'], ['.sonarlint', 'sonarlint'],
+    ['.storybook', 'storybook'], ['.teamcity', 'teamcity'], ['.terraform', 'terraform'], ['.vercel', 'vercel'],
+    ['.vitepress', 'vitepress'], ['.vuepress', 'vuepress'],
+  ] as const)('recognizes the directory %s as %s and not a file of that name', (name, tech) => {
+    const found = (type: 'file' | 'dir') => [...matchAllFiles([{ fp: '/repo/' + name, name, type }], '/repo').keys()];
+    expect(found('dir')).toContain(tech);
+    expect(found('file')).not.toContain(tech);
   });
 
   it('should not list multiple times the same files', () => {

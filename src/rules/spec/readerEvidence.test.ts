@@ -133,3 +133,33 @@ it('records the manifest of every other ecosystem that declares packages or imag
     { tech: 'spring-boot', kind: 'package', value: 'org.springframework.boot:spring-boot-starter-web', path: '/java/pom.xml', source: 'stack-analyser' },
   ]));
 });
+
+// The registry lists these file names and source constructs as signs; the fork reads them itself, from the file,
+// without a rule that names them.
+const compose = 'services:\n  cache:\n    image: redis:7\n';
+it.each([
+  ['Dockerfile', 'FROM node:20\n'],
+  ['docker-compose.yml', compose],
+  ['docker-compose.yaml', compose],
+])('reads docker from the file %s', async (name, content) => {
+  const result = await scan({ [name]: content });
+  const all = [result, ...result.childs].flatMap((c) => c.toJson('').evidence);
+  expect(result.techs.has('docker')).toBe(true);
+  expect(all).toContainEqual({ tech: 'docker', kind: 'file', value: name, path: `/${name}`, source: 'stack-analyser' });
+});
+
+it.each([
+  ['exunit', 'ExUnit.start', 'test_helper.exs', 'ExUnit.start()\n'],
+  ['exunit', 'ExUnit.configuration', 'test_helper.exs', 'ExUnit.configuration(trace: true)\n'],
+  ['swiftui', 'SwiftUI', 'View.swift', 'import SwiftUI\n'],
+  ['uikit', 'UIKit', 'View.swift', 'import UIKit\n'],
+  ['mapkit', 'MapKit', 'View.swift', 'import MapKit\n'],
+  ['flutter', 'Flutter', 'View.swift', 'import Flutter\n'],
+  ['firebase', 'FirebaseCore', 'View.swift', 'import FirebaseCore\n'],
+  ['firebase', 'FirebaseMessaging', 'View.swift', 'import FirebaseMessaging\n'],
+] as const)('reads %s from %s in a source file', async (tech, value, name, content) => {
+  const result = await scan({ [name]: content });
+  const all = [result, ...result.childs].flatMap((c) => c.toJson('').evidence);
+  expect(result.techs.has(tech)).toBe(true);
+  expect(all).toContainEqual({ tech, kind: 'source', value, path: `/${name}`, line: 1, source: 'stack-analyser' });
+});
