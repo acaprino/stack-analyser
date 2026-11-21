@@ -2,6 +2,8 @@
 
 exports[`php > should match everything 1`] = `
 [
+  "adobe",
+  "adobe.commercecloud",
   "adyen",
   "airtable",
   "algolia",
@@ -961,6 +963,16 @@ exports[`php > should match everything 2`] = `
   [
     "php",
     "magento/composer",
+    "0.0.0",
+  ],
+  [
+    "php",
+    "magento/ece-tools",
+    "0.0.0",
+  ],
+  [
+    "php",
+    "magento/magento-cloud-metapackage",
     "0.0.0",
   ],
   [

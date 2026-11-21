@@ -45,6 +45,7 @@ exports[`npm > should match everything 1`] = `
   "atlassian.opsgenie",
   "atlassian.trello",
   "auth0",
+  "ava",
   "aws",
   "aws.amplifyhosting",
   "aws.apigateway",
@@ -149,9 +150,11 @@ exports[`npm > should match everything 1`] = `
   "cypressci",
   "d3js",
   "daisyui",
+  "dapr",
   "databuddy",
   "datadog",
   "datadome",
+  "datafast",
   "datocms",
   "deepseek",
   "detox",
@@ -510,6 +513,7 @@ exports[`npm > should match everything 1`] = `
   "tailwind",
   "tanstackrouter",
   "tanstackstart",
+  "tauri",
   "tdengine",
   "telegram",
   "tensorflow",
@@ -517,6 +521,7 @@ exports[`npm > should match everything 1`] = `
   "testinglibrary",
   "tinybird",
   "tiptap",
+  "trayio",
   "trpc",
   "ts-rest",
   "turborepo",
@@ -568,6 +573,7 @@ exports[`npm > should match everything 1`] = `
   "wordpress",
   "workos",
   "xai",
+  "xo",
   "zapier",
   "zendesk",
   "zipkin",
@@ -1546,6 +1552,11 @@ exports[`npm > should match everything 2`] = `
   ],
   [
     "npm",
+    "@dapr/dapr",
+    "0.0.0",
+  ],
+  [
+    "npm",
     "@databuddy/sdk",
     "0.0.0",
   ],
@@ -1577,6 +1588,11 @@ exports[`npm > should match everything 2`] = `
   [
     "npm",
     "@datadome/react-native-datadome",
+    "0.0.0",
+  ],
+  [
+    "npm",
+    "@datafast/cli",
     "0.0.0",
   ],
   [
@@ -1736,11 +1752,6 @@ exports[`npm > should match everything 2`] = `
   ],
   [
     "npm",
-    "@google-cloud/",
-    "0.0.0",
-  ],
-  [
-    "npm",
     "@google-cloud/aiplatform",
     "0.0.0",
   ],
@@ -1827,6 +1838,11 @@ exports[`npm > should match everything 2`] = `
   [
     "npm",
     "@google-cloud/maps",
+    "0.0.0",
+  ],
+  [
+    "npm",
+    "@google-cloud/projectify",
     "0.0.0",
   ],
   [
@@ -3246,6 +3262,11 @@ exports[`npm > should match everything 2`] = `
   ],
   [
     "npm",
+    "@sequelize/core",
+    "0.0.0",
+  ],
+  [
+    "npm",
     "@shadcn/ui",
     "0.0.0",
   ],
@@ -3421,7 +3442,7 @@ exports[`npm > should match everything 2`] = `
   ],
   [
     "npm",
-    "@tauri-apps",
+    "@tauri-apps/api",
     "0.0.0",
   ],
   [
@@ -3931,6 +3952,11 @@ exports[`npm > should match everything 2`] = `
   ],
   [
     "npm",
+    "ava",
+    "0.0.0",
+  ],
+  [
+    "npm",
     "aws-amplify",
     "0.0.0",
   ],
@@ -4192,6 +4218,11 @@ exports[`npm > should match everything 2`] = `
   [
     "npm",
     "datadog-metrics",
+    "0.0.0",
+  ],
+  [
+    "npm",
+    "datafast",
     "0.0.0",
   ],
   [
@@ -5596,6 +5627,16 @@ exports[`npm > should match everything 2`] = `
   ],
   [
     "npm",
+    "sequelize-cli",
+    "0.0.0",
+  ],
+  [
+    "npm",
+    "sequelize-typescript",
+    "0.0.0",
+  ],
+  [
+    "npm",
     "shadcn",
     "0.0.0",
   ],
@@ -5927,6 +5968,11 @@ exports[`npm > should match everything 2`] = `
   [
     "npm",
     "wrangler",
+    "0.0.0",
+  ],
+  [
+    "npm",
+    "xo",
     "0.0.0",
   ],
   [

@@ -68,6 +68,7 @@ exports[`golang (lockfile) > should match everything 1`] = `
   "cohereai",
   "connectrpc",
   "coveralls",
+  "dapr",
   "datadome",
   "echo",
   "elasticsearch",
@@ -706,6 +707,11 @@ exports[`golang (lockfile) > should match everything 2`] = `
   [
     "golang",
     "github.com/cohere-ai/cohere-go/v2",
+    "v1.0.0",
+  ],
+  [
+    "golang",
+    "github.com/dapr/go-sdk",
     "v1.0.0",
   ],
   [

@@ -64,7 +64,6 @@ exports[`ruby (component) > should match everything 1`] = `
   "azure.postgres",
   "azure.redis",
   "azure.sql",
-  "azure.staticwebapps",
   "azure.storage",
   "betterstack",
   "brevo",
@@ -120,6 +119,7 @@ exports[`ruby (component) > should match everything 1`] = `
   "gcp.translate",
   "gcp.vision",
   "github",
+  "github.pages",
   "gitlab",
   "google",
   "google.calendar",
@@ -750,12 +750,12 @@ exports[`ruby (component) > should match everything 2`] = `
   ],
   [
     "ruby",
-    "functions_framework ",
+    "fusionauth_client",
     "1.0.0",
   ],
   [
     "ruby",
-    "fusionauth_client",
+    "github-pages",
     "1.0.0",
   ],
   [

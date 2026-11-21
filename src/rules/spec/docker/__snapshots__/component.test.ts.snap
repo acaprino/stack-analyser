@@ -42,6 +42,7 @@ exports[`docker > should match everything 1`] = `
   "cratedb",
   "crawl4ai",
   "cypressci",
+  "dapr",
   "datadog",
   "deno",
   "discourse",
@@ -563,6 +564,11 @@ exports[`docker > should match everything 2`] = `
   ],
   [
     "docker",
+    "daprio/daprd",
+    "0.0.0",
+  ],
+  [
+    "docker",
     "daprio/sentry",
     "0.0.0",
   ],
@@ -873,8 +879,8 @@ exports[`docker > should match everything 2`] = `
   ],
   [
     "docker",
-    "jenkins-docker",
-    "latest",
+    "jenkins/jenkins",
+    "0.0.0",
   ],
   [
     "docker",

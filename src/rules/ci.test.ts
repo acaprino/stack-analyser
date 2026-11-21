@@ -8,6 +8,8 @@ import { listIndexed } from '../register.js';
 import type { AllowedKeys } from '../index.js';
 import '../autoload.js';
 
+const workflow = 'on: push\njobs:\n  build:\n    runs-on: ubuntu-latest\n    steps: []\n';
+
 describe('ci', () => {
   it('should match everything', async () => {
     const paths: string[] = [];
@@ -18,6 +20,8 @@ describe('ci', () => {
 
       paths.push('example' in item.ref ? item.ref.example : item.ref.files[0]);
     }
+    // github.actions is read from the workflow itself, it no longer registers a file example
+    paths.push('.github/workflows/ci.yml');
 
     const res = await analyser({
       provider: new FakeProvider({
@@ -25,7 +29,7 @@ describe('ci', () => {
           '/': paths,
         },
         files: {
-          '/.github/workflows/ci.yml': '', // we open this file
+          '/.github/workflows/ci.yml': workflow, // we open this file
         },
       }),
     });
@@ -42,7 +46,7 @@ describe('ci', () => {
           '/.github/workflows': ['main.yml'],
         },
         files: {
-          '/.github/workflows/main.yml': '',
+          '/.github/workflows/main.yml': workflow,
         },
       }),
     });

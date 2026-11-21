@@ -21,12 +21,14 @@ exports[`python lockfile: pyproject.toml > should match everything 1`] = `
   "chargebee",
   "chromadb",
   "clerk",
+  "click",
   "clickhouse",
   "cloudinary",
   "cohereai",
   "composio",
   "convexdb",
   "crawl4ai",
+  "dapr",
   "datadog",
   "datadome",
   "dataiku",
@@ -70,10 +72,12 @@ exports[`python lockfile: pyproject.toml > should match everything 1`] = `
   "hetzner",
   "honeybadger",
   "hostinger",
+  "httpx",
   "huggingface",
   "inngest",
   "instana",
   "internet-archive",
+  "jinja2",
   "jsonschema",
   "keycloak",
   "keyring",
@@ -127,12 +131,15 @@ exports[`python lockfile: pyproject.toml > should match everything 1`] = `
   "rabbitmq",
   "redis",
   "replicate",
+  "requests",
   "resend",
+  "rich",
   "rq",
   "sas",
   "segment",
   "selenium",
   "sentry",
+  "setuptools",
   "socketio",
   "sphinx",
   "sqlalchemy",
@@ -317,6 +324,11 @@ exports[`python lockfile: pyproject.toml > should match everything 2`] = `
   ],
   [
     "python",
+    "click",
+    "1.0.0",
+  ],
+  [
+    "python",
     "clickhouse-connect",
     "1.0.0",
   ],
@@ -343,6 +355,11 @@ exports[`python lockfile: pyproject.toml > should match everything 2`] = `
   [
     "python",
     "crawl4ai",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "dapr",
     "1.0.0",
   ],
   [
@@ -562,6 +579,11 @@ exports[`python lockfile: pyproject.toml > should match everything 2`] = `
   ],
   [
     "python",
+    "httpx",
+    "1.0.0",
+  ],
+  [
+    "python",
     "huggingface-hub",
     "1.0.0",
   ],
@@ -578,6 +600,11 @@ exports[`python lockfile: pyproject.toml > should match everything 2`] = `
   [
     "python",
     "internetarchive",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "jinja2",
     "1.0.0",
   ],
   [
@@ -857,6 +884,11 @@ exports[`python lockfile: pyproject.toml > should match everything 2`] = `
   ],
   [
     "python",
+    "psycopg2",
+    "1.0.0",
+  ],
+  [
+    "python",
     "psycopg2-binary",
     "1.0.0",
   ],
@@ -878,11 +910,6 @@ exports[`python lockfile: pyproject.toml > should match everything 2`] = `
   [
     "python",
     "pymongo",
-    "1.0.0",
-  ],
-  [
-    "python",
-    "pymysql",
     "1.0.0",
   ],
   [
@@ -937,7 +964,17 @@ exports[`python lockfile: pyproject.toml > should match everything 2`] = `
   ],
   [
     "python",
+    "requests",
+    "1.0.0",
+  ],
+  [
+    "python",
     "resend",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "rich",
     "1.0.0",
   ],
   [
@@ -963,6 +1000,11 @@ exports[`python lockfile: pyproject.toml > should match everything 2`] = `
   [
     "python",
     "sentry_sdk",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "setuptools",
     "1.0.0",
   ],
   [
@@ -1124,12 +1166,14 @@ exports[`python lockfile: requirements.txt > should match everything 1`] = `
   "chargebee",
   "chromadb",
   "clerk",
+  "click",
   "clickhouse",
   "cloudinary",
   "cohereai",
   "composio",
   "convexdb",
   "crawl4ai",
+  "dapr",
   "datadog",
   "datadome",
   "dataiku",
@@ -1173,10 +1217,12 @@ exports[`python lockfile: requirements.txt > should match everything 1`] = `
   "hetzner",
   "honeybadger",
   "hostinger",
+  "httpx",
   "huggingface",
   "inngest",
   "instana",
   "internet-archive",
+  "jinja2",
   "jsonschema",
   "keycloak",
   "keyring",
@@ -1231,12 +1277,15 @@ exports[`python lockfile: requirements.txt > should match everything 1`] = `
   "rabbitmq",
   "redis",
   "replicate",
+  "requests",
   "resend",
+  "rich",
   "rq",
   "sas",
   "segment",
   "selenium",
   "sentry",
+  "setuptools",
   "socketio",
   "sphinx",
   "sqlalchemy",
@@ -1421,6 +1470,11 @@ exports[`python lockfile: requirements.txt > should match everything 2`] = `
   ],
   [
     "python",
+    "click",
+    "1.0.0",
+  ],
+  [
+    "python",
     "clickhouse-connect",
     "1.0.0",
   ],
@@ -1447,6 +1501,11 @@ exports[`python lockfile: requirements.txt > should match everything 2`] = `
   [
     "python",
     "crawl4ai",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "dapr",
     "1.0.0",
   ],
   [
@@ -1666,6 +1725,11 @@ exports[`python lockfile: requirements.txt > should match everything 2`] = `
   ],
   [
     "python",
+    "httpx",
+    "1.0.0",
+  ],
+  [
+    "python",
     "huggingface-hub",
     "1.0.0",
   ],
@@ -1682,6 +1746,11 @@ exports[`python lockfile: requirements.txt > should match everything 2`] = `
   [
     "python",
     "internetarchive",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "jinja2",
     "1.0.0",
   ],
   [
@@ -1961,6 +2030,11 @@ exports[`python lockfile: requirements.txt > should match everything 2`] = `
   ],
   [
     "python",
+    "psycopg2",
+    "1.0.0",
+  ],
+  [
+    "python",
     "psycopg2-binary",
     "1.0.0",
   ],
@@ -1982,11 +2056,6 @@ exports[`python lockfile: requirements.txt > should match everything 2`] = `
   [
     "python",
     "pymongo",
-    "1.0.0",
-  ],
-  [
-    "python",
-    "pymysql",
     "1.0.0",
   ],
   [
@@ -2041,7 +2110,17 @@ exports[`python lockfile: requirements.txt > should match everything 2`] = `
   ],
   [
     "python",
+    "requests",
+    "1.0.0",
+  ],
+  [
+    "python",
     "resend",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "rich",
     "1.0.0",
   ],
   [
@@ -2062,6 +2141,11 @@ exports[`python lockfile: requirements.txt > should match everything 2`] = `
   [
     "python",
     "sentry_sdk",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "setuptools",
     "1.0.0",
   ],
   [

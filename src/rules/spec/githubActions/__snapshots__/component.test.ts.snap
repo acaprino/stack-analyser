@@ -21,11 +21,13 @@ exports[`githubActions > should match all dependencies 1`] = `
   "aws.lambda",
   "aws.s3",
   "azure",
+  "azure.appservice",
   "azure.functions",
   "azure.mysql",
   "azure.postgres",
   "azure.sql",
   "azure.staticwebapps",
+  "bunsh",
   "bytebase",
   "checkov",
   "circleci",
@@ -52,6 +54,7 @@ exports[`githubActions > should match all dependencies 1`] = `
   "eleventy",
   "expodev",
   "firebase",
+  "flutter",
   "flyio",
   "flyway",
   "gatsby",
@@ -69,6 +72,7 @@ exports[`githubActions > should match all dependencies 1`] = `
   "github.codeql",
   "github.pages",
   "golangcilint",
+  "gradle",
   "hashicorp_vault",
   "helm",
   "heroku",
@@ -85,6 +89,7 @@ exports[`githubActions > should match all dependencies 1`] = `
   "php",
   "planetscale",
   "playwright",
+  "pnpm",
   "postgresql",
   "python",
   "qovery",
@@ -211,7 +216,17 @@ exports[`githubActions > should match all dependencies 2`] = `
   ],
   [
     "githubAction",
+    "actions/configure-pages",
+    "1",
+  ],
+  [
+    "githubAction",
     "actions/deploy-pages",
+    "1",
+  ],
+  [
+    "githubAction",
+    "actions/setup-node",
     "1",
   ],
   [
@@ -606,6 +621,11 @@ exports[`githubActions > should match all dependencies 2`] = `
   ],
   [
     "githubAction",
+    "gradle/actions/setup-gradle",
+    "1",
+  ],
+  [
+    "githubAction",
     "hashicorp/setup-terraform",
     "1",
   ],
@@ -691,6 +711,11 @@ exports[`githubActions > should match all dependencies 2`] = `
   ],
   [
     "githubAction",
+    "oven-sh/setup-bun",
+    "1",
+  ],
+  [
+    "githubAction",
     "paambaati/codeclimate-action",
     "1",
   ],
@@ -712,6 +737,11 @@ exports[`githubActions > should match all dependencies 2`] = `
   [
     "githubAction",
     "plengauer/Thoth",
+    "1",
+  ],
+  [
+    "githubAction",
+    "pnpm/action-setup",
     "1",
   ],
   [
@@ -772,7 +802,12 @@ exports[`githubActions > should match all dependencies 2`] = `
   [
     "githubAction",
     "snyk/actions/php",
-    "latest",
+    "1",
+  ],
+  [
+    "githubAction",
+    "subosito/flutter-action",
+    "1",
   ],
   [
     "githubAction",
