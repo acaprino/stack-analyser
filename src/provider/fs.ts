@@ -14,17 +14,21 @@ export interface FSProviderOptions {
   ignorePaths?: (RegExp | string)[];
   /** Largest single file that can be read. Increase for unusually large dependency lockfiles. */
   maxFileBytes?: number;
+  /** Folder names that are not entered, at any depth. Replaces the default list; an empty array skips nothing. */
+  skipDirs?: string[];
 }
 
 export class FSProvider implements BaseProvider {
   readonly opts: FSProviderOptions;
   readonly basePath: string;
+  readonly skipDirs?: readonly string[];
   private root?: Promise<string>;
   private readonly maxFileBytes: number;
 
   constructor(opts: FSProviderOptions) {
     this.opts = opts;
     this.basePath = path.resolve(opts.path);
+    this.skipDirs = opts.skipDirs && [...opts.skipDirs];
     this.maxFileBytes = opts.maxFileBytes ?? 32 * 1024 * 1024;
     if (!Number.isSafeInteger(this.maxFileBytes) || this.maxFileBytes <= 0) {
       throw new RangeError('maxFileBytes must be a positive integer');

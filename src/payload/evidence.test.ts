@@ -117,3 +117,13 @@ it('gives the host component of a dotted technology the evidence of the service 
   copy.evidence.pop();
   expect(aws.evidence).toHaveLength(2);
 });
+
+it('dives into a folder the default list skips when the caller says so', async () => {
+  const paths = { '/': ['tests/'], '/tests': ['package.json'] };
+  const files = { '/tests/package.json': JSON.stringify({ name: 't', dependencies: { vitest: '1' } }) };
+  const found = async (skipDirs?: string[]) =>
+    flatten(await analyser({ provider: new FakeProvider({ paths, files, skipDirs }) }), { merge: true }).techs.has('vitest');
+  expect(await found()).toBe(false);
+  expect(await found([])).toBe(true);
+  expect(await found(['tests'])).toBe(false);
+});

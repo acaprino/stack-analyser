@@ -29,7 +29,10 @@ it('writes a stack for a Maven project using the normal CLI', async () => {
 async function runCli(files: Record<string, string>, args: string[]) {
   const cwd = await fs.mkdtemp(path.join(os.tmpdir(), 'stack-analyser-cli-'));
   try {
-    for (const [name, content] of Object.entries(files)) await fs.writeFile(path.join(cwd, name), content);
+    for (const [name, content] of Object.entries(files)) {
+      await fs.mkdir(path.dirname(path.join(cwd, name)), { recursive: true });
+      await fs.writeFile(path.join(cwd, name), content);
+    }
     const file = path.join(import.meta.dirname, 'cli.ts');
     const result = await promisify(execFile)(process.execPath, [
       '--import', import.meta.resolve('tsx'), file, '.', ...args,
@@ -74,4 +77,25 @@ it('exits with 1 and writes nothing when the declarations file does not exist', 
   const { code, output } = await runCli({ 'package.json': manifest }, ['--declarations', 'missing.json']);
   expect(code).toBe(1);
   expect(output).toBeNull();
+}, 20_000);
+
+const tree = {
+  'package.json': manifest,
+  'tests/package.json': JSON.stringify({ name: 't', dependencies: { vitest: '1' } }),
+  'generated/package.json': JSON.stringify({ name: 'g', dependencies: { express: '4' } }),
+};
+
+it.each([
+  ['no option keeps the default list', [], ['react', 'express']],
+  ['an empty list skips nothing', ['--skip-dirs', ''], ['react', 'express', 'vitest']],
+  ['a list replaces the default one, and its entries are trimmed', ['--skip-dirs', ' generated , ,'], ['react', 'vitest']],
+  ['a folder listed by name is skipped', ['--skip-dirs', 'tests,generated'], ['react']],
+  ['a path to ignore is left out with its content', ['--ignore', 'generated'], ['react']],
+  ['paths to ignore are trimmed', ['--ignore', ' generated, '], ['react']],
+  ['both options together', ['--skip-dirs', '', '--ignore', 'generated'], ['react', 'vitest']],
+])('%s', async (_label, args, expected) => {
+  const { code, output } = await runCli(tree, ['--flat', ...args]);
+  expect(code).toBe(0);
+  const found = new Set<string>(output.techs);
+  expect(['react', 'express', 'vitest'].filter((tech) => found.has(tech))).toEqual(expected);
 }, 20_000);

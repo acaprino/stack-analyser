@@ -21,6 +21,14 @@ import './autoload.js';
 
 const program = new Command();
 
+/** Splits a comma-separated option value. Entries are trimmed and empty ones dropped, so `""` is an empty list. */
+function parseList(value: string): string[] {
+  return value
+    .split(',')
+    .map((item) => item.trim())
+    .filter((item) => item !== '');
+}
+
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
 // eslint-disable-next-line unicorn/no-await-expression-member
@@ -35,8 +43,10 @@ program
   .option('-o, --output <FILENAME>', 'output json to a file', 'output.json')
   .option('--flat', 'flatten the output', false)
   .option('--declarations <FILE>', 'JSON file with an array of declarations that other tools already read')
+  .option('--skip-dirs <NAMES>', 'comma-separated folder names to skip at any depth, instead of the default list ("" skips none)')
+  .option('--ignore <PATHS>', 'comma-separated paths, relative to the root, to leave out with everything below them')
   .version(pkg.version)
-  .action(async (arg: string, options: { output?: string; flat: boolean; declarations?: string }) => {
+  .action(async (arg: string, options: { output?: string; flat: boolean; declarations?: string; skipDirs?: string; ignore?: string }) => {
     const pathAtExecution = process.cwd();
     const root = path.isAbsolute(arg) ? arg : path.join(pathAtExecution, arg);
 
@@ -71,7 +81,11 @@ program
 
     await timer.setTimeout(500);
     const res = await analyser({
-      provider: new FSProvider({ path: root, ignorePaths: [] }),
+      provider: new FSProvider({
+        path: root,
+        ignorePaths: options.ignore === undefined ? [] : parseList(options.ignore),
+        skipDirs: options.skipDirs === undefined ? undefined : parseList(options.skipDirs),
+      }),
       declarations,
     });
     spinner.succeed('Analysed');

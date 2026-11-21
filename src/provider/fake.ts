@@ -8,13 +8,15 @@ function fixturePath(value: string): string {
 
 export class FakeProvider implements BaseProvider {
   basePath: string;
+  readonly skipDirs?: readonly string[];
   private paths;
   private files;
 
-  constructor(opts: { paths: Record<string, string[]>; files: Record<string, string> }) {
+  constructor(opts: { paths: Record<string, string[]>; files: Record<string, string>; skipDirs?: string[] }) {
     this.paths = Object.fromEntries(Object.entries(opts.paths).map(([key, value]) => [fixturePath(key), value]));
     this.files = Object.fromEntries(Object.entries(opts.files).map(([key, value]) => [fixturePath(key), value]));
     this.basePath = '/';
+    this.skipDirs = opts.skipDirs && [...opts.skipDirs];
   }
 
   listDir(pathRelative: string): Promise<ProviderFile[]> {

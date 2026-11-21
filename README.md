@@ -22,7 +22,7 @@ It can be helpful for other to get all dependencies or SaaS used in a given git 
 ## CLI
 
 ```bash
-npx @specfy/stack-analyser <PATH> [--output=<filename>] [--flat] [--declarations=<file>]
+npx @specfy/stack-analyser <PATH> [--output=<filename>] [--flat] [--declarations=<file>] [--skip-dirs=<names>] [--ignore=<paths>]
 ```
 
 ```sh
@@ -75,6 +75,30 @@ kept, each with its own `source`; what the analyser reads has the source `stack-
 prints the number of the entry and writes no output when the file is not a JSON array, when an entry has an unknown
 `type` or a missing field, or when a `path` is absolute or leaves the analysed folder.
 
+### Choosing which folders are skipped
+
+By default the analyser does not enter the folders in the list under [Filesystem provider](#filesystem-provider),
+such as `tests`, `public`, `bin`, `vendor` and `migrations`, at any depth. The caller decides what is left out.
+
+- `--skip-dirs <NAMES>` takes comma-separated folder names and uses them **instead of** the default list. A name is
+  compared with the name of a folder at any depth, so write `tests`, not `src/tests`. An empty value, as in
+  `--skip-dirs ""`, skips no folder at all.
+- `--ignore <PATHS>` takes comma-separated paths relative to the analysed folder. A path leaves out that folder or
+  file and everything below it. It applies on top of `--skip-dirs` or of the default list.
+
+Spaces around an entry and empty entries are dropped.
+
+```sh
+# enter every folder, including tests and vendor
+node dist/cli.js /my/project --skip-dirs ""
+
+# skip only these two names, wherever they are
+node dist/cli.js /my/project --skip-dirs "node_modules,dist"
+
+# leave out two paths of the analysed folder
+node dist/cli.js /my/project --ignore "docs/examples,packages/legacy"
+```
+
 ## Programmatic Usage
 
 ```ts
@@ -125,7 +149,7 @@ supported one, a missing field, or a `path` that is absolute or outside the proj
 
 ### Filesystem provider
 
-`FSProvider` accepts two optional settings.
+`FSProvider` accepts three optional settings.
 
 ```ts
 new FSProvider({
@@ -134,8 +158,25 @@ new FSProvider({
   ignorePaths: ['generated', /^packages\/[^/]+\/dist$/],
   // Largest single file the analyser reads, in bytes. The default is 32 MiB.
   maxFileBytes: 64 * 1024 * 1024,
+  // Folder names that are not entered, at any depth. It replaces the default list below;
+  // `[]` skips nothing. Leave it out to keep the default list.
+  skipDirs: ['node_modules', 'dist'],
 });
 ```
+
+The default list of skipped folders, used when `skipDirs` is not given:
+
+- Build and dependency output: `node_modules`, `dist`, `build`, `_build`, `.build`, `.dart_tool`, `obj`, `Pods`, `bin`,
+  `static`, `public`, `vendor`, `terraform.tfstate.d`, `tmp`
+- Tests and generated data: `migrations`, `tests`, `e2e`, `__fixtures__`, `__snapshots__`
+- Tool folders: `.artifacts`, `.assets`, `.azure`, `.azure-pipelines`, `.bundle`, `.cache`, `.changelog`,
+  `.devcontainer`, `.docker`, `.dynamodb`, `.fusebox`, `.git`, `.gitlab`, `.gradle`, `.log`, `.metadata`, `.npm`,
+  `.nuxt`, `.react-email`, `.release`, `.semgrep`, `.serverless`, `.svn`, `.terraform`, `.vercel`, `.vscode`,
+  `.vuepress`
+
+`.github` is not in the list, because the analyser reads GitHub Actions from it. With a custom `skipDirs`, only the
+names you give are skipped, so add `.github` there if you want it left out. `FakeProvider` takes the same `skipDirs`
+setting.
 
 The provider reads only inside `path`. A path that resolves outside it, directly or through a symbolic link,
 is reported as missing. A symbolic link to a file inside the repository is read as a file. A symbolic link to

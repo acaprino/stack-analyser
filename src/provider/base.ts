@@ -10,6 +10,8 @@ export interface BaseProvider {
   listDir: (pathRelative: string) => Promise<ProviderFile[]>;
   open: (path: string) => Promise<null | string>;
   stat: (path: string) => Promise<{ size: number } | null>;
+  /** Folder names that are not entered, at any depth. When present it replaces `IGNORED_DIVE_PATHS`; empty skips nothing. */
+  readonly skipDirs?: readonly string[];
 }
 
 export const IGNORED_DIVE_PATHS = [

@@ -2,7 +2,10 @@ import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { expect, it, vi } from 'vitest';
+import { analyser } from '../analyser/index.js';
+import { flatten } from '../payload/helpers.js';
 import { FSProvider } from './fs.js';
+import '../autoload.js';
 
 it('keeps filesystem reads inside the selected root and respects ignored relative paths', async () => {
   const temp = await fs.mkdtemp(path.join(os.tmpdir(), 'specfy-provider-'));
@@ -37,6 +40,26 @@ it('keeps filesystem reads inside the selected root and respects ignored relativ
     expect(await new FSProvider({ path: project, maxFileBytes: 2 }).open(path.join(project, 'visible.json'))).toBe('{}');
   } finally {
     vi.restoreAllMocks();
+    await fs.rm(temp, { recursive: true, force: true });
+  }
+});
+
+it('lets the caller replace the list of skipped folders, and keeps the default list without it', async () => {
+  const temp = await fs.mkdtemp(path.join(os.tmpdir(), 'specfy-provider-'));
+  try {
+    await fs.mkdir(path.join(temp, 'tests'));
+    await fs.writeFile(path.join(temp, 'tests/package.json'), JSON.stringify({ name: 't', dependencies: { vitest: '1' } }));
+    const found = async (skipDirs?: string[]) =>
+      flatten(await analyser({ provider: new FSProvider({ path: temp, skipDirs }) }), { merge: true }).techs.has('vitest');
+    expect(new FSProvider({ path: temp }).skipDirs).toBeUndefined();
+    expect(new FSProvider({ path: temp, skipDirs: [] }).skipDirs).toEqual([]);
+    expect(await found()).toBe(false);
+    expect(await found([])).toBe(true);
+    expect(await found(['tests'])).toBe(false);
+    // `ignorePaths` still applies to a folder that `skipDirs` lets through.
+    const ignored = new FSProvider({ path: temp, skipDirs: [], ignorePaths: ['tests'] });
+    expect(flatten(await analyser({ provider: ignored }), { merge: true }).techs.has('vitest')).toBe(false);
+  } finally {
     await fs.rm(temp, { recursive: true, force: true });
   }
 });

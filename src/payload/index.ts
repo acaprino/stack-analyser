@@ -122,12 +122,13 @@ export class Payload implements Analyser {
     ctx.mentions.push(...(await findHostMentions(files, provider)));
 
     // Recursively dive in folders
+    const skipDirs = provider.skipDirs ?? IGNORED_DIVE_PATHS;
     for (const file of files) {
       if (file.type === 'file') {
         ctx.detectLang(file.name);
         continue;
       }
-      if (IGNORED_DIVE_PATHS.includes(file.name)) {
+      if (skipDirs.includes(file.name)) {
         continue;
       }
 
