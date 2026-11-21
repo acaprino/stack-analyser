@@ -34,6 +34,8 @@ export class Payload implements Analyser {
   public parent?: null | Payload;
   public reason: Set<string>;
   public evidence: Analyser['evidence'] = [];
+  /** The key of every item in `evidence`: it is kept with the array, so that a merge does not have to build it again. */
+  #evidenceKeys = new Set<string>();
   public mentions: HostMention[] = [];
 
   constructor({
@@ -252,11 +254,10 @@ export class Payload implements Analyser {
    * Add evidence that already has its tech and source, skipping the ones this Payload already has.
    */
   private mergeEvidence(items: Evidence[]): void {
-    const seen = new Set(this.evidence.map(evidenceKey));
     for (const item of items) {
       const key = evidenceKey(item);
-      if (seen.has(key)) continue;
-      seen.add(key);
+      if (this.#evidenceKeys.has(key)) continue;
+      this.#evidenceKeys.add(key);
       this.evidence.push({ ...item });
     }
   }
@@ -366,6 +367,7 @@ export class Payload implements Analyser {
     cp.techs = new Set(this.techs);
     cp.reason = new Set(this.reason);
     cp.evidence = this.evidence.map((item) => ({ ...item }));
+    cp.#evidenceKeys = new Set(this.#evidenceKeys);
     cp.inComponent = this.inComponent;
     cp.edges = this.edges.map((edge) => ({ ...edge }));
     cp.mentions = [...this.mentions];

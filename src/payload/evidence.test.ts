@@ -127,3 +127,59 @@ it('dives into a folder the default list skips when the caller says so', async (
   expect(await found([])).toBe(true);
   expect(await found(['tests'])).toBe(false);
 });
+
+/** `count` folders, each with one manifest that names the same known packages. */
+function manyManifests(manifest: string, content: (index: number) => string, count: number) {
+  const paths: Record<string, string[]> = { '/': [] };
+  const files: Record<string, string> = {};
+  for (let i = 0; i < count; i++) {
+    paths['/'].push(`m${i}/`);
+    paths[`/m${i}`] = [manifest];
+    files[`/m${i}/${manifest}`] = content(i);
+  }
+  return new FakeProvider({ paths, files });
+}
+
+const knownPythonPackages = [
+  'django', 'flask', 'fastapi', 'celery', 'redis', 'psycopg2', 'sqlalchemy', 'pytest', 'numpy', 'pandas',
+  'boto3', 'pymongo', 'sentry-sdk', 'elasticsearch', 'gunicorn', 'requests', 'pydantic', 'openai', 'stripe', 'twilio',
+];
+const knownNpmPackages = [
+  'react', 'express', 'vue', 'next', 'jest', 'eslint', 'typescript', 'webpack', 'redis', 'pg',
+  'mongoose', 'prisma', 'fastify', 'vitest', 'tailwindcss', 'stripe', 'mysql2', 'socket.io', '@sentry/node', 'aws-sdk',
+];
+
+// The work used to grow with the square of the evidence already found: the first of these took about 16 seconds.
+// Now they take 1 to 3 seconds, and up to 7 with the whole suite running, so the bound leaves room for a loaded machine.
+const bound = 10_000;
+
+it('analyses 800 Python manifests with 20 known packages each without the time growing with the square', async () => {
+  const provider = manyManifests('requirements.txt', () => knownPythonPackages.map((name) => `${name}>=1`).join('\n'), 800);
+  const start = performance.now();
+  const json = (await analyser({ provider })).toJson('/');
+  const elapsed = performance.now() - start;
+  expect(json.evidence.length).toBeGreaterThanOrEqual(800 * 20);
+  expect(elapsed).toBeLessThan(bound);
+}, 60_000);
+
+it('flattens 400 npm packages with 20 known dependencies each without the time growing with the square', async () => {
+  const provider = manyManifests(
+    'package.json', (i) => JSON.stringify({ name: `pkg${i}`, dependencies: Object.fromEntries(knownNpmPackages.map((name) => [name, '1'])) }), 400);
+  const start = performance.now();
+  const json = flatten(await analyser({ provider }), { merge: true }).toJson('/');
+  const elapsed = performance.now() - start;
+  expect(json.evidence.length).toBeGreaterThan(400 * 20);
+  expect(elapsed).toBeLessThan(bound);
+}, 60_000);
+
+it('keeps what a copy has already seen apart from the original', () => {
+  const found = { kind: 'package', value: 'redis', path: '/package.json' } as const;
+  const other = { kind: 'package', value: 'ioredis', path: '/package.json' } as const;
+  const root = new Payload({ name: 'main', folderPath: '/' });
+  root.addEvidence('redis', [found]);
+  const copy = root.copy();
+  copy.addEvidence('redis', [found, other]);
+  expect(copy.evidence.map((e) => e.value)).toEqual(['redis', 'ioredis']);
+  root.addEvidence('redis', [other]);
+  expect(root.evidence.map((e) => e.value)).toEqual(['redis', 'ioredis']);
+});
