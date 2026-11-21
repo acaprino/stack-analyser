@@ -125,9 +125,9 @@ After the port the package registers 1,218 technologies, 142 more than the 1,076
 | Replay before and after the port | Before | After | Lost |
 | --- | ---: | ---: | ---: |
 | Frameworks, libraries and tools | 478 / 569 | 478 / 569 | 0 |
-| Services | 219 / 518 | 219 / 518 | 0 |
+| Services | 219 / 518 | 219 / 518 | 1 |
 
-No expected name is gained: 51 detections on 20 of the 178 recorded projects gain an id (`ruff`, `gunicorn`, `jinja` and a few other Python tools; none completes an expected name). An emulation of the registry's own matching on the same declarations (names without regard to case, every expression, the same scoring of names) reaches no expected name that the fork misses. The services total is 219 here; an earlier estimate of at least 232 came from a different scorer. No id recognised before is lost, except `jinja2`, which is renamed `jinja`. The names left unmatched are the ones of the table above, with one fewer unknown name among the services:
+No expected name is gained: 51 detections on 20 of the 178 recorded projects gain an id (`ruff`, `gunicorn`, `jinja` and a few other Python tools; none completes an expected name). An emulation of the registry's own matching on the same declarations (names without regard to case, every expression, the same scoring of names) reaches no expected name that the fork misses. The services total is 219 here; an earlier estimate of at least 232 came from a different scorer. No id recognised before is lost, except `jinja2` (renamed `jinja`) and `postman` on `real-app-hoppscotch`, the accepted loss above; no expected name is lost. The names left unmatched are the ones of the table above, with one fewer unknown name among the services:
 
 | Why expected labels remain unmatched after the port | Frameworks, libraries and tools | Services |
 | --- | ---: | ---: |
