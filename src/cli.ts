@@ -65,12 +65,28 @@ program
 
     l.log(kleur.bold().magenta(figureSet.triangleRight), 'Path', kleur.cyan(root));
 
-    // Checked before anything is analysed, so a bad file never leaves an output behind.
+    // Everything below is checked before anything is analysed, so a bad option never leaves an output behind.
+    const skipDirs = options.skipDirs === undefined ? undefined : parseList(options.skipDirs);
+    const ignorePaths = options.ignore === undefined ? [] : parseList(options.ignore);
+
+    const notAName = skipDirs?.find((entry) => /[\\/]/.test(entry));
+    if (notAName !== undefined) {
+      l.log(kleur.bold().red(figureSet.cross), `--skip-dirs takes folder names, not paths: "${notAName}" (to leave out one path, use --ignore)`);
+      process.exit(1);
+    }
+    const outside = ignorePaths.find((entry) => /^[A-Za-z]:[\\/]/.test(entry) || entry.split(/[\\/]/).includes('..'));
+    if (outside !== undefined) {
+      l.log(kleur.bold().red(figureSet.cross), `--ignore takes paths inside the project, relative to its root: "${outside}" is not one`);
+      process.exit(1);
+    }
+
     let declarations: Declaration[] | undefined;
-    if (options.declarations) {
+    if (options.declarations !== undefined) {
       const declarationsFile = path.resolve(pathAtExecution, options.declarations);
       try {
-        declarations = parseDeclarations(JSON.parse(await fs.readFile(declarationsFile, 'utf8')));
+        // A byte order mark, which some editors put first, is not part of the JSON.
+        const text = (await fs.readFile(declarationsFile, 'utf8')).replace(/^﻿/, '');
+        declarations = parseDeclarations(JSON.parse(text));
       } catch (err) {
         l.log(kleur.bold().red(figureSet.cross), `Declarations "${declarationsFile}":`, (err as Error).message);
         process.exit(1);
@@ -79,11 +95,7 @@ program
 
     const spinner = ora(`Analysing`).start();
 
-    const provider = new FSProvider({
-      path: root,
-      ignorePaths: options.ignore === undefined ? [] : parseList(options.ignore),
-      skipDirs: options.skipDirs === undefined ? undefined : parseList(options.skipDirs),
-    });
+    const provider = new FSProvider({ path: root, ignorePaths, skipDirs });
     const res = await analyser({ provider, declarations });
     spinner.succeed('Analysed');
 

@@ -73,7 +73,9 @@ The technologies and their evidence go on the root component, with the `path`, `
 A name that no rule knows adds nothing. When the analyser reads the same package itself, both pieces of evidence are
 kept, each with its own `source`; what the analyser reads has the source `stack-analyser`. The CLI exits with code 1,
 prints the number of the entry and writes no output when the file is not a JSON array, when an entry has an unknown
-`type` or a missing field, or when a `path` is absolute or leaves the analysed folder.
+`type` or a missing field, or when a `path` is absolute or leaves the analysed folder. It exits with code 1 and
+writes no output too when the value of `--declarations` is empty. A UTF-8 byte order mark at the start of the file
+is ignored.
 
 ### Choosing which folders are skipped
 
@@ -81,10 +83,14 @@ By default the analyser does not enter the folders in the list under [Filesystem
 such as `tests`, `public`, `bin`, `vendor` and `migrations`, at any depth. The caller decides what is left out.
 
 - `--skip-dirs <NAMES>` takes comma-separated folder names and uses them **instead of** the default list. A name is
-  compared with the name of a folder at any depth, so write `tests`, not `src/tests`. An empty value, as in
+  compared with the name of a folder at any depth, so write `tests`, not `src/tests`. An entry that holds a `/` or
+  a `\` is a path, not a name: the CLI names it, exits with code 1 and analyses nothing. An empty value, as in
   `--skip-dirs ""`, skips no folder at all.
 - `--ignore <PATHS>` takes comma-separated paths relative to the analysed folder. A path leaves out that folder or
-  file and everything below it. It applies on top of `--skip-dirs` or of the default list.
+  file and everything below it. It applies on top of `--skip-dirs` or of the default list. A leading `/` or `./` and
+  a trailing `/` are dropped, so `/gen`, `./gen`, `gen/` and `gen` mean the same folder. An entry that is absolute
+  with a drive letter, such as `C:/gen`, or that has a `..` in it, is not inside the analysed folder: the CLI names
+  it, exits with code 1 and analyses nothing.
 
 Spaces around an entry and empty entries are dropped.
 
@@ -154,7 +160,8 @@ supported one, a missing field, or a `path` that is absolute or outside the proj
 ```ts
 new FSProvider({
   path: '/my/repository/path/',
-  // Names relative to `path`, or regular expressions. Ignoring a directory excludes everything below it.
+  // Names relative to `path` (a leading `/` or `./` and a trailing `/` are dropped), or regular expressions.
+  // Ignoring a directory excludes everything below it.
   ignorePaths: ['generated', /^packages\/[^/]+\/dist$/],
   // Largest single file the analyser reads, in bytes. The default is 32 MiB.
   maxFileBytes: 64 * 1024 * 1024,

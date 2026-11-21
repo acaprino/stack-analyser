@@ -139,6 +139,22 @@ it('exits with 1 and writes nothing when the declarations file does not exist', 
   expect(output).toBeNull();
 }, 20_000);
 
+it('exits with 1 and writes nothing when --declarations is given an empty value', async () => {
+  const { code, out, output } = await runCli({ 'package.json': manifest }, ['--declarations', '']);
+  expect(code).toBe(1);
+  expect(out).toMatch(/Declarations/);
+  expect(output).toBeNull();
+}, 20_000);
+
+it('reads a declarations file that starts with a UTF-8 byte order mark', async () => {
+  const declarations = '﻿' + JSON.stringify([{ type: 'python', name: 'requests', path: 'setup.cfg', source: 'python-build' }]);
+  const { code, output } = await runCli(
+    { 'package.json': manifest, 'declarations.json': declarations }, ['--flat', '--declarations', 'declarations.json']);
+  expect(code).toBe(0);
+  expect(output.evidence).toContainEqual(
+    { tech: 'requests', kind: 'package', value: 'requests', path: '/setup.cfg', source: 'python-build' });
+}, 20_000);
+
 const tree = {
   'package.json': manifest,
   'tests/package.json': JSON.stringify({ name: 't', dependencies: { vitest: '1' } }),
@@ -158,6 +174,40 @@ it.each([
   expect(code).toBe(0);
   const found = new Set<string>(output.techs);
   expect(['react', 'express', 'vitest'].filter((tech) => found.has(tech))).toEqual(expected);
+}, 20_000);
+
+it('leaves out a folder to --ignore however its path is written', async () => {
+  const folders = { a: 'express', b: 'vue', c: 'fastify', d: 'mongoose' };
+  const files = {
+    'package.json': manifest,
+    ...Object.fromEntries(Object.entries(folders).map(([folder, dep]) => [`${folder}/package.json`, JSON.stringify({ name: folder, dependencies: { [dep]: '1' } })])),
+  };
+  const { code, output } = await runCli(files, ['--flat', '--ignore', '/a, ./b, c/, d']);
+  expect(code).toBe(0);
+  const found = new Set<string>(output.techs);
+  expect(['react', ...Object.values(folders)].filter((tech) => found.has(tech))).toEqual(['react']);
+}, 20_000);
+
+it.each([
+  ['a path with a slash', 'tests,generated/sub', 'generated/sub'],
+  ['a path with a backslash', 'tests,generated\\sub', 'generated\\sub'],
+])('exits with 1 and writes nothing when --skip-dirs is given %s', async (_label, value, entry) => {
+  const { code, out, output } = await runCli(tree, ['--skip-dirs', value]);
+  expect(code).toBe(1);
+  expect(out).toContain(`"${entry}"`);
+  expect(out).toMatch(/--skip-dirs takes folder names, not paths/);
+  expect(output).toBeNull();
+}, 20_000);
+
+it.each([
+  ['a drive letter', 'generated, C:/generated', 'C:/generated'],
+  ['a parent folder', 'generated,tests/../..', 'tests/../..'],
+])('exits with 1 and writes nothing when --ignore is given %s', async (_label, value, entry) => {
+  const { code, out, output } = await runCli(tree, ['--ignore', value]);
+  expect(code).toBe(1);
+  expect(out).toContain(`"${entry}"`);
+  expect(out).toMatch(/--ignore takes paths inside the project/);
+  expect(output).toBeNull();
 }, 20_000);
 
 const dist = path.join(import.meta.dirname, '..', 'dist');

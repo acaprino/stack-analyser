@@ -44,6 +44,21 @@ it('keeps filesystem reads inside the selected root and respects ignored relativ
   }
 });
 
+it.each(['generated', '/generated', './generated', 'generated/', '/generated/'])('ignores a folder written as %s', async (rule) => {
+  const temp = await fs.mkdtemp(path.join(os.tmpdir(), 'specfy-provider-'));
+  try {
+    await fs.mkdir(path.join(temp, 'generated'));
+    await fs.mkdir(path.join(temp, 'generated-docs'));
+    await fs.writeFile(path.join(temp, 'generated/data.json'), '{}');
+    const provider = new FSProvider({ path: temp, ignorePaths: [rule] });
+    // Only that folder: a folder whose name merely starts the same way is still read.
+    expect((await provider.listDir(temp)).map((file) => file.name)).toEqual(['generated-docs']);
+    expect(await provider.open(path.join(temp, 'generated/data.json'))).toBeNull();
+  } finally {
+    await fs.rm(temp, { recursive: true, force: true });
+  }
+});
+
 it('lets the caller replace the list of skipped folders, and keeps the default list without it', async () => {
   const temp = await fs.mkdtemp(path.join(os.tmpdir(), 'specfy-provider-'));
   try {

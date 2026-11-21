@@ -45,7 +45,8 @@ export class FSProvider implements BaseProvider {
       const prefix = parts.slice(0, i).join('/');
       for (const rule of rules) {
         if (typeof rule === 'string') {
-          if (prefix === portablePath(rule).replace(/^\.\//, '').replace(/\/$/, '')) return false;
+          // `/gen`, `./gen`, `gen/` and `gen` all name the same folder, relative to the root.
+          if (prefix === portablePath(rule).replace(/^(?:\.?\/)+/, '').replace(/\/+$/, '')) return false;
         } else {
           rule.lastIndex = 0;
           if (rule.test(prefix)) return false;
