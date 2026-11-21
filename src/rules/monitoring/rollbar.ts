@@ -4,7 +4,7 @@ register({
   tech: 'rollbar',
   name: 'Rollbar',
   type: 'monitoring',
-  dotenv: ['ROOLBAR_'],
+  dotenv: ['ROLLBAR_'],
   dependencies: [
     { type: 'golang', name: 'github.com/rollbar/rollbar-go' },
     { type: 'npm', name: 'rollbar' },

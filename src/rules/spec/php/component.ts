@@ -1,71 +1,49 @@
-import { l } from '../../../common/log.js';
-import { matchDependencies } from '../../../matchDependencies.js';
-import { Payload } from '../../../payload/index.js';
-import { detectLicense } from '../licenses/index.js';
+import path from 'node:path';
 
-import type { Analyser } from '../../../types/index.js';
+import { l } from '../../../common/log.js';
+import { detectLicense } from '../licenses/index.js';
+import { isRecord, packageComponent } from '../packageManifest.js';
+
 import type { ComponentMatcher } from '../../../types/rule.js';
 
-const FILES = new Set(['composer.json']);
-
 export interface ComposerJson {
-  name: string;
-  license?: string;
+  name?: string;
+  license?: string | string[];
   require?: Record<string, string>;
   'require-dev'?: Record<string, string>;
 }
 
 export const detectPhpComponent: ComponentMatcher = async (files, provider) => {
-  for (const file of files) {
-    if (!FILES.has(file.name)) {
-      continue;
-    }
+  const file = files.find((item) => item.name === 'composer.json' && item.type === 'file' && !item.isSymbolicLink);
+  if (!file) return false;
+  const content = await provider.open(file.fp);
+  if (!content) return false;
 
-    const content = await provider.open(file.fp);
-    if (!content) {
-      continue;
-    }
-
-    let json: ComposerJson;
-    try {
-      json = JSON.parse(content) as ComposerJson;
-    } catch (err) {
-      l.warn('Failed to parse composer.json', file.fp, err);
-      continue;
-    }
-
-    if (!json.name) {
-      continue;
-    }
-
-    const deps = {
-      ...json.require,
-      ...json['require-dev'],
-    };
-    const techs = matchDependencies(Object.keys(deps), 'php');
-    const depsFlatten: Analyser['dependencies'] = Object.entries(deps).map(
-      (dep: [string, string]) => {
-        return ['php', dep[0], dep[1]];
-      }
-    );
-
-    const pl = new Payload({
-      name: json.name,
-      folderPath: file.fp,
-      dependencies: depsFlatten,
-    });
-    pl.addTech('phpcomposer', ['matched file: composer.json']);
-    pl.addTechs(techs);
-
-    if (json.license) {
-      const lic = detectLicense(json.license);
-      if (lic !== false) {
-        pl.addLicenses(lic);
-      }
-    }
-
-    return pl;
+  let json: unknown;
+  try {
+    json = JSON.parse(content);
+  } catch (err) {
+    l.warn('Failed to parse composer.json', file.fp, err);
+    return false;
   }
+  if (!isRecord(json)) return false;
+  const name = typeof json.name === 'string' && json.name.trim() ? json.name : undefined;
+  const sections = [json.require, json['require-dev']].filter(isRecord);
+  if (!name && !sections.length) return false;
 
-  return false;
+  const requirements = new Map<string, string>();
+  for (const section of sections) {
+    for (const [id, version] of Object.entries(section)) {
+      if (typeof version === 'string') requirements.set(id, version);
+    }
+  }
+  const component = packageComponent(name ?? (path.basename(path.dirname(file.fp)) || 'virtual'), file.fp, 'php', requirements);
+  component.addTech('phpcomposer', ['matched file: composer.json']);
+  const licenses = Array.isArray(json.license) ? json.license : [json.license];
+  for (const license of licenses) {
+    if (typeof license !== 'string') continue;
+    const detected = detectLicense(license);
+    if (detected) component.addLicenses(detected);
+  }
+  return component;
 };

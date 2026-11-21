@@ -1,11 +1,13 @@
 import path from 'node:path';
 
-import { parseProjectXml } from '../../../common/xml.js';
+import { parseProjectXml, xmlChildren } from '../../../common/xml.js';
 import { matchDependencies } from '../../../matchDependencies.js';
 import { isRecord, packageComponent, projectPath } from '../packageManifest.js';
 
 import type { BaseProvider, ProviderFile } from '../../../provider/base.js';
 import type { ComponentMatcher } from '../../../types/rule.js';
+
+const msbuildNamespaces = ['http://schemas.microsoft.com/developer/msbuild/2003'];
 
 function rows(parent: unknown, key: string): Record<string, unknown>[] {
   if (!isRecord(parent)) return [];
@@ -13,10 +15,36 @@ function rows(parent: unknown, key: string): Record<string, unknown>[] {
   return (Array.isArray(values) ? values : [values]).filter(isRecord);
 }
 
-// Choose/When/Otherwise are evaluated by MSBuild. Keep explicit references across all target branches.
-function itemGroups(project: Record<string, unknown>): Record<string, unknown>[] {
-  return [...rows(project, 'ItemGroup'), ...rows(project, 'Choose').flatMap((choice) =>
-    [...rows(choice, 'When'), ...rows(choice, 'Otherwise')].flatMap(itemGroups))];
+// Keep declarations for possible build targets. Only a literal guard can exclude an entire branch.
+function condition(item: Record<string, unknown>): boolean | undefined {
+  const raw = item['@_Condition'];
+  if (raw === undefined || raw === '') return true;
+  const value = String(raw).trim().toLowerCase();
+  if (value === 'false' || value === "'false'") return false;
+  if (value === 'true' || value === "'true'") return true;
+  return undefined;
+}
+
+interface ItemGroup { node: Record<string, unknown>; unconditional: boolean }
+
+function* itemGroups(project: Record<string, unknown>, certain = true): Generator<ItemGroup> {
+  for (const [tag, node] of xmlChildren(project)) {
+    if (!isRecord(node)) continue;
+    if (tag === 'ItemGroup') {
+      const guard = condition(node);
+      if (guard !== false) yield { node, unconditional: certain && guard === true };
+    } else if (tag === 'Choose') {
+      let certainBranch = certain;
+      for (const [kind, branch] of xmlChildren(node)) {
+        if (!isRecord(branch) || (kind !== 'When' && kind !== 'Otherwise')) continue;
+        const guard = kind === 'Otherwise' ? true : condition(branch);
+        if (guard === false) continue;
+        yield* itemGroups(branch, certainBranch && guard === true);
+        if (guard === true) break;
+        certainBranch = false;
+      }
+    }
+  }
 }
 
 // Only a literal, unconditional project property establishes WinUI. A target or a
@@ -44,17 +72,26 @@ function enablesWinUI(project: Record<string, unknown>): boolean {
   return declared;
 }
 
-function packageVersions(groups: Record<string, unknown>[], tag: string): Map<string, string> {
-  const result = new Map<string, string>();
+function packageVersions(groups: Iterable<ItemGroup>, tag: string): Map<string, string> {
+  const result = new Map<string, [string, string]>();
   for (const group of groups) {
-    for (const item of rows(group, tag)) {
-      const id = item['@_Include'];
-      if (typeof id !== 'string' || !/^[\w.-]+$/.test(id)) continue;
+    for (const item of rows(group.node, tag)) {
+      const guard = condition(item);
+      if (guard === false) continue;
+      const removed = item['@_Remove'];
+      if (typeof removed === 'string' && group.unconditional && guard === true) {
+        for (const name of removed.split(';')) result.delete(name.trim().toLowerCase());
+      }
+      const include = item['@_Include'];
+      if (typeof include !== 'string') continue;
       const version = item['@_VersionOverride'] ?? item.VersionOverride ?? item['@_Version'] ?? item.Version;
-      result.set(id, typeof version === 'string' ? version : '');
+      for (const part of include.split(';')) {
+        const id = part.trim();
+        if (/^[\w.-]+$/.test(id)) result.set(id.toLowerCase(), [id, typeof version === 'string' ? version : '']);
+      }
     }
   }
-  return result;
+  return new Map(result.values());
 }
 
 function lockedPackages(content: string): Map<string, string> {
@@ -86,7 +123,7 @@ async function centralVersions(file: ProviderFile, files: ProviderFile[], provid
   for (;;) {
     const props = siblings.find((item) => item.type === 'file' && item.name === 'Directory.Packages.props');
     if (props) {
-      const root = parseProjectXml((await provider.open(props.fp)) || '')?.Project;
+      const root = parseProjectXml((await provider.open(props.fp)) || '', msbuildNamespaces, true)?.Project;
       if (isRecord(root)) {
         const versions = packageVersions(itemGroups(root), 'PackageVersion');
         return new Map([...versions].map(([name, version]) => [name.toLowerCase(), version]));
@@ -122,9 +159,9 @@ export const detectNugetComponent: ComponentMatcher = async (files, provider) =>
   }
   const payloads = [];
   for (const file of manifests) {
-    const project = parseProjectXml((await provider.open(file.fp)) || '')?.Project;
+    const project = parseProjectXml((await provider.open(file.fp)) || '', msbuildNamespaces, true)?.Project;
     if (!isRecord(project)) continue;
-    const groups = itemGroups(project);
+    const groups = [...itemGroups(project)];
     const requirements = packageVersions(groups, 'PackageReference');
     if (manifests.length === 1) {
       for (const [id, version] of installed) requirements.set(id, version);

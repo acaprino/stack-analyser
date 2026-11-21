@@ -4,6 +4,6 @@ register({
   tech: 'atlassian.bitbucketpipelines',
   name: 'Bitbucket Pipelines',
   type: 'ci',
-  files: ['bitbucket-pipeline.yml'],
+  files: ['bitbucket-pipelines.yml'],
   dependencies: [],
 });

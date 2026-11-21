@@ -1,0 +1,82 @@
+{
+  "npm": {
+    "react": ["react"], "react-dom": ["react-dom"], "react-native": ["react-native"],
+    "angular": ["@angular/core"], "vue": ["vue"], "sveltejs": ["svelte"], "nextjs": ["next"],
+    "nuxtjs": ["nuxt"], "vite": ["vite"], "vite-plus": ["vite-plus"], "typescript": ["typescript"],
+    "esbuild": ["esbuild"], "rollup": ["rollup"], "webpack": ["webpack"], "express": ["express"],
+    "koa": ["koa"], "fastify": ["fastify"], "nestjs": ["@nestjs/core"], "zod": ["zod"],
+    "eslint": ["eslint"], "prettier": ["prettier"], "biomejs": ["@biomejs/biome"],
+    "vitest": ["vitest"], "jest": ["jest"], "mochajs": ["mocha"], "ava": ["ava"], "xo": ["xo"],
+    "tape": ["tape"], "playwright": ["playwright", "@playwright/test"], "puppeteer": ["puppeteer"],
+    "babel": ["@babel/core"], "storybook": ["storybook", "@storybook/react"],
+    "pnpm": ["pnpm"], "yarn": ["yarn"]
+  },
+  "pypi": {
+    "fastapi": ["fastapi"], "flask": ["flask"], "django": ["django"], "pydantic": ["pydantic"],
+    "sqlalchemy": ["sqlalchemy"], "marshmallow": ["marshmallow"], "pyyaml": ["pyyaml"],
+    "requests": ["requests"], "httpx": ["httpx"], "click": ["click"], "rich": ["rich"],
+    "jinja2": ["jinja2"], "pytest": ["pytest"], "ruff": ["ruff"], "mypy": ["mypy"],
+    "flake8": ["flake8"], "black": ["black"], "tox": ["tox"], "sphinx": ["sphinx"],
+    "hatchling": ["hatchling"], "setuptools": ["setuptools"], "flit-core": ["flit-core"],
+    "poetry-core": ["poetry-core"], "uv-build": ["uv-build"], "maturin": ["maturin"]
+  },
+  "cargo": {
+    "tokio": ["tokio"], "axum": ["axum"], "actixweb": ["actix-web"], "clap": ["clap"],
+    "serde": ["serde"], "serde-json": ["serde_json"], "tempfile-rust": ["tempfile"],
+    "proptest": ["proptest"], "rstest": ["rstest"], "sqlx-rust": ["sqlx"],
+    "anyhow": ["anyhow"], "thiserror": ["thiserror"], "criterion": ["criterion"],
+    "tracing": ["tracing"], "reqwest": ["reqwest"], "hyper-rust": ["hyper"], "tauri": ["tauri"]
+  },
+  "gomod": {
+    "testify": ["github.com/stretchr/testify"], "gin": ["github.com/gin-gonic/gin"],
+    "cobra": ["github.com/spf13/cobra"], "viper": ["github.com/spf13/viper"],
+    "chi": ["github.com/go-chi/chi"], "echo": ["github.com/labstack/echo"],
+    "fiber": ["github.com/gofiber/fiber"], "gorm": ["gorm.io/gorm"],
+    "urfave-cli": ["github.com/urfave/cli"], "grpc": ["google.golang.org/grpc"],
+    "protobuf": ["google.golang.org/protobuf"], "opentelemetry": ["go.opentelemetry.io/otel"]
+  },
+  "maven": {
+    "spring-boot": ["org.springframework.boot:spring-boot", "org.springframework.boot:spring-boot-starter", "org.springframework.boot:spring-boot-starter-web", "org.springframework.boot:spring-boot-starter-parent", "org.springframework.boot:spring-boot-maven-plugin"],
+    "spring-mvc": ["org.springframework:spring-webmvc"], "spring-security": ["org.springframework.security:spring-security-core", "org.springframework.boot:spring-boot-starter-security"],
+    "junit": ["junit:junit"], "junit-jupiter": ["org.junit.jupiter:junit-jupiter", "org.junit.jupiter:junit-jupiter-api", "org.junit.jupiter:junit-jupiter-engine"],
+    "mockito": ["org.mockito:mockito-core", "org.mockito:mockito-junit-jupiter"],
+    "jackson": ["com.fasterxml.jackson.core:jackson-databind"], "lombok": ["org.projectlombok:lombok"],
+    "testng": ["org.testng:testng"], "picocli": ["info.picocli:picocli"], "h2": ["com.h2database:h2"],
+    "slf4j": ["org.slf4j:slf4j-api"], "logback": ["ch.qos.logback:logback-classic"],
+    "kotest": ["io.kotest:kotest-runner-junit5"], "mockk": ["io.mockk:mockk"]
+  },
+  "packagist": {
+    "phpunit": ["phpunit/phpunit"], "phpstan": ["phpstan/phpstan"], "phpcodesniffer": ["squizlabs/php_codesniffer"],
+    "php-cs-fixer": ["friendsofphp/php-cs-fixer"], "laravel": ["laravel/framework"],
+    "symfony": ["symfony/framework-bundle"], "phppest": ["pestphp/pest"],
+    "doctrinephp": ["doctrine/orm"], "slim": ["slim/slim"], "twigphp": ["twig/twig"],
+    "guzzle": ["guzzlehttp/guzzle"], "monolog": ["monolog/monolog"]
+  },
+  "nuget": {
+    "xunit": ["xunit", "xunit.v3"], "nunit": ["NUnit"], "mstest": ["MSTest.TestFramework"],
+    "entity-framework-core": ["Microsoft.EntityFrameworkCore"], "json-net": ["Newtonsoft.Json"],
+    "mono-cecil": ["Mono.Cecil"], "mudblazor": ["MudBlazor"], "serilog": ["Serilog"],
+    "moq": ["Moq"], "fluentassertions": ["FluentAssertions"], "messagepack-dotnet": ["MessagePack"]
+  },
+  "rubygems": {
+    "rails": ["rails"], "rspec": ["rspec", "rspec-core", "rspec-rails"], "rubocop": ["rubocop"],
+    "sinatra": ["sinatra"], "capybara": ["capybara"], "sidekiq": ["sidekiq"], "rake": ["rake"],
+    "minitest": ["minitest"], "rack": ["rack"], "puma": ["puma"], "sequelruby": ["sequel"]
+  },
+  "hex": {
+    "phoenix": ["phoenix"], "phoenix-liveview": ["phoenix_live_view"], "ecto": ["ecto", "ecto_sql"],
+    "oban": ["oban"], "broadway": ["broadway"], "jason": ["jason"], "ex-doc": ["ex_doc"],
+    "credo": ["credo"], "dialyxir": ["dialyxir"], "plug": ["plug"]
+  },
+  "pub": {
+    "flutter": ["flutter"], "flutter-test": ["flutter_test"], "dart-test": ["test"],
+    "flutter-rust-bridge": ["flutter_rust_bridge"], "dart-mappable": ["dart_mappable"],
+    "flutter-lints": ["flutter_lints"], "build-runner": ["build_runner"], "riverpod": ["riverpod", "flutter_riverpod"],
+    "equatable": ["equatable"], "dart-lints": ["lints"], "json-serializable": ["json_serializable"]
+  },
+  "swiftpm": {
+    "swift-argument-parser": ["apple/swift-argument-parser"], "swift-nio": ["apple/swift-nio"],
+    "swift-syntax": ["swiftlang/swift-syntax", "apple/swift-syntax"], "alamofire": ["alamofire/alamofire"],
+    "vapor": ["vapor/vapor"], "swift-log": ["apple/swift-log"], "swift-collections": ["apple/swift-collections"]
+  }
+}

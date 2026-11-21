@@ -15,7 +15,6 @@ const notAComponent = new Set<TechType>([
   'test',
   'orm',
   'package_manager',
-  'orm',
   'ui',
   'ui_framework',
   'iac',
@@ -51,33 +50,15 @@ export function findImplicitComponent({
     parent: pl,
     reason,
   });
-  pl.addChild(comp);
+  const target = pl.addChild(comp);
   if (ref.type !== 'hosting' && ref.type !== 'cloud') {
-    pl.addEdges(comp);
+    pl.addEdges(target);
   }
 }
 
-/**
- * When receive a tech in a component, we can deduct a new Hosting that was missing
- * For example we receive:
- *  - "vercel" from a folder named .vercel
- *  - we deduct this component is hosted by Vercel
- *  - Create an eponymous component
- *
- * Obviously there could be some false positive.
- */
-export function findHosting(pl: Payload, tech: AllowedKeys): void {
-  const ref = listIndexed[tech];
-  if (ref.type !== 'hosting' && ref.type !== 'cloud') {
-    return;
-  }
-
-  const find = pl.childs.find((c) => c.tech === ref.tech);
-  if (!find) {
-    throw new Error(`cant find hosting ${ref.tech}`);
-  }
-
-  pl.inComponent = find;
+export function findHosting(pl: Payload, fileMatches: Map<AllowedKeys, string[]>): void {
+  const candidates = pl.childs.filter((child) => child.tech && listIndexed[child.tech].deploymentConfig && fileMatches.has(child.tech));
+  if (candidates.length === 1) pl.inComponent = candidates[0];
 }
 
 /**
@@ -88,28 +69,14 @@ export function findHosting(pl: Payload, tech: AllowedKeys): void {
  * it can lead to some false positive with very generic names.
  */
 export function findEdgesInDependencies(pl: Payload): void {
-  const names = new Set<string>();
-  for (const child of pl.childs) names.add(child.name);
+  const byName = new Map<string, Payload | null>();
+  for (const child of pl.childs) byName.set(child.name, byName.has(child.name) ? null : child);
 
   for (const child of pl.childs) {
     for (const dep of child.dependencies) {
       const name = dep[1];
-      if (!names.has(name)) {
-        continue;
-      }
-
-      // Self referencing
-      if (name === child.name || name === child.tech) {
-        continue;
-      }
-
-      // Check if we already added an edge about that
-      const already = child.edges.find((edge) => edge.target.name === name);
-      if (already) {
-        continue;
-      }
-
-      child.addEdges(pl.childs.find((c) => c.name === name)!);
+      const target = byName.get(name);
+      if (target && target !== child && name !== child.tech) child.addEdges(target);
     }
   }
 }
@@ -137,65 +104,44 @@ export function flatten(src: Payload, options: { merge?: boolean } = {}): Payloa
   dest.mentions = [...src.mentions];
   pushChilds(src, dest);
 
-  // Find and merge duplicates
-  const duplicates: string[] = [];
-  for (const childA of dest.childs) {
-    if (duplicates.includes(childA.id)) {
-      continue;
-    }
-
-    // Check against other child
-    for (const childB of dest.childs) {
-      if (childA.id === childB.id) {
-        continue;
-      }
-      if (childA.tech === null || childB.tech === null) {
-        continue;
-      }
-      if (childA.name !== childB.name && childA.tech !== childB.tech) {
-        continue;
-      }
-
-      duplicates.push(childB.id);
-      childA.combine(childB);
-
-      // Update outdated ref
-      for (const childC of dest.childs) {
-        if (childC.inComponent?.id === childB.id) {
-          childC.inComponent = childA;
-        }
-        if (childC.parent?.id === childB.id) {
-          childC.inComponent = childA;
-        }
-
-        for (const edge of childC.edges) {
-          if (edge.target.id === childB.id) {
-            edge.target = childA;
-          }
-        }
-      }
+  // Only equal technology IDs represent the same known service. Keep each project
+  // component independently, even when it happens to share a display name with a service.
+  const byTech = new Map<AllowedKeys, Payload>();
+  const byId = new Map<string, Payload>([[src.id, dest]]);
+  const unique: Payload[] = [];
+  for (const child of dest.childs) {
+    const canonical = child.tech ? byTech.get(child.tech) : undefined;
+    if (canonical) {
+      canonical.combine(child);
+      for (const edge of child.edges) canonical.addEdges(edge.target);
+      byId.set(child.id, canonical);
+    } else {
+      if (child.tech) byTech.set(child.tech, child);
+      unique.push(child);
+      byId.set(child.id, child);
     }
   }
 
-  // Remove duplicates
-  dest.childs = dest.childs.filter((child) => {
-    return !duplicates.includes(child.id);
-  });
+  dest.childs = unique;
+  dest.edges = src.edges.map((edge) => ({ ...edge }));
+  dest.inComponent = src.inComponent;
+  for (const child of [dest, ...unique]) {
+    if (child.inComponent) child.inComponent = byId.get(child.inComponent.id) ?? null;
+    if (child.parent) child.parent = byId.get(child.parent.id) ?? null;
+    const edges = child.edges;
+    child.edges = [];
+    for (const edge of edges) {
+      const target = byId.get(edge.target.id);
+      if (target && target !== child && !child.edges.some((prior) => prior.target === target)) {
+        child.edges.push({ ...edge, target });
+      }
+    }
+  }
 
   findEdgesInDependencies(dest);
-
-  // Combine everything with their respective parent
-  if (merge === true) {
-    for (const child of dest.childs) {
-      if (child.parent) {
-        child.parent.combine(child);
-      }
-
-      dest.combine(child);
-    }
-
+  if (merge) {
+    for (const child of unique) dest.combine(child);
     dest.combine(src);
   }
-
   return dest;
 }

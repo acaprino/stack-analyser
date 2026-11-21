@@ -6,4 +6,5 @@ register({
   name: 'Gradle',
   type: 'package_manager',
   detect: detectGradle,
+  dependencies: [{ type: 'githubAction', name: 'gradle/actions/setup-gradle' }],
 });

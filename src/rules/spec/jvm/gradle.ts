@@ -1,4 +1,4 @@
-import toml from '@iarna/toml';
+import { parse as parseToml } from 'smol-toml';
 
 import type { Dependency } from '../../../types/index.js';
 
@@ -23,7 +23,7 @@ export function gradleCatalog(source: string): Catalog {
   const entries: Catalog = new Map();
   let data: Record<string, unknown>;
   try {
-    data = toml.parse(source);
+    data = parseToml(source);
   } catch {
     return entries;
   }
@@ -119,14 +119,14 @@ export function gradleDependencies(source: string, catalog: Catalog): Dependency
     const [call, ...rest] = statement;
     if (!call) return;
     const args = rest.filter((t) => t !== '(' && t !== ')');
-    if (blocks.length === 0 && call === 'apply' && args[0] === 'plugin' && [':', '='].includes(args[1]!)) {
+    if (blocks.length === 0 && call === 'apply' && args.length === 3 && args[0] === 'plugin' && [':', '='].includes(args[1]!)) {
       const id = literal(args[2]);
       const dep = id && marker(id, '');
       if (dep) result.push(dep);
       return;
     }
-    if (blocks.length !== 1) return;
-    if (blocks[0] === 'plugins' && ['id', 'alias', 'kotlin'].includes(call)) {
+    if (blocks.length === 1 && blocks[0] === 'plugins' && ['id', 'alias', 'kotlin'].includes(call)) {
+      if (args.length > 1 && !['version', '.version', 'apply', '.apply'].includes(args[1])) return;
       const applyAt = args.findIndex((arg) => arg === 'apply' || arg === '.apply');
       if (applyAt >= 0 && args[applyAt + 1] !== 'true') return;
       if (call === 'alias') {
@@ -138,7 +138,13 @@ export function gradleDependencies(source: string, catalog: Catalog): Dependency
         const entry = id && marker(call === 'kotlin' ? `org.jetbrains.kotlin.${id}` : id, version ?? '');
         if (entry) result.push(entry);
       }
-    } else if (blocks[0] === 'dependencies' && (configuration.test(call) || call === 'add')) {
+    } else if (configuration.test(call) || call === 'add') {
+      const topLevel = blocks.length === 1 && blocks[0] === 'dependencies';
+      const kotlinSet = blocks[0] === 'kotlin' && blocks[1] === 'sourceSets' && (
+        (blocks.length === 3 && /^\w+\.dependencies$/.test(blocks[2])) ||
+        (blocks.length === 4 && blocks[2] === 'source set' && blocks[3] === 'dependencies')
+      );
+      if (!topLevel && !kotlinSet) return;
       if (call === 'add' && (literal(args[0]) === undefined || args[1] !== ',')) return;
       result.push(...moduleArguments(call === 'add' ? args.slice(2) : args, catalog));
     }
@@ -161,7 +167,13 @@ export function gradleDependencies(source: string, catalog: Catalog): Dependency
     }
     if (token === '{') {
       read();
-      blocks.push(statement.length === 1 ? statement[0]! : '');
+      let block = statement.length === 1 ? statement[0] : '';
+      if (blocks.length === 2 && blocks[0] === 'kotlin' && blocks[1] === 'sourceSets') {
+        const delegate = statement.length === 4 && statement[0] === 'val' && statement[2] === 'by' &&
+          ['getting', 'creating'].includes(statement[3]);
+        if (delegate || /^\w+(?:Main|Test)$/.test(block)) block = 'source set';
+      }
+      blocks.push(block);
       statement = [];
     } else if (token === '}' || token === ';') {
       read();

@@ -8,7 +8,7 @@ register({
   dependencies: [
     {
       type: 'npm',
-      name: /launchdarkly-.+-client-sdk/,
+      name: /^launchdarkly-[\w-]+-client-sdk$/,
       example: 'launchdarkly-react-client-sdk',
     },
     {
@@ -18,7 +18,7 @@ register({
     },
     {
       type: 'golang',
-      name: /github.com\/launchdarkly\//,
+      name: /^github\.com\/launchdarkly\//,
       example: 'github.com/launchdarkly/go-sdk-common/v3',
     },
     { type: 'ruby', name: 'launchdarkly-server-sdk' },

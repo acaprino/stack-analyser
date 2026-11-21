@@ -4,6 +4,6 @@ register({
   tech: 'sonarlint',
   name: 'SonarLint',
   type: 'linter',
-  files: ['.sonarlint'],
+  files: ['.sonarlint/'],
   dependencies: [],
 });

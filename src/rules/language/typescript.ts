@@ -4,8 +4,8 @@ register({
   tech: 'typescript',
   name: 'Typescript',
   type: 'language',
-  files: /tsconfig(.[a-zA-Z0-9_-]+)?.json/,
+  files: /^tsconfig(?:\.[\w-]+)*\.json$/,
   example: 'tsconfig.json',
-  extensions: ['.ts', '.tsx'],
+  extensions: ['.ts', '.tsx', '.mts', '.cts'],
   dependencies: [{ type: 'npm', name: 'typescript' }],
 });

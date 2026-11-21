@@ -4,7 +4,7 @@ register({
   tech: 'github',
   name: 'GitHub',
   type: 'saas',
-  files: ['.github'],
+  files: ['.github/'],
   dependencies: [
     { type: 'npm', name: 'octokit' },
     { type: 'npm', name: /^@octokit\//, example: '@octokit/types' },

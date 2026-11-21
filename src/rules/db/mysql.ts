@@ -17,7 +17,6 @@ register({
     { type: 'npm', name: '@pulumi/mysql' },
     { type: 'python', name: 'mysql-connector-python' },
     { type: 'python', name: 'PyMySQL' },
-    { type: 'python', name: 'pymysql' },
     { type: 'python', name: 'mysqlclient' },
     { type: 'terraform.resource', name: 'airbyte_destination_mysql' },
     { type: 'nuget', name: 'Microting.EntityFrameworkCore.MySql' },

@@ -7,6 +7,7 @@ register({
   type: 'runtime',
   files: ['package.json'],
   dependencies: [
+    { type: 'githubAction', name: 'actions/setup-node' },
     { type: 'docker', name: /^nodejs(?:\/|$)/, example: 'nodejs' },
     { type: 'docker', name: 'node' },
     { type: 'docker', name: 'circleci/node' },

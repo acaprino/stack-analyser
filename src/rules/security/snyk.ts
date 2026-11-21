@@ -14,7 +14,7 @@ register({
     },
     {
       type: 'githubAction',
-      name: /^snyk\/actions\//,
+      name: /^snyk\/actions\/[^/]/i,
       example: 'snyk/actions/php',
     },
     { type: 'docker', name: 'snyk/snyk-cli' },

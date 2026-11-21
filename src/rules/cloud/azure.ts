@@ -9,6 +9,7 @@ register({
     { type: 'golang', name: 'github.com/Azure/azure-sdk-for-go' },
     { type: 'rust', name: 'azure_core' },
     { type: 'ruby', name: 'azure-armrest' },
+    { type: 'ruby', name: 'azure_mgmt_web' },
     { type: 'githubAction', name: 'azure/login' },
     { type: 'githubAction', name: 'azure/CLI' },
     { type: 'githubAction', name: 'azure/powershell' },

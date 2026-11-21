@@ -4,7 +4,7 @@ register({
   tech: 'circleci',
   name: 'CircleCI',
   type: 'ci',
-  files: ['.circleci', 'circle.yml', 'circle.yaml'],
+  files: ['.circleci/', 'circle.yml', 'circle.yaml'],
   dependencies: [
     { type: 'ruby', name: 'circleci' },
     {

@@ -20,7 +20,7 @@ register({
     { type: 'rust', name: 'ddtrace' },
     { type: 'rust', name: 'datadog-apm' },
     { type: 'ruby', name: 'ddtrace' },
-    { type: 'ruby', name: /datadog/, example: 'datadog-lambda' },
+    { type: 'ruby', name: /^(?:datadog(?:[-_]|$)|dogstatsd-ruby$)/, example: 'datadog-lambda' },
     { type: 'php', name: 'datadog/php-datadogstatsd' },
     { type: 'php', name: 'datadog/dd-trace' },
     { type: 'githubAction', name: 'DataDog/synthetics-ci-github-action' },

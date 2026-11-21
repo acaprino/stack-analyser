@@ -46,7 +46,7 @@ jobs:
       const [name] = example.split('@');
       yml.push(`
       - name: ${name}
-        uses: ${example}
+        uses: ${example.includes('@') ? example : example + '@1'}
     `);
     }
 

@@ -4,6 +4,6 @@ register({
   tech: 'vitepress',
   name: 'VitePress',
   type: 'ssg',
-  files: ['.vitepress'],
+  files: ['.vitepress/'],
   dependencies: [{ type: 'npm', name: 'vitepress' }],
 });

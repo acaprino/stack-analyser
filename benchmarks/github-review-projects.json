@@ -1,0 +1,1010 @@
+[
+  {
+    "repo": "sindresorhus/slugify",
+    "language": "JavaScript",
+    "commit": "99b35c2b0d6ccfad2b96ba9ce6997c6365b9a4b7",
+    "tree": "72396b63115dcea5305030b949b9b98d75cbe998",
+    "fileCount": 13,
+    "search": 1,
+    "split": "holdout"
+  },
+  {
+    "repo": "sindresorhus/on-change",
+    "language": "JavaScript",
+    "commit": "8cc2aec097b1da82bc3531213fbcd205ecf5aede",
+    "tree": "82faaba6962c4d1d248e9038804a40a38756599f",
+    "fileCount": 63,
+    "search": 1,
+    "split": "development"
+  },
+  {
+    "repo": "sindresorhus/capture-website",
+    "language": "JavaScript",
+    "commit": "f55e04116c32aa2e9d02fe6c2431a3aafee2f7ca",
+    "tree": "6ee923d8a4577fd98fe807340db286bd0e6b46a3",
+    "fileCount": 17,
+    "search": 1,
+    "split": "development"
+  },
+  {
+    "repo": "bugthesystem/scientist.js",
+    "language": "JavaScript",
+    "commit": "461762b144090c207c6f907d11d36ce0d51734e3",
+    "tree": "12402aed802247811e9568dca8407d4ebcdbaa51",
+    "fileCount": 30,
+    "search": 1,
+    "split": "holdout"
+  },
+  {
+    "repo": "nikhilk/node-tensorflow",
+    "language": "JavaScript",
+    "commit": "db0b0db423f0b8354d29819129c13ed3c8475971",
+    "tree": "1300958df725b8b70009ecb1ea3aee644e085572",
+    "fileCount": 38,
+    "search": 1,
+    "split": "development"
+  },
+  {
+    "repo": "mysticatea/cpx",
+    "language": "JavaScript",
+    "commit": "692b67bf129e3a70c00f6e1129b9c04e018cfb90",
+    "tree": "7d8958e68e2190b6397f3068303823c353aa6ee7",
+    "fileCount": 33,
+    "search": 1,
+    "split": "development"
+  },
+  {
+    "repo": "thesephist/libsearch",
+    "language": "JavaScript",
+    "commit": "53d1e62e15051a7ff7be007a0b185d3beeb7d4d8",
+    "tree": "99466a47b43a451293ae85301426e81319503ac7",
+    "fileCount": 18,
+    "search": 1,
+    "split": "development"
+  },
+  {
+    "repo": "gajus/redux-immutable",
+    "language": "TypeScript",
+    "commit": "214917f184f7bc9a2e4a6ef3e8334101022eb297",
+    "tree": "3c9c19a7c99169226c700bf40ed453e98010ad1d",
+    "fileCount": 21,
+    "search": 2,
+    "split": "development"
+  },
+  {
+    "repo": "kutlugsahin/react-smooth-dnd",
+    "language": "TypeScript",
+    "commit": "9c42c9e61f7a239c626a2f4cbcfd275283a14f0d",
+    "tree": "070b46c2e30ba7e5eef33c13959687a30d35b995",
+    "fileCount": 11,
+    "search": 2,
+    "split": "holdout"
+  },
+  {
+    "repo": "vercel/nextjs-postgres-nextauth-tailwindcss-template",
+    "language": "TypeScript",
+    "commit": "fe026711c19ac3ee4589c86a738f59b84e611559",
+    "tree": "dfa2cb9d3a90af10c6aa89dac61cdf3ce76220a4",
+    "fileCount": 46,
+    "search": 2,
+    "split": "development"
+  },
+  {
+    "repo": "liyupi/sql-father-frontend-public",
+    "language": "TypeScript",
+    "commit": "b35d80300e8d13d8d108dd9e8cc7e6450404ab72",
+    "tree": "7aea8ce76168be91294efb6813baaa575c035733",
+    "fileCount": 92,
+    "search": 2,
+    "split": "development"
+  },
+  {
+    "repo": "pedronauck/reworm",
+    "language": "TypeScript",
+    "commit": "036e2a58d80b9376a93f90760794cfd7b542dcef",
+    "tree": "5c9f8d461299bb991e109e7c57a8982472ba1606",
+    "fileCount": 20,
+    "search": 2,
+    "split": "development"
+  },
+  {
+    "repo": "uixmat/onborda",
+    "language": "TypeScript",
+    "commit": "e865eb4089fb86b58ed75ca0e4742bcc59f81b31",
+    "tree": "4a8984aead97d23df64699e01422601ea744ec94",
+    "fileCount": 20,
+    "search": 2,
+    "split": "holdout"
+  },
+  {
+    "repo": "ibelick/nim",
+    "language": "TypeScript",
+    "commit": "f797dc5f2689a5e28bd9d6d93b767e9fbbd10bec",
+    "tree": "3a1a09b238882ad1d46b55b13fea586815770373",
+    "fileCount": 36,
+    "search": 2,
+    "split": "development"
+  },
+  {
+    "repo": "lnxpy/hey",
+    "language": "Python",
+    "commit": "29b14dc2898d55f612d1adc2ed80b6db182becd9",
+    "tree": "b2f30764ddfd6804cae5d5f6e83dd92ac5e3fa68",
+    "fileCount": 26,
+    "search": 3,
+    "split": "holdout"
+  },
+  {
+    "repo": "mtchavez/python-package-boilerplate",
+    "language": "Python",
+    "commit": "98ee9610719f4e5e33a40f44590e044a9853e3e4",
+    "tree": "bc640d8884e64a2934c7f63eda03f5e1669ce6a6",
+    "fileCount": 20,
+    "search": 3,
+    "split": "development"
+  },
+  {
+    "repo": "abdoohossamm/djcompiler",
+    "language": "Python",
+    "commit": "e24b16b359e71c8748ed594724923c558fd1824a",
+    "tree": "2f640eb079d2072ccee2e8b0ff91e9ce6396f57b",
+    "fileCount": 33,
+    "search": 3,
+    "split": "development"
+  },
+  {
+    "repo": "tomchen/example_pypi_package",
+    "language": "Python",
+    "commit": "d50c61f1317c0cc7d1fc8927d666da7355732c61",
+    "tree": "044a5a610f0b380b02fe433dcc424e9d56a2c718",
+    "fileCount": 17,
+    "search": 3,
+    "split": "development"
+  },
+  {
+    "repo": "SaidBySolo/neispy",
+    "language": "Python",
+    "commit": "ef50b19caba9ac8def78d8d40b3e667f66d41648",
+    "tree": "ec795f8710098b45e1e155b3ad5818e39574fc6e",
+    "fileCount": 59,
+    "search": 3,
+    "split": "holdout"
+  },
+  {
+    "repo": "CleanPegasus/coffeeshop",
+    "language": "Python",
+    "commit": "15b1be4a20fe77958b90001bcc1f633ba887a92b",
+    "tree": "b2da5d20408b985cf0d60474ee8ec6304b651404",
+    "fileCount": 27,
+    "search": 3,
+    "split": "development"
+  },
+  {
+    "repo": "david-g-3654/homebench",
+    "language": "Python",
+    "commit": "4a7710b43d10e7eb5c340d4300318e90c3f1bf57",
+    "tree": "1e3e42e83e153e0851219729b588bd1efee700e0",
+    "fileCount": 67,
+    "search": 3,
+    "split": "development"
+  },
+  {
+    "repo": "zwczou/weixin-python",
+    "language": "Python",
+    "commit": "5debb1264f9a18c16635706a2e8903b2949120ed",
+    "tree": "4bc54fce06eab33ac4487b85ca3ef12afdfd1919",
+    "fileCount": 22,
+    "search": 4,
+    "split": "development"
+  },
+  {
+    "repo": "karec/cookiecutter-flask-restful",
+    "language": "Python",
+    "commit": "07f87ded07a9f3c1b39b3755b50eab25c1b7e0e0",
+    "tree": "a00e602059cfa24fbabd23aebb036169f5a95a06",
+    "fileCount": 49,
+    "search": 4,
+    "split": "development"
+  },
+  {
+    "repo": "matsui528/sis",
+    "language": "Python",
+    "commit": "669ab31e2c2de46831e2f720876688cc0ebbf1a0",
+    "tree": "4dde4324ea103b66d4deb6dc7cfa31943260dac2",
+    "fileCount": 12,
+    "search": 4,
+    "split": "development"
+  },
+  {
+    "repo": "noraj/flask-session-cookie-manager",
+    "language": "Python",
+    "commit": "3c271d28e06737662cc2c8c355bac2ae49b65fb4",
+    "tree": "c47a88ef9acbf3ee1edd344bdfbe06b85e1a6338",
+    "fileCount": 11,
+    "search": 4,
+    "split": "holdout"
+  },
+  {
+    "repo": "italomaia/flask-empty",
+    "language": "Python",
+    "commit": "482599bd03595918be743692813f8aa94a0faecd",
+    "tree": "528b66cc46250caf2b36abb9e03a04f91d9695d6",
+    "fileCount": 88,
+    "search": 4,
+    "split": "development"
+  },
+  {
+    "repo": "cosmic-byte/flask-restplus-boilerplate",
+    "language": "Python",
+    "commit": "3bd1d508a3c457b6a19c709baef47496467e5f2b",
+    "tree": "42b2ee4770c30815b4729d6bac9f22b8521cc826",
+    "fileCount": 27,
+    "search": 4,
+    "split": "development"
+  },
+  {
+    "repo": "ssola/python-flask-microservice",
+    "language": "Python",
+    "commit": "b13d1013737f2d02a8945734863e20c6dc0691f0",
+    "tree": "3bdadedfe3cff0941132752c5ca66a7474e6e24a",
+    "fileCount": 17,
+    "search": 4,
+    "split": "holdout"
+  },
+  {
+    "repo": "SpringForAll/spring-boot-starter-swagger",
+    "language": "Java",
+    "commit": "f8940cf1f5a53b9811c88cd76fde25ba94f759d6",
+    "tree": "d4f34a1c1a0c7e9ac12417c75cf8a86046ec5172",
+    "fileCount": 16,
+    "search": 5,
+    "split": "development"
+  },
+  {
+    "repo": "ali-bouali/spring-boot-3-jwt-security",
+    "language": "Java",
+    "commit": "ad5109f1d5435042372db6b4262ad3206fa851cd",
+    "tree": "c6afdf7b904b29c7d1bb416c8dda0f38c1ff22a2",
+    "fileCount": 46,
+    "search": 5,
+    "split": "development"
+  },
+  {
+    "repo": "murraco/spring-boot-jwt",
+    "language": "Java",
+    "commit": "72b5b8a24db42cdc514c9f6870f046d7039aada9",
+    "tree": "f67d7f36dd164e8e59b4271a06765bf3d3a1ecfa",
+    "fileCount": 35,
+    "search": 5,
+    "split": "development"
+  },
+  {
+    "repo": "bezkoder/spring-boot-spring-security-jwt-authentication",
+    "language": "Java",
+    "commit": "096e106a6d807129e49b8b80af1ffc389b0fe3da",
+    "tree": "5490f6b5cc934e850c8ef656cc0997a98d090f65",
+    "fileCount": 31,
+    "search": 5,
+    "split": "holdout"
+  },
+  {
+    "repo": "netgloo/spring-boot-samples",
+    "language": "Java",
+    "commit": "065c82a9f7702de1c751f7980672c2eb0e6c33c1",
+    "tree": "b093315008e1270e72044ea265d1354a46be1dd7",
+    "fileCount": 107,
+    "search": 5,
+    "split": "development"
+  },
+  {
+    "repo": "callicoder/spring-boot-websocket-chat-demo",
+    "language": "Java",
+    "commit": "2b708ddf1074192f5db056895cb1e3c055a546a9",
+    "tree": "8ca562a6c2d974ea9013af2f2cb9ca0338888ca5",
+    "fileCount": 20,
+    "search": 5,
+    "split": "development"
+  },
+  {
+    "repo": "dearbinge/dubbo-spring-boot-mybatis-redis",
+    "language": "Java",
+    "commit": "21f3f662f7303ff97ff10c66e29e24545cf525a3",
+    "tree": "9ac03f9f456daeed9fab5764d7a7490b713edd83",
+    "fileCount": 85,
+    "search": 5,
+    "split": "holdout"
+  },
+  {
+    "repo": "kizitonwose/Time",
+    "language": "Kotlin",
+    "commit": "ef4027fb965d59ea87957fe08da7cc4d3a91d145",
+    "tree": "458a57530e523c577b9b3c896e33aee116aec175",
+    "fileCount": 21,
+    "search": 6,
+    "split": "holdout"
+  },
+  {
+    "repo": "MoyuruAizawa/TimetableLayout",
+    "language": "Kotlin",
+    "commit": "eddfeaa6075fe8e1b66e97e056ac00146571a69d",
+    "tree": "4a4e58ed587c141d94f971e15841836fd79135bb",
+    "fileCount": 54,
+    "search": 6,
+    "split": "development"
+  },
+  {
+    "repo": "nitrico/LastAdapter",
+    "language": "Kotlin",
+    "commit": "b19d66fb078d345be7a4cdbe5d8c4f30cb72d68a",
+    "tree": "e29ba57049dcf7b907431f575c8fb3fdefbf75dd",
+    "fileCount": 53,
+    "search": 6,
+    "split": "development"
+  },
+  {
+    "repo": "ldlywt/FastJetpack",
+    "language": "Kotlin",
+    "commit": "64398bf19b824d4419452586046cafa727a85758",
+    "tree": "2a1f3f80e5efd0afaacb0e46c5f888408a0ae217",
+    "fileCount": 86,
+    "search": 6,
+    "split": "development"
+  },
+  {
+    "repo": "mcxiaoke/kotlin-koi",
+    "language": "Kotlin",
+    "commit": "58e548a531e1f66ce4bd8535058cf8d4173c5709",
+    "tree": "41df1a4a9f71ae770a01c0fdeebc6d88cde4140e",
+    "fileCount": 98,
+    "search": 6,
+    "split": "development"
+  },
+  {
+    "repo": "amitshekhariitbhu/Learn-Kotlin-Coroutines",
+    "language": "Kotlin",
+    "commit": "2d3068e512ddced73d5ce11c1d7c522fb8c616e5",
+    "tree": "0208b35034c59a1c6c93381883cbd46062fa0ebd",
+    "fileCount": 81,
+    "search": 6,
+    "split": "holdout"
+  },
+  {
+    "repo": "DevSrSouza/svg-to-compose",
+    "language": "Kotlin",
+    "commit": "0dc8f216386013b63719427dd9b71434796bb05b",
+    "tree": "77db14e8823468398d7b32678a06e445a37f5433",
+    "fileCount": 35,
+    "search": 6,
+    "split": "development"
+  },
+  {
+    "repo": "sony/gobreaker",
+    "language": "Go",
+    "commit": "fed8e9eb35f9cd3e5c2a67842c924346c3e1fbdd",
+    "tree": "b7a88f2f2be052d57f0d78091db0d987b7f766fd",
+    "fileCount": 24,
+    "search": 7,
+    "split": "holdout"
+  },
+  {
+    "repo": "bwmarrin/snowflake",
+    "language": "Go",
+    "commit": "bc74ab286f15f6c73896cb40ad39c502263c7af3",
+    "tree": "f408ee4ce69e8fe47f1d4c02d2d099319984086e",
+    "fileCount": 6,
+    "search": 7,
+    "split": "development"
+  },
+  {
+    "repo": "cloudflare/tableflip",
+    "language": "Go",
+    "commit": "64983fb2d863b805bc6ddd0d1163b08c6e627a86",
+    "tree": "4ed1bd291f1560be3df982db099d3b41e22ff3af",
+    "fileCount": 29,
+    "search": 7,
+    "split": "development"
+  },
+  {
+    "repo": "gorilla/sessions",
+    "language": "Go",
+    "commit": "bb4cd60c952a9ce48ea0dc6cc7b282ff79c38263",
+    "tree": "8bf7c6430419bd6aa3c47ad0334058caccb0afef",
+    "fileCount": 20,
+    "search": 7,
+    "split": "development"
+  },
+  {
+    "repo": "lotusirous/go-concurrency-patterns",
+    "language": "Go",
+    "commit": "791337ff11e69cd9d1a8587e53474a8469b3510f",
+    "tree": "127e85a7e1f5a6bf1dcacc59a9742cd0ed083869",
+    "fileCount": 24,
+    "search": 7,
+    "split": "holdout"
+  },
+  {
+    "repo": "realworld-apps/golang-gin-realworld-example-app",
+    "language": "Go",
+    "commit": "de2be2ab883217c609a22b3872f200d9fad9cfb9",
+    "tree": "0953260e984ef57e3f0f688ca8f26e4d5d7eb1d3",
+    "fileCount": 41,
+    "search": 7,
+    "split": "development"
+  },
+  {
+    "repo": "bluele/gcache",
+    "language": "Go",
+    "commit": "d8b7e051c564c174fea6ef60d180abf601099015",
+    "tree": "cdf25d05768eec098dd73b41261a758ad469a973",
+    "fileCount": 22,
+    "search": 7,
+    "split": "development"
+  },
+  {
+    "repo": "Technolution/rustig",
+    "language": "Rust",
+    "commit": "38518668a4531adc046fbfc15d352dd753a030da",
+    "tree": "358bdfd17f623b3924a1981677f570b2b91a88c9",
+    "fileCount": 103,
+    "search": 8,
+    "split": "development"
+  },
+  {
+    "repo": "ct-austin/ifmt",
+    "language": "Rust",
+    "commit": "4b276dfa0d9d1b56821f987564c1f4df45b973e2",
+    "tree": "5f64f4f7616b8f9f911864b6a94714ae8574bc67",
+    "fileCount": 12,
+    "search": 8,
+    "split": "development"
+  },
+  {
+    "repo": "Hexilee/unhtml.rs",
+    "language": "Rust",
+    "commit": "4c26c3b2e8f4d9b91eaa518fdf00a83243a056bf",
+    "tree": "04b94edc6bbb25abfc2950fcf8f96ed387be8858",
+    "fileCount": 30,
+    "search": 8,
+    "split": "development"
+  },
+  {
+    "repo": "frol/flatc-rust",
+    "language": "Rust",
+    "commit": "ef0ed865741a130b2e57a16f84b8f8b8a927e1e6",
+    "tree": "a7353adb7fc6ac34b94a97663dab8ee0411e59ff",
+    "fileCount": 15,
+    "search": 8,
+    "split": "development"
+  },
+  {
+    "repo": "irevenko/ferris-fetch",
+    "language": "Rust",
+    "commit": "229ab7029109865b9fd6aab5953875942bdf3e33",
+    "tree": "2f9f815db7104c5883dc88511c9be1fee1171731",
+    "fileCount": 6,
+    "search": 8,
+    "split": "development"
+  },
+  {
+    "repo": "cureforpain/qrrs",
+    "language": "Rust",
+    "commit": "c6d0535c046d4ea8e39ff0808211fd5d7b10eb4c",
+    "tree": "0fbedbdc825106cb4fa531a0d4db385fa8240bd0",
+    "fileCount": 29,
+    "search": 8,
+    "split": "holdout"
+  },
+  {
+    "repo": "auula/falsework",
+    "language": "Rust",
+    "commit": "4afdfbc15c2b9b98edf525e1f16f6d66593b327f",
+    "tree": "5af2fd4926f77941b5261d07da23f02e815c59a9",
+    "fileCount": 10,
+    "search": 8,
+    "split": "holdout"
+  },
+  {
+    "repo": "FireLustre/php-dfa-sensitive",
+    "language": "PHP",
+    "commit": "0220f586cc4c9128ede6c5e2ec8a2e6cdc266376",
+    "tree": "0ac7e3a41e2f314aaf9abd39ce66f474e2233e8a",
+    "fileCount": 15,
+    "search": 9,
+    "split": "development"
+  },
+  {
+    "repo": "chinleung/laravel-multilingual-routes",
+    "language": "PHP",
+    "commit": "343d5a1e3a737de3a4386672b49fd82df1c44cf2",
+    "tree": "1df86f199ac308271a205c8f429a77d979f3a263",
+    "fileCount": 31,
+    "search": 9,
+    "split": "development"
+  },
+  {
+    "repo": "misterdebug/crud-generator-laravel",
+    "language": "PHP",
+    "commit": "b8f44cbfcc4e04fca308a0851fbb77751fd2aed8",
+    "tree": "dd8c4d48b01a8e90d03968929739cdadba53d92f",
+    "fileCount": 79,
+    "search": 9,
+    "split": "development"
+  },
+  {
+    "repo": "stevegrunwell/wp-cache-remember",
+    "language": "PHP",
+    "commit": "7ad1da18b1cab08e638539176961f71c2fff2ac7",
+    "tree": "35eac94dc659dc0d7d7092f9a75786daaf8ab42b",
+    "fileCount": 19,
+    "search": 9,
+    "split": "holdout"
+  },
+  {
+    "repo": "ssx/skrub",
+    "language": "PHP",
+    "commit": "5043edfa818d20c3e50751dbd6cda4481927e64c",
+    "tree": "767909e503d2211f23ffab2faf9e5aa3d6d5073c",
+    "fileCount": 10,
+    "search": 9,
+    "split": "holdout"
+  },
+  {
+    "repo": "ItinerisLtd/acf-gutenblocks",
+    "language": "PHP",
+    "commit": "785e2680a933e64b1f5a1da116691983aa8a368e",
+    "tree": "7ebd2680dd53545a5b9ba9cd9ddf544998f92132",
+    "fileCount": 18,
+    "search": 9,
+    "split": "development"
+  },
+  {
+    "repo": "RichieMcMullen/laravel-strava",
+    "language": "PHP",
+    "commit": "b88807ddc0ee6f54bad43c79805d42a5a94cba98",
+    "tree": "282fbba9ffaa830e1a2b241cc8839814c1f40b08",
+    "fileCount": 11,
+    "search": 9,
+    "split": "development"
+  },
+  {
+    "repo": "Selleo/pattern",
+    "language": "Ruby",
+    "commit": "fda5fdf0ef29ec81789388dcc26b261af436816b",
+    "tree": "967a6b164bf59d70bc0e8b5238cf2cd6fffa0df5",
+    "fileCount": 33,
+    "search": 10,
+    "split": "development"
+  },
+  {
+    "repo": "piotrmurach/pastel",
+    "language": "Ruby",
+    "commit": "97d656f0d7ebb8b5c7f39d2020b43c28bb50eb71",
+    "tree": "a9967a7ceaa1b8cc2a2dca30d04347e553c8f24e",
+    "fileCount": 58,
+    "search": 10,
+    "split": "holdout"
+  },
+  {
+    "repo": "afair/postgresql_cursor",
+    "language": "Ruby",
+    "commit": "f9efd83ad14cfb58688e256e265c84a6200b9866",
+    "tree": "0f2e9f38623277cdbd762b3a6c4f5068548bda95",
+    "fileCount": 24,
+    "search": 10,
+    "split": "holdout"
+  },
+  {
+    "repo": "yhirose/maxminddb",
+    "language": "Ruby",
+    "commit": "287accf6f700a64b670e9b04fa2ae1f3fee65c13",
+    "tree": "10ed30d127245fe1d3470dcb8523bf6f7e17c3c3",
+    "fileCount": 27,
+    "search": 10,
+    "split": "development"
+  },
+  {
+    "repo": "girishso/pluck_to_hash",
+    "language": "Ruby",
+    "commit": "978468a51ca4173b18f309e54b10956cad51a1e2",
+    "tree": "528f2c14c042936954cf2b718e0520b3137b61ba",
+    "fileCount": 16,
+    "search": 10,
+    "split": "development"
+  },
+  {
+    "repo": "juusaw/amp-jekyll",
+    "language": "Ruby",
+    "commit": "29d68ad9ef9e715dac3d3328fda90858d3fb3115",
+    "tree": "be4ffc8f678e2d7b251e6020b0b1ec4e4fb508e2",
+    "fileCount": 7,
+    "search": 10,
+    "split": "development"
+  },
+  {
+    "repo": "digitalsparky/jekyll-minifier",
+    "language": "Ruby",
+    "commit": "5422b3570321668b419ec8271391a029f385c390",
+    "tree": "7e04c2b25590966c8c047577e47d4c3ac36bc00e",
+    "fileCount": 55,
+    "search": 10,
+    "split": "development"
+  },
+  {
+    "repo": "discord/manifold",
+    "language": "Elixir",
+    "commit": "73045259fd1c749bdf96449cf64c55cf81a01fab",
+    "tree": "957a93f4fb32c2a2dc74deff9f4e831e977f4b0e",
+    "fileCount": 23,
+    "search": 11,
+    "split": "holdout"
+  },
+  {
+    "repo": "discord/sorted_set_nif",
+    "language": "Elixir",
+    "commit": "6ba93bf7d46635e3b35bb282339a1271784d0cbe",
+    "tree": "705c23d2d32dfb972ac9e30ef99a91f033aac5ad",
+    "fileCount": 36,
+    "search": 11,
+    "split": "development"
+  },
+  {
+    "repo": "dashbitco/flow",
+    "language": "Elixir",
+    "commit": "7638a6f57062031d4b86b61956e0ba57990ee6ec",
+    "tree": "605784d10cceffa50bf4beaf8c5f02eecf26898f",
+    "fileCount": 23,
+    "search": 11,
+    "split": "development"
+  },
+  {
+    "repo": "dashbitco/mox",
+    "language": "Elixir",
+    "commit": "97df51a7cb0dc04a18e541ba53be92d49b62c314",
+    "tree": "f5e5dd263297a46522a0e13fd39f17ecfb61a22e",
+    "fileCount": 25,
+    "search": 11,
+    "split": "development"
+  },
+  {
+    "repo": "phoenixframework/flame",
+    "language": "Elixir",
+    "commit": "2b124f3ffdede8c1f125ce36b237bef1c50940a3",
+    "tree": "2f8c31463d61a829870e4912fae0cfe0c6a671b5",
+    "fileCount": 33,
+    "search": 11,
+    "split": "development"
+  },
+  {
+    "repo": "discord/fastglobal",
+    "language": "Elixir",
+    "commit": "275569454462312fc3f5214275fe7e739b5b2d25",
+    "tree": "b65f9afa6f031af55622942a4b07fd88c5eaf949",
+    "fileCount": 10,
+    "search": 11,
+    "split": "development"
+  },
+  {
+    "repo": "alco/porcelain",
+    "language": "Elixir",
+    "commit": "d240c7946e12f7fc878a6663b4e31952c78dc1da",
+    "tree": "bdbd4a2ffe6dc58f748ad4b9c0a3e8060be4a44d",
+    "fileCount": 30,
+    "search": 11,
+    "split": "holdout"
+  },
+  {
+    "repo": "sooxt98/google_nav_bar",
+    "language": "Dart",
+    "commit": "1d999a84869be048e111458943af8d3d54d4d8f2",
+    "tree": "853a364fd5b93296ef1220a193c6a735f59edb60",
+    "fileCount": 81,
+    "search": 12,
+    "split": "development"
+  },
+  {
+    "repo": "Norbert515/pimp_my_button",
+    "language": "Dart",
+    "commit": "a52eea867755532fb6ff862bc9946472934afbe2",
+    "tree": "d08a39a3fcf0fac8f303c57726ae6511c5b83c33",
+    "fileCount": 86,
+    "search": 12,
+    "split": "development"
+  },
+  {
+    "repo": "letsar/gap",
+    "language": "Dart",
+    "commit": "e8b21fa2c0cfe4e830a456abe4d7c25e5ecc89cc",
+    "tree": "f010736990b9914a4ad449b7aba8cddf74f335be",
+    "fileCount": 91,
+    "search": 12,
+    "split": "holdout"
+  },
+  {
+    "repo": "MaikuB/incrementally_loading_listview",
+    "language": "Dart",
+    "commit": "df1051ad13a5b2455d78bafaea542b7c0b19f0be",
+    "tree": "6ab6ffea376c0058e5b3ff9d8445f5a7bd091112",
+    "fileCount": 68,
+    "search": 12,
+    "split": "holdout"
+  },
+  {
+    "repo": "smartnsoft/flappy_search_bar",
+    "language": "Dart",
+    "commit": "32747cec8c80d1b23ae939242f42a8395d375299",
+    "tree": "79450cab5ee0f4e0cb8643df9b733dd566d57c20",
+    "fileCount": 66,
+    "search": 12,
+    "split": "development"
+  },
+  {
+    "repo": "letsar/nil",
+    "language": "Dart",
+    "commit": "98eace002e3056240dbc0e52182e11666d25a5c0",
+    "tree": "85c1b3baa1ab94f0388b190134db1ff76d53ad85",
+    "fileCount": 20,
+    "search": 12,
+    "split": "development"
+  },
+  {
+    "repo": "atiqsamtia/change_app_package_name",
+    "language": "Dart",
+    "commit": "45fed1d056b02d1baaee0c41d1a2b98d9de30dbb",
+    "tree": "03c13332106ff9d56c625cd0cc2da40b4517871b",
+    "fileCount": 13,
+    "search": 12,
+    "split": "development"
+  },
+  {
+    "repo": "Marusyk/grok.net",
+    "language": "C#",
+    "commit": "5d6c0442b16ca867259706bb35acba0fe9489384",
+    "tree": "2fcdbee8f5a3dd180c745df0f5ff3a8541ce7045",
+    "fileCount": 39,
+    "search": 13,
+    "split": "development"
+  },
+  {
+    "repo": "neosmart/AsyncLock",
+    "language": "C#",
+    "commit": "a3c7bc9c8009fbb5217fbaa322a15bfb212220c7",
+    "tree": "af2061003ebed957b6568f70ec2c5b7931586887",
+    "fileCount": 24,
+    "search": 13,
+    "split": "holdout"
+  },
+  {
+    "repo": "antonpup/CounterStrike2GSI",
+    "language": "C#",
+    "commit": "e7892bb962f54f059ffe73ecf0108f4334430a74",
+    "tree": "6445b25a80b677143dcff0acfaca6338eda5bba2",
+    "fileCount": 59,
+    "search": 13,
+    "split": "development"
+  },
+  {
+    "repo": "Dwarf1er/openlabel",
+    "language": "C#",
+    "commit": "b75ecf1049a4b431e242f7afcfc85845699a1bc9",
+    "tree": "2a4ccb21f8c7477b7caaacb4b7c8224d0d2a1dc2",
+    "fileCount": 14,
+    "search": 13,
+    "split": "holdout"
+  },
+  {
+    "repo": "rubenwe/PlanningAI",
+    "language": "C#",
+    "commit": "4784e40478572f3eae3eab8553395b3a10867ae6",
+    "tree": "31bcd8b0cf086ec43fac330556612221294c1bdc",
+    "fileCount": 53,
+    "search": 13,
+    "split": "development"
+  },
+  {
+    "repo": "nkristek/Wpf.Converters",
+    "language": "C#",
+    "commit": "a5817dd2c9c3403bd99ce604bc5d361a3ae50bec",
+    "tree": "3752c4ec729fc48a57fb584421df288bcfdb35e4",
+    "fileCount": 73,
+    "search": 13,
+    "split": "development"
+  },
+  {
+    "repo": "peteraritchie/ConsoleApplicationBuilder",
+    "language": "C#",
+    "commit": "6cfa932c08592f9e899ff133ffc41abf63e12d33",
+    "tree": "00815dd9f9ae282d0d9203607364dac4465d5403",
+    "fileCount": 103,
+    "search": 13,
+    "split": "development"
+  },
+  {
+    "repo": "Mijick/Popups",
+    "language": "Swift",
+    "commit": "3aa55233eda7bbcbd98b52a6f63d5a7e1955189a",
+    "tree": "b4dc9a9dad5ee86967fa371032c20f374b52caa4",
+    "fileCount": 62,
+    "search": 14,
+    "split": "development"
+  },
+  {
+    "repo": "guillermomuntaner/Burritos",
+    "language": "Swift",
+    "commit": "309dbe1b5b3af8839ca6a7ebb2ad6ddf041bf420",
+    "tree": "8b95a9e3a9b6fdbf3b3e66f1168a7f977f9ff430",
+    "fileCount": 34,
+    "search": 14,
+    "split": "holdout"
+  },
+  {
+    "repo": "sindresorhus/macos-wallpaper",
+    "language": "Swift",
+    "commit": "64e35cf4c21ffc1509d737eb2e22a5b64c731d28",
+    "tree": "c8f98fb9f3ca22fc40c275bcfa40b38c8eba6f61",
+    "fileCount": 13,
+    "search": 14,
+    "split": "development"
+  },
+  {
+    "repo": "sindresorhus/LaunchAtLogin-Modern",
+    "language": "Swift",
+    "commit": "a04ec1c363be3627734f6dad757d82f5d4fa8fcc",
+    "tree": "2a203abcd00bb47f057b3a95db4841201c744f53",
+    "fileCount": 9,
+    "search": 14,
+    "split": "development"
+  },
+  {
+    "repo": "lapfelix/BluetoothConnector",
+    "language": "Swift",
+    "commit": "90670c6fa3418a0bf68defb65dff21d42af64b23",
+    "tree": "e965b4d30b8aef7d152558f0384e0c998b8844ce",
+    "fileCount": 11,
+    "search": 14,
+    "split": "development"
+  },
+  {
+    "repo": "sanzaru/SimpleToast",
+    "language": "Swift",
+    "commit": "df5a3af345b162af9f37e6588fc23212a885033d",
+    "tree": "1ff392ac8e5b1bde283c3d35462a2c40f5e8700f",
+    "fileCount": 27,
+    "search": 14,
+    "split": "holdout"
+  },
+  {
+    "repo": "sindresorhus/macos-trash",
+    "language": "Swift",
+    "commit": "033004b56b8dc30907fa25ec0b1a7a4b84173c3a",
+    "tree": "64e3f4f4c35bb61105804fd7c4779c79fa367b50",
+    "fileCount": 12,
+    "search": 14,
+    "split": "development"
+  },
+  {
+    "repo": "euvl/v-clipboard",
+    "language": "TypeScript",
+    "commit": "42e4527db0b5587a9eb3774e724410194561940c",
+    "tree": "5df590ff9d1d68da9d5b88b8ffcb2e3b582c6dc0",
+    "fileCount": 18,
+    "search": 15,
+    "split": "development"
+  },
+  {
+    "repo": "aweiu/element-ui-verify",
+    "language": "TypeScript",
+    "commit": "42375c273f8fffe7eff7e398ea9f19895a0d724e",
+    "tree": "45b5ba1100309563af5f0e2f9b7ead93869a1443",
+    "fileCount": 12,
+    "search": 15,
+    "split": "holdout"
+  },
+  {
+    "repo": "justinkames/vuejs-logger",
+    "language": "TypeScript",
+    "commit": "aa6c92aec40fd22a56ac7b0812b8fad967280e87",
+    "tree": "17f123022e1158a6dbf6ff7aca09a81c0b26eddb",
+    "fileCount": 18,
+    "search": 15,
+    "split": "holdout"
+  },
+  {
+    "repo": "NiklasPor/prettier-plugin-organize-attributes",
+    "language": "TypeScript",
+    "commit": "50a0c4f8809c34b351a400011b7734701285b5e9",
+    "tree": "36e8033e4f0f234b879b0f79ebdd4816e1bc8b32",
+    "fileCount": 56,
+    "search": 15,
+    "split": "development"
+  },
+  {
+    "repo": "any86/be-full",
+    "language": "TypeScript",
+    "commit": "7a9cb9ce62b107931a6e234b9da8c3ca3abf2130",
+    "tree": "3450b3fc8c6451a34dc52d32c0e79eb079db8978",
+    "fileCount": 13,
+    "search": 15,
+    "split": "development"
+  },
+  {
+    "repo": "sascha245/vuex-simple",
+    "language": "TypeScript",
+    "commit": "5400ce40b00e8ad38a4ea02bdce15f5027b1877c",
+    "tree": "c25f773941694ee3dfccbab3139497eb7d46fb66",
+    "fileCount": 57,
+    "search": 15,
+    "split": "development"
+  },
+  {
+    "repo": "antfu/v-dollar",
+    "language": "TypeScript",
+    "commit": "f2812dda7bc1ea3a226df3501cd989c515c011ea",
+    "tree": "6f02d7968e867c53eb874e9aab37e245e11df54d",
+    "fileCount": 13,
+    "search": 15,
+    "split": "development"
+  },
+  {
+    "repo": "cibernox/svelte-intl-precompile",
+    "language": "JavaScript",
+    "commit": "14c900fb08ead39ee83c1729fbd7dfd628465f16",
+    "tree": "bddf1180f3728d97220b3325d224489ef727e3b7",
+    "fileCount": 23,
+    "search": 16,
+    "split": "holdout"
+  },
+  {
+    "repo": "pqina/svelte-filepond",
+    "language": "JavaScript",
+    "commit": "4ef682916938acf444e6ff6431196be5e24321a0",
+    "tree": "f498437fa8fa5b3f8a4aad79587fa6145d5d4ad7",
+    "fileCount": 25,
+    "search": 16,
+    "split": "development"
+  },
+  {
+    "repo": "yuanchuan/sveltekit-autoimport",
+    "language": "JavaScript",
+    "commit": "57d3ce83a16a99aa29559b9b20d793e6eb0a1908",
+    "tree": "979b2fca7aa9d086235a78d427b3cce920b4cabd",
+    "fileCount": 32,
+    "search": 16,
+    "split": "development"
+  },
+  {
+    "repo": "tretapey/svelte-pwa",
+    "language": "JavaScript",
+    "commit": "6958525b5ba8ef0f31f68432b99610eafa648523",
+    "tree": "449400151403bd45d901bdb87562eb52d3447805",
+    "fileCount": 21,
+    "search": 16,
+    "split": "development"
+  },
+  {
+    "repo": "michmich112/sveltekit-adapter-chrome-extension",
+    "language": "JavaScript",
+    "commit": "f501e24d584adcf19c427814ad36346f0597d211",
+    "tree": "bde40c64584c9aeadcd6d14ef514cd1286e7e22d",
+    "fileCount": 8,
+    "search": 16,
+    "split": "holdout"
+  },
+  {
+    "repo": "heithemmoumni/svelte-mindmap",
+    "language": "JavaScript",
+    "commit": "9fee0e0c44a0127bd42ec537fe3b86f8cf5e6fe0",
+    "tree": "b20acdf5d2dec5d34d6d8d1ba98c7bd4c72ea4b6",
+    "fileCount": 29,
+    "search": 16,
+    "split": "development"
+  },
+  {
+    "repo": "dylanblokhuis/svelte-feather-icons",
+    "language": "JavaScript",
+    "commit": "2205add5188fb26b3d8b894c51461c1b088bac89",
+    "tree": "5a15c1352560f6ec2dcf9ef449a74762215898e5",
+    "fileCount": 7,
+    "search": 16,
+    "split": "development"
+  }
+]

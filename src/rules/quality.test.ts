@@ -169,21 +169,28 @@ describe('no duplicate', () => {
   });
 });
 
+// Shared parsers emit these IDs directly. Parent products can be inferred from a
+// registered child. The remaining historical product names have no direct detector.
+const sharedReaderIds = ['cargo', 'phpcomposer', 'exunit', 'mapkit', 'swiftui', 'uikit', 'winui'];
+const parentIds = ['adobe', 'microsoft'];
+const catalogueOnly = [
+  'fabric', 'meilisearchcloud', 'railway.mongodb', 'railway.mysql', 'railway.postgres', 'railway.redis',
+  'replit.postgres', 'typesensecloud', 'apple.maps', 'vialink',
+];
+const indirect = new Set([...sharedReaderIds, ...parentIds, ...catalogueOnly]);
+
 describe('rule completeness', () => {
   for (const rule of registeredRules) {
-    it(`${rule.tech} should have at least one rule`, () => {
-      const hasFiles = 'files' in rule && rule.files !== undefined;
-      const hasDependencies =
-        'dependencies' in rule && rule.dependencies !== undefined && rule.dependencies.length > 0;
-      const hasExtensions =
-        'extensions' in rule && rule.extensions !== undefined && rule.extensions.length > 0;
-      const hasDotEnv = 'dotenv' in rule && rule.dotenv !== undefined && rule.dotenv.length > 0;
-      if (!(hasFiles || hasDependencies || hasExtensions || hasDotEnv)) {
-        // eslint-disable-next-line no-console
-        console.warn(`[WARNING] Rule "${rule.tech}" does not have a rule`);
+    it(`${rule.tech} has working examples or an explicit indirect status`, () => {
+      const direct = Boolean(rule.detect || rule.files || rule.extensions?.length || rule.dotenv?.length ||
+        rule.hosts?.length || rule.dependencies?.length);
+      expect(direct, rule.tech).toBe(!indirect.has(rule.tech));
+      if (rule.files instanceof RegExp && 'example' in rule) {
+        expect(rule.example).toMatch(rule.files);
       }
-
-      expect(true).toBe(true); // Always pass
+      for (const dep of rule.dependencies ?? []) {
+        if ('example' in dep) expect(dep.example).toMatch(dep.name);
+      }
     });
   }
 });

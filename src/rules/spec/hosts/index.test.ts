@@ -70,6 +70,20 @@ describe('service endpoint mentions', () => {
     expect(provider.stat).toHaveBeenCalledOnce();
   });
 
+  it('recognizes literal mobile and multi-document configuration endpoints while respecting the source syntax', async () => {
+    const provider = fixture({
+      'deployment.yaml': '---\nkind: Service\n---\nurl: https://api.telegram.org/v1\n',
+      'client.py': 'n = count // 2; url = "https://api.telegram.org"\n',
+      'client.swift': '// example: "https://api.telegram.org"\nlet base = "https://api.telegram.org"\n',
+      'client.dart': 'const base = "https://api.telegram.org";\n',
+      'broken.json': 'url: https://api.telegram.org',
+    });
+    const pinned = await findHostMentions(await provider.listDir('/'), provider);
+    expect(pinned.map(({ path, line }) => [path, line])).toEqual([
+      ['client.dart', 1], ['client.py', 1], ['client.swift', 2], ['deployment.yaml', 4],
+    ]);
+  });
+
   it('continues after provider errors while obtaining a source size or text', async () => {
     const provider = fixture({ 'a.ts': '', 'b.ts': '', 'c.ts': 'fetch("https://api.telegram.org")' });
     vi.spyOn(provider, 'stat').mockRejectedValueOnce(new Error('metadata unavailable'));

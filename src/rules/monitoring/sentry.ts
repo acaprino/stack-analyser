@@ -10,7 +10,6 @@ register({
     { type: 'docker', name: 'getsentry/sentry' },
     { type: 'docker', name: 'getsentry/sentry-cli' },
     { type: 'docker', name: 'sentryintegrations/sentry-github-action-release' },
-    { type: 'docker', name: 'daprio/sentry' },
     { type: 'docker', name: 'us.gcr.io/sentryio/sentry' },
     { type: 'npm', name: '@sentry/browser' },
     { type: 'npm', name: '@sentry/nextjs' },

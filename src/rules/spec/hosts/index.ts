@@ -1,13 +1,13 @@
 import path from 'node:path';
 
-import { LineCounter, parseDocument, visit } from 'yaml';
+import { LineCounter, parseAllDocuments, visit } from 'yaml';
 
 import { endpointHosts } from '../../../loader.js';
 
 import type { BaseProvider, ProviderFile } from '../../../provider/base.js';
 import type { HostMention } from '../../../types/index.js';
 
-const sourceFile = /\.(?:[cm]?[jt]sx?|py|rb|php|exs?|rs|go|cs|kts?|java|vue)$/i;
+const sourceFile = /\.(?:[cm]?[jt]sx?|py|rb|php|exs?|rs|go|cs|kts?|java|swift|dart|vue)$/i;
 const configFile = /\.(?:json|ya?ml)$/i;
 const exampleEnv = /^\.env\.(?:example|sample|template)(?:\.|$)/;
 const excluded = /(?:^|\/)(?:docs?|examples?|fixtures?|tests?|__tests__|__fixtures__|node_modules|vendor|generated)(?:\/|$)|(?:[.-](?:test|spec|min|generated)|(?:^|\/)test_[^/]*)\.[^.]+$|(?:lock|shrinkwrap)\.(?:json|ya?ml)$|(?:^|\/)(?:package|composer)\.json$/i;
@@ -17,8 +17,10 @@ const maxFileSize = 500_000;
 // another string cannot become a standalone endpoint. Hash comments depend on the language.
 function sourceValues(content: string, name: string, emit: (value: string, line: number) => void) {
   const hash = /\.(?:py|rb|php|exs?)$/i.test(name);
-  const syntax = /<!--[\s\S]*?(?:-->|$)|\/\*[\s\S]*?(?:\*\/|$)|\/\/[^\n]*|"""[\s\S]*?(?:"""|$)|'''[\s\S]*?(?:'''|$)|"(?:\\[^\n]|[^"\\\r\n])*"|'(?:\\[^\n]|[^'\\\r\n])*'|\x60(?:\\[\s\S]|[^\x60\\])*\x60/g;
-  const tokens = hash ? new RegExp('#[^\\n]*|' + syntax.source, 'g') : syntax;
+  const slashComments = !/\.(?:py|rb|exs?)$/i.test(name);
+  const literals = /"""[\s\S]*?(?:"""|$)|'''[\s\S]*?(?:'''|$)|"(?:\\[^\n]|[^"\\\r\n])*"|'(?:\\[^\n]|[^'\\\r\n])*'|\x60(?:\\[\s\S]|[^\x60\\])*\x60/;
+  const comments = /<!--[\s\S]*?(?:-->|$)|\/\*[\s\S]*?(?:\*\/|$)|\/\/[^\n]*/;
+  const tokens = new RegExp((hash ? '#[^\\n]*|' : '') + (slashComments ? comments.source + '|' : '') + literals.source, 'g');
   let line = 1;
   let cursor = 0;
   for (const match of content.matchAll(tokens)) {
@@ -31,17 +33,25 @@ function sourceValues(content: string, name: string, emit: (value: string, line:
   }
 }
 
-function configValues(content: string, emit: (value: string, line: number) => void) {
+function configValues(content: string, name: string, emit: (value: string, line: number) => void) {
+  if (name.toLowerCase().endsWith('.json')) {
+    try {
+      JSON.parse(content);
+    } catch {
+      return;
+    }
+  }
   const lineCounter = new LineCounter();
-  const doc = parseDocument(content, { lineCounter, logLevel: 'silent' });
-  if (doc.errors.length > 0) return;
-  visit(doc, {
-    Scalar(key, node) {
-      if (key !== 'key' && typeof node.value === 'string' && node.range) {
-        emit(node.value, lineCounter.linePos(node.range[0]).line);
-      }
-    },
-  });
+  for (const doc of parseAllDocuments(content, { lineCounter, logLevel: 'silent' })) {
+    if (doc.errors.length) continue;
+    visit(doc, {
+      Scalar(key, node) {
+        if (key !== 'key' && typeof node.value === 'string' && node.range) {
+          emit(node.value, lineCounter.linePos(node.range[0]).line);
+        }
+      },
+    });
+  }
 }
 
 function envValues(content: string, emit: (value: string, line: number) => void) {
@@ -97,7 +107,7 @@ export async function findHostMentions(files: ProviderFile[], provider: BaseProv
     };
 
     if (env) envValues(content, emit);
-    else if (config) configValues(content, emit);
+    else if (config) configValues(content, name, emit);
     else sourceValues(content, name, emit);
   }
   return results;

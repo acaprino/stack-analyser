@@ -4,9 +4,9 @@ register({
   tech: 'jenkins',
   name: 'Jenkins',
   type: 'ci',
-  files: ['.jenkins'],
+  files: ['Jenkinsfile', '.jenkins/'],
   dependencies: [
-    { type: 'docker', name: /^jenkins-docker(?:\/|$)/, example: 'jenkins-docker' },
+    { type: 'docker', name: 'jenkins/jenkins' },
     { type: 'ruby', name: 'jenkins_api_client' },
   ],
 });

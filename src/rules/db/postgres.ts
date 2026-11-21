@@ -23,7 +23,7 @@ register({
     { type: 'ruby', name: 'pg' },
     {
       type: 'deno',
-      name: /\/x\/postgres@/,
+      name: /^https:\/\/deno\.land\/x\/postgres(?:@[^/?#]+)?\//,
       example: 'https://deno.land/x/postgres@v0.17.0/mod.ts',
     },
     { type: 'php', name: 'martin-georgiev/postgresql-for-doctrine' },
@@ -37,6 +37,7 @@ register({
     { type: 'python', name: 'psycopg' },
     { type: 'python', name: 'psycopg-c' },
     { type: 'python', name: 'psycopg-pool' },
+    { type: 'python', name: 'psycopg2' },
     { type: 'python', name: 'psycopg2-binary' },
     { type: 'nuget', name: 'Npgsql' },
     { type: 'nuget', name: 'Npgsql.EntityFrameworkCore.PostgreSQL' },

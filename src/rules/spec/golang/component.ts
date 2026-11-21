@@ -4,11 +4,9 @@ import { Payload } from '../../../payload/index.js';
 
 import type { ComponentMatcher } from '../../../types/rule.js';
 
-const FILES_REG = /^main.go$/;
-
 export const detectGolangComponent: ComponentMatcher = (files) => {
   for (const file of files) {
-    if (!FILES_REG.test(file.name)) {
+    if (file.name !== 'main.go' || file.type !== 'file' || file.isSymbolicLink) {
       continue;
     }
 

@@ -4,6 +4,6 @@ register({
   tech: 'sonarqube',
   name: 'SonarQube',
   type: 'ci',
-  files: ['.sonar-project.properties'],
+  files: ['sonar-project.properties'],
   dependencies: [{ type: 'docker', name: 'sonarqube' }],
 });

@@ -5,6 +5,6 @@ register({
   name: 'CodeSandboxCI',
   type: 'ci',
   matchFullPath: true,
-  files: /.codesandbox\/ci.json/,
+  files: /^\.codesandbox\/ci\.json$/,
   example: '.codesandbox/ci.json',
 });

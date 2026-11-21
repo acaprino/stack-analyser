@@ -4,5 +4,5 @@ register({
   tech: 'datafast',
   name: 'Datafast',
   type: 'analytics',
-  dependencies: [],
+  dependencies: [{ type: 'npm', name: 'datafast' }, { type: 'npm', name: '@datafast/cli' }],
 });

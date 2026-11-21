@@ -8,7 +8,7 @@ register({
     { type: 'githubAction', name: 'denoland/deployctl' },
     {
       type: 'deno',
-      name: /\/x\/deploy(@[0-9.]+)?\/deployctl.ts/,
+      name: /^https:\/\/deno\.land\/x\/deploy(?:@[^/?#]+)?\/deployctl\.ts(?:[?#]|$)/,
       example: 'https://deno.land/x/deploy@1.4.07/deployctl.ts',
     },
   ],

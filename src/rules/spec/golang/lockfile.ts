@@ -1,56 +1,31 @@
-import path from 'node:path';
+import { packageComponent } from '../packageManifest.js';
 
-import { matchDependencies } from '../../../matchDependencies.js';
-import { Payload } from '../../../payload/index.js';
-
-import type { Dependency } from '../../../types/index.js';
 import type { ComponentMatcher } from '../../../types/rule.js';
 
-const LOCKFILE = 'go.mod';
-const lineReg = /[\t](.+)\sv(.+)/;
+// Only a require directive declares a dependency. Other blocks have similar-looking entries.
+function directModules(source: string): Map<string, string> {
+  const modules = new Map<string, string>();
+  let block: string | undefined;
+  for (const raw of source.split(/\r?\n/)) {
+    const comment = raw.indexOf('//');
+    const line = (comment < 0 ? raw : raw.slice(0, comment)).trim();
+    if (!line) continue;
+    if (line === ')') { block = undefined; continue; }
+    const open = /^([a-z]+)\s*\($/.exec(line);
+    if (open) { block = open[1]; continue; }
+    if (block && block !== 'require') continue;
+    const declaration = block === 'require' ? line : /^require\s+(.+)$/.exec(line)?.[1];
+    if (!declaration || (comment >= 0 && /^\/\/\s*indirect\b/.test(raw.slice(comment)))) continue;
+    const fields = /^(?:"([^"\s]+)"|([^\s"]+))\s+(?:"(v[^"\s]+)"|(v[^\s"]+))$/.exec(declaration);
+    if (fields) modules.set(fields[1] ?? fields[2], fields[3] ?? fields[4]);
+  }
+  return modules;
+}
 
 export const detectGolangLockfile: ComponentMatcher = async (files, provider) => {
-  for (const file of files) {
-    if (file.name !== LOCKFILE) {
-      continue;
-    }
-
-    const content = await provider.open(file.fp);
-    if (!content) {
-      continue;
-    }
-
-    const pl = new Payload({
-      name: 'virtual',
-      folderPath: path.dirname(file.fp),
-    });
-
-    const dependencies: Dependency[] = [];
-    // We only register docker service with image and that we know
-    for (const line of content.split(/\r?\n/)) {
-      if (!lineReg.test(line)) {
-        continue;
-      }
-
-      const [url, version, comment, ...rest] = line.slice(1).split(' ');
-      if (rest.length > 0 || comment) {
-        // Skip false positive and '// indirect'
-        continue;
-      }
-
-      dependencies.push(['golang', url, version || 'latest']);
-      const matched = matchDependencies([url], 'golang');
-      if (matched.size <= 0) {
-        continue;
-      }
-
-      pl.addTechs(matched);
-    }
-
-    pl.dependencies = [...dependencies];
-
-    return pl;
-  }
-
-  return false;
+  const file = files.find((item) => item.type === 'file' && !item.isSymbolicLink && item.name === 'go.mod');
+  if (!file) return false;
+  const content = await provider.open(file.fp);
+  if (!content) return false;
+  return packageComponent('virtual', file.fp, 'golang', directModules(content));
 };

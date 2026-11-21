@@ -2,10 +2,10 @@ import { l } from '../../../common/log.js';
 import { matchDependencies } from '../../../matchDependencies.js';
 import { Payload } from '../../../payload/index.js';
 import { detectLicense } from '../licenses/index.js';
+import { isRecord } from '../packageManifest.js';
 
 import type { Analyser } from '../../../types/index.js';
 import type { ComponentMatcher } from '../../../types/rule.js';
-import type { FullVersion } from 'package-json';
 
 const FILES = new Set(['package.json']);
 
@@ -20,37 +20,44 @@ export const detectNodeComponent: ComponentMatcher = async (files, provider) => 
       continue;
     }
 
-    let json: FullVersion;
+    let json: unknown;
     try {
-      json = JSON.parse(content) as FullVersion;
+      json = JSON.parse(content);
     } catch (err) {
       l.warn('Failed to parse package.json', file.fp, err);
       continue;
     }
 
-    if (!json.name) {
-      continue;
+    if (!isRecord(json)) continue;
+    const deps = new Map<string, string>();
+    for (const table of [json.peerDependencies, json.devDependencies, json.dependencies, json.optionalDependencies]) {
+      if (!isRecord(table)) continue;
+      for (const [key, version] of Object.entries(table)) {
+        if (typeof version === 'string') deps.set(key, version);
+      }
+    }
+    const name = typeof json.name === 'string' && json.name ? json.name : 'virtual';
+    if (name === 'virtual' && !deps.size) continue;
+    const declared: Analyser['dependencies'] = [];
+    const external = new Set<string>();
+    for (const [key, version] of deps) {
+      declared.push(['npm', key, version]);
+      const spec = version.trim();
+      if (/^(?:file:|link:|workspace:|portal:|\.{1,2}[/\\]|[/\\]|[A-Za-z]:[/\\]|~\/)/i.test(spec)) continue;
+      if (spec.startsWith('npm:')) {
+        const target = /^npm:((?:@[\w.-]+\/)?[\w.-]+)(?:@[^\s]*)?$/.exec(spec)?.[1];
+        if (target) external.add(target);
+      } else {
+        external.add(key);
+      }
     }
 
-    const deps = {
-      ...json.peerDependencies,
-      ...json.dependencies,
-      ...json.devDependencies,
-      ...json.optionalDependencies,
-    };
-    const techs = matchDependencies(Object.keys(deps), 'npm');
-    const depsFlatten: Analyser['dependencies'] = Object.entries(deps).map(
-      (dep: [string, string | undefined]) => {
-        return ['npm', dep[0], dep[1] ?? ''];
-      }
-    );
-
     const pl = new Payload({
-      name: json.name,
+      name,
       folderPath: file.fp,
-      dependencies: depsFlatten,
+      dependencies: declared,
     });
-    pl.addTechs(techs);
+    pl.addTechs(matchDependencies([...external], 'npm'));
 
     if (json.license && typeof json.license === 'string') {
       const lic = detectLicense(json.license);

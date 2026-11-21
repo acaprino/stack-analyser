@@ -4,7 +4,7 @@ register({
   tech: 'tinybird',
   name: 'Tinybird',
   type: 'analytics',
-  dotenv: ['TINYBIRD'],
+  dotenv: ['TINYBIRD', 'TINYBIRD_'],
   dependencies: [
     {
       type: 'npm',

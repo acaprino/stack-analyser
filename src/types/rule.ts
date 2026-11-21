@@ -36,6 +36,9 @@ export type Rule = {
   type: TechType;
   /** Exact HTTP(S) endpoint hostnames; a reference alone does not establish a dependency. */
   hosts?: string[];
+  /** Matching one of this rule's files identifies a deployment target for the owning module. */
+  deploymentConfig?: boolean;
+  /** Variable names. A trailing underscore declares a namespace. */
   dotenv?: string[];
   dependencies?: RuleDependency[];
   detect?: ComponentMatcher | ComponentMatcher[];
@@ -49,6 +52,7 @@ export type RuleFiles =
       example: string;
     }
   | {
+      /** Literal filenames or directory names with a trailing slash. */
       files: string[];
     }
   | {
@@ -68,6 +72,6 @@ export type ComponentMatcher = (
   provider: BaseProvider
 ) => MaybePromise<false | Payload | Payload[]>;
 
-export type TechMatcher = (files: ProviderFile[]) => [Rule, string] | false;
+export type TechMatcher = (files: ProviderFile[], basePath?: string) => [Rule, string] | false;
 export type ExtensionMatcher = (list: Set<string>) => [Rule, string] | false;
-export type DotEnvMatcher = (content: string) => [Rule, string] | false;
+export type DotEnvMatcher = (variables: readonly string[]) => [Rule, string] | false;

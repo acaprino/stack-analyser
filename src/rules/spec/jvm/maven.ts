@@ -15,7 +15,7 @@ function children(parent: XmlElement | undefined, key: string): XmlElement[] {
 }
 
 export function mavenProject(content: string): { name: string; dependencies: Dependency[] } | null {
-  const root = element(parseProjectXml(content)?.project);
+  const root = element(parseProjectXml(content, ['http://maven.apache.org/POM/4.0.0', 'http://maven.apache.org/POM/4.1.0'])?.project);
   if (!root || typeof root.artifactId !== 'string') return null;
   const parent = element(root.parent);
   const properties: XmlElement = {
@@ -26,9 +26,19 @@ export function mavenProject(content: string): { name: string; dependencies: Dep
   };
   function resolve(value: unknown): string {
     if (typeof value !== 'string') return '';
-    const key = /^\$\{([^}]+)\}$/.exec(value)?.[1];
-    const result = key ? properties[key] : value;
-    return typeof result === 'string' && !result.includes('$') ? result : '';
+    let result = value;
+    for (let depth = 0; result.includes('${') && depth < 16; depth++) {
+      if (result.length > 1024) return '';
+      let unresolved = false;
+      result = result.replace(/\$\{([^}]+)\}/g, (_, key: string) => {
+        const property = Object.hasOwn(properties, key) ? properties[key] : undefined;
+        if (typeof property === 'string' && property.length <= 1024) return property;
+        unresolved = true;
+        return '';
+      });
+      if (unresolved) return '';
+    }
+    return result.length <= 1024 && !result.includes('$') ? result : '';
   }
 
   const dependencies: Dependency[] = [];

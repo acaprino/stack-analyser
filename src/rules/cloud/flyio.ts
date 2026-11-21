@@ -1,6 +1,7 @@
 import { register } from '../../register.js';
 
 register({
+  deploymentConfig: true,
   tech: 'flyio',
   name: 'Flyio',
   type: 'cloud',

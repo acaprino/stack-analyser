@@ -4,5 +4,5 @@ register({
   tech: 'ifttt',
   name: 'ifttt',
   type: 'notification',
-  dotenv: ['IFTTT'],
+  dotenv: ['IFTTT', 'IFTTT_'],
 });

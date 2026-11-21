@@ -4,6 +4,6 @@ register({
   tech: 'storybook',
   name: 'Storybook',
   type: 'test',
-  files: ['.storybook'],
+  files: ['.storybook/'],
   dependencies: [{ type: 'npm', name: 'storybook' }],
 });

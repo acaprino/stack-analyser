@@ -4,7 +4,7 @@ register({
   tech: 'google.analytics',
   name: 'Google Analytics',
   type: 'analytics',
-  dotenv: ['GOOGLE_ANALYTICS'],
+  dotenv: ['GOOGLE_ANALYTICS', 'GOOGLE_ANALYTICS_'],
   dependencies: [
     { type: 'npm', name: 'universal-analytics' },
     { type: 'npm', name: 'react-ga' },
@@ -12,7 +12,7 @@ register({
     { type: 'npm', name: '@types/google.analytics' },
     { type: 'npm', name: '@docusaurus/plugin-google-analytics' },
     { type: 'npm', name: '@analytics/google-analytics' },
-    { type: 'npm', name: /^@google-analytics\\/, example: '@google-analytics/data' },
+    { type: 'npm', name: /^@google-analytics\//, example: '@google-analytics/data' },
     { type: 'npm', name: 'nextjs-google-analytics' },
     { type: 'npm', name: '@nuxtjs/google-analytics' },
     { type: 'npm', name: 'gatsby-plugin-google-analytics' },

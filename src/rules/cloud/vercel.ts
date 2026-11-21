@@ -1,10 +1,11 @@
 import { register } from '../../register.js';
 
 register({
+  deploymentConfig: true,
   tech: 'vercel',
   name: 'Vercel',
   type: 'cloud',
-  files: ['.vercel', 'vercel.json'],
+  files: ['.vercel/', 'vercel.json'],
   dependencies: [
     { type: 'npm', name: 'vercel' },
     { type: 'npm', name: '@vercel/client' },

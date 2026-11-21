@@ -1,30 +1,47 @@
 import { SaxesParser } from 'saxes';
 
-type Frame = { name: string; fields: Record<string, unknown>; text: string };
+const orderedChildren = Symbol('ordered XML elements');
+type NamedElement = readonly [string, unknown];
+type Element = Record<string, unknown> & { [orderedChildren]?: NamedElement[] };
 
-export function parseProjectXml(content: string): Record<string, unknown> | null {
+export function xmlChildren(element: Element): readonly NamedElement[] {
+  return element[orderedChildren] ?? [];
+}
+
+type Frame = { name: string; fields: Record<string, unknown>; text: string; ignored: boolean };
+
+export function parseProjectXml(content: string, namespaces: readonly string[] = [], preserveOrder = false): Record<string, unknown> | null {
   const root: Record<string, unknown> = Object.create(null);
   const stack: Frame[] = [];
   const parser = new SaxesParser({ xmlns: true });
+  let namespace = '';
   parser.on('doctype', () => { throw new Error('DTD in build manifest'); });
   parser.on('opentag', (tag) => {
+    if (stack.length >= 256) throw new Error('Build manifest nesting limit');
+    if (!stack.length) {
+      namespace = tag.uri;
+      if (namespace && !namespaces.includes(namespace)) throw new Error('Unrecognized project namespace');
+    }
+    const ignored = tag.uri !== namespace || stack.at(-1)?.ignored === true;
     const fields: Record<string, unknown> = Object.create(null);
     for (const attr of Object.values(tag.attributes)) {
-      fields[`@_${attr.local}`] = attr.value;
+      if (!attr.uri) fields[`@_${attr.local}`] = attr.value;
     }
-    stack.push({ name: tag.local, fields, text: '' });
+    stack.push({ name: tag.local, fields, text: '', ignored });
   });
   function text(value: string) {
     const frame = stack.at(-1);
-    if (frame) frame.text += value;
+    if (frame && !frame.ignored) frame.text += value;
   }
   parser.on('text', text);
   parser.on('cdata', text);
   parser.on('closetag', () => {
-    const { name, fields, text: raw } = stack.pop()!;
-    const parent = stack.at(-1)?.fields ?? root;
+    const { name, fields, text: raw, ignored } = stack.pop()!;
+    if (ignored) return;
+    const parent: Element = stack.at(-1)?.fields ?? root;
     const value = Object.keys(fields).length ? fields : raw.trim();
     if (typeof value !== 'string' && raw.trim()) value['#text'] = raw.trim();
+    if (preserveOrder) (parent[orderedChildren] ??= []).push([name, value]);
     const previous = parent[name];
     if (previous === undefined) parent[name] = value;
     else if (Array.isArray(previous)) previous.push(value);

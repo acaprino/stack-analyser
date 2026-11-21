@@ -6,7 +6,7 @@ register({
   tech: 'terraform',
   name: 'Terraform',
   type: 'iac',
-  files: ['.terraform', '.terraform.lock.hcl', 'main.tf', 'variables.tf'],
+  files: ['.terraform/', '.terraform.lock.hcl', 'main.tf', 'variables.tf'],
   extensions: ['.tf'],
   dependencies: [
     { type: 'githubAction', name: 'hashicorp/setup-terraform' },

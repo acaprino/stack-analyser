@@ -4,7 +4,7 @@ register({
   tech: 'cypressci',
   name: 'Cypress',
   type: 'ci',
-  files: /cypress.config.(js|ts|mjs|cjs)/,
+  files: /^cypress\.config\.(?:[cm]?[jt]s)$/,
   example: 'cypress.config.js',
   dependencies: [
     { type: 'npm', name: 'cypress' },

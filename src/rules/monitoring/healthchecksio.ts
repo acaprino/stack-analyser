@@ -4,4 +4,5 @@ register({
   tech: 'healthchecksio',
   name: 'Healthchecks.io',
   type: 'monitoring',
+  hosts: ['hc-ping.com'],
 });

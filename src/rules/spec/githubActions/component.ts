@@ -1,116 +1,73 @@
 import { parse } from 'yaml';
-import { portablePath } from '../../../common/helpers.js';
 
 import { l } from '../../../common/log.js';
+import { imageReference } from '../../../common/packageIdentity.js';
 import { matchDependencies } from '../../../matchDependencies.js';
 import { Payload } from '../../../payload/index.js';
+import { isRecord, projectPath } from '../packageManifest.js';
 
-import type { Dependency } from '../../../types/index.js';
 import type { ComponentMatcher } from '../../../types/rule.js';
 
-export const FILE_REG = /.github\/workflows\/.+\.y(a)?ml/;
+const workflowFile = /^\.github\/workflows\/[^/]+\.ya?ml$/;
 
-interface Step {
-  name?: string;
-  uses?: string; // Interesting
-  run?: string;
-  with?: Record<string, string>;
+function addImage(pl: Payload, value: unknown): void {
+  const image = isRecord(value) ? value.image : value;
+  if (typeof image !== 'string' || !image.trim()) return;
+  const { name, version } = imageReference(image);
+  if (!name || /[\s$]/.test(name)) return;
+  pl.dependencies.push(['docker', name, version]);
+  pl.addTechs(matchDependencies([name], 'docker'));
 }
 
-interface GitHubActionsFile {
-  name?: string;
-  on?: Record<string, unknown>;
-  jobs?: Record<
-    string,
-    {
-      container?: { image: string; options?: string } | string; // interesting
-      'runs-on': string;
-      'timeout-minutes': number;
-      env?: Record<string, string>;
-      services?: Record<
-        string,
-        {
-          image?: string; // interesting
-        }
-      >;
-      steps?: Step[];
-    }
-  >;
+function addAction(pl: Payload, uses: unknown): void {
+  if (typeof uses !== 'string') return;
+  if (uses.startsWith('docker://')) {
+    addImage(pl, uses.slice('docker://'.length));
+    return;
+  }
+  if (uses.startsWith('./') && !/[\s$]/.test(uses)) {
+    pl.dependencies.push(['githubAction', uses, '']);
+    return;
+  }
+  const action = /^([\w.-]+\/[\w.-]+(?:\/[\w./-]+)*)@([^\s$@]+)$/.exec(uses);
+  if (!action) return;
+  const [, name, version] = action;
+  pl.dependencies.push(['githubAction', name, version]);
+  pl.addTechs(matchDependencies([name], 'githubAction'));
 }
 
 export const detectGithubActionsComponent: ComponentMatcher = async (files, provider) => {
+  const workflows: Payload[] = [];
   for (const file of files) {
-    if (!FILE_REG.test(portablePath(file.fp))) {
-      continue;
-    }
-
+    const relative = projectPath(provider.basePath, file.fp);
+    if (file.type !== 'file' || !workflowFile.test(relative)) continue;
     const content = await provider.open(file.fp);
-    if (!content) {
-      continue;
-    }
-
-    let parsed: GitHubActionsFile;
+    if (!content) continue;
+    let parsed: unknown;
     try {
-      parsed = parse(content, {}) as GitHubActionsFile;
-      if (!parsed.jobs) {
-        l.warn('No jobs in GitHub Actions', file.fp);
-        continue;
-      }
-    } catch (err) {
-      l.warn('Failed to parse', file.fp, err);
+      parsed = parse(content);
+    } catch {
+      l.warn('Failed to parse workflow', file.fp);
       continue;
     }
-
+    if (!isRecord(parsed) || !Object.hasOwn(parsed, 'on') || !isRecord(parsed.jobs)) continue;
+    const jobs = Object.values(parsed.jobs).filter(isRecord);
+    if (!jobs.length) continue;
     const pl = new Payload({ name: 'virtual', folderPath: file.fp });
-
-    const dependencies: Dependency[] = [];
-    for (const [, config] of Object.entries(parsed.jobs)) {
-      if (config.steps) {
-        for (const step of config.steps) {
-          if (!step.uses) {
-            continue;
-          }
-
-          const [name, version] = step.uses.split('@');
-          dependencies.push(['githubAction', name, version || 'latest']);
-          const matched = matchDependencies([name], 'githubAction');
-          if (matched.size > 0) {
-            pl.addTechs(matched);
-          }
-        }
+    pl.addTech('github.actions', [`GitHub Actions workflow: ${relative}`]);
+    for (const job of jobs) {
+      addAction(pl, job.uses);
+      if (Array.isArray(job.steps)) {
+        for (const step of job.steps) if (isRecord(step)) addAction(pl, step.uses);
       }
-
-      if (config.container !== undefined) {
-        const [imageName, imageVersion] =
-          typeof config.container === 'string'
-            ? config.container.split(':')
-            : config.container.image;
-        dependencies.push(['docker', imageName, imageVersion || 'latest']);
-        const matched = matchDependencies([imageName], 'docker');
-        if (matched.size > 0) {
-          pl.addTechs(matched);
-        }
-      }
-
-      if (config.services) {
-        for (const [, service] of Object.entries(config.services)) {
-          if (!service.image) {
-            continue;
-          }
-
-          const [imageName, imageVersion] = service.image.split(':');
-          dependencies.push(['docker', imageName, imageVersion || 'latest']);
-          const matched = matchDependencies([imageName], 'docker');
-          if (matched.size > 0) {
-            pl.addTechs(matched);
-          }
+      addImage(pl, job.container);
+      if (isRecord(job.services)) {
+        for (const service of Object.values(job.services)) {
+          if (isRecord(service)) addImage(pl, service.image);
         }
       }
     }
-
-    pl.dependencies = [...dependencies];
-    return pl;
+    workflows.push(pl);
   }
-
-  return false;
+  return workflows.length ? workflows : false;
 };

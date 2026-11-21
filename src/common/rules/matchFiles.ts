@@ -1,3 +1,5 @@
+import path from 'node:path';
+
 import { listIndexed } from '../../register.js';
 import { portablePath } from '../helpers.js';
 
@@ -10,16 +12,19 @@ export function matchFiles({
   files,
   matches,
   matchFullPath,
+  basePath,
 }: {
   key: AllowedKeys;
   files: ProviderFile[];
   matches: string[];
   matchFullPath?: boolean;
+  basePath?: string;
 }): [Rule, string] | false {
   for (const file of files) {
-    const name = matchFullPath ? portablePath(file.fp) : file.name;
-    if (matches.includes(name)) {
-      return [listIndexed[key], name];
+    if (file.isSymbolicLink) continue;
+    const name = matchFullPath ? portablePath(basePath ? path.relative(basePath, file.fp) : file.fp) : file.name;
+    if (matches.includes(file.type === 'dir' ? name + '/' : name)) {
+      return [listIndexed[key], matchFullPath ? file.fp : file.name];
     }
   }
 
@@ -31,16 +36,20 @@ export function matchFilesRegex({
   files,
   match,
   matchFullPath,
+  basePath,
 }: {
   key: AllowedKeys;
   files: ProviderFile[];
   match: RegExp;
   matchFullPath?: boolean;
+  basePath?: string;
 }): [Rule, string] | false {
   for (const file of files) {
-    const name = matchFullPath ? portablePath(file.fp) : file.name;
+    if (file.type !== 'file' || file.isSymbolicLink) continue;
+    const name = matchFullPath ? portablePath(basePath ? path.relative(basePath, file.fp) : file.fp) : file.name;
+    match.lastIndex = 0;
     if (match.test(name)) {
-      return [listIndexed[key], name];
+      return [listIndexed[key], matchFullPath ? file.fp : file.name];
     }
   }
 

@@ -45,7 +45,6 @@
   "dependencies": {
     "@actions/core": "1.11.1",
     "@cdktf/hcl2json": "0.21.0",
-    "@iarna/toml": "2.2.5",
     "commander": "14.0.0",
     "consola": "3.4.2",
     "dockerfile-ast": "0.7.1",
@@ -55,6 +54,7 @@
     "nanoid": "5.1.5",
     "ora": "8.2.0",
     "saxes": "6.0.0",
+    "smol-toml": "1.9.1",
     "spdx-expression-parse": "4.0.0",
     "yaml": "2.8.0"
   }

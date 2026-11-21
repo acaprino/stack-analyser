@@ -10,7 +10,7 @@ export function matchAllFiles(files: ProviderFile[], basePath: string): Map<Allo
 
   // Match files
   for (const rule of rulesTechs) {
-    const res = rule(files);
+    const res = rule(files, basePath);
     if (res === false) {
       continue;
     }
@@ -21,7 +21,13 @@ export function matchAllFiles(files: ProviderFile[], basePath: string): Map<Allo
   // Match extensions
   const exts = new Set<string>();
   for (const file of files) {
-    exts.add(path.extname(file.name));
+    if (file.type !== 'file' || file.isSymbolicLink) continue;
+    const { ext, name } = path.parse(file.name);
+    if (!ext) continue;
+    exts.add(ext);
+    // Keep compound extensions such as '.rs.in' without treating the directory name as evidence.
+    const previous = path.extname(name);
+    if (previous) exts.add(previous + ext);
   }
   for (const rule of rulesExtensions) {
     const res = rule(exts);

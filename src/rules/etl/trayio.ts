@@ -4,5 +4,5 @@ register({
   tech: 'trayio',
   name: 'Tray.ai',
   type: 'etl',
-  dependencies: [{ type: 'npm', name: /^@trayio-app\//, example: '@trayio/cdk-cli' }],
+  dependencies: [{ type: 'npm', name: /^@trayio\//, example: '@trayio/cdk-cli' }],
 });

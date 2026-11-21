@@ -6,6 +6,6 @@ register({
   type: 'ui',
   dependencies: [
     { type: 'npm', name: 'codemirror' },
-    { type: 'npm', name: /@codemirror\//, example: '@codemirror/view' },
+    { type: 'npm', name: /^@codemirror\//, example: '@codemirror/view' },
   ],
 });

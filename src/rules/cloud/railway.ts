@@ -1,6 +1,7 @@
 import { register } from '../../register.js';
 
 register({
+  deploymentConfig: true,
   tech: 'railway',
   name: 'Railway',
   type: 'cloud',

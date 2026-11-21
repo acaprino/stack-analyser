@@ -4,7 +4,7 @@ register({
   tech: 'golangcilint',
   name: 'GolangCI Lint',
   type: 'linter',
-  files: ['.golangcit.yml'],
+  files: ['.golangci.yml', '.golangci.yaml', '.golangci.toml', '.golangci.json'],
   dependencies: [
     { type: 'golang', name: 'github.com/golangci/golangci-lint' },
     { type: 'githubAction', name: 'golangci/golangci-lint-action' },

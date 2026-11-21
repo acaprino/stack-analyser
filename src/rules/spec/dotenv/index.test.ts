@@ -15,7 +15,7 @@ describe('dotenv', () => {
         continue;
       }
 
-      env.push(`${item.ref.dotenv.map((v) => `${v}KEY=example`).join('\r\n')}`);
+      env.push(...item.ref.dotenv.map((name) => `${name}${name.endsWith('_') ? 'KEY' : ''}=example`));
     }
 
     const res = await analyser({
@@ -24,7 +24,7 @@ describe('dotenv', () => {
           '/': ['.env.example'],
         },
         files: {
-          '/.env.example': env.join(''),
+          '/.env.example': env.join('\n'),
         },
       }),
     });
@@ -33,5 +33,18 @@ describe('dotenv', () => {
 
     expect([...merged.techs].sort()).toMatchSnapshot();
     expect([...merged.dependencies].sort()).toMatchSnapshot();
+  });
+
+  it('only reads assigned keys, including public client prefixes and multiple templates', async () => {
+    const provider = new FakeProvider({
+      paths: { '/': ['.env.example', '.env.production.sample'] },
+      files: {
+        '/.env.example': '# OPENAI_API_KEY=x\nNOTE="STRIPE_TOKEN"\nNOT_REDIS_URL=x\nADD_PORT=3\nAPPLE_IDENTITY=x',
+        '/.env.production.sample': 'export NEXT_PUBLIC_SUPABASE_URL=demo\nROLLBAR_TOKEN=\nVITE_SENTRY_DSN=x',
+      },
+    });
+    const hits = flatten(await analyser({ provider }), { merge: true }).techs;
+    expect([...hits]).toEqual(expect.arrayContaining(['supabase', 'rollbar', 'sentry']));
+    for (const other of ['openai', 'stripe', 'redis', 'datadog', 'apple'] as const) expect(hits.has(other)).toBe(false);
   });
 });

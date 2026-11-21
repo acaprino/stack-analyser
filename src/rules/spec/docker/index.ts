@@ -6,7 +6,7 @@ register({
   tech: 'docker',
   name: 'Docker',
   type: 'tool',
-  files: ['.dockerignore', 'Dockerfile', 'docker-compose.yml', 'docker-compose.yaml'],
+  files: ['.dockerignore'],
   detect: [detectDockerComponent, detectDockerfile],
   dependencies: [
     { type: 'githubAction', name: 'docker/login-action' },

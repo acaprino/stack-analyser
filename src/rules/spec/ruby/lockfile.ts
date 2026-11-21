@@ -1,50 +1,133 @@
-import { matchDependencies } from '../../../matchDependencies.js';
-import { Payload } from '../../../payload/index.js';
+import { sourceText, tokens } from '../manifestTokens.js';
+import { packageComponent, projectPath } from '../packageManifest.js';
 
-import type { Analyser } from '../../../types/index.js';
+import type { Token } from '../manifestTokens.js';
 import type { ComponentMatcher } from '../../../types/rule.js';
 
-const FILES = new Set(['Gemfile']);
+const gemName = /^[a-z\d][a-z\d_.-]*$/i;
+const gemfiles = new Set(['Gemfile', 'gems.rb']);
+const locks = new Map([['Gemfile', 'Gemfile.lock'], ['gems.rb', 'gems.locked']]);
 
-const NEW_LINE_REG = /\r?\n/;
-const DEP_REG = /gem "(.+)",\s+("(.+)")?/;
+function* statements(source: string) {
+  let row: Token[] = [], nesting = 0;
+  for (const token of tokens(source, 'ruby')) {
+    const last = row.at(-1);
+    const separator = token.kind === 'symbol' && token.value === ';';
+    if (last && !nesting && (separator || (last.line < token.line && last.value !== ','))) {
+      yield row;
+      row = [];
+    }
+    if (separator) continue;
+    if (token.kind === 'symbol') {
+      if (token.value === '(' || token.value === '[') nesting++;
+      if (token.value === ')' || token.value === ']') nesting = Math.max(0, nesting - 1);
+    }
+    row.push(token);
+  }
+  if (row.length) yield row;
+}
+
+// Keep literal declarations in the Bundler DSL or on the actual Gem::Specification
+// block parameter. Never load the Gemfile or execute a gemspec.
+function declaredGems(source: string, gemspec: boolean): Map<string, string> {
+  const found = new Map<string, string>();
+  const scopes: { receiver?: string; disabled: boolean; condition?: boolean }[] = [];
+  for (const row of statements(source)) {
+    const words = row.map((token) => token.kind === 'string' ? '' : token.value);
+    const first = words[0];
+    if (first === 'end' || first === '}') { scopes.pop(); continue; }
+    if (first === 'else' && scopes.at(-1)?.condition !== undefined) {
+      const scope = scopes.at(-1)!;
+      scope.disabled = !!scopes.at(-2)?.disabled || scope.condition === true;
+      continue;
+    }
+    const block = words.indexOf('do');
+    const brace = words.indexOf('{');
+    const opener = block >= 0 ? block : brace >= 0 && words[brace + 1] === '|' ? brace : -1;
+    const parent = scopes.at(-1);
+    if (opener >= 0 || /^(?:module|class|def|if|unless|case|begin|until|while|for)$/.test(first)) {
+      const parameter = words[opener + 1] === '|' && row[opener + 2]?.kind === 'word' && words[opener + 3] === '|'
+        ? words[opener + 2] : undefined;
+      const constructor = words.slice(0, opener).join('');
+      const spec = gemspec && /^(?:\w+=)?Gem::Specification\.new(?:\(\))?$/.test(constructor);
+      const condition = ['if', 'unless'].includes(first) && ['true', 'false'].includes(words[1])
+        && words.length === 2 ? (words[1] === 'true') === (first === 'if') : undefined;
+      const receiver = spec ? parameter : parameter === parent?.receiver ? undefined : parent?.receiver;
+      scopes.push({ receiver, disabled: !!parent?.disabled || first === 'def' || condition === false, condition });
+      continue;
+    }
+    if (parent?.disabled) continue;
+    let arg = 1;
+    if (gemspec) {
+      if (words[1] !== '.' || !/^add_(?:(?:development|runtime)_)?dependency$/.test(words[2]) ||
+          parent?.receiver !== first) continue;
+      arg = 3;
+    } else if (first !== 'gem') continue;
+    if (words[arg] === '(') arg++;
+    const name = row[arg];
+    if (name?.kind !== 'string' || !gemName.test(name.value)) continue;
+    const tail = words.slice(arg + 1);
+    if (tail.length && ![',', ')', 'if', 'unless'].includes(tail[0])) continue;
+    if ((tail.at(-2) === 'if' && tail.at(-1) === 'false') || (tail.at(-2) === 'unless' && tail.at(-1) === 'true')) continue;
+    // A path or git override can reuse the name of an unrelated public gem.
+    if (tail.some((word, i) => ['path', 'git', 'github'].includes(word) &&
+        (tail[i + 1] === ':' || (tail[i - 1] === ':' && tail[i + 1] === '=')))) continue;
+    const versions: string[] = [];
+    for (let i = arg + 1; words[i] === ',' && row[i + 1]?.kind === 'string'; i += 2) {
+      versions.push(row[i + 1].value);
+    }
+    found.set(name.value, versions.join(', ') || 'latest');
+  }
+  return found;
+}
+
+function lockedDirectGems(source: string): Map<string, string> {
+  const direct = new Map<string, string>(), versions = new Map<string, string>();
+  let section = '';
+  for (const row of source.split(/\r?\n/)) {
+    if (/^\S/.test(row)) { section = row; continue; }
+    if (section === 'GEM') {
+      const spec = /^ {4}([\w.-]+) \(([^()]+)\)$/.exec(row);
+      if (spec) versions.set(spec[1], spec[2]);
+    } else if (section === 'DEPENDENCIES') {
+      // Only direct registry entries. Bang-suffixed entries use PATH/GIT sources.
+      const dep = /^ {2}([\w.-]+)(?: \(([^()]+)\))?$/.exec(row);
+      if (dep) direct.set(dep[1], dep[2] || 'latest');
+    }
+  }
+  return new Map([...versions].filter(([name]) => direct.has(name)));
+}
 
 export const detectRubyLockfile: ComponentMatcher = async (files, provider) => {
-  for (const file of files) {
-    if (!FILES.has(file.name)) {
-      continue;
+  const available = files.filter((file) => file.type === 'file' && !file.isSymbolicLink);
+  const manifests = available.filter((file) => gemfiles.has(file.name) || file.name.endsWith('.gemspec'));
+  const components = [];
+  for (const file of manifests) {
+    const source = await sourceText(provider, file.fp);
+    if (source === null) continue;
+    const gemspec = !gemfiles.has(file.name);
+    const packages = declaredGems(source, gemspec);
+    const lock = !gemspec && available.find((entry) => entry.name === locks.get(file.name));
+    if (lock) {
+      const pinned = lockedDirectGems((await sourceText(provider, lock.fp)) || '');
+      for (const [name, version] of packages) if (version === 'latest' && pinned.has(name)) packages.set(name, pinned.get(name)!);
     }
-
-    const content = await provider.open(file.fp);
-    if (!content) {
-      continue;
-    }
-
-    const lines = content.split(NEW_LINE_REG);
-
-    const pl = new Payload({ name: 'virtual', folderPath: file.fp });
-
-    const deps: Record<string, string> = {};
-    for (const line of lines) {
-      const match = line.match(DEP_REG);
-      if (!match) {
-        continue;
-      }
-
-      deps[match[1]] = match[3] || 'latest';
-    }
-
-    const techs = matchDependencies(Object.keys(deps), 'ruby');
-    const depsFlatten: Analyser['dependencies'] = Object.entries(deps).map(([name, value]) => {
-      return ['ruby', name, value || 'latest'];
-    });
-
-    pl.addTechs(techs);
-    pl.addTech('bundler', ['matched file: Gemfile']);
-    pl.dependencies = depsFlatten;
-
-    return pl;
+    const pl = packageComponent('virtual', file.fp, 'ruby', packages);
+    if (gemspec) pl.addTech('ruby', ['gemspec: ' + projectPath(provider.basePath, file.fp)]);
+    else pl.addTech('bundler', ['matched file: ' + file.name]);
+    components.push(pl);
   }
-
-  return false;
+  // When a manifest exists it is authoritative. A stale lock cannot create a new
+  // dependency, and transitive requirements under the specs section are never promoted.
+  if (!manifests.length) {
+    for (const file of available.filter((entry) => [...locks.values()].includes(entry.name))) {
+      const packages = lockedDirectGems((await sourceText(provider, file.fp)) || '');
+      if (!packages.size) continue;
+      const pl = packageComponent('virtual', file.fp, 'ruby', packages);
+      pl.addTech('bundler', ['matched file: ' + file.name]);
+      pl.addTech('ruby', ['Bundler lock: ' + projectPath(provider.basePath, file.fp)]);
+      components.push(pl);
+    }
+  }
+  return components.length ? components : false;
 };

@@ -74,8 +74,7 @@ export class Payload implements Analyser {
   async recurse(provider: BaseProvider, filePath: string): Promise<void> {
     const files = await provider.listDir(filePath);
 
-    // eslint-disable-next-line unicorn/no-this-assignment, @typescript-eslint/no-this-alias
-    let ctx: Payload = this;
+    const modules = new Set<Payload>();
     for (const rule of rulesComponents) {
       const res = await rule(files, provider);
       if (res === false) {
@@ -90,12 +89,14 @@ export class Payload implements Analyser {
           }
           this.combine(pl);
         } else {
-          ctx = pl;
-          this.addChild(pl);
+          modules.add(this.addChild(pl));
         }
       }
     }
 
+    // When several manifests share a directory, a generic source or endpoint cannot be
+    // assigned to one of them by detector registration order. Keep the evidence at their parent.
+    const ctx = modules.size === 1 ? modules.values().next().value! : this;
     const dotenv = await detectInDotEnv(files, provider);
     if (dotenv !== false) {
       for (const child of dotenv.childs) {
@@ -107,6 +108,7 @@ export class Payload implements Analyser {
     // Detect Tech
     const matched = matchAllFiles(files, provider.basePath);
     ctx.addTechs(matched);
+    if (modules.size === 1 || (!modules.size && filePath === provider.basePath)) findHosting(ctx, matched);
     ctx.mentions.push(...(await findHostMentions(files, provider)));
 
     // Recursively dive in folders
@@ -130,15 +132,7 @@ export class Payload implements Analyser {
    * If a similar child is found at the same level, it will merge them.
    */
   addChild(service: Payload): Payload {
-    const exist = this.childs.find((s) => {
-      // we only merge if a tech is similar otherwise it's too easy to get a false-positive
-      if (!s.tech && !service.tech) {
-        return false;
-      }
-      if (s.name === service.name) return true;
-      if (s.tech === service.tech) return true;
-      return false;
-    });
+    const exist = service.tech ? this.childs.find((child) => child.tech === service.tech) : undefined;
 
     if (service.tech?.includes('.')) {
       const [host] = service.tech.split('.');
@@ -173,7 +167,8 @@ export class Payload implements Analyser {
       }
 
       // Merge dependencies
-      exist.dependencies = [...exist.dependencies, ...service.dependencies];
+      exist.combineDependencies(service);
+      for (const reason of service.reason) exist.reason.add(reason);
 
       return exist;
     }
@@ -202,13 +197,13 @@ export class Payload implements Analyser {
     }
 
     findImplicitComponent({ pl: this, tech, reason });
-    findHosting(this, tech);
   }
 
   /**
    * Register a relationship between this Payload and an other one.
    */
   addEdges(pl: Payload): void {
+    if (pl === this || this.edges.some((edge) => edge.target.id === pl.id)) return;
     this.edges.push({
       target: pl,
       read: true,
@@ -256,8 +251,8 @@ export class Payload implements Analyser {
   combineDependencies(pl: Payload): void {
     // Merge dependencies
     const dedup = new Map<string, Dependency>();
-    for (const dep of this.dependencies) dedup.set(dep.join('_'), dep);
-    for (const dep of pl.dependencies) dedup.set(dep.join('_'), dep);
+    for (const dep of this.dependencies) dedup.set(JSON.stringify(dep), dep);
+    for (const dep of pl.dependencies) dedup.set(JSON.stringify(dep), dep);
     this.dependencies = [...dedup.values()];
   }
 
@@ -308,10 +303,10 @@ export class Payload implements Analyser {
     cp.techs = new Set(this.techs);
     cp.reason = new Set(this.reason);
     cp.inComponent = this.inComponent;
-    cp.edges = this.edges;
+    cp.edges = this.edges.map((edge) => ({ ...edge }));
     cp.mentions = [...this.mentions];
-    cp.path = this.path;
-    cp.languages = this.languages;
+    cp.path = new Set(this.path);
+    cp.languages = { ...this.languages };
     cp.licenses = new Set(this.licenses);
     cp.childs = this.childs;
 

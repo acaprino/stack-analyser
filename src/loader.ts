@@ -21,6 +21,7 @@ export const rulesExtensions: ExtensionMatcher[] = [];
 export const rulesDotEnv: DotEnvMatcher[] = [];
 export const endpointHosts = new Map<string, Set<AllowedKeys>>();
 export const rulesComponents: ComponentMatcher[] = [];
+const loadedRules = new WeakSet<Rule>();
 
 export const dependencies: Record<SupportedDeps, { match: RegExp; tech: AllowedKeys }[]> = {
   'terraform.resource': [],
@@ -57,6 +58,9 @@ export function loadAllRules(): void {
 }
 
 export function loadOne(rule: Rule): void {
+  if (loadedRules.has(rule)) return;
+  const invalid = rule.dependencies?.find((dep) => dep.name === '');
+  if (invalid) throw new Error(`empty dependency name for ${rule.name} (${rule.type} > ${rule.tech})`);
   for (const value of rule.hosts ?? []) {
     const host = value.toLowerCase();
     const techs = endpointHosts.get(host) ?? new Set<AllowedKeys>();
@@ -65,23 +69,21 @@ export function loadOne(rule: Rule): void {
   }
 
   if (rule.dependencies) {
-    rule.dependencies.map((dep) => {
-      if (dep.name === '') {
-        throw new Error(`empty dependency name for ${rule.name} (${rule.type} > ${rule.tech})`);
-      }
+    for (const dep of rule.dependencies) {
       dependencies[dep.type].push({
         match: typeof dep.name === 'string' ? packagePattern(dep.name, dep.type) : dep.name,
         tech: rule.tech,
       });
       rawList.push({ type: 'dependency', ref: dep });
-    });
+    }
   }
 
   if (rule.files !== undefined) {
     let matcher: TechMatcher;
     if (Array.isArray(rule.files)) {
-      matcher = (files) => {
+      matcher = (files, basePath) => {
         return matchFiles({
+          basePath,
           key: rule.tech,
           files,
           matches: rule.files as string[],
@@ -89,8 +91,9 @@ export function loadOne(rule: Rule): void {
         });
       };
     } else {
-      matcher = (files) => {
+      matcher = (files, basePath) => {
         return matchFilesRegex({
+          basePath,
           key: rule.tech,
           files,
           match: rule.files as RegExp,
@@ -113,8 +116,8 @@ export function loadOne(rule: Rule): void {
   }
 
   if (Array.isArray(rule.dotenv) && rule.dotenv.length > 0) {
-    const matcher: DotEnvMatcher = (content) => {
-      return matchDotEnv({ key: rule.tech, list: rule.dotenv!, content });
+    const matcher: DotEnvMatcher = (variables) => {
+      return matchDotEnv({ key: rule.tech, list: rule.dotenv!, variables });
     };
 
     rawList.push({ type: 'dotenv', ref: rule as RuleWithDotEnv });
@@ -124,4 +127,5 @@ export function loadOne(rule: Rule): void {
   if (rule.detect) {
     rulesComponents.push(...(Array.isArray(rule.detect) ? rule.detect : [rule.detect]));
   }
+  loadedRules.add(rule);
 }

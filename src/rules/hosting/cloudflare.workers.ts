@@ -1,6 +1,7 @@
 import { register } from '../../register.js';
 
 register({
+  deploymentConfig: true,
   tech: 'cloudflare.workers',
   name: 'Cloudflare Workers',
   type: 'hosting',

@@ -4,5 +4,5 @@ register({
   tech: 'teamcity',
   name: 'TeamCity',
   type: 'ci',
-  files: ['.teamcity'],
+  files: ['.teamcity/'],
 });

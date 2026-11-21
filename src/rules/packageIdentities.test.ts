@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import '../autoload.js';
+import { dependencies, loadAllRules, rawList, rulesComponents } from '../loader.js';
 import { matchDependencies } from '../matchDependencies.js';
 
 import type { SupportedDeps } from '../types/rule.js';
@@ -46,10 +47,46 @@ const cases: [SupportedDeps, string, string[]][] = [
   ['swiftpm', 'github.com/example/firebase-ios-sdk', []],
   ['docker', 'docker.io/library/redis:7', ['redis']],
   ['docker', 'registry.example/redis-proxy:7', []],
+  ['npm', '@hubspot/api-client', ['hubspot']],
+  ['npm', '@hubpost/api-client', []],
+  ['npm', '@google-analytics/data', ['google.analytics']],
+  ['npm', '@trayio/cdk-cli', ['trayio']],
+  ['npm', 'sequelize-typescript', ['sequelize']],
+  ['npm', 'unrelated-sequelize-fixture', []],
+  ['npm', 'passport-google-oauth', ['google.oauth']],
+  ['python', 'psycopg2', ['postgresql']],
+  ['githubAction', 'AZURE/STATIC-WEB-APPS-DEPLOY', ['azure.staticwebapps']],
+  ['githubAction', 'Azure/webapps-deploy', ['azure.appservice']],
+  ['githubAction', 'ARIGA/ATLAS-ACTION/migrate/push', ['atlasgo']],
+  ['githubAction', 'ARIGA/ATLAS-ACTION/MIGRATE/push', []],
+  ['githubAction', 'SNYK/ACTIONS/php', ['snyk']],
+  ['githubAction', 'gradle/actions/setup-gradle', ['gradle']],
+  ['githubAction', 'other/actions/setup-gradle', []],
+  ['githubAction', 'pnpm/action-setup', ['pnpm']],
+  ['githubAction', 'oven-sh/setup-bun', ['bunsh']],
+  ['githubAction', 'subosito/flutter-action', ['flutter']],
+  ['terraform.resource', 'azurerm_linux_web_app', ['azure.appservice']],
+  ['terraform.resource', 'azurerm_static_web_app', ['azure.staticwebapps']],
+  ['terraform.resource', 'google_container_registry', ['gcp.containerregistry']],
+  ['terraform.resource', 'google_container_node_pool', ['gcp.gke']],
+  ['deno', 'https://deno.land/x/postgres/mod.ts', ['postgresql']],
+  ['deno', 'https://other.example/x/postgres@1/mod.ts', []],
+  ['deno', 'https://other.example/x/sqlite3@1/mod.ts', []],
+  ['deno', 'https://deno.land/x/deploy@1.4.0/deployctl.ts.bak', []],
+  ['docker', 'jenkins/jenkins:lts', ['jenkins']],
+  ['docker', 'daprio/sentry', ['dapr']],
+  ['docker', 'getsentry/sentry', ['sentry']],
 ];
 
 describe('package identities', () => {
   it.each(cases)('%s %s', (type, name, expected) => {
     expect([...matchDependencies([name], type).keys()].sort()).toEqual(expected);
+  });
+
+  it('loading the default catalog again preserves matcher and component counts', () => {
+    const counts = () => [dependencies.npm.length, rawList.length, rulesComponents.length];
+    const before = counts();
+    loadAllRules();
+    expect(counts()).toEqual(before);
   });
 });

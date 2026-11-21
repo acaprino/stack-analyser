@@ -7,6 +7,7 @@ import './aws.fargate.js';
 import './aws.lambda.js';
 import './aws.lightsail.js';
 import './azure.aks.js';
+import './azure.appservice.js';
 import './azure.containerapps.js';
 import './azure.functions.js';
 import './azure.staticwebapps.js';

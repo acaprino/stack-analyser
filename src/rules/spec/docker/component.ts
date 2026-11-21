@@ -4,24 +4,16 @@ import { l } from '../../../common/log.js';
 import { imageReference } from '../../../common/packageIdentity.js';
 import { matchDependencies } from '../../../matchDependencies.js';
 import { Payload } from '../../../payload/index.js';
+import { isRecord } from '../packageManifest.js';
 
 import type { ComponentMatcher } from '../../../types/rule.js';
-import type { AllowedKeys } from '../../../types/techs.js';
 
 const FILES_REG = /^(?:docker-)?compose(?:[._-].+)?\.ya?ml$/;
-
-interface DockerCompose {
-  services: Record<string, DockerComposeService>;
-}
-interface DockerComposeService {
-  image?: string;
-  container_name?: string;
-}
 
 export const detectDockerComponent: ComponentMatcher = async (files, provider) => {
   const components: Payload[] = [];
   for (const file of files) {
-    if (!FILES_REG.test(file.name)) {
+    if (file.type !== 'file' || !FILES_REG.test(file.name)) {
       continue;
     }
 
@@ -30,37 +22,37 @@ export const detectDockerComponent: ComponentMatcher = async (files, provider) =
       continue;
     }
 
-    let parsed: DockerCompose;
+    let parsed: unknown;
     try {
-      parsed = parse(content, {}) as DockerCompose;
-      if (!parsed?.services || typeof parsed.services !== 'object' || Array.isArray(parsed.services)) {
-        l.warn('Failed to parse Docker file', file.fp);
-        continue;
-      }
-    } catch (err) {
-      l.warn('Failed to parse', file.fp, err);
+      parsed = parse(content, { merge: true });
+    } catch {
+      l.warn('Failed to parse Compose file', file.fp);
       continue;
     }
-
+    if (!isRecord(parsed) || !isRecord(parsed.services)) continue;
+    const services = Object.entries(parsed.services).filter((entry): entry is [string, Record<string, unknown>] => {
+      const [, service] = entry;
+      return isRecord(service) && ['image', 'build', 'extends', 'provider'].some((key) => Object.hasOwn(service, key));
+    });
+    if (!services.length) continue;
     const pl = new Payload({ name: 'virtual', folderPath: file.fp });
+    pl.addTech('docker', [`Compose services in ${file.name}`]);
 
-    for (const [name, service] of Object.entries<DockerComposeService>(parsed.services)) {
-      if (typeof service?.image !== 'string' || !service.image) {
+    for (const [name, service] of services) {
+      if (typeof service.image !== 'string' || !service.image.trim()) {
         continue;
       }
 
-      // If we don't match, it's fine because docker is mostly made for services
-      // It's better to have few false positive, than a lot of missing components
       const { name: imageName, version: imageVersion } = imageReference(service.image);
-      if (imageName.includes('$')) {
+      if (!imageName || /[\s$]/.test(imageName)) {
         continue;
       }
       const matched = [...matchDependencies([imageName], 'docker').entries()];
 
-      const tech = matched[0] as unknown as [AllowedKeys, string[]] | undefined;
+      const tech = matched[0];
       pl.addChild(
         new Payload({
-          name: service.container_name || name,
+          name: typeof service.container_name === 'string' && service.container_name ? service.container_name : name,
           folderPath: file.fp,
           tech: tech ? tech[0] : null,
           parent: pl,

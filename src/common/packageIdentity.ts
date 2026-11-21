@@ -14,6 +14,13 @@ export function imageReference(image: string): { name: string; version: string }
 
 export function packagePattern(name: string, type: SupportedDeps): RegExp {
   const escape = (part: string): string => part.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  if (type === 'githubAction') {
+    const [owner, repo, ...subpath] = name.split('/');
+    if (!subpath.length) return new RegExp(`^${escape(name)}$`, 'i');
+    // GitHub folds case for repository identity but retains case in paths within the repository.
+    const repository = escape(`${owner}/${repo}`).replace(/[a-z]/gi, (c) => `[${c.toLowerCase()}${c.toUpperCase()}]`);
+    return new RegExp(`^${repository}/${escape(subpath.join('/'))}$`);
+  }
   const literal = type === 'python' ? name.split(/[-_.]+/).map(escape).join('[-_.]+')
     : escape(type === 'docker' ? imageReference(name).name : name);
   const end = type === 'golang' ? '(?:/|$)' : '$';

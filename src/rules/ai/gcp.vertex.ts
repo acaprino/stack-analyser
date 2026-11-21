@@ -4,7 +4,7 @@ register({
   tech: 'gcp.vertex',
   name: 'Vertex AI',
   type: 'ai',
-  dotenv: ['VERTEX_AI', 'GOOGLE_VERTEX_PROJECT_ID'],
+  dotenv: ['VERTEX_AI', 'VERTEX_AI_', 'GOOGLE_VERTEX_PROJECT_ID'],
   dependencies: [
     { type: 'npm', name: '@ai-sdk/google-vertex' },
     { type: 'npm', name: '@google-cloud/vertexai' },
