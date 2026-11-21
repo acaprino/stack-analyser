@@ -34,7 +34,7 @@ import './hyperscript.js';
 import './imago.js';
 import './jackson.js';
 import './jhipster.js';
-import './jinja2.js';
+import './jinja.js';
 import './jmeter.js';
 import './jms-serializer.js';
 import './json-net.js';

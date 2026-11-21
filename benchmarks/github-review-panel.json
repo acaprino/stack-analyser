@@ -15,7 +15,7 @@
     "fastapi": ["fastapi"], "flask": ["flask"], "django": ["django"], "pydantic": ["pydantic"],
     "sqlalchemy": ["sqlalchemy"], "marshmallow": ["marshmallow"], "pyyaml": ["pyyaml"],
     "requests": ["requests"], "httpx": ["httpx"], "click": ["click"], "rich": ["rich"],
-    "jinja2": ["jinja2"], "pytest": ["pytest"], "ruff": ["ruff"], "mypy": ["mypy"],
+    "jinja": ["jinja2"], "pytest": ["pytest"], "ruff": ["ruff"], "mypy": ["mypy"],
     "flake8": ["flake8"], "black": ["black"], "tox": ["tox"], "sphinx": ["sphinx"],
     "hatchling": ["hatchling"], "setuptools": ["setuptools"], "flit-core": ["flit-core"],
     "poetry-core": ["poetry-core"], "uv-build": ["uv-build"], "maturin": ["maturin"]

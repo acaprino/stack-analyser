@@ -544,7 +544,7 @@ export type AllowedKeys =
   | 'jetpack-compose'
   | 'jhipster'
   | 'jhipster-control-center'
-  | 'jinja2'
+  | 'jinja'
   | 'jmeter'
   | 'jms-serializer'
   | 'joijs'
