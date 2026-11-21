@@ -107,10 +107,12 @@ exports[`rust (component) > should match everything 1`] = `
   "notion",
   "okta",
   "openapi",
+  "opencv",
   "opentelemetry",
   "pagerduty",
   "paypal",
   "pinecone",
+  "polars",
   "postgresql",
   "posthog",
   "prometheus",
@@ -708,6 +710,11 @@ exports[`rust (component) > should match everything 2`] = `
   ],
   [
     "rust",
+    "opencv",
+    "1.0.0",
+  ],
+  [
+    "rust",
     "opentelemetry",
     "1.0.0",
   ],
@@ -724,6 +731,11 @@ exports[`rust (component) > should match everything 2`] = `
   [
     "rust",
     "pinecone-sdk",
+    "1.0.0",
+  ],
+  [
+    "rust",
+    "polars",
     "1.0.0",
   ],
   [

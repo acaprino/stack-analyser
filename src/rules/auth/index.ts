@@ -14,6 +14,7 @@ import './hanko.js';
 import './keycloak.js';
 import './kinde.js';
 import './logto.js';
+import './magic.js';
 import './microsoft-entra-oauth.js';
 import './microsoft.oauth.js';
 import './mock-oauth2-server.js';

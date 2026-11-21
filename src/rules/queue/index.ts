@@ -1,3 +1,4 @@
+import './apache-pulsar.js';
 import './apacheKafka.js';
 import './apicurio-registry.js';
 import './aws.kafka.js';
