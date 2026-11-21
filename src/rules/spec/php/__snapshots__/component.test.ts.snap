@@ -1017,7 +1017,7 @@ exports[`php > should match everything 2`] = `
   ],
   [
     "php",
-    "meilisearch/meilisearch-php ",
+    "meilisearch/meilisearch-php",
     "0.0.0",
   ],
   [
@@ -1522,7 +1522,7 @@ exports[`php > should match everything 2`] = `
   ],
   [
     "php",
-    "typesense/typesense-php ",
+    "typesense/typesense-php",
     "0.0.0",
   ],
   [

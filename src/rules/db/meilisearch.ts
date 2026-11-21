@@ -13,6 +13,6 @@ register({
     { type: 'rust', name: 'meilisearch-sdk' },
     { type: 'ruby', name: 'meilisearch' },
     { type: 'ruby', name: 'meilisearch-rails' },
-    { type: 'php', name: 'meilisearch/meilisearch-php ' },
+    { type: 'php', name: 'meilisearch/meilisearch-php' },
   ],
 });

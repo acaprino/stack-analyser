@@ -169,6 +169,21 @@ describe('no duplicate', () => {
   });
 });
 
+describe('dependency names', () => {
+  it('should not begin or end with whitespace', () => {
+    // A name with a space around it is compared as written and so can never match a real package.
+    const padded: string[] = [];
+    for (const rule of registeredRules) {
+      for (const dep of rule.dependencies ?? []) {
+        if (typeof dep.name === 'string' && dep.name !== dep.name.trim()) {
+          padded.push(`${rule.tech} ${dep.type}:${JSON.stringify(dep.name)}`);
+        }
+      }
+    }
+    expect(padded).toEqual([]);
+  });
+});
+
 // Shared parsers emit these IDs directly. Parent products can be inferred from a
 // registered child. The remaining historical product names have no direct detector.
 const sharedReaderIds = ['cargo', 'phpcomposer', 'exunit', 'mapkit', 'swiftui', 'uikit', 'winui'];

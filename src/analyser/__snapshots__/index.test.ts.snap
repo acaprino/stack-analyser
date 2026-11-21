@@ -252,7 +252,7 @@ exports[`analyser > should run correctly 1`] = `
                   "value": "dd-trace",
                 },
               ],
-              "id": "38",
+              "id": "39",
               "inComponent": null,
               "languages": {},
               "licenses": [],
@@ -292,7 +292,7 @@ exports[`analyser > should run correctly 1`] = `
           "edges": [
             {
               "read": true,
-              "target": "38",
+              "target": "39",
               "write": true,
             },
           ],
@@ -333,7 +333,7 @@ exports[`analyser > should run correctly 1`] = `
               "value": "typescript",
             },
           ],
-          "id": "37",
+          "id": "38",
           "inComponent": null,
           "languages": {
             "JSON": 1,
@@ -376,7 +376,7 @@ exports[`analyser > should run correctly 1`] = `
                   "value": ".vercel",
                 },
               ],
-              "id": "41",
+              "id": "42",
               "inComponent": null,
               "languages": {},
               "licenses": [],
@@ -458,8 +458,8 @@ exports[`analyser > should run correctly 1`] = `
               "value": "vite",
             },
           ],
-          "id": "40",
-          "inComponent": "41",
+          "id": "41",
+          "inComponent": "42",
           "languages": {
             "HTML": 1,
             "JSON": 1,
@@ -509,7 +509,7 @@ exports[`analyser > should run correctly 1`] = `
               "value": "registry.terraform.io/hashicorp/google",
             },
           ],
-          "id": "49",
+          "id": "50",
           "inComponent": null,
           "languages": {},
           "licenses": [],
@@ -596,7 +596,7 @@ exports[`analyser > should run correctly 1`] = `
               "value": "registry.terraform.io/vercel/vercel",
             },
           ],
-          "id": "50",
+          "id": "51",
           "inComponent": null,
           "languages": {},
           "licenses": [],
@@ -636,7 +636,7 @@ exports[`analyser > should run correctly 1`] = `
               "value": "Cargo.toml",
             },
           ],
-          "id": "46",
+          "id": "47",
           "inComponent": null,
           "languages": {
             "TOML": 1,
@@ -715,6 +715,33 @@ exports[`analyser > should run correctly 1`] = `
                 "algolia matched: /^algolia\\/algoliasearch-client-php$/",
               ],
               "tech": "algolia",
+              "techs": [],
+            },
+            {
+              "childs": [],
+              "dependencies": [],
+              "edges": [],
+              "evidence": [
+                {
+                  "kind": "package",
+                  "path": "/php/composer.json",
+                  "source": "stack-analyser",
+                  "tech": "meilisearch",
+                  "value": "meilisearch/meilisearch-php",
+                },
+              ],
+              "id": "35",
+              "inComponent": null,
+              "languages": {},
+              "licenses": [],
+              "name": "Meilisearch",
+              "path": [
+                "/php/composer.json",
+              ],
+              "reason": [
+                "meilisearch matched: /^meilisearch\\/meilisearch-php$/",
+              ],
+              "tech": "meilisearch",
               "techs": [],
             },
             {
@@ -970,6 +997,11 @@ exports[`analyser > should run correctly 1`] = `
               "target": "34",
               "write": true,
             },
+            {
+              "read": true,
+              "target": "35",
+              "write": true,
+            },
           ],
           "evidence": [
             {
@@ -985,6 +1017,13 @@ exports[`analyser > should run correctly 1`] = `
               "source": "stack-analyser",
               "tech": "laravel",
               "value": "laravel/framework",
+            },
+            {
+              "kind": "package",
+              "path": "/php/composer.json",
+              "source": "stack-analyser",
+              "tech": "meilisearch",
+              "value": "meilisearch/meilisearch-php",
             },
             {
               "kind": "file",
@@ -1040,12 +1079,14 @@ exports[`analyser > should run correctly 1`] = `
             "redis matched: /^predis\\/predis$/",
             "algolia matched: /^algolia\\/algoliasearch-client-php$/",
             "spotify matched: /^jwilsson\\/spotify-web-api-php$/",
+            "meilisearch matched: /^meilisearch\\/meilisearch-php$/",
             "matched file: composer.json",
           ],
           "tech": null,
           "techs": [
             "algolia",
             "laravel",
+            "meilisearch",
             "php",
             "phpcomposer",
             "phpunit",
@@ -1436,7 +1477,7 @@ exports[`analyser > should run correctly 2`] = `
       "edges": [
         {
           "read": true,
-          "target": "38",
+          "target": "39",
           "write": true,
         },
       ],
@@ -1477,7 +1518,7 @@ exports[`analyser > should run correctly 2`] = `
           "value": "typescript",
         },
       ],
-      "id": "37",
+      "id": "38",
       "inComponent": null,
       "languages": {
         "JSON": 1,
@@ -1532,7 +1573,7 @@ exports[`analyser > should run correctly 2`] = `
       "edges": [
         {
           "read": true,
-          "target": "37",
+          "target": "38",
           "write": true,
         },
       ],
@@ -1580,8 +1621,8 @@ exports[`analyser > should run correctly 2`] = `
           "value": "vite",
         },
       ],
-      "id": "40",
-      "inComponent": "41",
+      "id": "41",
+      "inComponent": "42",
       "languages": {
         "HTML": 1,
         "JSON": 1,
@@ -1679,7 +1720,7 @@ exports[`analyser > should run correctly 2`] = `
           "value": "dd-trace",
         },
       ],
-      "id": "38",
+      "id": "39",
       "inComponent": null,
       "languages": {},
       "licenses": [],
@@ -1712,7 +1753,7 @@ exports[`analyser > should run correctly 2`] = `
           "value": "registry.terraform.io/hashicorp/google",
         },
       ],
-      "id": "49",
+      "id": "50",
       "inComponent": null,
       "languages": {},
       "licenses": [],
@@ -1751,6 +1792,33 @@ exports[`analyser > should run correctly 2`] = `
         "matched file: .github",
       ],
       "tech": "github",
+      "techs": [],
+    },
+    {
+      "childs": [],
+      "dependencies": [],
+      "edges": [],
+      "evidence": [
+        {
+          "kind": "package",
+          "path": "/php/composer.json",
+          "source": "stack-analyser",
+          "tech": "meilisearch",
+          "value": "meilisearch/meilisearch-php",
+        },
+      ],
+      "id": "35",
+      "inComponent": null,
+      "languages": {},
+      "licenses": [],
+      "name": "Meilisearch",
+      "path": [
+        "/php/composer.json",
+      ],
+      "reason": [
+        "meilisearch matched: /^meilisearch\\/meilisearch-php$/",
+      ],
+      "tech": "meilisearch",
       "techs": [],
     },
     {
@@ -1806,7 +1874,7 @@ exports[`analyser > should run correctly 2`] = `
           "value": "registry.terraform.io/vercel/vercel",
         },
       ],
-      "id": "41",
+      "id": "42",
       "inComponent": null,
       "languages": {},
       "licenses": [],
@@ -2193,7 +2261,7 @@ exports[`analyser > should run correctly 2`] = `
           "value": "Cargo.toml",
         },
       ],
-      "id": "46",
+      "id": "47",
       "inComponent": null,
       "languages": {
         "TOML": 1,
@@ -2445,6 +2513,11 @@ exports[`analyser > should run correctly 2`] = `
           "target": "34",
           "write": true,
         },
+        {
+          "read": true,
+          "target": "35",
+          "write": true,
+        },
       ],
       "evidence": [
         {
@@ -2460,6 +2533,13 @@ exports[`analyser > should run correctly 2`] = `
           "source": "stack-analyser",
           "tech": "laravel",
           "value": "laravel/framework",
+        },
+        {
+          "kind": "package",
+          "path": "/php/composer.json",
+          "source": "stack-analyser",
+          "tech": "meilisearch",
+          "value": "meilisearch/meilisearch-php",
         },
         {
           "kind": "file",
@@ -2515,12 +2595,14 @@ exports[`analyser > should run correctly 2`] = `
         "redis matched: /^predis\\/predis$/",
         "algolia matched: /^algolia\\/algoliasearch-client-php$/",
         "spotify matched: /^jwilsson\\/spotify-web-api-php$/",
+        "meilisearch matched: /^meilisearch\\/meilisearch-php$/",
         "matched file: composer.json",
       ],
       "tech": null,
       "techs": [
         "algolia",
         "laravel",
+        "meilisearch",
         "php",
         "phpcomposer",
         "phpunit",
@@ -2981,6 +3063,13 @@ exports[`analyser > should run correctly 2`] = `
       "value": "laravel/framework",
     },
     {
+      "kind": "package",
+      "path": "/php/composer.json",
+      "source": "stack-analyser",
+      "tech": "meilisearch",
+      "value": "meilisearch/meilisearch-php",
+    },
+    {
       "kind": "action",
       "path": "/.github/workflows/test.yaml",
       "source": "stack-analyser",
@@ -3170,7 +3259,7 @@ exports[`analyser > should run correctly 2`] = `
       "value": "vite",
     },
   ],
-  "id": "51",
+  "id": "52",
   "inComponent": null,
   "languages": {
     "AMPL": 1,
@@ -3216,6 +3305,7 @@ exports[`analyser > should run correctly 2`] = `
     "matched file: main.go",
     "algolia matched: /^algolia\\/algoliasearch-client-php$/",
     "spotify matched: /^jwilsson\\/spotify-web-api-php$/",
+    "meilisearch matched: /^meilisearch\\/meilisearch-php$/",
     "phpunit matched: /^phpunit\\/phpunit$/",
     "laravel matched: /^laravel\\/framework$/",
     "matched file: composer.json",
@@ -3262,6 +3352,7 @@ exports[`analyser > should run correctly 2`] = `
     "github.actions",
     "golang",
     "laravel",
+    "meilisearch",
     "nodejs",
     "php",
     "phpcomposer",

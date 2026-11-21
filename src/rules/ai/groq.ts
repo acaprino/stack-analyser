@@ -9,7 +9,7 @@ register({
     { type: 'npm', name: '@langchain/groq' },
     { type: 'npm', name: '@ai-sdk/groq' },
     { type: 'npm', name: 'groq-sdk' },
-    { type: 'npm', name: 'genkitx-groq ' },
+    { type: 'npm', name: 'genkitx-groq' },
     { type: 'python', name: 'langchain-groq' },
     { type: 'python', name: 'groq' },
   ],
