@@ -2,7 +2,6 @@
 
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import timer from 'node:timers/promises';
 import { fileURLToPath } from 'node:url';
 
 import { Command } from 'commander';
@@ -79,7 +78,6 @@ program
 
     const spinner = ora(`Analysing`).start();
 
-    await timer.setTimeout(500);
     const res = await analyser({
       provider: new FSProvider({
         path: root,

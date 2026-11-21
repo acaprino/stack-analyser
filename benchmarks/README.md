@@ -110,13 +110,15 @@ node benchmarks/startup.mjs dist/cli.js ../daodan/benchmarks/project-model/fixtu
 node benchmarks/startup.mjs dist/cli.mjs ../daodan/benchmarks/project-model/fixtures/py-fastapi-compose --max-ms 1000
 ```
 
-Measured on 21 November 2026 on Windows 11 with Node 24.14.1 and 22 logical cores, on the `py-fastapi-compose` fixture of the project-model corpus. Unrelated work was running on the machine (60 to 85 percent CPU), so the figures are noisy.
+The CLI used to wait 500 ms after starting its spinner, before the analysis began. That pause did no work and is removed: it was 52 to 68 percent of the bundle's previous median (500 of 966 to 736 ms). The figures below are measured without it.
+
+Measured on 21 November 2026 on Windows 11 with Node 24.14.1 and 22 logical cores, on the `py-fastapi-compose` fixture of the project-model corpus. The machine was not quiet: unrelated work from other sessions kept the CPU between 35 and 96 percent busy during every measurement, so the figures are noisy, and `dist/cli.js` suffers from that far more than the bundle does.
 
 | Entry point | Five runs (ms) | Median (ms) |
 | --- | --- | ---: |
-| `dist/cli.js` | 4459, 4680, 5494, 3535, 4842 | 4680 |
-| `dist/cli.mjs` | 898, 974, 966, 962, 1057 | 966 |
+| `dist/cli.js` | 3611, 7449, 2943, 5887, 3972 | 3972 |
+| `dist/cli.mjs` | 561, 667, 609, 611, 607 | 609 |
 
-Earlier runs the same day, with less other work running, gave medians between 1978 and 2428 ms for `dist/cli.js` and between 736 and 881 ms for `dist/cli.mjs`. Every median of the bundle was under 1,000 ms, but on a busy machine the margin is thin, because a fixed part of the time is not loading. `node dist/cli.mjs --version` loads the whole bundle and exits in about 190 ms, against about 2,200 ms for `dist/cli.js`, and an empty Node process takes about 50 ms.
+Two other pairs taken minutes apart gave medians of 7885 and 4519 ms for `dist/cli.js` and 746 and 526 ms for `dist/cli.mjs`. Before the pause was removed, runs on a less loaded machine gave medians between 1978 and 2428 ms for `dist/cli.js` and between 736 and 881 ms for `dist/cli.mjs`. Every median of the bundle was under 1,000 ms. A run of `node dist/cli.mjs --version`, which loads the whole bundle and registers every rule, takes about 190 ms on a less loaded machine, against about 2,200 ms for `dist/cli.js`, and an empty Node process takes about 50 ms.
 
-A `node --cpu-prof` run of the bundle (764 ms of profile) spent 432 ms idle, which is the `await timer.setTimeout(500)` in `src/cli.ts` that keeps the spinner on screen before the analysis starts. The rest is small: about 32 ms compiling the bundle, about 23 ms to decompress the Terraform WebAssembly that `@cdktf/hcl2json` loads as soon as it is imported (plus about 15 ms of WebAssembly start), and the analysis itself. Cutting the remaining time further means shortening that pause or loading `@cdktf/hcl2json` only when a Terraform file is found.
+A `node --cpu-prof` run of the bundle with the pause still in place (764 ms of profile) spent 432 ms idle in it. Of the rest, about 32 ms went to compiling the bundle, about 23 ms to decompressing the Terraform WebAssembly that `@cdktf/hcl2json` loads as soon as it is imported (plus about 15 ms of WebAssembly start), and the remainder to reading files and the analysis, none of it above 10 ms per function. Cutting the time further means loading `@cdktf/hcl2json` only when a Terraform file is found.
