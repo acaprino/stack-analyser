@@ -1,0 +1,14 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`package identities > no package identifies two technologies 1`] = `
+[
+  "npm:@netlify/plugin-nextjs → netlify, nextjs",
+  "nuget:aspire.npgsql.entityframeworkcore.postgresql → entity-framework-core, postgresql",
+  "nuget:npgsql.entityframeworkcore.postgresql → entity-framework-core, postgresql",
+  "nuget:mudblazor → blazor, mudblazor",
+  "maven:io.quarkus:quarkus-rest-qute → quarkus-rest, qute",
+  "maven:io.quarkus:quarkus-hibernate-reactive-panache → hibernate-reactive, panache",
+  "maven:io.quarkus:quarkus-hibernate-orm-panache → hibernate, panache",
+  "maven:io.quarkus:quarkus-hibernate-orm-panache-kotlin → hibernate, panache",
+]
+`;

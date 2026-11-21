@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import '../autoload.js';
 import { dependencies, loadAllRules, rawList, rulesComponents } from '../loader.js';
 import { matchDependencies } from '../matchDependencies.js';
+import { registeredRules } from '../register.js';
 
 import type { SupportedDeps } from '../types/rule.js';
 
@@ -88,5 +89,20 @@ describe('package identities', () => {
     const before = counts();
     loadAllRules();
     expect(counts()).toEqual(before);
+  });
+
+  it('no package identifies two technologies', () => {
+    const owners = new Map<string, Set<string>>();
+    for (const rule of registeredRules) {
+      for (const dep of rule.dependencies ?? []) {
+        if (typeof dep.name !== 'string') continue;
+        const key = `${dep.type}:${dep.name.toLowerCase()}`;
+        owners.set(key, (owners.get(key) ?? new Set()).add(rule.tech));
+      }
+    }
+    const shared = [...owners]
+      .filter(([, techs]) => techs.size > 1)
+      .map(([key, techs]) => `${key} → ${[...techs].sort().join(', ')}`);
+    expect(shared).toMatchSnapshot();
   });
 });
