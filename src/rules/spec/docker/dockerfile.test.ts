@@ -6,6 +6,8 @@ import { promisify } from 'node:util';
 
 import { expect, it } from 'vitest';
 
+import { tsxImport } from '../../../tests/tsx.js';
+
 it('reads literal FROM repositories through the CLI and skips stages, comments and heredoc bodies', async () => {
   const cwd = await fs.mkdtemp(path.join(os.tmpdir(), 'specfy-dockerfile-'));
   try {
@@ -18,7 +20,7 @@ it('reads literal FROM repositories through the CLI and skips stages, comments a
     await fs.writeFile(path.join(cwd, 'Dockerfile.web'), 'FROM nginx:${TAG}\n');
     await fs.writeFile(path.join(cwd, 'Dockerfile.web.dockerignore'), 'FROM traefik:1\n');
     const cli = path.join(import.meta.dirname, '../../../cli.ts');
-    await promisify(execFile)(process.execPath, ['--import', import.meta.resolve('tsx'), cli, '.', '--flat'], { cwd });
+    await promisify(execFile)(process.execPath, ['--import', tsxImport, cli, '.', '--flat'], { cwd });
     const result = JSON.parse(await fs.readFile(path.join(cwd, 'output.json'), 'utf8'));
     expect(result.dependencies).toHaveLength(3);
     expect(result.dependencies).toEqual(expect.arrayContaining([

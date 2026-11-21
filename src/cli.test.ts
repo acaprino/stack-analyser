@@ -7,6 +7,8 @@ import { promisify } from 'node:util';
 
 import { expect, it } from 'vitest';
 
+import { tsxImport } from './tests/tsx.js';
+
 it('writes a stack for a Maven project using the normal CLI', async () => {
   const cwd = await fs.mkdtemp(path.join(os.tmpdir(), 'stack-analyser-cli-'));
   try {
@@ -16,7 +18,7 @@ it('writes a stack for a Maven project using the normal CLI', async () => {
       <artifactId>spring-boot-starter-web</artifactId></dependency></dependencies></project>`);
     const file = path.join(import.meta.dirname, 'cli.ts');
     const { stdout } = await promisify(execFile)(process.execPath, [
-      '--import', import.meta.resolve('tsx'), file, '.', '--flat',
+      '--import', tsxImport, file, '.', '--flat',
     ], { cwd, env: { ...process.env, LOG_LEVEL: 'info' } });
     expect(stdout).toContain('Output');
     const output = JSON.parse(await fs.readFile(path.join(cwd, 'output.json'), 'utf8'));
@@ -36,7 +38,7 @@ async function runCli(files: Record<string, string>, args: string[]) {
     }
     const file = path.join(import.meta.dirname, 'cli.ts');
     const result = await promisify(execFile)(process.execPath, [
-      '--import', import.meta.resolve('tsx'), file, '.', ...args,
+      '--import', tsxImport, file, '.', ...args,
     ], { cwd, env: { ...process.env, LOG_LEVEL: 'info' } }).then(
       (done) => ({ code: 0, out: done.stdout + done.stderr }),
       (err: { code: number; stdout: string; stderr: string }) => ({ code: err.code, out: err.stdout + err.stderr })
