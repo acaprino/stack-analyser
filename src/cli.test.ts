@@ -147,7 +147,7 @@ it('exits with 1 and writes nothing when --declarations is given an empty value'
 }, 20_000);
 
 it('reads a declarations file that starts with a UTF-8 byte order mark', async () => {
-  const declarations = '﻿' + JSON.stringify([{ type: 'python', name: 'requests', path: 'setup.cfg', source: 'python-build' }]);
+  const declarations = '\uFEFF' + JSON.stringify([{ type: 'python', name: 'requests', path: 'setup.cfg', source: 'python-build' }]);
   const { code, output } = await runCli(
     { 'package.json': manifest, 'declarations.json': declarations }, ['--flat', '--declarations', 'declarations.json']);
   expect(code).toBe(0);

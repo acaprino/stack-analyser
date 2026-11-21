@@ -85,7 +85,7 @@ program
       const declarationsFile = path.resolve(pathAtExecution, options.declarations);
       try {
         // A byte order mark, which some editors put first, is not part of the JSON.
-        const text = (await fs.readFile(declarationsFile, 'utf8')).replace(/^﻿/, '');
+        const text = (await fs.readFile(declarationsFile, 'utf8')).replace(/^\uFEFF/, '');
         declarations = parseDeclarations(JSON.parse(text));
       } catch (err) {
         l.log(kleur.bold().red(figureSet.cross), `Declarations "${declarationsFile}":`, (err as Error).message);
