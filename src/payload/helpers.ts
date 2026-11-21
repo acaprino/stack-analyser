@@ -1,7 +1,11 @@
 import { listIndexed } from '../register.js';
 import { Payload } from './index.js';
 
+import type { Evidence, EvidenceItem } from '../types/index.js';
 import type { AllowedKeys, TechType } from '../types/techs.js';
+
+/** Who reads a project by itself, when an evidence item does not name another source. */
+export const DEFAULT_EVIDENCE_SOURCE = 'stack-analyser';
 
 const notAComponent = new Set<TechType>([
   'ci',
@@ -33,10 +37,12 @@ export function findImplicitComponent({
   pl,
   tech,
   reason,
+  evidence,
 }: {
   pl: Payload;
   tech: AllowedKeys;
   reason: string[];
+  evidence?: EvidenceItem[];
 }): void {
   const ref = listIndexed[tech];
   if (notAComponent.has(ref.type)) {
@@ -49,11 +55,56 @@ export function findImplicitComponent({
     folderPath: pl.path,
     parent: pl,
     reason,
+    evidence,
   });
   const target = pl.addChild(comp);
   if (ref.type !== 'hosting' && ref.type !== 'cloud') {
     pl.addEdges(target);
   }
+}
+
+/**
+ * Give an evidence item its technology and its source.
+ * It builds a new object, so the caller's item is never shared.
+ */
+export function toEvidence(tech: AllowedKeys, item: EvidenceItem): Evidence {
+  return {
+    tech,
+    kind: item.kind,
+    value: item.value,
+    path: item.path,
+    ...(item.line !== undefined && { line: item.line }),
+    source: item.source ?? DEFAULT_EVIDENCE_SOURCE,
+  };
+}
+
+/**
+ * Two evidences are the same when they agree on technology, kind, value, path, line and source.
+ */
+export function evidenceKey(evidence: Evidence): string {
+  const { tech, kind, value, path, line, source } = evidence;
+  return JSON.stringify([tech, kind, value, path, line ?? null, source]);
+}
+
+function compareText(a: string, b: string): number {
+  if (a < b) return -1;
+  return a > b ? 1 : 0;
+}
+
+/**
+ * Stable output order: technology, kind, path, line, value (then source, to break any remaining tie).
+ * Plain code-unit comparison, so the order does not depend on the locale of the machine.
+ * An evidence without a line comes before the ones with a line.
+ */
+export function compareEvidence(a: Evidence, b: Evidence): number {
+  return (
+    compareText(a.tech, b.tech) ||
+    compareText(a.kind, b.kind) ||
+    compareText(a.path, b.path) ||
+    (a.line ?? 0) - (b.line ?? 0) ||
+    compareText(a.value, b.value) ||
+    compareText(a.source, b.source)
+  );
 }
 
 export function findHosting(pl: Payload, fileMatches: Map<AllowedKeys, string[]>): void {

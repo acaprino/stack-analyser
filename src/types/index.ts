@@ -20,9 +20,30 @@ export interface HostMention {
   line: number;
 }
 
+export type EvidenceKind = 'package' | 'image' | 'action' | 'terraform' | 'file' | 'extension' | 'env' | 'source';
+
+export interface Evidence {
+  tech: AllowedKeys;
+  kind: EvidenceKind;
+  /** The package, image, action, resource, file, extension, variable or symbol that was found. */
+  value: string;
+  /** Absolute during the analysis; `toJson(root)` renders it relative to the analysed root. */
+  path: string;
+  line?: number;
+  /** Who read it: `stack-analyser`, or the source of an incoming declaration. */
+  source: string;
+}
+
+/** Evidence as a reader reports it: `tech` comes from the receiver, a missing `source` means `stack-analyser`. */
+export type EvidenceItem = Omit<Evidence, 'tech' | 'source'> & { source?: string };
+
 export interface Analyser {
   /** Service endpoints referred to in source or configuration, with their evidence. */
   mentions?: HostMention[];
+  /**
+   * Structured proof of why each technology was recognised, next to the `reason` sentences.
+   */
+  evidence: Evidence[];
   /**
    * Unique random id for this payload
    */

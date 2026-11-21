@@ -8,11 +8,11 @@ import { matchAllFiles } from '../matchAllFiles.js';
 import { findHostMentions } from '../rules/spec/hosts/index.js';
 import { IGNORED_DIVE_PATHS } from '../provider/base.js';
 import { listIndexed } from '../register.js';
-import { findHosting, findImplicitComponent } from './helpers.js';
+import { compareEvidence, evidenceKey, findHosting, findImplicitComponent, toEvidence } from './helpers.js';
 import { detectInDotEnv } from '../rules/spec/dotenv/index.js';
 
 import type { BaseProvider } from '../provider/base.js';
-import type { Analyser, AnalyserJson, Dependency, HostMention } from '../types/index.js';
+import type { Analyser, AnalyserJson, Dependency, Evidence, EvidenceItem, HostMention } from '../types/index.js';
 import type { AllowedLicenses } from '../types/licenses.js';
 import type { AllowedKeys } from '../types/techs.js';
 
@@ -30,6 +30,7 @@ export class Payload implements Analyser {
   public edges: Analyser['edges'];
   public parent?: null | Payload;
   public reason: Set<string>;
+  public evidence: Analyser['evidence'] = [];
   public mentions: HostMention[] = [];
 
   constructor({
@@ -40,6 +41,7 @@ export class Payload implements Analyser {
     tech,
     dependencies,
     reason,
+    evidence,
   }: {
     id?: Analyser['id'];
     name: Analyser['name'];
@@ -48,6 +50,8 @@ export class Payload implements Analyser {
     tech?: Analyser['tech'];
     dependencies?: Analyser['dependencies'];
     reason?: string | string[];
+    /** Evidence for `tech`: it is only kept when this Payload has a tech. */
+    evidence?: EvidenceItem[];
   }) {
     this.id = id || nid();
     this.name = name;
@@ -65,6 +69,9 @@ export class Payload implements Analyser {
 
     this.parent = parent;
     this.edges = [];
+    if (this.tech && evidence) {
+      this.addEvidence(this.tech, evidence);
+    }
   }
 
   /**
@@ -143,6 +150,7 @@ export class Payload implements Analyser {
           folderPath: service.path,
           tech: tech.tech,
           reason: `implicit: ${service.tech}`,
+          evidence: service.evidence,
         });
         const child = this.addChild(pl);
         service.inComponent = child;
@@ -169,6 +177,7 @@ export class Payload implements Analyser {
       // Merge dependencies
       exist.combineDependencies(service);
       for (const reason of service.reason) exist.reason.add(reason);
+      exist.mergeEvidence(service.evidence);
 
       return exist;
     }
@@ -190,13 +199,36 @@ export class Payload implements Analyser {
   /**
    * Declare this Payload has built with this tech.
    */
-  addTech(tech: AllowedKeys, reason: string[]): void {
+  addTech(tech: AllowedKeys, reason: string[], evidence?: EvidenceItem[]): void {
     this.techs.add(tech);
     for (const r of reason) {
       this.reason.add(r);
     }
+    if (evidence) {
+      this.addEvidence(tech, evidence);
+    }
 
-    findImplicitComponent({ pl: this, tech, reason });
+    findImplicitComponent({ pl: this, tech, reason, evidence });
+  }
+
+  /**
+   * Register the evidence found for a tech, without duplicates.
+   */
+  addEvidence(tech: AllowedKeys, items: EvidenceItem[]): void {
+    this.mergeEvidence(items.map((item) => toEvidence(tech, item)));
+  }
+
+  /**
+   * Add evidence that already has its tech and source, skipping the ones this Payload already has.
+   */
+  private mergeEvidence(items: Evidence[]): void {
+    const seen = new Set(this.evidence.map(evidenceKey));
+    for (const item of items) {
+      const key = evidenceKey(item);
+      if (seen.has(key)) continue;
+      seen.add(key);
+      this.evidence.push({ ...item });
+    }
   }
 
   /**
@@ -263,6 +295,7 @@ export class Payload implements Analyser {
    */
   combine(pl: Payload): void {
     for (const reason of pl.reason) this.reason.add(reason);
+    this.mergeEvidence(pl.evidence);
     if (pl.mentions.length > 0) {
       this.mentions = [...new Set([...this.mentions, ...pl.mentions])];
     }
@@ -302,6 +335,7 @@ export class Payload implements Analyser {
     });
     cp.techs = new Set(this.techs);
     cp.reason = new Set(this.reason);
+    cp.evidence = this.evidence.map((item) => ({ ...item }));
     cp.inComponent = this.inComponent;
     cp.edges = this.edges.map((edge) => ({ ...edge }));
     cp.mentions = [...this.mentions];
@@ -343,6 +377,17 @@ export class Payload implements Analyser {
       licenses: [...this.licenses.values()],
       dependencies: this.dependencies,
       reason: [...this.reason.values()],
+      evidence: this.evidence
+        .map((item) => ({
+          tech: item.tech,
+          kind: item.kind,
+          value: item.value,
+          // The analysed root itself is written `/`
+          path: cleanPath([item.path], root)[0] || '/',
+          ...(item.line !== undefined && { line: item.line }),
+          source: item.source,
+        }))
+        .sort(compareEvidence),
       ...(this.mentions.length > 0 && { mentions: this.mentions.map((mention) => ({ ...mention })) }),
     };
   }

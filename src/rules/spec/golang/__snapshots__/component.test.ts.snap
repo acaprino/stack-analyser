@@ -7,6 +7,7 @@ exports[`golang > should match a service 1`] = `
       "childs": [],
       "dependencies": [],
       "edges": [],
+      "evidence": [],
       "id": "",
       "inComponent": "",
       "languages": {
@@ -28,6 +29,7 @@ exports[`golang > should match a service 1`] = `
   ],
   "dependencies": [],
   "edges": [],
+  "evidence": [],
   "id": "",
   "inComponent": "",
   "languages": {},

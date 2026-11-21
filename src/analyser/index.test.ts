@@ -54,6 +54,7 @@ describe('analyser', () => {
       licenses: [],
       dependencies: [],
       reason: [],
+      evidence: [],
     });
   });
 

@@ -43,7 +43,16 @@ export type { BaseProvider, ProviderFile } from './provider/base.js';
 export { FakeProvider } from './provider/fake.js';
 export type { FSProviderOptions } from './provider/fs.js';
 export { FSProvider } from './provider/fs.js';
-export type { Analyser, AnalyserJson, Dependency, GraphEdge, HostMention } from './types/index.js';
+export type {
+  Analyser,
+  AnalyserJson,
+  Dependency,
+  Evidence,
+  EvidenceItem,
+  EvidenceKind,
+  GraphEdge,
+  HostMention,
+} from './types/index.js';
 
 export type { SupportedDeps } from './types/rule.js';
 export type {

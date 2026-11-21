@@ -1,3 +1,4 @@
+import path from 'node:path';
 import { expect, it } from 'vitest';
 import { flatten } from './helpers.js';
 import { Payload } from './index.js';
@@ -55,4 +56,64 @@ it('keeps unowned folder evidence visible when multiple manifests share a direct
   const result = await analyser({ provider });
   expect(result.mentions.map((m) => m.path)).toContain('adapter.py');
   expect(result.childs.flatMap((c) => c.mentions)).toEqual([]);
+});
+
+it('toJson makes evidence paths relative and portable', () => {
+  const base = path.resolve('repo'); // un percorso della piattaforma: con il separatore di Windows su Windows
+  const root = new Payload({ name: 'main', folderPath: base });
+  root.addTech('react', ['react matched: /^react$/'], [{ kind: 'package', value: 'react', path: path.join(base, 'web', 'package.json') }]);
+  root.addEvidence('react', [{ kind: 'extension', value: '.tsx', path: base }]);
+  expect(root.toJson(base).evidence).toEqual([
+    { tech: 'react', kind: 'extension', value: '.tsx', path: '/', source: 'stack-analyser' },
+    { tech: 'react', kind: 'package', value: 'react', path: '/web/package.json', source: 'stack-analyser' },
+  ]);
+});
+
+it('gives the deduced component the evidence of the technology that implied it', () => {
+  const root = new Payload({ name: 'api', folderPath: '/api' });
+  root.addTech('postgresql', ['postgresql matched: /^pg$/'], [{ kind: 'package', value: 'pg', path: '/api/package.json' }]);
+  expect(root.childs[0].tech).toBe('postgresql');
+  expect(root.childs[0].evidence).toEqual([{ tech: 'postgresql', kind: 'package', value: 'pg', path: '/api/package.json', source: 'stack-analyser' }]);
+});
+
+it('flatten keeps the union of evidence', () => {
+  const root = new Payload({ name: 'main', folderPath: '/' });
+  for (const folder of ['/a', '/b', '/a']) {
+    const child = root.addChild(new Payload({ name: folder, folderPath: folder }));
+    child.addTech('redis', ['redis client'], [{ kind: 'package', value: 'redis', path: `${folder}/package.json` }]);
+  }
+  const before = structuredClone(root.toJson());
+  const redis = flatten(root, { merge: true }).childs.find((c) => c.tech === 'redis')!;
+  expect(redis.evidence.map((e) => e.path).sort()).toEqual(['/a/package.json', '/b/package.json']);
+  expect(root.toJson()).toEqual(before);
+});
+
+it('does not repeat evidence, keeps a declared source and ignores evidence of a Payload without tech', () => {
+  const found = { kind: 'package', value: 'redis', path: '/package.json' } as const;
+  const root = new Payload({ name: 'main', folderPath: '/', tech: 'redis', evidence: [found] });
+  root.addEvidence('redis', [found, { ...found, source: 'declared' }, { kind: 'source', value: 'createClient', path: '/index.ts', line: 3 }]);
+  expect(root.evidence).toEqual([
+    { tech: 'redis', ...found, source: 'stack-analyser' },
+    { tech: 'redis', ...found, source: 'declared' },
+    { tech: 'redis', kind: 'source', value: 'createClient', path: '/index.ts', line: 3, source: 'stack-analyser' },
+  ]);
+  expect(new Payload({ name: 'plain', folderPath: '/', evidence: [found] }).evidence).toEqual([]);
+});
+
+it('gives the host component of a dotted technology the evidence of the service and merges it on the next one', () => {
+  const root = new Payload({ name: 'main', folderPath: '/' });
+  root.addTech('aws.s3', ['aws.s3 matched'], [{ kind: 'package', value: '@aws-sdk/client-s3', path: '/package.json' }]);
+  root.addTech('aws.athena', ['aws.athena matched'], [{ kind: 'package', value: '@aws-sdk/client-athena', path: '/package.json' }]);
+  const aws = root.childs.find((c) => c.tech === 'aws')!;
+  expect([...aws.reason]).toEqual(['implicit: aws.s3', 'implicit: aws.athena']);
+  expect(aws.evidence).toEqual([
+    { tech: 'aws', kind: 'package', value: '@aws-sdk/client-s3', path: '/package.json', source: 'stack-analyser' },
+    { tech: 'aws', kind: 'package', value: '@aws-sdk/client-athena', path: '/package.json', source: 'stack-analyser' },
+  ]);
+  expect(root.childs.find((c) => c.tech === 'aws.s3')!.evidence.map((e) => e.tech)).toEqual(['aws.s3']);
+
+  const copy = aws.copy();
+  expect(copy.evidence).toEqual(aws.evidence);
+  copy.evidence.pop();
+  expect(aws.evidence).toHaveLength(2);
 });
