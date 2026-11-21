@@ -50,6 +50,63 @@ async function runCli(files: Record<string, string>, args: string[]) {
   }
 }
 
+/**
+ * Runs the CLI from source with the project in `<tmp>/proj`, the working folder in `<tmp>/work` and `<tmp>/out` free for an output.
+ * `args` gets the temporary folder, so that a test can write the root and the output the way it needs to.
+ */
+async function runCliOver(args: (tmp: string) => string[], outputFile: (tmp: string) => string) {
+  const tmp = await fs.mkdtemp(path.join(os.tmpdir(), 'stack-analyser-cli-'));
+  try {
+    for (const [name, content] of Object.entries({
+      'proj/package.json': JSON.stringify({ name: 'app', dependencies: { react: '18' } }),
+      'proj/web/package.json': JSON.stringify({ name: 'web', dependencies: { express: '4' } }),
+    })) {
+      await fs.mkdir(path.dirname(path.join(tmp, name)), { recursive: true });
+      await fs.writeFile(path.join(tmp, name), content);
+    }
+    await fs.mkdir(path.join(tmp, 'work'));
+    await fs.mkdir(path.join(tmp, 'out'));
+    const file = path.join(import.meta.dirname, 'cli.ts');
+    const result = await promisify(execFile)(process.execPath, [
+      '--import', tsxImport, file, ...args(tmp),
+    ], { cwd: path.join(tmp, 'work'), env: { ...process.env, LOG_LEVEL: 'info' } }).then(
+      (done) => ({ code: 0, out: done.stdout + done.stderr }),
+      (err: { code: number; stdout: string; stderr: string }) => ({ code: err.code, out: err.stdout + err.stderr })
+    );
+    const output = await fs.readFile(outputFile(tmp), 'utf8').then((json) => JSON.parse(json), () => null);
+    return { ...result, output };
+  } finally {
+    await fs.rm(tmp, { recursive: true, force: true });
+  }
+}
+
+/** What the evidence of a project holds in `path`, each once. */
+function evidencePaths(output: { evidence: { path: string }[] }): string[] {
+  return [...new Set(output.evidence.map((item) => item.path))].sort();
+}
+
+const evidenceOfProj = ['/package.json', '/web/package.json'];
+
+it('writes evidence paths relative to the root when the root ends with a separator', async () => {
+  const { code, output } = await runCliOver(() => ['..' + path.sep + 'proj' + path.sep, '--flat'], (tmp) => path.join(tmp, 'work', 'output.json'));
+  expect(code).toBe(0);
+  expect(evidencePaths(output)).toEqual(evidenceOfProj);
+}, 20_000);
+
+it('writes evidence paths relative to the root when an absolute root goes through ..', async () => {
+  const { code, output } = await runCliOver(
+    (tmp) => [[tmp, 'work', '..', 'proj'].join(path.sep), '--flat'], (tmp) => path.join(tmp, 'work', 'output.json'));
+  expect(code).toBe(0);
+  expect(evidencePaths(output)).toEqual(evidenceOfProj);
+}, 20_000);
+
+it('writes the output where an absolute --output says', async () => {
+  const { code, output } = await runCliOver(
+    (tmp) => ['..' + path.sep + 'proj', '--flat', '--output', path.join(tmp, 'out', 'result.json')], (tmp) => path.join(tmp, 'out', 'result.json'));
+  expect(code).toBe(0);
+  expect(evidencePaths(output)).toEqual(evidenceOfProj);
+}, 20_000);
+
 const manifest = JSON.stringify({ name: 'app', dependencies: { react: '18' } });
 
 it('reads declarations from a file and keeps their source', async () => {

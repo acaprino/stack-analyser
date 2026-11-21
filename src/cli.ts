@@ -47,7 +47,8 @@ program
   .version(pkg.version)
   .action(async (arg: string, options: { output?: string; flat: boolean; declarations?: string; skipDirs?: string; ignore?: string }) => {
     const pathAtExecution = process.cwd();
-    const root = path.isAbsolute(arg) ? arg : path.join(pathAtExecution, arg);
+    // Resolved once, so that a trailing separator or a `..` does not change what the provider and the output call the root.
+    const root = path.resolve(pathAtExecution, arg);
 
     l.debug('Version', pkg.version);
 
@@ -78,20 +79,19 @@ program
 
     const spinner = ora(`Analysing`).start();
 
-    const res = await analyser({
-      provider: new FSProvider({
-        path: root,
-        ignorePaths: options.ignore === undefined ? [] : parseList(options.ignore),
-        skipDirs: options.skipDirs === undefined ? undefined : parseList(options.skipDirs),
-      }),
-      declarations,
+    const provider = new FSProvider({
+      path: root,
+      ignorePaths: options.ignore === undefined ? [] : parseList(options.ignore),
+      skipDirs: options.skipDirs === undefined ? undefined : parseList(options.skipDirs),
     });
+    const res = await analyser({ provider, declarations });
     spinner.succeed('Analysed');
 
     if (options.output) {
       const output = options.flat ? flatten(res, { merge: true }) : res;
-      const file = path.join(pathAtExecution, options.output);
-      await fs.writeFile(file, JSON.stringify(output.toJson(root), undefined, 2));
+      const file = path.resolve(pathAtExecution, options.output);
+      // The base the provider writes its paths with, which is what has to come off them.
+      await fs.writeFile(file, JSON.stringify(output.toJson(provider.basePath), undefined, 2));
       l.log('');
       l.log('Output', kleur.green(file));
     }
