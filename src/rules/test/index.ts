@@ -1,5 +1,6 @@
 import './archunit.js';
 import './artillery.js';
+import './ava.js';
 import './capybara.js';
 import './dart-test.js';
 import './detox.js';

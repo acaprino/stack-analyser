@@ -9,3 +9,4 @@ import './sonarlint.js';
 import './stylelint.js';
 import './ultracite.js';
 import './vale.js';
+import './xo.js';

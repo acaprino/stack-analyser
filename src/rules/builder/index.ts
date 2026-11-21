@@ -9,6 +9,7 @@ import './parceljs.js';
 import './rolldown.js';
 import './rollup.js';
 import './rspack.js';
+import './setuptools.js';
 import './sqldelight.js';
 import './stylus.js';
 import './swc.js';
