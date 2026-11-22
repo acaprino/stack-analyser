@@ -74,6 +74,7 @@ const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
 // eslint-disable-next-line unicorn/no-await-expression-member
 const pkg = JSON.parse((await fs.readFile(path.join(dirname, './../package.json'))).toString()) as {
+  name: string;
   version: string;
 };
 
@@ -100,7 +101,7 @@ const analysisOptions = {
 };
 
 program
-  .name('stack-analyser')
+  .name(pkg.name)
   .description('CLI to extract metadata from repository')
   .argument('[path]', 'repository to analyze, required unless --catalogue is given')
   .option('--catalogue <FILE>', 'write the catalogue of the rules as JSON to a file and analyse nothing; stands alone, with no path and no other option')

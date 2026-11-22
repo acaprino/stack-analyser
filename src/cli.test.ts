@@ -360,13 +360,15 @@ it('exits with 1 and writes nothing when --catalogue is given with a project or 
   expect(output.out).toContain('--output');
 }, 40_000);
 
-it('exits with 1 and names the file when the catalogue cannot be written, and when nothing is asked', async () => {
-  const [missingFolder, aFolder, nothing] = await Promise.all([
+it('exits with 1 and names the file when the catalogue cannot be written, and when nothing is asked; --help names the package', async () => {
+  const [missingFolder, aFolder, nothing, help] = await Promise.all([
     runCatalogueCli(['--catalogue', 'no/such/folder/rules.json'], { 'package.json': manifest }),
     // The target is a folder: the rename fails, and the temporary file is removed.
     runCatalogueCli(['--catalogue', 'out'], { 'out/keep.txt': 'keep' }),
     // Making the project optional leaves it required when there is no `--catalogue`.
     runCatalogueCli([], { 'package.json': manifest }),
+    // The program is named after the package, not after the original project.
+    runCatalogueCli(['--help'], {}),
   ]);
   expect(missingFolder.code).toBe(1);
   expect(missingFolder.out).toMatch(/Catalogue ".*rules\.json"/);
@@ -377,6 +379,8 @@ it('exits with 1 and names the file when the catalogue cannot be written, and wh
   expect(nothing.code).toBe(1);
   expect(nothing.out).toMatch(/missing required argument 'path'/);
   expect(nothing.files).toEqual(['package.json']);
+  expect(help.code).toBe(0);
+  expect(help.out).toContain('Usage: stack-analyser-daodan ');
 }, 40_000);
 
 const dist = path.join(import.meta.dirname, '..', 'dist');
