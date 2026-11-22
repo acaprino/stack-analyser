@@ -27,6 +27,7 @@ const integrations: Record<string, string[]> = {
   'maven:org.springframework.boot:spring-boot-starter-data-redis': ['spring-boot', 'spring-data-redis'],
   'maven:org.springframework.boot:spring-boot-starter-security': ['spring-boot', 'spring-security'],
   'maven:org.springframework.boot:spring-boot-starter-thymeleaf': ['spring-boot', 'thymeleaf'],
+  'maven:org.springframework.boot:spring-boot-starter-web': ['spring-boot', 'spring-mvc'],
   'maven:org.springframework.boot:spring-boot-starter-webflux': ['spring-boot', 'spring-webflux'],
   'maven:org.springframework.boot:spring-boot-starter-webmvc': ['spring-boot', 'spring-mvc'],
   'nuget:Aspire.Azure.AI.OpenAI': ['azure.openai', 'dotnet-aspire'],

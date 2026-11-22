@@ -8,7 +8,7 @@ import { registeredRules } from '../register.js';
 import type { SupportedDeps } from '../types/rule.js';
 
 const cases: [SupportedDeps, string, string[]][] = [
-  ['maven', 'org.springframework.boot:spring-boot-starter-web', ['spring-boot']],
+  ['maven', 'org.springframework.boot:spring-boot-starter-web', ['spring-boot', 'spring-mvc']],
   ['maven', 'org.springframework.boot:org.springframework.boot.gradle.plugin', ['spring-boot']],
   ['maven', 'org.springframework.boot', ['spring-boot']],
   ['maven', 'org.example:spring-boot-starter-web', []],

@@ -521,6 +521,9 @@
     "spring-data-jpa": [
       "maven:org.springframework.data:spring-data-jpa"
     ],
+    "spring-mvc": [
+      "maven:org.springframework.boot:spring-boot-starter-web"
+    ],
     "stytch": [
       "rust:stytch"
     ],
@@ -937,11 +940,6 @@
       "id": "sonarqube",
       "sign": "file:.sonar-project.properties",
       "reason": "The name has a stray leading dot in the older release: SonarQube reads sonar-project.properties, which the fork lists, and files.test.ts checks that the dotted name does not match."
-    },
-    {
-      "id": "spring-mvc",
-      "sign": "maven:org.springframework.boot:spring-boot-starter-web",
-      "reason": "The fork identifies spring-boot-starter-web as spring-boot only, and a test fixes it; Spring MVC is identified by org.springframework:spring-webmvc and the webmvc starter."
     },
     {
       "id": "sqlite",
