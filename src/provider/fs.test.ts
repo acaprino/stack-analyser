@@ -59,6 +59,62 @@ it.each(['generated', '/generated', './generated', 'generated/', '/generated/'])
   }
 });
 
+it('reads a perimeter of five thousand paths', async () => {
+  const temp = await fs.mkdtemp(path.join(os.tmpdir(), 'specfy-provider-'));
+  try {
+    // 20 packages of 10 files each, 200 files in all.
+    for (let pkg = 0; pkg < 20; pkg++) {
+      await fs.mkdir(path.join(temp, `pkg-${pkg}`, 'src'), { recursive: true });
+      for (let file = 0; file < 10; file++) await fs.writeFile(path.join(temp, `pkg-${pkg}`, 'src', `file-${file}.json`), '{}');
+    }
+    // Five thousand paths, the five of the first packages among them. Written in the ways the caller may write one.
+    const ignorePaths = [
+      ...Array.from({ length: 4995 }, (_, i) => `generated/area-${i}/code`),
+      ...['pkg-0/src', '/pkg-1/src', './pkg-2/src', 'pkg-3/src/', 'pkg-4'],
+    ];
+    expect(ignorePaths).toHaveLength(5000);
+    const provider = new FSProvider({ path: temp, ignorePaths });
+
+    const found: string[] = [];
+    const started = performance.now();
+    const walk = async (directory: string): Promise<void> => {
+      for (const entry of await provider.listDir(directory)) {
+        if (entry.type === 'dir') await walk(entry.fp);
+        else if ((await provider.open(entry.fp)) === '{}') found.push(path.relative(temp, entry.fp));
+      }
+    };
+    await walk(temp);
+    const elapsed = performance.now() - started;
+
+    // The five ignored packages are not read, the other fifteen are, whole.
+    expect(found).toHaveLength(150);
+    expect(found.some((file) => /^pkg-[0-4][\\/]/.test(file))).toBe(false);
+    expect(found).toContain(path.join('pkg-5', 'src', 'file-0.json'));
+    // The bound is far above what a lookup in a set takes: it only has to tell a lookup that grows with the list from one that does not.
+    expect(elapsed).toBeLessThan(2000);
+  } finally {
+    await fs.rm(temp, { recursive: true, force: true });
+  }
+}, 60_000);
+
+it('applies a regular expression beside string paths, whatever its flags', async () => {
+  const temp = await fs.mkdtemp(path.join(os.tmpdir(), 'specfy-provider-'));
+  try {
+    for (const folder of ['docs', 'generated', 'generated-docs', 'src']) {
+      await fs.mkdir(path.join(temp, folder));
+      await fs.writeFile(path.join(temp, folder, 'data.json'), '{}');
+    }
+    // The `g` flag keeps `lastIndex` between tests, which the provider has to reset for every path.
+    const provider = new FSProvider({ path: temp, ignorePaths: ['docs', /^generated/g, /^src\/other$/] });
+    expect((await provider.listDir(temp)).map((file) => file.name)).toEqual(['src']);
+    expect(await provider.open(path.join(temp, 'generated-docs', 'data.json'))).toBeNull();
+    expect(await provider.open(path.join(temp, 'generated', 'data.json'))).toBeNull();
+    expect(await provider.open(path.join(temp, 'src', 'data.json'))).toBe('{}');
+  } finally {
+    await fs.rm(temp, { recursive: true, force: true });
+  }
+});
+
 it('lets the caller replace the list of skipped folders, and keeps the default list without it', async () => {
   const temp = await fs.mkdtemp(path.join(os.tmpdir(), 'specfy-provider-'));
   try {

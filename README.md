@@ -24,7 +24,7 @@ It can be helpful for other to get all dependencies or SaaS used in a given git 
 The CLI and the library need Node.js 20 or later.
 
 ```bash
-npx @specfy/stack-analyser <PATH> [--output=<filename>] [--flat] [--declarations=<file>] [--skip-dirs=<names>] [--ignore=<paths>]
+npx @specfy/stack-analyser <PATH> [--output=<filename>] [--flat] [--declarations=<file>] [--skip-dirs=<names>] [--ignore=<paths>] [--perimeter=<file>]
 ```
 
 ```sh
@@ -107,7 +107,13 @@ such as `tests`, `public`, `bin`, `vendor` and `migrations`, at any depth. The c
   with a drive letter, such as `C:/gen`, or that has a `..` in it, is not inside the analysed folder: the CLI names
   it, exits with code 1 and analyses nothing.
 
-Spaces around an entry and empty entries are dropped.
+- `--perimeter <FILE>` takes both lists from a JSON file, for lists too long for a command line:
+  `{"skipDirs": ["name", "name"], "ignore": ["path", "path"]}`. A key left out means what the option left out means, and the
+  entries follow the same rules as the options, taken as written. It cannot be used with `--skip-dirs` or `--ignore`.
+  If the file is missing, is not that JSON, or has an entry the options would refuse, the CLI names the file, exits
+  with code 1 and analyses nothing. A UTF-8 byte order mark at the start is ignored.
+
+Spaces around an entry and empty entries are dropped from the two options, not from the file.
 
 ```sh
 # enter every folder, including tests and vendor
@@ -118,6 +124,13 @@ node dist/cli.js /my/project --skip-dirs "node_modules,dist"
 
 # leave out two paths of the analysed folder
 node dist/cli.js /my/project --ignore "docs/examples,packages/legacy"
+
+# the same two lists from a file, perimeter.json
+node dist/cli.js /my/project --perimeter perimeter.json
+```
+
+```json
+{ "skipDirs": ["node_modules", "dist"], "ignore": ["docs/examples", "packages/legacy"] }
 ```
 
 ## Programmatic Usage

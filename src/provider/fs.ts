@@ -24,11 +24,19 @@ export class FSProvider implements BaseProvider {
   readonly skipDirs?: readonly string[];
   private root?: Promise<string>;
   private readonly maxFileBytes: number;
+  /** The string rules, written once the way a path is compared, so that a lookup costs the same however many there are. */
+  private readonly ignoredPaths = new Set<string>();
+  private readonly ignoredPatterns: RegExp[] = [];
 
   constructor(opts: FSProviderOptions) {
     this.opts = opts;
     this.basePath = path.resolve(opts.path);
     this.skipDirs = opts.skipDirs && [...opts.skipDirs];
+    for (const rule of opts.ignorePaths ?? []) {
+      // `/gen`, `./gen`, `gen/` and `gen` all name the same folder, relative to the root.
+      if (typeof rule === 'string') this.ignoredPaths.add(portablePath(rule).replace(/^(?:\.?\/)+/, '').replace(/\/+$/, ''));
+      else this.ignoredPatterns.push(rule);
+    }
     this.maxFileBytes = opts.maxFileBytes ?? 32 * 1024 * 1024;
     if (!Number.isSafeInteger(this.maxFileBytes) || this.maxFileBytes <= 0) {
       throw new RangeError('maxFileBytes must be a positive integer');
@@ -38,19 +46,14 @@ export class FSProvider implements BaseProvider {
   private allowed(base: string, target: string): boolean {
     const relative = path.relative(base, target);
     if (relative === '..' || relative.startsWith('..' + path.sep) || path.isAbsolute(relative)) return false;
-    const rules = this.opts.ignorePaths;
-    if (!relative || !rules?.length) return true;
-    const parts = portablePath(relative).split('/');
-    for (let i = 1; i <= parts.length; i++) {
-      const prefix = parts.slice(0, i).join('/');
-      for (const rule of rules) {
-        if (typeof rule === 'string') {
-          // `/gen`, `./gen`, `gen/` and `gen` all name the same folder, relative to the root.
-          if (prefix === portablePath(rule).replace(/^(?:\.?\/)+/, '').replace(/\/+$/, '')) return false;
-        } else {
-          rule.lastIndex = 0;
-          if (rule.test(prefix)) return false;
-        }
+    if (!relative || !(this.ignoredPaths.size || this.ignoredPatterns.length)) return true;
+    let prefix = '';
+    for (const part of portablePath(relative).split('/')) {
+      prefix = prefix ? `${prefix}/${part}` : part;
+      if (this.ignoredPaths.has(prefix)) return false;
+      for (const pattern of this.ignoredPatterns) {
+        pattern.lastIndex = 0;
+        if (pattern.test(prefix)) return false;
       }
     }
     return true;

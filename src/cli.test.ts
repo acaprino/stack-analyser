@@ -210,6 +210,75 @@ it.each([
   expect(output).toBeNull();
 }, 20_000);
 
+/** The techs of `tree` that an output holds, in the order of `tree`. */
+function techsOfTree(output: { techs: string[] }): string[] {
+  const found = new Set<string>(output.techs);
+  return ['react', 'express', 'vitest', 'vue', 'fastify'].filter((tech) => found.has(tech));
+}
+
+const perimeterTree = {
+  ...tree,
+  'docs/old/package.json': JSON.stringify({ name: 'old', dependencies: { vue: '3' } }),
+  'docs/new/package.json': JSON.stringify({ name: 'new', dependencies: { fastify: '4' } }),
+};
+
+it('gives the same output from --perimeter as from --skip-dirs and --ignore', async () => {
+  // `generated` is skipped by name, so `tests` is entered; `docs/old` is left out by path.
+  const perimeter = JSON.stringify({ skipDirs: ['generated'], ignore: ['docs/old'] });
+  // Both runs see the same project, the file included: it is a JSON file of the project like another.
+  const files = { ...perimeterTree, 'perimeter.json': perimeter };
+  const [options, file] = await Promise.all([
+    runCli(files, ['--flat', '--skip-dirs', 'generated', '--ignore', 'docs/old']),
+    runCli(files, ['--flat', '--perimeter', 'perimeter.json']),
+  ]);
+  expect(options.code).toBe(0);
+  expect(file.code).toBe(0);
+  expect(techsOfTree(options.output)).toEqual(['react', 'vitest', 'fastify']);
+  expect(withoutIds(file.output)).toEqual(withoutIds(options.output));
+}, 40_000);
+
+it('keeps what an absent key means, and reads a perimeter that starts with a byte order mark', async () => {
+  const [withoutSkipDirs, withoutIgnore] = await Promise.all([
+    // No `skipDirs`: the default list, which holds `tests`.
+    runCli({ ...perimeterTree, 'perimeter.json': JSON.stringify({ ignore: ['generated'] }) }, ['--flat', '--perimeter', 'perimeter.json']),
+    // No `ignore`: nothing is left out by path. An empty `skipDirs`: no folder is skipped by name.
+    runCli({ ...perimeterTree, 'perimeter.json': '\uFEFF' + JSON.stringify({ skipDirs: [] }) }, ['--flat', '--perimeter', 'perimeter.json']),
+  ]);
+  expect(withoutSkipDirs.code).toBe(0);
+  expect(techsOfTree(withoutSkipDirs.output)).toEqual(['react', 'vue', 'fastify']);
+  expect(withoutIgnore.code).toBe(0);
+  expect(techsOfTree(withoutIgnore.output)).toEqual(['react', 'express', 'vitest', 'vue', 'fastify']);
+}, 40_000);
+
+it.each([['--ignore', 'generated'], ['--skip-dirs', 'tests']])(
+  'exits with 1 when --perimeter is given with %s', async (option, value) => {
+    const { code, out, output } = await runCli(
+      { ...tree, 'perimeter.json': JSON.stringify({ ignore: ['generated'] }) }, ['--perimeter', 'perimeter.json', option, value]);
+    expect(code).toBe(1);
+    expect(out).toMatch(/--perimeter cannot be combined with --skip-dirs or --ignore/);
+    expect(output).toBeNull();
+  }, 20_000);
+
+it.each([
+  ['a file that is not JSON', 'skipDirs: tests', /Perimeter ".*perimeter\.json":/],
+  ['a file that is an array', '["tests"]', /must be an object/],
+  ['a key that is not known', '{"skipdirs": ["tests"]}', /unknown key "skipdirs"/],
+  ['a list that holds a number', '{"skipDirs": ["tests", 1]}', /"skipDirs" must be an array of strings/],
+  ['an ignore that is a string', '{"ignore": "generated"}', /"ignore" must be an array of strings/],
+  ['a skipDirs entry that is a path', '{"skipDirs": ["tests", "generated/sub"]}', /"skipDirs" takes folder names, not paths: "generated\/sub"/],
+  ['an ignore entry with a drive letter', '{"ignore": ["generated", "C:/generated"]}', /"ignore" takes paths inside the project, relative to its root: "C:\/generated"/],
+  ['an ignore entry with a parent folder', '{"ignore": ["tests/../.."]}', /"ignore" takes paths inside the project.*"tests\/\.\.\/\.\."/],
+  ['no file at all', undefined, /Perimeter ".*perimeter\.json":.*ENOENT/],
+])('exits with 1 and writes nothing when the perimeter file is not the expected JSON: %s', async (_label, content, message) => {
+  const files = content === undefined ? tree : { ...tree, 'perimeter.json': content };
+  const { code, out, output } = await runCli(files, ['--perimeter', 'perimeter.json']);
+  expect(code).toBe(1);
+  // The message names the file, then what is wrong with it.
+  expect(out).toMatch(/Perimeter ".*perimeter\.json":/);
+  expect(out).toMatch(message);
+  expect(output).toBeNull();
+}, 20_000);
+
 const dist = path.join(import.meta.dirname, '..', 'dist');
 const fixtures = path.join(import.meta.dirname, '..', 'tests', '__fixtures__');
 const hasBuild = existsSync(path.join(dist, 'cli.js')) && existsSync(path.join(dist, 'cli.mjs'));
