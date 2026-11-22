@@ -3,7 +3,7 @@
 ## Installation
 
 ```sh
-git clone https://github.com/specfy/stack-analyser.git
+git clone https://github.com/acaprino/stack-analyser-daodan.git
 ```
 
 ```sh

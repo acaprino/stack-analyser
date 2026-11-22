@@ -1,18 +1,20 @@
 {
-  "name": "@specfy/stack-analyser",
-  "version": "1.27.6-daodan.2",
+  "name": "stack-analyser-daodan",
+  "version": "1.27.6-daodan.3",
   "description": "",
   "main": "./dist/index.js",
-  "bin": "./dist/cli.js",
+  "bin": {
+    "stack-analyser-daodan": "./dist/cli.mjs"
+  },
   "typings": "./dist/index.d.ts",
   "type": "module",
-  "homepage": "https://github.com/acaprino/stack-analyser#readme",
+  "homepage": "https://github.com/acaprino/stack-analyser-daodan#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/acaprino/stack-analyser.git"
+    "url": "https://github.com/acaprino/stack-analyser-daodan.git"
   },
   "bugs": {
-    "url": "https://github.com/acaprino/stack-analyser/issues"
+    "url": "https://github.com/acaprino/stack-analyser-daodan/issues"
   },
   "scripts": {
     "prebuild": "tsx src/scripts/prebuild.ts",

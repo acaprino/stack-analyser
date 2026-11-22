@@ -1,4 +1,6 @@
-# Stack Analyser
+# stack-analyser-daodan
+
+A fork of [specfy/stack-analyser](https://github.com/specfy/stack-analyser), published as `stack-analyser-daodan`, with its own additions: more rules and readers, `--declarations`, `--perimeter` and `--catalogue` for the CLI, and evidence on every technology. The original project is the work of Specfy and its contributors, under the MIT license kept in [LICENSE](./LICENSE). The two badges below are the upstream project's.
 
 [![Main](https://github.com/specfy/stack-analyser/actions/workflows/ci.yaml/badge.svg)](https://github.com/specfy/stack-analyser/actions/workflows/ci.yaml)
 [![codecov](https://codecov.io/gh/specfy/stack-analyser/branch/main/graph/badge.svg?token=6L5O79P9UI)](https://codecov.io/gh/specfy/stack-analyser)
@@ -24,12 +26,12 @@ It can be helpful for other to get all dependencies or SaaS used in a given git 
 The CLI and the library need Node.js 20 or later.
 
 ```bash
-npx @specfy/stack-analyser <PATH> [--output=<filename>] [--flat] [--declarations=<file>] [--skip-dirs=<names>] [--ignore=<paths>] [--perimeter=<file>]
-npx @specfy/stack-analyser --catalogue=<file>
+npx stack-analyser-daodan <PATH> [--output=<filename>] [--flat] [--declarations=<file>] [--skip-dirs=<names>] [--ignore=<paths>] [--perimeter=<file>]
+npx stack-analyser-daodan --catalogue=<file>
 ```
 
 ```sh
-npx @specfy/stack-analyser /my/folder
+npx stack-analyser-daodan /my/folder
 ```
 
 To run the rules from this checkout, build the package and invoke its CLI directly.
@@ -173,15 +175,15 @@ A program gets the same list from `catalogue(rules.list)`, both exported from th
 ## Programmatic Usage
 
 ```ts
-npm install -E @specfy/stack-analyser
+npm install -E stack-analyser-daodan
 ```
 
 ```ts
-import { analyser, FSProvider, flatten, rules } from "@specfy/stack-analyser"
+import { analyser, FSProvider, flatten, rules } from "stack-analyser-daodan"
 
 // /!\ Load default rules
 // without this no rules will be enabled by default
-import '@specfy/stack-analyser/dist/autoload';
+import 'stack-analyser-daodan/dist/autoload';
 
 // Analyze a folder
 const result = await analyser({
@@ -203,7 +205,7 @@ const flat = flatten(result);
 project (see [Declarations read by other tools](#declarations-read-by-other-tools)). The `Declaration` type is exported.
 
 ```ts
-import { analyser, FSProvider, type Declaration } from "@specfy/stack-analyser"
+import { analyser, FSProvider, type Declaration } from "stack-analyser-daodan"
 
 const declarations: Declaration[] = [
   { type: 'npm', name: 'react', path: 'package.json', line: 12, source: 'renovate' },
@@ -271,7 +273,7 @@ for a repository with an unusually large lockfile.
 
 ```yaml
 - name: Stack Analyser
-  uses: specfy/stack-analyser@v__VERSION__
+  uses: acaprino/stack-analyser-daodan@v__VERSION__
 ```
 
 ## Output
