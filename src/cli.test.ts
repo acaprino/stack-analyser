@@ -7,7 +7,10 @@ import { promisify } from 'node:util';
 
 import { expect, it } from 'vitest';
 
+import { catalogue } from './catalogue.js';
+import { rules } from './index.js';
 import { tsxImport } from './tests/tsx.js';
+import './autoload.js';
 
 it('writes a stack for a Maven project using the normal CLI', async () => {
   const cwd = await fs.mkdtemp(path.join(os.tmpdir(), 'stack-analyser-cli-'));
@@ -279,6 +282,103 @@ it.each([
   expect(output).toBeNull();
 }, 20_000);
 
+/** Every file below `dir`, as paths relative to it written with `/`, sorted. */
+async function listFiles(dir: string, prefix = ''): Promise<string[]> {
+  const found: string[] = [];
+  for (const entry of await fs.readdir(dir, { withFileTypes: true })) {
+    if (entry.isDirectory()) found.push(...(await listFiles(path.join(dir, entry.name), `${prefix}${entry.name}/`)));
+    else found.push(prefix + entry.name);
+  }
+  return found.sort();
+}
+
+/**
+ * Runs the CLI from source in a folder holding `files`, with `args` and no project argument unless `args` holds one.
+ * `written` is the file, relative to the folder, whose bytes to read once it has run; `files` is what the folder holds after.
+ */
+async function runCatalogueCli(args: string[], inputs: Record<string, string>, written?: string) {
+  const cwd = await fs.mkdtemp(path.join(os.tmpdir(), 'stack-analyser-cli-'));
+  try {
+    for (const [name, content] of Object.entries(inputs)) {
+      await fs.mkdir(path.dirname(path.join(cwd, name)), { recursive: true });
+      await fs.writeFile(path.join(cwd, name), content);
+    }
+    const result = await promisify(execFile)(process.execPath, [
+      '--import', tsxImport, path.join(import.meta.dirname, 'cli.ts'), ...args,
+    ], { cwd, env: { ...process.env, LOG_LEVEL: 'info' } }).then(
+      (done) => ({ code: 0, out: done.stdout + done.stderr }),
+      (err: { code: number; stdout: string; stderr: string }) => ({ code: err.code, out: err.stdout + err.stderr })
+    );
+    const bytes = written === undefined ? null : await fs.readFile(path.join(cwd, written)).catch(() => null);
+    return { ...result, bytes, files: await listFiles(cwd) };
+  } finally {
+    await fs.rm(cwd, { recursive: true, force: true });
+  }
+}
+
+it('writes the catalogue of the rules without a project, and leaves nothing else behind', async () => {
+  // A project in the folder it runs in, which must not be read, and a folder that already holds a file.
+  const { code, out, bytes, files } = await runCatalogueCli(
+    ['--catalogue', 'out/rules.json'], { 'package.json': manifest, 'out/keep.txt': 'keep' }, 'out/rules.json');
+  expect(code).toBe(0);
+  expect(out).toContain('rules.json');
+  // Nothing was analysed (no output.json) and the temporary file, which was in the same folder, was renamed.
+  expect(files).toEqual(['out/keep.txt', 'out/rules.json', 'package.json']);
+  expect(bytes).not.toBeNull();
+  // UTF-8 without a byte order mark: the first byte is the bracket of the array.
+  expect(bytes![0]).toBe('['.codePointAt(0));
+  const text = bytes!.toString('utf8');
+  expect(text).toBe(JSON.stringify(catalogue(rules.list), undefined, 2));
+  const entries = JSON.parse(text) as { tech: string }[];
+  expect(entries).toHaveLength(rules.list.length);
+  expect(entries.find((entry) => entry.tech === 'spring-mvc')).toMatchObject({
+    dependencies: expect.arrayContaining([{ type: 'maven', name: 'org.springframework.boot:spring-boot-starter-web' }]),
+  });
+}, 20_000);
+
+it('exits with 1 and writes nothing when --catalogue is given with a project or with another option', async () => {
+  const inputs = { 'package.json': manifest };
+  const [all, project, output] = await Promise.all([
+    // Every option at once: the message names each of them, and none of the files they point at is read.
+    runCatalogueCli(
+      ['.', '--catalogue', 'rules.json', '--output', 'out.json', '--flat', '--declarations', 'd.json', '--perimeter', 'p.json', '--skip-dirs', 'tests', '--ignore', 'gen'],
+      inputs, 'rules.json'),
+    runCatalogueCli(['.', '--catalogue', 'rules.json'], inputs, 'rules.json'),
+    // `--output` has a default value, so only an `--output` that was typed is a conflict, even one that says the default.
+    runCatalogueCli(['--catalogue', 'rules.json', '--output', 'output.json'], inputs, 'rules.json'),
+  ]);
+  for (const result of [all, project, output]) {
+    expect(result.code).toBe(1);
+    expect(result.out).toMatch(/--catalogue stands alone/);
+    expect(result.bytes).toBeNull();
+    expect(result.files).toEqual(['package.json']);
+  }
+  for (const name of ['the project', '--output', '--flat', '--declarations', '--perimeter', '--skip-dirs', '--ignore']) {
+    expect(all.out).toContain(name);
+  }
+  expect(project.out).toContain('the project');
+  expect(output.out).toContain('--output');
+}, 40_000);
+
+it('exits with 1 and names the file when the catalogue cannot be written, and when nothing is asked', async () => {
+  const [missingFolder, aFolder, nothing] = await Promise.all([
+    runCatalogueCli(['--catalogue', 'no/such/folder/rules.json'], { 'package.json': manifest }),
+    // The target is a folder: the rename fails, and the temporary file is removed.
+    runCatalogueCli(['--catalogue', 'out'], { 'out/keep.txt': 'keep' }),
+    // Making the project optional leaves it required when there is no `--catalogue`.
+    runCatalogueCli([], { 'package.json': manifest }),
+  ]);
+  expect(missingFolder.code).toBe(1);
+  expect(missingFolder.out).toMatch(/Catalogue ".*rules\.json"/);
+  expect(missingFolder.files).toEqual(['package.json']);
+  expect(aFolder.code).toBe(1);
+  expect(aFolder.out).toMatch(/Catalogue ".*out"/);
+  expect(aFolder.files).toEqual(['out/keep.txt']);
+  expect(nothing.code).toBe(1);
+  expect(nothing.out).toMatch(/missing required argument 'path'/);
+  expect(nothing.files).toEqual(['package.json']);
+}, 40_000);
+
 const dist = path.join(import.meta.dirname, '..', 'dist');
 const fixtures = path.join(import.meta.dirname, '..', 'tests', '__fixtures__');
 const hasBuild = existsSync(path.join(dist, 'cli.js')) && existsSync(path.join(dist, 'cli.mjs'));
@@ -320,6 +420,29 @@ it.skipIf(!hasBuild)(
     const [modules, bundle] = await Promise.all([runBuilt('cli.js'), runBuilt('cli.mjs')]);
     expect(modules.childs.length).toBeGreaterThan(0);
     expect(withoutIds(bundle)).toEqual(withoutIds(modules));
+  },
+  60_000
+);
+
+async function catalogueBuilt(file: string): Promise<Buffer> {
+  const cwd = await fs.mkdtemp(path.join(os.tmpdir(), 'stack-analyser-built-'));
+  try {
+    await promisify(execFile)(process.execPath, [path.join(dist, file), '--catalogue', 'rules.json'], { cwd });
+    return await fs.readFile(path.join(cwd, 'rules.json'));
+  } finally {
+    await fs.rm(cwd, { recursive: true, force: true });
+  }
+}
+
+it.skipIf(!hasBuild)(
+  hasBuild
+    ? 'gives the same catalogue from the bundle as from the modules'
+    : 'gives the same catalogue from the bundle as from the modules (skipped: dist/cli.js or dist/cli.mjs is missing, run npm run build)',
+  async () => {
+    const [modules, bundle] = await Promise.all([catalogueBuilt('cli.js'), catalogueBuilt('cli.mjs')]);
+    expect(JSON.parse(modules.toString('utf8'))).toHaveLength(rules.list.length);
+    // The same bytes, not only the same entries.
+    expect(bundle.equals(modules)).toBe(true);
   },
   60_000
 );

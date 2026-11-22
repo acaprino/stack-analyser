@@ -30,6 +30,8 @@ export const lang = {
 };
 
 export { analyser } from './analyser/index.js';
+export { catalogue } from './catalogue.js';
+export type { CatalogueDependency, CatalogueEntry, CataloguePattern } from './catalogue.js';
 export type { LangListItem } from './common/languages.js';
 export type { TechMatch } from './matchAllFiles.js';
 export {

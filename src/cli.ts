@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import { randomBytes } from 'node:crypto';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -10,9 +11,11 @@ import kleur from 'kleur';
 import ora from 'ora';
 
 import { analyser, parseDeclarations } from './analyser/index.js';
+import { catalogue } from './catalogue.js';
 import { l } from './common/log.js';
 import { flatten } from './payload/helpers.js';
 import { FSProvider } from './provider/fs.js';
+import { registeredRules } from './register.js';
 
 import type { Declaration } from './types/index.js';
 
@@ -74,10 +77,33 @@ const pkg = JSON.parse((await fs.readFile(path.join(dirname, './../package.json'
   version: string;
 };
 
+/** Writes `text` to `file` by way of a temporary file in the same folder, so that a reader never finds half of it. */
+async function writeAtomically(file: string, text: string): Promise<void> {
+  const temporary = path.join(path.dirname(file), `.${path.basename(file)}.${randomBytes(4).toString('hex')}.tmp`);
+  try {
+    await fs.writeFile(temporary, text, { encoding: 'utf8', flag: 'wx' });
+    await fs.rename(temporary, file);
+  } catch (err) {
+    await fs.rm(temporary, { force: true });
+    throw err;
+  }
+}
+
+/** The options an analysis takes, by the name commander gives them and the way a person types them. */
+const analysisOptions = {
+  output: '--output',
+  flat: '--flat',
+  declarations: '--declarations',
+  skipDirs: '--skip-dirs',
+  ignore: '--ignore',
+  perimeter: '--perimeter',
+};
+
 program
   .name('stack-analyser')
   .description('CLI to extract metadata from repository')
-  .argument('<path>', 'repository to analyze')
+  .argument('[path]', 'repository to analyze, required unless --catalogue is given')
+  .option('--catalogue <FILE>', 'write the catalogue of the rules as JSON to a file and analyse nothing; stands alone, with no path and no other option')
   .option('-o, --output <FILENAME>', 'output json to a file', 'output.json')
   .option('--flat', 'flatten the output', false)
   .option('--declarations <FILE>', 'JSON file with an array of declarations that other tools already read')
@@ -85,12 +111,40 @@ program
   .option('--ignore <PATHS>', 'comma-separated paths, relative to the root, to leave out with everything below them')
   .option('--perimeter <FILE>', 'JSON file {"skipDirs": [names], "ignore": [paths]} that gives the two lists; not with --skip-dirs or --ignore')
   .version(pkg.version)
-  .action(async (arg: string, options: { output?: string; flat: boolean; declarations?: string; skipDirs?: string; ignore?: string; perimeter?: string }) => {
+  .action(async (
+    arg: string | undefined,
+    options: { catalogue?: string; output?: string; flat: boolean; declarations?: string; skipDirs?: string; ignore?: string; perimeter?: string },
+    command: Command
+  ) => {
     const pathAtExecution = process.cwd();
-    // Resolved once, so that a trailing separator or a `..` does not change what the provider and the output call the root.
-    const root = path.resolve(pathAtExecution, arg);
 
     l.debug('Version', pkg.version);
+
+    if (options.catalogue !== undefined) {
+      // `--output` has a default value, so what counts is whether it was typed, not whether it has a value.
+      const given = [
+        ...(arg === undefined ? [] : ['the project']),
+        ...Object.entries(analysisOptions).filter(([name]) => command.getOptionValueSource(name) === 'cli').map(([, flag]) => flag),
+      ];
+      if (given.length > 0) {
+        l.log(kleur.bold().red(figureSet.cross), `--catalogue stands alone and analyses nothing: it cannot be combined with ${given.join(', ')}`);
+        process.exit(1);
+      }
+      const file = path.resolve(pathAtExecution, options.catalogue);
+      const entries = catalogue(registeredRules);
+      try {
+        await writeAtomically(file, JSON.stringify(entries, undefined, 2));
+      } catch (err) {
+        l.log(kleur.bold().red(figureSet.cross), `Catalogue "${file}":`, (err as Error).message);
+        process.exit(1);
+      }
+      l.log('Catalogue', kleur.green(file), `(${entries.length} rules)`);
+      return;
+    }
+
+    if (arg === undefined) command.error("error: missing required argument 'path'", { code: 'commander.missingArgument' });
+    // Resolved once, so that a trailing separator or a `..` does not change what the provider and the output call the root.
+    const root = path.resolve(pathAtExecution, arg);
 
     try {
       const stat = await fs.stat(root);

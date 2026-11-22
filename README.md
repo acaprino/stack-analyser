@@ -25,6 +25,7 @@ The CLI and the library need Node.js 20 or later.
 
 ```bash
 npx @specfy/stack-analyser <PATH> [--output=<filename>] [--flat] [--declarations=<file>] [--skip-dirs=<names>] [--ignore=<paths>] [--perimeter=<file>]
+npx @specfy/stack-analyser --catalogue=<file>
 ```
 
 ```sh
@@ -132,6 +133,42 @@ node dist/cli.js /my/project --perimeter perimeter.json
 ```json
 { "skipDirs": ["node_modules", "dist"], "ignore": ["docs/examples", "packages/legacy"] }
 ```
+
+### The catalogue of rules
+
+`--catalogue <FILE>` writes the rules the analyser knows, without analysing anything: no project is given and no file
+of any project is read. It stands alone, so with a project path or with `--output`, `--flat`, `--declarations`,
+`--perimeter`, `--skip-dirs` or `--ignore` the CLI exits with code 1 and writes nothing.
+
+```sh
+node dist/cli.mjs --catalogue catalogue.json
+```
+
+The file is a JSON array in UTF-8 without a byte order mark, one object per rule, sorted by `tech` in code unit order.
+It is written to a temporary name in the same folder and then renamed, so a reader never finds half of it; if the
+folder does not exist or cannot be written, the CLI names the file and exits with code 1. A key that a rule has no value
+for is left out of its entry.
+
+```json
+{
+  "tech": "typescript",
+  "name": "Typescript",
+  "type": "language",
+  "dependencies": [{ "type": "npm", "name": "typescript" }],
+  "files": { "pattern": "^tsconfig(?:\\.[\\w-]+)*\\.json$" },
+  "extensions": [".ts", ".tsx", ".mts", ".cts"]
+}
+```
+
+- `hosts`, `dotenv` and `extensions` are lists of strings.
+- `dependencies` holds `{ "type", "name" }` for a package name, and `{ "type", "pattern" }` for a regular expression,
+  with `"flags"` added when it has any. `pattern` is the source of the expression, so `new RegExp(pattern, flags)`
+  gives it back. The example that goes with a pattern is not written.
+- `files` is the list of file names, or `{ "pattern" }` (and `"flags"`) for a regular expression. A rule that gives its
+  files in another way has `{ "computed": true }`.
+
+A program gets the same list from `catalogue(rules.list)`, both exported from the package, once the rules are loaded
+(see [Programmatic Usage](#programmatic-usage)).
 
 ## Programmatic Usage
 
