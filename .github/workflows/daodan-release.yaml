@@ -4,6 +4,7 @@ on:
   push:
     branches: [feature/stack-detection]
     tags: ["v*-daodan.*"]
+  workflow_dispatch: # builds the branch it is started on and releases it under the tag of its version
 
 permissions:
   contents: read
@@ -54,7 +55,7 @@ jobs:
           if-no-files-found: error
 
   release:
-    if: startsWith(github.ref, 'refs/tags/')
+    if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch'
     needs: package
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -74,11 +75,11 @@ jobs:
       - name: Create the release
         run: |
           version="v$(node -p 'require("./package.json").version')"
-          if [ "$GITHUB_REF_NAME" != "$version" ]; then
+          if [ "$GITHUB_REF_TYPE" = tag ] && [ "$GITHUB_REF_NAME" != "$version" ]; then
             echo "::error::tag $GITHUB_REF_NAME is not the package version $version"
             exit 1
           fi
           sha256=$(sha256sum "$TGZ" | cut -d' ' -f1)
           echo "sha256 $sha256  $TGZ"
-          gh release create "$GITHUB_REF_NAME" "$TGZ" --title "$GITHUB_REF_NAME" \
+          gh release create "$version" "$TGZ" --target "$GITHUB_SHA" --title "$version" \
             --notes "Built by GitHub Actions from $GITHUB_SHA. sha256 of $TGZ: $sha256"
