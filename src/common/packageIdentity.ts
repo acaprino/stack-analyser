@@ -1,14 +1,19 @@
 import type { SupportedDeps } from '../types/rule.js';
 
-/** A tag follows the last slash. A colon before it belongs to a registry port. */
+/** The repository of an image as it is written, without its tag or digest. A tag follows the last slash. A colon before it belongs to a registry port. */
+export function imageRepository(image: string): string {
+  const [tagged] = image.split('@', 1);
+  const colon = tagged.indexOf(':', tagged.lastIndexOf('/') + 1);
+  return colon >= 0 ? tagged.slice(0, colon) : tagged;
+}
+
+/** The repository as the rules compare it, in lower case and without Docker Hub's registry and `library/`, and the tag or digest. */
 export function imageReference(image: string): { name: string; version: string } {
   const [tagged, digest] = image.split('@', 2);
-  const colon = tagged.indexOf(':', tagged.lastIndexOf('/') + 1);
-  const hasTag = colon >= 0;
-  const repository = (hasTag ? tagged.slice(0, colon) : tagged).toLowerCase();
-  const name = repository.replace(/^(?:(?:index\.|registry-1\.)?docker\.io\/)?library\/(?=[^/]+$)/, '')
+  const repository = imageRepository(tagged);
+  const name = repository.toLowerCase().replace(/^(?:(?:index\.|registry-1\.)?docker\.io\/)?library\/(?=[^/]+$)/, '')
     .replace(/^(?:index\.|registry-1\.)?docker\.io\//, '');
-  const tag = hasTag ? tagged.slice(colon + 1) : '';
+  const tag = tagged.slice(repository.length + 1);
   return { name, version: digest ? (tag ? `${tag}@${digest}` : digest) : tag || 'latest' };
 }
 

@@ -285,6 +285,9 @@ The exact types `AnalyserJson` can be found [here](./src/types/index.ts)
 Every technology of a component has at least one `evidence` item: the `kind` of what was found (`package`,
 `image`, `action`, `terraform`, `file`, `extension`, `env` or `source`), its `value`, the `path` where it was found
 and, when the reader knows it, the `line`. The `reason` sentences are unchanged and stay next to the evidence.
+The `value` of a package, image or action is its name as the file or the declaration writes it. An image is matched by
+its repository, without Docker Hub's registry and `library/` (`docker.io/library/postgres:16` is matched as `postgres`),
+and its `value` is the repository as written, without the tag or digest (`docker.io/library/postgres`).
 
 <details>
   <summary>Output</summary>

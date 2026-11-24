@@ -1,6 +1,6 @@
 import { DockerfileParser } from 'dockerfile-ast';
 
-import { imageReference } from '../../../common/packageIdentity.js';
+import { imageReference, imageRepository } from '../../../common/packageIdentity.js';
 import { Payload } from '../../../payload/index.js';
 
 import type { ComponentMatcher } from '../../../types/rule.js';
@@ -27,12 +27,15 @@ export const detectDockerfile: ComponentMatcher = async (files, provider) => {
 
     const component = new Payload({ name: file.name, folderPath: file.fp });
     component.addTech('docker', [`FROM in ${file.name}`], [{ kind: 'file', value: file.name, path: file.fp }]);
+    // The evidence names an image as the file writes it; the dependency, as the rules compare it.
+    const declared: string[] = [];
     for (const reference of images) {
       const { name, version } = imageReference(reference);
       if (!name || name === 'scratch' || name.includes('$')) continue;
       component.dependencies.push(['docker', name, version]);
+      declared.push(imageRepository(reference));
     }
-    component.addDependencyTechs(component.dependencies.map(([, name]) => name), 'docker', file.fp);
+    component.addDependencyTechs(declared, 'docker', file.fp);
     group.addChild(component);
     group.path.add(file.fp);
   }

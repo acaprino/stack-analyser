@@ -1,7 +1,7 @@
 import { parse } from 'yaml';
 
 import { l } from '../../../common/log.js';
-import { imageReference } from '../../../common/packageIdentity.js';
+import { imageReference, imageRepository } from '../../../common/packageIdentity.js';
 import { Payload } from '../../../payload/index.js';
 import { isRecord, projectPath } from '../packageManifest.js';
 
@@ -15,7 +15,7 @@ function addImage(pl: Payload, value: unknown, file: string): void {
   const { name, version } = imageReference(image);
   if (!name || /[\s$]/.test(name)) return;
   pl.dependencies.push(['docker', name, version]);
-  pl.addDependencyTechs([name], 'docker', file);
+  pl.addDependencyTechs([imageRepository(image)], 'docker', file);
 }
 
 function addAction(pl: Payload, uses: unknown, file: string): void {

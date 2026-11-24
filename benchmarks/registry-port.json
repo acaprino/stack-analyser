@@ -464,6 +464,9 @@
       "npm:pusher",
       "python:pusher"
     ],
+    "quarkus": [
+      "pattern:maven:^io\\.quarkus:"
+    ],
     "questdb": [
       "python:questdb"
     ],
@@ -870,11 +873,6 @@
       "id": "postgresql",
       "sign": "pattern:deno:\\/x\\/postgres@",
       "reason": "The fork anchors the module URL to deno.land, as `/^https:\\/\\/deno\\.land\\/x\\/postgres(?:@[^/?#]+)?\\//`; the registry's `\\/x\\/postgres@` has no host and would accept the same path on any server (a test shows that another host's postgres module is not PostgreSQL)."
-    },
-    {
-      "id": "quarkus",
-      "sign": "pattern:maven:^io\\.quarkus:",
-      "reason": "`^io\\.quarkus:` would give every Quarkus extension to quarkus. The fork gives the extensions that are technologies of their own to those (quarkus-rest, qute, panache and others), and a package identifies one technology, so quarkus lists only its core artifacts."
     },
     {
       "id": "rabbitmq",

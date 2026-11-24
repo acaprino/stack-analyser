@@ -71,6 +71,25 @@ describe('declarations', () => {
     });
   });
 
+  it('reports a declared image by the name that was sent, not by the repository it is matched as', async () => {
+    const result = await analyser({ provider: project(), declarations: [
+      { type: 'docker', name: 'docker.io/apache/tika', path: 'compose.yaml', line: 3, source: 'image-scan' },
+      { type: 'docker', name: 'index.docker.io/library/postgres', path: 'compose.yaml', line: 7, source: 'image-scan' },
+      { type: 'docker', name: 'registry-1.docker.io/bitnami/postgresql', path: 'compose.yaml', line: 9, source: 'image-scan' },
+    ] });
+    const evidence = result.toJson('').evidence;
+    expect(evidence).toContainEqual({
+      tech: 'apachetika', kind: 'image', value: 'docker.io/apache/tika', path: '/compose.yaml', line: 3, source: 'image-scan',
+    });
+    expect(evidence).toContainEqual({
+      tech: 'postgresql', kind: 'image', value: 'index.docker.io/library/postgres', path: '/compose.yaml', line: 7, source: 'image-scan',
+    });
+    expect(evidence).toContainEqual({
+      tech: 'postgresql', kind: 'image', value: 'registry-1.docker.io/bitnami/postgresql', path: '/compose.yaml', line: 9,
+      source: 'image-scan',
+    });
+  });
+
   it('writes the path of a declaration the way the readers write theirs', async () => {
     // The same file, the same name and the same source as the fork's own evidence: they are one item.
     const result = flatten(await analyser({ provider: project(), declarations: [

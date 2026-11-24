@@ -50,6 +50,33 @@ it('reads Python dependency groups and Poetry tables, retaining extras and ignor
   expect(result.dependencies).toContainEqual(['python', 'fastapi', '0.100']);
 });
 
+it('leaves out the Python distributions that uv takes from the workspace or a local path', async () => {
+  const result = await scan({ 'pyproject.toml': `[project]
+name = "app"
+dependencies = ["sentry-sdk>=2", "Django", "fastapi", "flask", "pydantic"]
+[dependency-groups]
+test = ["pytest"]
+[tool.uv.sources]
+sentry_sdk = { workspace = true }
+django = { path = "../django", editable = true }
+fastapi = { git = "https://github.com/fastapi/fastapi" }
+flask = { index = "internal" }
+pydantic = { url = "https://example.com/pydantic-2.0-py3-none-any.whl" }
+pytest = [{ path = "../pytest", marker = "sys_platform == 'linux'" }, { index = "pypi", marker = "sys_platform != 'linux'" }]
+` });
+  expect([...result.techs]).toEqual(expect.arrayContaining(['fastapi', 'flask', 'pydantic', 'pytest']));
+  for (const id of ['sentry', 'django']) expect([...result.techs]).not.toContain(id);
+});
+
+it('leaves out a Python distribution referenced by a file URL, as PDM writes a path', async () => {
+  const result = await scan({
+    'pyproject.toml': '[project]\nname = "app"\ndependencies = ["requests @ file:///${PROJECT_ROOT}/../requests", "fastapi"]\n',
+    'svc/requirements.txt': 'httpx @ file:///srv/httpx ; python_version >= "3.8"\ncelery==5\n',
+  });
+  expect([...result.techs]).toEqual(expect.arrayContaining(['fastapi', 'celery']));
+  for (const id of ['requests', 'httpx']) expect([...result.techs]).not.toContain(id);
+});
+
 it('invalid pyproject metadata cannot abort analysis of independent projects', async () => {
   const result = await scan({ 'pyproject.toml': 'project = "invalid"', 'app/requirements.txt': 'pytest==8' });
   expect([...result.techs]).toContain('pytest');
@@ -131,6 +158,23 @@ it('records the manifest of every other ecosystem that declares packages or imag
     { tech: 'tokio', kind: 'package', value: 'tokio', path: '/rs/Cargo.toml', source: 'stack-analyser' },
     { tech: 'nodejs', kind: 'image', value: 'node', path: '/Dockerfile', source: 'stack-analyser' },
     { tech: 'spring-boot', kind: 'package', value: 'org.springframework.boot:spring-boot-starter-web', path: '/java/pom.xml', source: 'stack-analyser' },
+  ]));
+});
+
+it('records an image as the file writes it, and its dependency as the rules compare it', async () => {
+  const result = await scan({
+    'Dockerfile': 'FROM docker.io/library/node:20\n',
+    'docker-compose.yml': 'services:\n  db:\n    image: registry-1.docker.io/bitnami/postgresql:16\n',
+    '.github/workflows/ci.yml': 'on: push\njobs:\n  build:\n    runs-on: ubuntu-latest\n    container: index.docker.io/library/redis:7\n',
+  });
+  const all = [result, ...result.childs].flatMap((c) => c.toJson('').evidence);
+  expect(all).toEqual(expect.arrayContaining([
+    { tech: 'nodejs', kind: 'image', value: 'docker.io/library/node', path: '/Dockerfile', source: 'stack-analyser' },
+    { tech: 'postgresql', kind: 'image', value: 'registry-1.docker.io/bitnami/postgresql', path: '/docker-compose.yml', source: 'stack-analyser' },
+    { tech: 'redis', kind: 'image', value: 'index.docker.io/library/redis', path: '/.github/workflows/ci.yml', source: 'stack-analyser' },
+  ]));
+  expect(result.dependencies).toEqual(expect.arrayContaining([
+    ['docker', 'node', '20'], ['docker', 'bitnami/postgresql', '16'], ['docker', 'redis', '7'],
   ]));
 });
 

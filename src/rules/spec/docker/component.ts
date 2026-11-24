@@ -1,7 +1,7 @@
 import { parse } from 'yaml';
 
 import { l } from '../../../common/log.js';
-import { imageReference } from '../../../common/packageIdentity.js';
+import { imageReference, imageRepository } from '../../../common/packageIdentity.js';
 import { matchDependencies } from '../../../matchDependencies.js';
 import { Payload } from '../../../payload/index.js';
 import { isRecord } from '../packageManifest.js';
@@ -58,7 +58,7 @@ export const detectDockerComponent: ComponentMatcher = async (files, provider) =
           parent: pl,
           dependencies: [['docker', imageName, imageVersion || 'latest']],
           reason: tech ? tech[1] : `matched: ${imageName}`,
-          evidence: [{ kind: 'image', value: imageName, path: file.fp }],
+          evidence: [{ kind: 'image', value: imageRepository(service.image), path: file.fp }],
         })
       );
     }

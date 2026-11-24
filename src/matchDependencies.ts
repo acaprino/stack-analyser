@@ -1,5 +1,5 @@
 import { dependencies } from './loader.js';
-import { imageReference } from './common/packageIdentity.js';
+import { imageReference, imageRepository } from './common/packageIdentity.js';
 
 import type { AllowedKeys, EvidenceKind, SupportedDeps } from './index.js';
 
@@ -7,16 +7,18 @@ type DependencyRule = (typeof dependencies)[SupportedDeps][number];
 
 /**
  * Every rule that matches one of the names, in input order then rule order.
- * `name` is what the rules were tested against: an image is reduced to its repository.
+ * `name` is the name as it was given, an image without its tag or digest. The rules are tested against an image
+ * reduced to its repository, and against any other name as it is.
  */
 function matchRules(pkgs: string[], type: SupportedDeps): { name: string; ref: DependencyRule }[] {
   const hits: { name: string; ref: DependencyRule }[] = [];
   for (const dep of pkgs) {
-    const name = type === 'docker' ? imageReference(dep).name : dep;
+    const name = type === 'docker' ? imageRepository(dep) : dep;
+    const compared = type === 'docker' ? imageReference(dep).name : dep;
     for (const ref of dependencies[type]) {
       // Third-party rules may use a global or sticky expression.
       ref.match.lastIndex = 0;
-      if (ref.match.test(name)) {
+      if (ref.match.test(compared)) {
         hits.push({ name, ref });
       }
     }

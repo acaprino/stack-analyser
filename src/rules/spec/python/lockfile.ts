@@ -16,6 +16,37 @@ const PROJECT = 'pyproject.toml';
 // A bare URL, directive or local path cannot establish a distribution name.
 const requirement = /^([A-Za-z0-9](?:[A-Za-z0-9._-]*[A-Za-z0-9])?)(?:\[[\w., -]+\])?\s*(?=$|[<>=!~;@(])/;
 
+/** PEP 503: names that differ only in case and in runs of `-`, `_` and `.` are one distribution. */
+const normalized = (name: string): string => name.toLowerCase().replace(/[-_.]+/g, '-');
+
+/** A PEP 508 direct reference to a `file:` URL (`name @ file:///…`, as PDM writes a path) names a local distribution. */
+function localReference(specifier: string): boolean {
+  if (!specifier.startsWith('@')) return false;
+  try {
+    return new URL(specifier.slice(1).trim()).protocol === 'file:';
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * The distributions that `[tool.uv.sources]` takes from the workspace (`workspace = true`) or from a local path
+ * (`path = …`), by normalised name: they are not external packages. A git, url or index source is external. A list
+ * of sources, one per marker, is local only when every source in it is.
+ */
+function uvLocalSources(tool: unknown): Set<string> {
+  const local = new Set<string>();
+  const sources = isRecord(tool) && isRecord(tool.uv) ? tool.uv.sources : undefined;
+  if (!isRecord(sources)) return local;
+  const isLocal = (source: unknown): boolean =>
+    isRecord(source) && (source.workspace === true || typeof source.path === 'string');
+  for (const [name, value] of Object.entries(sources)) {
+    const entries: unknown[] = Array.isArray(value) ? value : [value];
+    if (entries.length && entries.every(isLocal)) local.add(normalized(name));
+  }
+  return local;
+}
+
 export const detectPythonLockfile: ComponentMatcher = async (files, provider) => {
   const manifests: Payload[] = [];
   for (const file of files) {
@@ -64,6 +95,7 @@ function requirements(lines: unknown[]): Dependency[] {
     const match = requirement.exec(line);
     if (!match) continue;
     const specifier = line.slice(match[0].length).split(';', 1)[0].trim();
+    if (localReference(specifier)) continue;
     const version = /^\(?\s*[~!=<>]+\s*([^,\s)]+)/.exec(specifier)?.[1] || 'latest';
     dependencies.push(['python', match[1], version]);
   }
@@ -99,7 +131,8 @@ export function parsePyproject({
   for (const table of [prj['optional-dependencies'], json['dependency-groups']]) {
     if (isRecord(table)) groups.push(...Object.values(table));
   }
-  const dependencies = requirements(groups.filter(Array.isArray).flat());
+  const local = uvLocalSources(json.tool);
+  const dependencies = requirements(groups.filter(Array.isArray).flat()).filter(([, name]) => !local.has(normalized(name)));
   const poetry = isRecord(json.tool) ? json.tool.poetry : undefined;
   if (isRecord(poetry)) {
     const tables: unknown[] = [poetry.dependencies, poetry['dev-dependencies']];
