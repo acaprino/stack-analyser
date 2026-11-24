@@ -5,6 +5,6 @@ register({
   name: 'Cats',
   type: 'tool',
   dependencies: [
-    { type: 'maven', name: /^org\.typelevel:cats-core(?:_[a-z0-9.]+)?$/, example: 'org.typelevel:cats-core' },
+    { type: 'maven', name: /^org\.typelevel:cats-core(?:_[a-z0-9.]+)*$/, example: 'org.typelevel:cats-core' },
   ],
 });

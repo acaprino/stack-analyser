@@ -132,6 +132,7 @@ exports[`php > should match everything 1`] = `
   "newrelic",
   "notion",
   "novu",
+  "okta",
   "okta.oauth",
   "openai",
   "openapi",

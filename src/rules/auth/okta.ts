@@ -12,5 +12,7 @@ register({
     { type: 'ruby', name: 'oktakit' },
     { type: 'npm', name: '@pulumi/okta' },
     { type: 'python', name: 'pulumi-okta' },
+    // Sign-in with Okta (okta.oauth) runs against an Okta organisation.
+    { type: 'php', name: 'socialiteproviders/okta' },
   ],
 });

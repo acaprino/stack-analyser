@@ -192,6 +192,16 @@ it.each([
   expect(all).toContainEqual({ tech: 'docker', kind: 'file', value: name, path: `/${name}`, source: 'stack-analyser' });
 });
 
+it('reads docker from a Compose file that only includes other Compose files', async () => {
+  const result = await scan({ 'docker-compose.yml': 'include:\n  - db/compose.yaml\n  - path: web/compose.yaml\n' });
+  const all = [result, ...result.childs].flatMap((c) => c.toJson('').evidence);
+  expect(result.techs.has('docker')).toBe(true);
+  expect(all).toContainEqual({
+    tech: 'docker', kind: 'file', value: 'docker-compose.yml', path: '/docker-compose.yml', source: 'stack-analyser',
+  });
+  expect((await scan({ 'docker-compose.yml': 'include: []\n' })).techs.has('docker')).toBe(false);
+});
+
 it.each([
   ['exunit', 'ExUnit.start', 'test_helper.exs', 'ExUnit.start()\n'],
   ['exunit', 'ExUnit.configuration', 'test_helper.exs', 'ExUnit.configuration(trace: true)\n'],

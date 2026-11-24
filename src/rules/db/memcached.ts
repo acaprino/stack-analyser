@@ -8,6 +8,7 @@ register({
   dependencies: [
     { type: 'npm', name: 'memcached' },
     { type: 'docker', name: /^memcached(?:\/|$)/, example: 'memcached' },
+    { type: 'docker', name: 'bitnami/memcached' },
     { type: 'rust', name: 'memcache-async' },
     { type: 'rust', name: 'memcache' },
     { type: 'ruby', name: 'dalli' },

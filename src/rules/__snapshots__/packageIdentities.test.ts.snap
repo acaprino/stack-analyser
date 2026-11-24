@@ -2,11 +2,17 @@
 
 exports[`package identities > no package identifies two technologies 1`] = `
 [
+  "php:socialiteproviders/okta → okta, okta.oauth",
   "npm:@netlify/plugin-nextjs → netlify, nextjs",
+  "maven:org.springframework.boot:spring-boot-starter-data-elasticsearch → elasticsearch, spring-data-elasticsearch",
+  "npm:mongoose → mongodb, mongoose",
+  "maven:org.springframework.boot:spring-boot-starter-data-mongodb → mongodb, spring-data-mongodb",
   "nuget:aspire.npgsql.entityframeworkcore.postgresql → entity-framework-core, postgresql",
   "nuget:npgsql.entityframeworkcore.postgresql → entity-framework-core, postgresql",
+  "maven:org.springframework.boot:spring-boot-starter-data-redis → redis, spring-data-redis",
   "nuget:mudblazor → blazor, mudblazor",
   "maven:io.quarkus:quarkus-rest-qute → quarkus-rest, qute",
+  "maven:org.springframework.boot:spring-boot-starter-amqp → rabbitmq, spring-amqp",
   "maven:io.quarkus:quarkus-hibernate-reactive-panache → hibernate-reactive, panache",
   "maven:io.quarkus:quarkus-hibernate-orm-panache → hibernate, panache",
   "maven:io.quarkus:quarkus-hibernate-orm-panache-kotlin → hibernate, panache",

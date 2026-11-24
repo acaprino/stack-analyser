@@ -1,6 +1,6 @@
 {
   "name": "stack-analyser-daodan",
-  "version": "1.27.6-daodan.4",
+  "version": "1.27.6-daodan.5",
   "description": "",
   "main": "./dist/index.js",
   "bin": {

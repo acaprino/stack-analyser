@@ -12,6 +12,12 @@ register({
     { type: 'npm', name: '@opentelemetry/instrumentation-ioredis' },
     { type: 'npm', name: 'ioredis' },
     { type: 'docker', name: /^redis(?:\/|$)/, example: 'redis' },
+    { type: 'docker', name: 'bitnami/redis' },
+    { type: 'docker', name: 'bitnami/redis-cluster' },
+    { type: 'docker', name: 'bitnami/redis-sentinel' },
+    { type: 'docker', name: 'circleci/redis' },
+    { type: 'docker', name: 'cimg/redis' },
+    { type: 'docker', name: 'ubuntu/redis' },
     { type: 'rust', name: 'redis' },
     { type: 'rust', name: 'redis-async' },
     { type: 'ruby', name: 'redis' },
@@ -30,5 +36,8 @@ register({
     { type: 'nuget', name: 'StackExchange.Redis' },
     { type: 'maven', name: 'io.lettuce:lettuce-core' },
     { type: 'maven', name: 'redis.clients:jedis' },
+    // The starter brings Spring Data Redis and the Lettuce client: it connects to Redis.
+    { type: 'maven', name: 'org.springframework.boot:spring-boot-starter-data-redis' },
+    { type: 'maven', name: 'org.springframework.boot:spring-boot-starter-data-redis-reactive' },
   ],
 });

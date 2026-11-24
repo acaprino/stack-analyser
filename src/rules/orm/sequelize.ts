@@ -9,6 +9,8 @@ register({
     { type: 'npm', name: 'sequelize' },
     { type: 'npm', name: 'sequelize-cli' },
     { type: 'npm', name: 'sequelize-typescript' },
+    { type: 'npm', name: 'sequelize-auto' },
+    { type: 'npm', name: '@nestjs/sequelize' },
     { type: 'npm', name: /^@sequelize\//, example: '@sequelize/core' },
   ],
 });

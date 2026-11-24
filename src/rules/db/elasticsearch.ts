@@ -8,6 +8,9 @@ register({
   dependencies: [
     { type: 'npm', name: '@elastic/elasticsearch' },
     { type: 'docker', name: /^elasticsearch(?:\/|$)/, example: 'elasticsearch' },
+    { type: 'docker', name: 'docker.elastic.co/elasticsearch/elasticsearch' },
+    { type: 'docker', name: 'docker.elastic.co/elasticsearch/elasticsearch-oss' },
+    { type: 'docker', name: 'bitnami/elasticsearch' },
     {
       type: 'terraform',
       name: 'registry.terraform.io/phillbaker/elasticsearch',
@@ -23,5 +26,7 @@ register({
     },
     { type: 'python', name: 'elasticsearch' },
     { type: 'terraform.resource', name: 'airbyte_destination_elasticsearch' },
+    // The starter brings Spring Data Elasticsearch and the Elasticsearch client.
+    { type: 'maven', name: 'org.springframework.boot:spring-boot-starter-data-elasticsearch' },
   ],
 });

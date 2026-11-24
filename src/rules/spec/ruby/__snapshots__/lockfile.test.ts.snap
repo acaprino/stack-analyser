@@ -735,6 +735,11 @@ exports[`ruby (component) > should match everything 2`] = `
   ],
   [
     "ruby",
+    "fluent-plugin-datadog",
+    "1.0.0",
+  ],
+  [
+    "ruby",
     "fluent-plugin-kafka",
     "1.0.0",
   ],
@@ -1126,6 +1131,16 @@ exports[`ruby (component) > should match everything 2`] = `
   [
     "ruby",
     "logstash-logger",
+    "1.0.0",
+  ],
+  [
+    "ruby",
+    "logstash-output-datadog",
+    "1.0.0",
+  ],
+  [
+    "ruby",
+    "logstash-output-datadog_metrics",
     "1.0.0",
   ],
   [

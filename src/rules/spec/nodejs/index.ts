@@ -15,6 +15,17 @@ register({
     { type: 'docker', name: 'bitnami/node' },
     { type: 'docker', name: 'okteto/node' },
     { type: 'docker', name: 'gcr.io/distroless/nodejs24-debian13' },
+    {
+      type: 'docker',
+      name: /^gcr\.io\/distroless\/nodejs(?:\d+-debian\d+)?$/,
+      example: 'gcr.io/distroless/nodejs20-debian12',
+    },
+    // Red Hat's Node.js images.
+    {
+      type: 'docker',
+      name: /^(?:registry\.access\.redhat\.com|registry\.redhat\.io)\/ubi\d+\/nodejs-\d+(?:-minimal)?$/,
+      example: 'registry.access.redhat.com/ubi8/nodejs-18',
+    },
   ],
   detect: detectNodeComponent,
 });

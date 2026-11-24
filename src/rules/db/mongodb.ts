@@ -27,7 +27,12 @@ register({
     { type: 'golang', name: 'go.mongodb.org/mongo-driver' },
     { type: 'npm', name: '@nestjs/mongoose' },
     { type: 'npm', name: 'mongoose-autopopulate' },
+    // Mongoose is a technology of its own and works only with MongoDB.
+    { type: 'npm', name: 'mongoose' },
     { type: 'maven', name: 'org.mongodb:mongodb-driver-sync' },
+    // The starter brings Spring Data MongoDB and the MongoDB driver: it connects to MongoDB.
+    { type: 'maven', name: 'org.springframework.boot:spring-boot-starter-data-mongodb' },
+    { type: 'maven', name: 'org.springframework.boot:spring-boot-starter-data-mongodb-reactive' },
     { type: 'nuget', name: 'MongoDB.Driver' },
   ],
 });
