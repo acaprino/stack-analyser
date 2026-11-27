@@ -94,8 +94,9 @@ function moduleArguments(args: string[], catalog: Catalog): Dependency[] {
 
 // Gradle shares Java's unbraced control flow. A newline after "if (condition)" (or "else")
 // does not start a new independent declaration.
+// A trailing comma continues the argument list on the next line, in both DSLs.
 function awaitsBody(statement: string[]): boolean {
-  if (statement.at(-1) === 'else') return true;
+  if (statement.at(-1) === 'else' || statement.at(-1) === ',') return true;
   const guard = Math.max(...['if', 'for', 'while'].map((word) => statement.lastIndexOf(word)));
   if (guard < 0 || statement[guard + 1] !== '(') return false;
   let depth = 1;
@@ -116,7 +117,19 @@ export function gradleDependencies(source: string, catalog: Catalog): Dependency
   let parens = 0;
   let lineBreak = false;
   function read() {
-    const [call, ...rest] = statement;
+    // A branch of `if`/`else` in the top-level block declares a possible build target, braced or not: its guard goes.
+    let tokens = statement;
+    while (blocks[0] === 'dependencies' && (tokens[0] === 'else' || (tokens[0] === 'if' && tokens[1] === '('))) {
+      if (tokens[0] === 'else') {
+        tokens = tokens.slice(1);
+        continue;
+      }
+      let depth = 0;
+      const end = tokens.findIndex((token) => (depth += token === '(' ? 1 : token === ')' ? -1 : 0) === 0 && token === ')');
+      if (end < 0) return;
+      tokens = tokens.slice(end + 1);
+    }
+    const [call, ...rest] = tokens;
     if (!call) return;
     const args = rest.filter((t) => t !== '(' && t !== ')');
     if (blocks.length === 0 && call === 'apply' && args.length === 3 && args[0] === 'plugin' && [':', '='].includes(args[1]!)) {
@@ -139,7 +152,7 @@ export function gradleDependencies(source: string, catalog: Catalog): Dependency
         if (entry) result.push(entry);
       }
     } else if (configuration.test(call) || call === 'add') {
-      const topLevel = blocks.length === 1 && blocks[0] === 'dependencies';
+      const topLevel = blocks[0] === 'dependencies' && blocks.slice(1).every((block) => block === 'branch');
       const kotlinSet = blocks[0] === 'kotlin' && blocks[1] === 'sourceSets' && (
         (blocks.length === 3 && /^\w+\.dependencies$/.test(blocks[2])) ||
         (blocks.length === 4 && blocks[2] === 'source set' && blocks[3] === 'dependencies')
@@ -168,6 +181,7 @@ export function gradleDependencies(source: string, catalog: Catalog): Dependency
     if (token === '{') {
       read();
       let block = statement.length === 1 ? statement[0] : '';
+      if (blocks[0] === 'dependencies' && ['if', 'else'].includes(statement[0]!)) block = 'branch';
       if (blocks.length === 2 && blocks[0] === 'kotlin' && blocks[1] === 'sourceSets') {
         const delegate = statement.length === 4 && statement[0] === 'val' && statement[2] === 'by' &&
           ['getting', 'creating'].includes(statement[3]);

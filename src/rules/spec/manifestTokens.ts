@@ -7,7 +7,9 @@ export interface Token {
   line: number;
 }
 
-type Language = 'swift' | 'elixir' | 'ruby';
+// Scala (sbt) shares Swift's comments and string delimiters; Python shares Elixir's quotes and `#` comments, without
+// interpolation, and takes `'` strings as literals.
+type Language = 'swift' | 'elixir' | 'ruby' | 'scala' | 'python';
 
 export async function sourceText(provider: BaseProvider, file: string): Promise<null | string> {
   const stat = await provider.stat(file);
@@ -88,8 +90,9 @@ export function tokens(source: string, language: Language): Token[] {
   while (i < source.length) {
     const start = i;
     const char = source[i];
-    const isSwift = language === 'swift';
+    const isSwift = language === 'swift' || language === 'scala';
     const isRuby = language === 'ruby';
+    const isPython = language === 'python';
     const quote = isSwift ? swiftQuote : isRuby ? rubyQuote : elixirQuote;
     quote.lastIndex = sigil.lastIndex = word.lastIndex = percentLiteral.lastIndex = heredoc.lastIndex = i;
     let match: RegExpExecArray | null;
@@ -145,9 +148,9 @@ export function tokens(source: string, language: Language): Token[] {
       const delimiter = isSwift ? match[2] : match[1];
       const marks = isSwift ? match[1] : '';
       const close = delimiter + marks;
-      i = stringEnd(source, quote.lastIndex, close, '\\' + marks, isSwift, 0, !isRuby || delimiter !== "'");
+      i = stringEnd(source, quote.lastIndex, close, '\\' + marks, isSwift, 0, !isPython && (!isRuby || delimiter !== "'"));
       const value = source.slice(quote.lastIndex, i - close.length);
-      const literal = (delimiter === '"' || (isRuby && delimiter === "'")) && source.slice(i - close.length, i) === close &&
+      const literal = (delimiter === '"' || ((isRuby || isPython) && delimiter === "'")) && source.slice(i - close.length, i) === close &&
         !value.includes('\\' + marks) && (isSwift || !value.includes('#{'));
       out.push(literal ? { kind: 'string', value, line } : { kind: 'opaque', value: '', line });
     } else if ((match = word.exec(source))) {

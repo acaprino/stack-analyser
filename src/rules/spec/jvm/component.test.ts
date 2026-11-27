@@ -51,7 +51,7 @@ it('recognizes Spring Boot in the Maven and Gradle modules that declare it', asy
   }
 });
 
-it('reads effective local declarations without promoting POM defaults, examples or profiles', () => {
+it('reads local declarations and those of profiles without promoting POM defaults or examples', () => {
   expect(mavenProject(`<project><artifactId>app</artifactId>
     <parent><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-parent</artifactId><version>3</version></parent>
     <dependencyManagement><dependencies><dependency><groupId>x</groupId><artifactId>managed</artifactId></dependency>
@@ -59,7 +59,8 @@ it('reads effective local declarations without promoting POM defaults, examples 
     </plugins></pluginManagement><plugins><plugin><groupId>io.test</groupId><artifactId>used-plugin</artifactId></plugin></plugins></build>
     <profiles><profile><dependencies><dependency><groupId>x</groupId><artifactId>conditional</artifactId></dependency>
     </dependencies></profile></profiles><!-- <dependencies>unused</dependencies> --></project>`)?.dependencies)
-    .toEqual([['maven', 'org.springframework.boot:spring-boot-starter-parent', '3'], ['maven', 'io.test:used-plugin', '']]);
+    .toEqual([['maven', 'org.springframework.boot:spring-boot-starter-parent', '3'], ['maven', 'io.test:used-plugin', ''],
+      ['maven', 'x:conditional', '']]);
   expect(mavenProject('<project><artifactId>broken</artifactId>')).toBeNull();
 });
 
@@ -89,6 +90,8 @@ it('reads literal Gradle dependencies and skips unapplied plugins and non-depend
   subprojects { dependencies { implementation("child:only:1") } }`, new Map())).toEqual([
     ['maven', 'org.example.actual:org.example.actual.gradle.plugin', '1'],
     ['maven', 'com.example:core', '2'],
+    ['maven', 'group:conditional', '3'],
+    ['maven', 'group:alternative', '4'],
     ['maven', 'another.group:test', '1'],
   ]);
 });

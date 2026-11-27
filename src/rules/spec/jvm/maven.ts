@@ -52,5 +52,13 @@ export function mavenProject(content: string): { name: string; dependencies: Dep
   for (const plugin of children(element(element(root.build)?.plugins), 'plugin')) {
     add(plugin, 'org.apache.maven.plugins');
   }
+  // A profile's dependencies and plugins are the project's when the profile is active (`-P`, a property, the JDK):
+  // possible build targets, as the conditional item groups of MSBuild.
+  for (const profile of children(element(root.profiles), 'profile')) {
+    for (const dependency of children(element(profile.dependencies), 'dependency')) add(dependency);
+    for (const plugin of children(element(element(profile.build)?.plugins), 'plugin')) {
+      add(plugin, 'org.apache.maven.plugins');
+    }
+  }
   return { name: root.artifactId, dependencies };
 }

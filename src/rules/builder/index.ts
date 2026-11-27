@@ -1,6 +1,9 @@
 import './astro-compiler.js';
+import './autotools.js';
 import './babel.js';
+import './cmake.js';
 import './create-react-app.js';
+import './dotnet.js';
 import './esbuild.js';
 import './hatchling.js';
 import './less.js';

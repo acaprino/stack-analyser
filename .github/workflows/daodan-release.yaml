@@ -2,7 +2,7 @@ name: Daodan release
 
 on:
   push:
-    branches: [feature/stack-detection]
+    branches: [feature/stack-detection, "daodan-*"] # a push builds and tests; only a tag or a manual start releases
     tags: ["v*-daodan.*"]
   workflow_dispatch: # builds the branch it is started on and releases it under the tag of its version
 

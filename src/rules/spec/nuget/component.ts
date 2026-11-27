@@ -93,6 +93,15 @@ function packageVersions(groups: Iterable<ItemGroup>, tag: string): Map<string, 
   return new Map(result.values());
 }
 
+// An MSBuild project SDK is a NuGet package: `<Project Sdk="Name/Version">` (several split by `;`), `<Sdk Name>` and
+// `<Import Sdk>`. Its version comes from global.json's `msbuild-sdks` or the attribute; the name is enough to match.
+function projectSdks(project: Record<string, unknown>): string[] {
+  const names = typeof project['@_Sdk'] === 'string' ? project['@_Sdk'].split(';') : [];
+  for (const item of rows(project, 'Sdk')) if (typeof item['@_Name'] === 'string') names.push(item['@_Name']);
+  for (const item of rows(project, 'Import')) if (typeof item['@_Sdk'] === 'string') names.push(item['@_Sdk']);
+  return names.map((sdk) => sdk.split('/')[0].trim()).filter((sdk) => /^[\w.-]+$/.test(sdk));
+}
+
 function lockedPackages(content: string): Map<string, string> {
   const pinned = new Map<string, string>();
   let data: unknown;
@@ -195,7 +204,7 @@ export const detectNugetComponent: ComponentMatcher = async (files, provider) =>
         project['@_Sdk'].split(';').some((sdk) => sdk.split('/')[0].trim() === 'Microsoft.NET.Sdk.Web')) {
       frameworks.set('Microsoft.AspNetCore.App', '');
     }
-    payload.addDependencyTechs([...frameworks.keys()], 'nuget', file.fp);
+    payload.addDependencyTechs([...frameworks.keys(), ...projectSdks(project)], 'nuget', file.fp);
     payloads.push(payload);
   }
   if (payloads.length) return payloads;

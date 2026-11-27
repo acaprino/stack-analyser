@@ -12,16 +12,26 @@ export function isRecord(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === 'object' && !Array.isArray(value);
 }
 
-/** `file` is the manifest that holds the requirements: it is the evidence of every technology they match. */
+/** Whether `target` (absolute, or relative to `from`, a folder) stays inside the analysed copy of the project. */
+export function insideProject(base: string, from: string, target: string): boolean {
+  const relative = path.relative(path.resolve(base), path.resolve(from, target));
+  return !(relative === '..' || relative.startsWith(`..${path.sep}`) || path.isAbsolute(relative));
+}
+
+/**
+ * `file` is the manifest that holds the requirements: it is the evidence of every technology they match. A requirement
+ * in `local` comes from a folder of the project itself: it stays a dependency and matches no technology.
+ */
 export function packageComponent(
   name: string,
   folderPath: string,
   ecosystem: SupportedDeps,
   requirements: Map<string, string>,
-  file: string
+  file: string,
+  local: ReadonlySet<string> = new Set()
 ): Payload {
   const payload = new Payload({ name, folderPath });
   payload.dependencies = [...requirements].map(([pkg, version]) => [ecosystem, pkg, version]);
-  payload.addDependencyTechs([...requirements.keys()], ecosystem, file);
+  payload.addDependencyTechs([...requirements.keys()].filter((pkg) => !local.has(pkg)), ecosystem, file);
   return payload;
 }
