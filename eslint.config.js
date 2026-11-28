@@ -2,7 +2,8 @@ import lint from '@h1fra/eslint-config';
 
 export default [
   {
-    ignores: ['**/dist/', '**/node_modules/', '**/.wrangler'],
+    // *.generated.ts is written by `npm run prebuild` and not committed.
+    ignores: ['**/dist/', '**/node_modules/', '**/.wrangler', '**/*.generated.ts'],
   },
   ...lint.configs.base,
   ...lint.configs.strict,

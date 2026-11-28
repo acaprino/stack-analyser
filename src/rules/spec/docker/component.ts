@@ -62,7 +62,8 @@ export const detectDockerComponent: ComponentMatcher = async (files, provider) =
       }
       const matched = [...matchDependencies([imageName], 'docker').entries()];
 
-      const tech = matched[0];
+      // No rule may know the image.
+      const tech = matched.at(0);
       pl.addChild(
         new Payload({
           name:

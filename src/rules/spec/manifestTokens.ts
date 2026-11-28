@@ -165,7 +165,7 @@ export function tokens(source: string, language: Language): Token[] {
       char === '/' &&
       (out.at(-1)?.line !== line ||
         ['=', '~', '(', '[', '{', ',', ';', 'return', 'when', 'if', 'unless'].includes(
-          out.at(-1)!.value
+          out.at(-1)?.value ?? ''
         ))
     ) {
       i = stringEnd(source, { start: i + 1, close: '/', escape: '\\', isSwift: false });

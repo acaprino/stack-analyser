@@ -49,8 +49,7 @@ async function folders(provider: BaseProvider, pattern: string): Promise<string[
  */
 async function localPackages(
   json: Record<string, unknown>,
-  file: string,
-  provider: BaseProvider
+  { file, provider }: { file: string; provider: BaseProvider }
 ): Promise<Set<string>> {
   const names = new Set<string>();
   const repositories = isRecord(json.repositories)
@@ -96,7 +95,7 @@ export const detectPhpComponent: ComponentMatcher = async (files, provider) => {
   }
   if (!isRecord(json)) return false;
   const name = typeof json.name === 'string' && json.name.trim() ? json.name : undefined;
-  const sections = [json.require, json['require-dev']].filter(isRecord);
+  const sections = [json.require, json['require-dev']].filter((section) => isRecord(section));
   if (!name && sections.length === 0) return false;
 
   const requirements = new Map<string, string>();
@@ -105,7 +104,7 @@ export const detectPhpComponent: ComponentMatcher = async (files, provider) => {
       if (typeof version === 'string') requirements.set(id, version);
     }
   }
-  const fromFolders = await localPackages(json, file.fp, provider);
+  const fromFolders = await localPackages(json, { file: file.fp, provider });
   const local = new Set([...requirements.keys()].filter((id) => fromFolders.has(id.toLowerCase())));
   const component = packageComponent(name ?? (path.basename(path.dirname(file.fp)) || 'virtual'), {
     folderPath: file.fp,
@@ -122,7 +121,7 @@ export const detectPhpComponent: ComponentMatcher = async (files, provider) => {
   for (const license of licenses) {
     if (typeof license !== 'string') continue;
     const detected = detectLicense(license);
-    if (detected) component.addLicenses(detected);
+    if (detected !== false) component.addLicenses(detected);
   }
   return component;
 };

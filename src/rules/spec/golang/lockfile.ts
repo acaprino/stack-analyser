@@ -49,7 +49,10 @@ function goMod(source: string): { modules: Map<string, string>; replacements: Re
     )
       continue;
     const fields = /^(?:"([^"\s]+)"|([^\s"]+))\s+(?:"(v[^"\s]+)"|(v[^\s"]+))$/.exec(declaration);
-    if (fields) modules.set(fields[1] ?? fields[2], fields[3] ?? fields[4]);
+    if (!fields) continue;
+    // Each pair holds the quoted or the bare form: only the one that matched is set.
+    const [, quoted, bare, quotedVersion, bareVersion] = fields as (string | undefined)[];
+    modules.set(quoted ?? bare ?? '', quotedVersion ?? bareVersion ?? '');
   }
   return { modules, replacements };
 }

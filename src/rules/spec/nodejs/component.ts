@@ -64,7 +64,7 @@ export const detectNodeComponent: ComponentMatcher = async (files, provider) => 
     });
     pl.addDependencyTechs([...external], { type: 'npm', file: file.fp });
 
-    if (json.license && typeof json.license === 'string') {
+    if (typeof json.license === 'string' && json.license !== '') {
       const lic = detectLicense(json.license);
       if (lic !== false) {
         pl.addLicenses(lic);

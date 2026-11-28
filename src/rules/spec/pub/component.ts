@@ -68,7 +68,8 @@ export const detectPubComponent: ComponentMatcher = async (files, provider) => {
     }
   }
   if (name === 'virtual' && requirements.size === 0) return false;
-  const source = manifest || lock!;
+  const source = manifest ?? lock;
+  if (source === undefined) return false;
   const payload = packageComponent(name, {
     folderPath: source.fp,
     ecosystem: 'pub',

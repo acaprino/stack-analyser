@@ -48,30 +48,6 @@ export class FSProvider implements BaseProvider {
     }
   }
 
-  private allowed(base: string, target: string): boolean {
-    const relative = path.relative(base, target);
-    if (relative === '..' || relative.startsWith('..' + path.sep) || path.isAbsolute(relative))
-      return false;
-    if (!relative || !(this.ignoredPaths.size > 0 || this.ignoredPatterns.length > 0)) return true;
-    let prefix = '';
-    for (const part of portablePath(relative).split('/')) {
-      prefix = prefix ? `${prefix}/${part}` : part;
-      if (this.ignoredPaths.has(prefix)) return false;
-      for (const pattern of this.ignoredPatterns) {
-        pattern.lastIndex = 0;
-        if (pattern.test(prefix)) return false;
-      }
-    }
-    return true;
-  }
-
-  private async resolve(target: string): Promise<null | string> {
-    if (!this.allowed(this.basePath, target)) return null;
-    this.root ??= fs.realpath(this.basePath);
-    const [base, file] = await Promise.all([this.root, fs.realpath(target)]);
-    return this.allowed(base, file) ? file : null;
-  }
-
   async listDir(directory: string): Promise<ProviderFile[]> {
     try {
       const resolved = await this.resolve(directory);
@@ -112,11 +88,12 @@ export class FSProvider implements BaseProvider {
       const resolved = await this.resolve(target);
       if (!resolved) return null;
       // Reject non-regular files before opening. Nonblocking mode also covers changes between stat and open.
-      if (!(await fs.stat(resolved)).isFile()) return null;
-      const handle = await fs.open(
-        resolved,
-        constants.O_RDONLY | (constants.O_NONBLOCK ?? 0) | (constants.O_NOFOLLOW ?? 0)
-      );
+      const found = await fs.stat(resolved);
+      if (!found.isFile()) return null;
+      // Windows has neither flag: Node leaves them undefined there, whatever the types say.
+      const nonBlocking = (constants.O_NONBLOCK as number | undefined) ?? 0;
+      const noFollow = (constants.O_NOFOLLOW as number | undefined) ?? 0;
+      const handle = await fs.open(resolved, constants.O_RDONLY | nonBlocking | noFollow);
       try {
         const info = await handle.stat();
         if (!info.isFile()) return null;
@@ -140,5 +117,29 @@ export class FSProvider implements BaseProvider {
       l.warn('Could not read file', target);
       return null;
     }
+  }
+
+  private allowed(base: string, target: string): boolean {
+    const relative = path.relative(base, target);
+    if (relative === '..' || relative.startsWith('..' + path.sep) || path.isAbsolute(relative))
+      return false;
+    if (!relative || !(this.ignoredPaths.size > 0 || this.ignoredPatterns.length > 0)) return true;
+    let prefix = '';
+    for (const part of portablePath(relative).split('/')) {
+      prefix = prefix ? `${prefix}/${part}` : part;
+      if (this.ignoredPaths.has(prefix)) return false;
+      for (const pattern of this.ignoredPatterns) {
+        pattern.lastIndex = 0;
+        if (pattern.test(prefix)) return false;
+      }
+    }
+    return true;
+  }
+
+  private async resolve(target: string): Promise<null | string> {
+    if (!this.allowed(this.basePath, target)) return null;
+    this.root ??= fs.realpath(this.basePath);
+    const [base, file] = await Promise.all([this.root, fs.realpath(target)]);
+    return this.allowed(base, file) ? file : null;
   }
 }
