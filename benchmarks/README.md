@@ -142,6 +142,15 @@ node benchmarks/replay-declarations.mjs . . ../daodan/benchmarks/project-model c
 node benchmarks/port-registry.mjs ../daodan/daodan/data/service-registry.json
 ```
 
+## Ecosystem coverage
+
+This rule decides which frameworks of an ecosystem the fork must recognise. It was written and committed before any list was fetched.
+
+1. **List.** For each of the nine ecosystems the fork reads from manifests — npm (the web), PyPI, Go modules, crates.io, NuGet, Maven Central, Packagist, RubyGems and pub.dev — the 1,000 packages that the most public repositories depend on, as packages.ecosyste.ms counts them (`/api/v1/registries/<registry>/packages?sort=dependent_repos_count&order=desc`). The count is the same in all nine: Go modules and Maven Central publish no download counts, and a repository that declares a package is what the fork reads. The list is fetched once; the table gives its date.
+2. **Framework.** A package of the list is kept when it is an application framework, one that gives the structure of a whole web, server, mobile or desktop application or site (a web or API server framework, a full-stack or front-end framework, a static site generator, a mobile or desktop application framework), or a user-interface framework (a toolkit of UI components or widgets, a GUI toolkit, a CSS framework). Left out: a library for one concern (an HTTP client, a router, an ORM, a driver, state, logging, validation, serialization), test, build, lint and type tools, and a framework's plugins, adapters, internal packages and type definitions, which count with the framework. A first pass keeps the packages whose description or keywords on ecosyste.ms hold `framework`, `gui`, `ui`, `user interface`, `widget`, `toolkit`, `component`, `web server`, `http server` or `css`; each of those is then read and decided by hand, and the table records the decision.
+3. **Threshold.** Every framework of the list is widespread and must have a rule: the fork's dependency matcher (`dependencies.detect`, as in the replay) gives a technology for its name in its ecosystem. One it misses gets a rule, under the id of Daodan's registry when the registry has the technology. Nothing outside the 1,000 gets a rule from this measurement.
+4. **Before and after.** `replay-declarations.mjs` and a full stack run on Daodan's corpus show the names each build finds and loses.
+
 ## Startup
 
 `startup.mjs` runs one CLI five times on one project and prints the five times and their median, in milliseconds, each measured from spawn to exit of the whole process. It exits with 1 when the median is above `--max-ms`. Every run happens in an empty temporary folder, so the CLI's output file never lands in the repository, and a run that fails or writes no output is an error (exit 2), never a fast time.
