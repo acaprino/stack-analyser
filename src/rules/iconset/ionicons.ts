@@ -4,5 +4,5 @@ register({
   tech: 'ionicons',
   name: 'Ionicons',
   type: 'iconset',
-  dependencies: [{ type: 'npm', name: 'ionicosn' }],
+  dependencies: [{ type: 'npm', name: 'ionicons' }],
 });

@@ -22,6 +22,7 @@ const integrations: Record<string, string[]> = {
   'php:socialiteproviders/okta': ['okta', 'okta.oauth'],
   // Every artifact of the group io.quarkus is also quarkus.
   'maven:io.quarkus:quarkus-apicurio-registry-avro': ['avro', 'quarkus'],
+  'maven:io.quarkus:quarkus-hibernate-orm': ['hibernate', 'quarkus'],
   'maven:io.quarkus:quarkus-hibernate-orm-panache': ['hibernate', 'panache', 'quarkus'],
   'maven:io.quarkus:quarkus-hibernate-orm-panache-kotlin': ['hibernate', 'panache', 'quarkus'],
   'maven:io.quarkus:quarkus-hibernate-reactive-panache': [
@@ -29,13 +30,29 @@ const integrations: Record<string, string[]> = {
     'panache',
     'quarkus',
   ],
+  'maven:io.quarkus:quarkus-junit': ['junit-jupiter', 'quarkus'],
   'maven:io.quarkus:quarkus-junit-mockito': ['mockito', 'quarkus'],
+  'maven:io.quarkus:quarkus-junit5': ['junit-jupiter', 'quarkus'],
   'maven:io.quarkus:quarkus-messaging-kafka': ['quarkus', 'smallrye-reactive-messaging'],
   'maven:io.quarkus:quarkus-mongodb-panache': ['panache', 'quarkus'],
   'maven:io.quarkus:quarkus-rest': ['quarkus', 'quarkus-rest'],
   'maven:io.quarkus:quarkus-rest-jackson': ['quarkus', 'quarkus-rest'],
   'maven:io.quarkus:quarkus-rest-qute': ['quarkus', 'quarkus-rest', 'qute'],
   'maven:io.quarkus:quarkus-websockets-next': ['quarkus', 'quarkus-websockets-next'],
+  // The JUnit Jupiter support of another project brings JUnit Jupiter with it.
+  'maven:io.micronaut.test:micronaut-test-junit5': ['junit-jupiter', 'micronaut'],
+  'maven:org.jetbrains.kotlin:kotlin-test-junit': ['junit', 'kotlin-test'],
+  'maven:org.jetbrains.kotlin:kotlin-test-junit5': ['junit-jupiter', 'kotlin-test'],
+  'maven:org.jetbrains.kotlin:kotlin-test-testng': ['kotlin-test', 'testng'],
+  'maven:org.mockito:mockito-junit-jupiter': ['junit-jupiter', 'mockito'],
+  'maven:org.testcontainers:junit-jupiter': ['junit-jupiter', 'testcontainers'],
+  'maven:org.testcontainers:testcontainers-junit-jupiter': ['junit-jupiter', 'testcontainers'],
+  // spring-boot-starter-test holds JUnit Jupiter and Mockito, and every Spring Boot 4 test starter depends on it.
+  'maven:org.springframework.boot:spring-boot-starter-test': [
+    'junit-jupiter',
+    'mockito',
+    'spring-boot',
+  ],
   // A starter that brings the driver of one server gives that server as well.
   'maven:org.springframework.boot:spring-boot-starter-amqp': [
     'rabbitmq',
@@ -60,7 +77,12 @@ const integrations: Record<string, string[]> = {
     'spring-boot',
     'spring-data-elasticsearch',
   ],
-  'maven:org.springframework.boot:spring-boot-starter-data-jpa': ['spring-boot', 'spring-data-jpa'],
+  // "Starter for using Spring Data JPA with Hibernate".
+  'maven:org.springframework.boot:spring-boot-starter-data-jpa': [
+    'hibernate',
+    'spring-boot',
+    'spring-data-jpa',
+  ],
   'maven:org.springframework.boot:spring-boot-starter-data-mongodb': [
     'mongodb',
     'spring-boot',
@@ -173,7 +195,8 @@ describe('no duplicate', () => {
       }
 
       for (const dep of rule.dependencies) {
-        const str = `${dep.type}:${dep.name}`;
+        // An expression stands for the package of its example: the table of integrations names packages.
+        const str = `${dep.type}:${'example' in dep ? dep.example : dep.name}`;
         const prior = deps.get(str);
         if (prior) {
           expect(prior).not.toBe(rule.tech);

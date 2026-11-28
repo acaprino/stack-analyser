@@ -18,6 +18,7 @@ import {
 } from './helpers.js';
 import { detectInDotEnv } from '../rules/spec/dotenv/index.js';
 import { findHostMentions } from '../rules/spec/hosts/index.js';
+import { detectPageReferences } from '../rules/spec/html/index.js';
 
 import type { TechMatch } from '../matchAllFiles.js';
 import type { BaseProvider } from '../provider/base.js';
@@ -138,6 +139,9 @@ export class Payload implements Analyser {
       }
       ctx.combine(dotenv);
     }
+    // A page that loads a package from a CDN uses it as a manifest would declare it, in the folder's module.
+    const pages = await detectPageReferences(files, provider);
+    if (pages !== false) ctx.combine(pages);
 
     // Detect Tech
     const matched = matchAllFilesWithEvidence(files, {

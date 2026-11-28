@@ -13,8 +13,15 @@ exports[`package identities > should not let one package identify two technologi
   "nuget:mudblazor → blazor, mudblazor",
   "maven:io.quarkus:quarkus-rest-qute → quarkus-rest, qute",
   "maven:org.springframework.boot:spring-boot-starter-amqp → rabbitmq, spring-amqp",
+  "maven:org.springframework.boot:spring-boot-starter-data-jpa → hibernate, spring-data-jpa",
   "maven:io.quarkus:quarkus-hibernate-orm-panache → hibernate, panache",
   "maven:io.quarkus:quarkus-hibernate-orm-panache-kotlin → hibernate, panache",
   "maven:io.quarkus:quarkus-hibernate-reactive-panache → hibernate-reactive, panache",
+  "maven:org.jetbrains.kotlin:kotlin-test-junit → junit, kotlin-test",
+  "maven:org.jetbrains.kotlin:kotlin-test-junit5 → junit-jupiter, kotlin-test",
+  "maven:org.mockito:mockito-junit-jupiter → junit-jupiter, mockito",
+  "maven:org.testcontainers:junit-jupiter → junit-jupiter, testcontainers",
+  "maven:org.testcontainers:testcontainers-junit-jupiter → junit-jupiter, testcontainers",
+  "maven:org.jetbrains.kotlin:kotlin-test-testng → kotlin-test, testng",
 ]
 `;

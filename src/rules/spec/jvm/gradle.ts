@@ -101,6 +101,19 @@ function literal(value?: string): string | undefined {
 }
 
 function moduleArguments(args: string[], catalog: Catalog): Dependency[] {
+  // The Kotlin DSL's kotlin(module) and kotlin(module, version) name org.jetbrains.kotlin:kotlin-<module>.
+  if (args[0] === 'kotlin') {
+    const module = literal(args[1]);
+    const versioned = args.length === 4 && args[2] === ',';
+    if (!filled(module) || (args.length !== 2 && !versioned)) return [];
+    // A version held in a variable or a template is unknown.
+    const version = versioned ? (literal(args[3]) ?? '') : '';
+    const dep = coordinate(
+      `org.jetbrains.kotlin:kotlin-${module}`,
+      version.includes('$') ? '' : version
+    );
+    return dep ? [dep] : [];
+  }
   // Gradle's Groovy map notation, e.g. implementation group: 'g', name: 'a', version: '1'.
   if (args[1] === ':' || args[1] === '=') {
     const fields = new Map<string, string>();
@@ -153,6 +166,31 @@ function awaitsBody(statement: string[]): boolean {
     }
   }
   return false;
+}
+
+export type TestFramework = 'useJUnitPlatform' | 'useTestNG';
+
+/**
+ * The line of the first call of each method that chooses the framework of a Gradle test task, `useJUnitPlatform` and
+ * `useTestNG`, followed by its arguments or its configuration block. Comments and strings call nothing.
+ */
+export function gradleTestFrameworks(source: string): Map<TestFramework, number> {
+  const found = new Map<TestFramework, number>();
+  let line = 1;
+  let previous = '';
+  for (const [token] of source.matchAll(tokens)) {
+    const method = previous.slice(previous.lastIndexOf('.') + 1);
+    if (
+      (token === '(' || token === '{') &&
+      (method === 'useJUnitPlatform' || method === 'useTestNG') &&
+      !found.has(method)
+    )
+      found.set(method, line);
+    for (const character of token) if (character === '\n') line++;
+    if (!token.startsWith('//') && !token.startsWith('/*') && !token.endsWith('\n'))
+      previous = token;
+  }
+  return found;
 }
 
 export function gradleDependencies(source: string, catalog: Catalog): Dependency[] {

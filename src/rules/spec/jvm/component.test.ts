@@ -5,7 +5,7 @@ import path from 'node:path';
 import { expect, test } from 'vitest';
 
 import '../../../autoload.js';
-import { gradleDependencies } from './gradle.js';
+import { gradleDependencies, gradleTestFrameworks } from './gradle.js';
 import { mavenProject } from './maven.js';
 import { analyser } from '../../../analyser/index.js';
 import { FSProvider } from '../../../provider/fs.js';
@@ -118,4 +118,86 @@ test('reads literal Gradle dependencies and skips unapplied plugins and non-depe
     ['maven', 'group:alternative', '4'],
     ['maven', 'another.group:test', '1'],
   ]);
+});
+
+test('reads the Kotlin DSL kotlin(module) notation as org.jetbrains.kotlin:kotlin-<module>', () => {
+  expect(
+    gradleDependencies(
+      `kotlin {
+    sourceSets {
+      commonTest.dependencies { implementation(kotlin("test")) }
+    }
+  }
+  dependencies {
+    implementation(kotlin("stdlib", "2.0.21"))
+    implementation(kotlin("reflect", kotlinVersion))
+    testImplementation(kotlin("test-junit5", "$kotlinVersion"))
+    implementation(kotlin(name))
+  }`,
+      new Map()
+    )
+  ).toStrictEqual([
+    ['maven', 'org.jetbrains.kotlin:kotlin-test', ''],
+    ['maven', 'org.jetbrains.kotlin:kotlin-stdlib', '2.0.21'],
+    ['maven', 'org.jetbrains.kotlin:kotlin-reflect', ''],
+    ['maven', 'org.jetbrains.kotlin:kotlin-test-junit5', ''],
+  ]);
+});
+
+test('finds the test framework a Gradle test task chooses, not a comment or a string', () => {
+  expect([
+    ...gradleTestFrameworks(
+      `// useTestNG()
+  val note = "useJUnitPlatform()"
+  tasks.test {
+    useJUnitPlatform()
+  }
+  tasks.register<Test>("slow") { useJUnitPlatform { includeTags("slow") } }
+  test.useTestNG() {
+    suites("testng.xml")
+  }`
+    ),
+  ]).toStrictEqual([
+    ['useJUnitPlatform', 4],
+    ['useTestNG', 7],
+  ]);
+});
+
+test('gives TestNG for useTestNG(), and JUnit Jupiter for kotlin.test on the JUnit Platform only', async () => {
+  const root = await mkdtemp(path.join(os.tmpdir(), 'specfy-jvm-'));
+  try {
+    const files = {
+      'settings.gradle.kts': 'include("ng", "kt", "platform")',
+      'ng/build.gradle.kts': 'tasks.test {\n  useTestNG()\n}',
+      'kt/build.gradle.kts':
+        'dependencies { testImplementation(kotlin("test")) }\ntasks.test { useJUnitPlatform() }',
+      'platform/build.gradle.kts':
+        'dependencies { testImplementation("io.kotest:kotest-runner-junit5:5.9.1") }\n' +
+        'tasks.test { useJUnitPlatform() }',
+    };
+    for (const [file, content] of Object.entries(files)) {
+      const full = path.join(root, file);
+      await mkdir(path.dirname(full), { recursive: true });
+      await writeFile(full, content);
+    }
+    const result = await analyser({ provider: new FSProvider({ path: root }) });
+    const components = result.childs.flatMap((pl) => [pl, ...pl.childs]);
+    const named = (name: string): Set<string> =>
+      components.find((pl) => pl.name === name)?.techs ?? new Set();
+
+    expect(named('ng').has('testng')).toBe(true);
+    expect(named('kt').has('kotlin-test')).toBe(true);
+    expect(named('kt').has('junit-jupiter')).toBe(true);
+    expect(named('platform').has('junit-jupiter')).toBe(false);
+    expect(
+      components
+        .flatMap((pl) => [...pl.reason].filter((reason) => reason.includes('Gradle use')))
+        .sort()
+    ).toStrictEqual([
+      'Gradle useTestNG() at ng/build.gradle.kts:2',
+      'kotlin.test with Gradle useJUnitPlatform() at kt/build.gradle.kts:2',
+    ]);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
 });

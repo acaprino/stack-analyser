@@ -1,11 +1,11 @@
 import path from 'node:path';
 
-import { gradleCatalog, gradleDependencies } from './gradle.js';
+import { gradleCatalog, gradleDependencies, gradleTestFrameworks } from './gradle.js';
 import { mavenProject } from './maven.js';
 import { sbtDependencies } from './sbt.js';
 import { Payload } from '../../../payload/index.js';
 import { sourceText } from '../manifestTokens.js';
-import { oncePerRun } from '../packageManifest.js';
+import { oncePerRun, projectPath } from '../packageManifest.js';
 
 import type { BaseProvider, ProviderFile } from '../../../provider/base.js';
 import type { Dependency } from '../../../types/index.js';
@@ -85,11 +85,33 @@ export const detectGradle: ComponentMatcher = async (files, provider) => {
   const folder = path.dirname(build.fp);
   const catalog = source.includes('libs.') ? await catalogFile(provider, { folder, files }) : null;
   const deps = gradleDependencies(source, catalog ?? new Map<string, Dependency[]>());
-  return component('gradle', {
+  const pl = component('gradle', {
     name: path.basename(folder) || 'Gradle project',
     file: build.fp,
     deps,
   });
+  const where = projectPath(provider.basePath, build.fp);
+  const calls = gradleTestFrameworks(source);
+  const testNG = calls.get('useTestNG');
+  if (testNG !== undefined) {
+    pl.addTech('testng', {
+      reason: [`Gradle useTestNG() at ${where}:${testNG}`],
+      evidence: [{ kind: 'file', value: build.name, path: build.fp, line: testNG }],
+    });
+  }
+  // kotlin("test") resolves to the variant of the framework the test task uses: kotlin-test-junit5 for the
+  // JUnit Platform, which brings JUnit Jupiter.
+  const platform = calls.get('useJUnitPlatform');
+  if (
+    platform !== undefined &&
+    deps.some(([, name]) => name === 'org.jetbrains.kotlin:kotlin-test')
+  ) {
+    pl.addTech('junit-jupiter', {
+      reason: [`kotlin.test with Gradle useJUnitPlatform() at ${where}:${platform}`],
+      evidence: [{ kind: 'file', value: build.name, path: build.fp, line: platform }],
+    });
+  }
+  return pl;
 };
 
 // `build.sbt` is the project; the other `.sbt` files of its folder and of `project/` (plugins) add their module IDs.
