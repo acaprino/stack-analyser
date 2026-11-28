@@ -133,6 +133,7 @@ exports[`ruby (component) > should match everything 1`] = `
   "google.sheets",
   "google.slides",
   "google.tasks",
+  "gtk",
   "hashicorp_vault",
   "helm",
   "heroku",
@@ -1001,6 +1002,16 @@ exports[`ruby (component) > should match everything 2`] = `
   [
     "ruby",
     "google_maps_service",
+    "1.0.0",
+  ],
+  [
+    "ruby",
+    "gtk3",
+    "1.0.0",
+  ],
+  [
+    "ruby",
+    "gtk4",
     "1.0.0",
   ],
   [

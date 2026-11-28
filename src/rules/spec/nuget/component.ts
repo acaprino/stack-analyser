@@ -11,6 +11,7 @@ import {
 
 import type { BaseProvider, ProviderFile } from '../../../provider/base.js';
 import type { ComponentMatcher } from '../../../types/rule.js';
+import type { AllowedKeys } from '../../../types/techs.js';
 
 const msbuildNamespaces = ['http://schemas.microsoft.com/developer/msbuild/2003'];
 
@@ -65,15 +66,30 @@ function* itemGroups(project: Record<string, unknown>, certain = true): Generato
   }
 }
 
-// Only a literal, unconditional project property establishes WinUI. A target or a
-// conditional branch can conflict with that declaration, but cannot establish it.
-function enablesWinUI(project: Record<string, unknown>): boolean {
+// The documented opt-in property of each UI framework of the .NET SDK and the Windows App SDK.
+const frameworkProperties: [property: string, tech: AllowedKeys][] = [
+  ['UseWinUI', 'winui'],
+  ['UseWPF', 'wpf'],
+  ['UseWindowsForms', 'winforms'],
+  ['UseUwp', 'uwp'],
+];
+
+// A project that is not SDK-style names the assemblies of its UI framework, by simple name or full display name.
+const frameworkAssemblies = new Map<string, AllowedKeys>([
+  ['presentationframework', 'wpf'],
+  ['system.windows.forms', 'winforms'],
+]);
+
+// Only a literal, unconditional project property opts in. A target or a conditional
+// branch can conflict with that declaration, but cannot establish it.
+function enables(project: Record<string, unknown>, property: string): boolean {
+  const wanted = property.toLowerCase();
   const pending = [project];
   let declared = false;
   for (let container = pending.pop(); container !== undefined; container = pending.pop()) {
     for (const group of rows(container, 'PropertyGroup')) {
       for (const [name, values] of Object.entries(group)) {
-        if (name.toLowerCase() !== 'usewinui') continue;
+        if (name.toLowerCase() !== wanted) continue;
         for (const value of Array.isArray(values) ? (values as unknown[]) : [values]) {
           const literal = isRecord(value) ? value['#text'] : value;
           if (typeof literal !== 'string' || literal.toLowerCase() !== 'true') return false;
@@ -88,6 +104,21 @@ function enablesWinUI(project: Record<string, unknown>): boolean {
     }
   }
   return declared;
+}
+
+/** The UI frameworks whose assemblies the project references, with the reference as written. */
+function referencedFrameworks(groups: Iterable<ItemGroup>): Map<AllowedKeys, string> {
+  const found = new Map<AllowedKeys, string>();
+  for (const group of groups) {
+    for (const item of rows(group.node, 'Reference')) {
+      const include = item['@_Include'];
+      if (condition(item) === false || typeof include !== 'string') continue;
+      const assembly = include.split(',')[0].trim();
+      const tech = frameworkAssemblies.get(assembly.toLowerCase());
+      if (tech && !found.has(tech)) found.set(tech, assembly);
+    }
+  }
+  return found;
 }
 
 function packageVersions(groups: Iterable<ItemGroup>, tag: string): Map<string, string> {
@@ -241,9 +272,17 @@ export const detectNugetComponent: ComponentMatcher = async (files, provider) =>
       reason: [`MSBuild project: ${projectPath(provider.basePath, file.fp)}`],
       evidence: [{ kind: 'file', value: file.name, path: file.fp }],
     });
-    if (enablesWinUI(project)) {
-      payload.addTech('winui', {
-        reason: [`MSBuild UseWinUI=true in ${projectPath(provider.basePath, file.fp)}`],
+    const where = projectPath(provider.basePath, file.fp);
+    for (const [property, tech] of frameworkProperties) {
+      if (!enables(project, property)) continue;
+      payload.addTech(tech, {
+        reason: [`MSBuild ${property}=true in ${where}`],
+        evidence: [{ kind: 'file', value: file.name, path: file.fp }],
+      });
+    }
+    for (const [tech, assembly] of referencedFrameworks(groups)) {
+      payload.addTech(tech, {
+        reason: [`MSBuild reference to ${assembly} in ${where}`],
         evidence: [{ kind: 'file', value: file.name, path: file.fp }],
       });
     }

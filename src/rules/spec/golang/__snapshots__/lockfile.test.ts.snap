@@ -139,6 +139,7 @@ exports[`golang (lockfile) > should match everything 1`] = `
   "gorm",
   "grpc",
   "grpc-gateway",
+  "gtk",
   "hashicorp_vault",
   "helm",
   "hetzner",
@@ -238,6 +239,7 @@ exports[`golang (lockfile) > should match everything 1`] = `
   "urfave-cli",
   "valkey",
   "viper",
+  "wails",
   "weaviate",
   "withorb",
   "workos",
@@ -849,6 +851,11 @@ exports[`golang (lockfile) > should match everything 2`] = `
   ],
   [
     "golang",
+    "github.com/diamondburned/gotk4/pkg",
+    "v1.0.0",
+  ],
+  [
+    "golang",
     "github.com/duckdb/duckdb-go",
     "v1.0.0",
   ],
@@ -985,6 +992,11 @@ exports[`golang (lockfile) > should match everything 2`] = `
   [
     "golang",
     "github.com/googleapis/google-cloud-go",
+    "v1.0.0",
+  ],
+  [
+    "golang",
+    "github.com/gotk3/gotk3",
     "v1.0.0",
   ],
   [
@@ -1470,6 +1482,11 @@ exports[`golang (lockfile) > should match everything 2`] = `
   [
     "golang",
     "github.com/valkey-io/valkey-go",
+    "v1.0.0",
+  ],
+  [
+    "golang",
+    "github.com/wailsapp/wails",
     "v1.0.0",
   ],
   [

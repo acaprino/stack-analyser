@@ -8,6 +8,7 @@ import { FakeProvider } from '../../provider/fake.js';
 import '../../autoload.js';
 
 import type { Payload } from '../../payload/index.js';
+import type { AllowedKeys } from '../../types/techs.js';
 
 async function scan(files: Record<string, string>): Promise<Payload> {
   const provider = new FakeProvider({
@@ -112,6 +113,46 @@ describe('native package manifests', () => {
     ).toStrictEqual(['Desktop']);
     expect(result.toJson().reason.filter((reason) => reason.includes('UseWinUI'))).toStrictEqual([
       'MSBuild UseWinUI=true in Desktop.csproj',
+    ]);
+  });
+
+  it('should give WPF, Windows Forms and UWP for their opt-in property, and WPF and Windows Forms for their assemblies', async () => {
+    const result = await scan({
+      'Editor.csproj':
+        '<Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><TargetFramework>net8.0-windows</TargetFramework>' +
+        '<UseWPF>true</UseWPF><UseWindowsForms>true</UseWindowsForms></PropertyGroup></Project>',
+      'Store.csproj':
+        '<Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><UseUwp>true</UseUwp></PropertyGroup></Project>',
+      'Legacy.csproj':
+        '<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003"><ItemGroup>' +
+        '<Reference Include="System"/><Reference Include="PresentationFramework"/>' +
+        '<Reference Include="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"/>' +
+        '</ItemGroup></Project>',
+      'Off.csproj':
+        '<Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><UseWPF>false</UseWPF><UseUwp>$(Store)</UseUwp></PropertyGroup>' +
+        '<ItemGroup Condition="false"><Reference Include="System.Windows.Forms"/></ItemGroup>' +
+        '<ItemGroup><Reference Include="System.Windows.Forms.DataVisualization"/></ItemGroup></Project>',
+    });
+    const holders = (tech: AllowedKeys): string[] =>
+      result.childs
+        .filter((child) => child.techs.has(tech))
+        .map((child) => child.name)
+        .sort();
+
+    expect(holders('wpf')).toStrictEqual(['Editor', 'Legacy']);
+    expect(holders('winforms')).toStrictEqual(['Editor', 'Legacy']);
+    expect(holders('uwp')).toStrictEqual(['Store']);
+    expect(
+      result
+        .toJson()
+        .reason.filter((reason) => /^MSBuild (?:Use\w+=true|reference to) /.test(reason))
+        .sort()
+    ).toStrictEqual([
+      'MSBuild UseUwp=true in Store.csproj',
+      'MSBuild UseWPF=true in Editor.csproj',
+      'MSBuild UseWindowsForms=true in Editor.csproj',
+      'MSBuild reference to PresentationFramework in Legacy.csproj',
+      'MSBuild reference to System.Windows.Forms in Legacy.csproj',
     ]);
   });
 

@@ -34,6 +34,8 @@ describe('all', () => {
       ['.sonar-project.properties', 'file', 'sonarqube', false],
       ['regex', 'file', 'jest', false],
       ['main.rs.in', 'file', 'rust', true],
+      ['wails.json', 'file', 'wails', true],
+      ['wails.json', 'dir', 'wails', false],
     ];
     for (const [relative, type, tech, expected] of cases) {
       const name = relative.split('/').pop()!;

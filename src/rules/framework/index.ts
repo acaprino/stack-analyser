@@ -69,6 +69,7 @@ import './symfony.js';
 import './tanstackstart.js';
 import './tauri.js';
 import './wagtail.js';
+import './wails.js';
 import './wasp.js';
 import './yew.js';
 import './yii2.js';

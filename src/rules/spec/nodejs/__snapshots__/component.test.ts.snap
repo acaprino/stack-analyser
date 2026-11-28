@@ -646,6 +646,7 @@ exports[`npm > should match everything 1`] = `
   "vue-sfc-compiler",
   "vuepress",
   "vuetify",
+  "wails",
   "watermelondb",
   "webex",
   "webflow",
@@ -4059,6 +4060,11 @@ exports[`npm > should match everything 2`] = `
   [
     "npm",
     "@vuepress/plugin-docsearch",
+    "0.0.0",
+  ],
+  [
+    "npm",
+    "@wailsio/runtime",
     "0.0.0",
   ],
   [

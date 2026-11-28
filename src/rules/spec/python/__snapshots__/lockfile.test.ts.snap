@@ -114,6 +114,7 @@ exports[`python lockfile: pyproject.toml > should match everything 1`] = `
   "firebase.functions",
   "firecrawl",
   "flask",
+  "flet",
   "foundationdb",
   "freshdesk",
   "frontegg",
@@ -183,6 +184,7 @@ exports[`python lockfile: pyproject.toml > should match everything 1`] = `
   "keycloak",
   "keyring",
   "kinde",
+  "kivy",
   "kubernetes",
   "lago",
   "langchain",
@@ -261,6 +263,8 @@ exports[`python lockfile: pyproject.toml > should match everything 1`] = `
   "pulumi",
   "pusher",
   "pydantic",
+  "pyqt",
+  "pyside",
   "pytest",
   "pytorch",
   "pyyaml",
@@ -355,6 +359,11 @@ exports[`python lockfile: pyproject.toml > should match everything 2`] = `
 [
   [
     "python",
+    "Kivy",
+    "1.0.0",
+  ],
+  [
+    "python",
     "MergePythonClient",
     "1.0.0",
   ],
@@ -371,6 +380,36 @@ exports[`python lockfile: pyproject.toml > should match everything 2`] = `
   [
     "python",
     "PyMySQL",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "PyQt5",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "PyQt6",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "PySide2",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "PySide6",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "PySide6_Addons",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "PySide6_Essentials",
     "1.0.0",
   ],
   [
@@ -951,6 +990,26 @@ exports[`python lockfile: pyproject.toml > should match everything 2`] = `
   [
     "python",
     "flask",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "flet",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "flet-cli",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "flet-desktop",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "flet-web",
     "1.0.0",
   ],
   [
@@ -2330,6 +2389,7 @@ exports[`python lockfile: requirements.txt > should match everything 1`] = `
   "firebase.functions",
   "firecrawl",
   "flask",
+  "flet",
   "foundationdb",
   "freshdesk",
   "frontegg",
@@ -2399,6 +2459,7 @@ exports[`python lockfile: requirements.txt > should match everything 1`] = `
   "keycloak",
   "keyring",
   "kinde",
+  "kivy",
   "kubernetes",
   "lago",
   "langchain",
@@ -2477,6 +2538,8 @@ exports[`python lockfile: requirements.txt > should match everything 1`] = `
   "pulumi",
   "pusher",
   "pydantic",
+  "pyqt",
+  "pyside",
   "pytest",
   "python",
   "pytorch",
@@ -2572,6 +2635,11 @@ exports[`python lockfile: requirements.txt > should match everything 2`] = `
 [
   [
     "python",
+    "Kivy",
+    "1.0.0",
+  ],
+  [
+    "python",
     "MergePythonClient",
     "1.0.0",
   ],
@@ -2588,6 +2656,36 @@ exports[`python lockfile: requirements.txt > should match everything 2`] = `
   [
     "python",
     "PyMySQL",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "PyQt5",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "PyQt6",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "PySide2",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "PySide6",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "PySide6_Addons",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "PySide6_Essentials",
     "1.0.0",
   ],
   [
@@ -3168,6 +3266,26 @@ exports[`python lockfile: requirements.txt > should match everything 2`] = `
   [
     "python",
     "flask",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "flet",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "flet-cli",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "flet-desktop",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "flet-web",
     "1.0.0",
   ],
   [

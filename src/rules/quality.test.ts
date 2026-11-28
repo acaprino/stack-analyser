@@ -256,7 +256,16 @@ describe('dependency names', () => {
 
 // Shared parsers emit these IDs directly. Parent products can be inferred from a
 // registered child. The remaining historical product names have no direct detector.
-const sharedReaderIds = ['cargo', 'phpcomposer', 'exunit', 'mapkit', 'swiftui', 'uikit', 'winui'];
+const sharedReaderIds = [
+  'cargo',
+  'phpcomposer',
+  'exunit',
+  'mapkit',
+  'swiftui',
+  'uikit',
+  'winforms',
+  'wpf',
+];
 const parentIds = ['adobe', 'microsoft'];
 const catalogueOnly = [
   'fabric',

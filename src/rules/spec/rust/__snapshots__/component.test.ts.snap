@@ -90,6 +90,7 @@ exports[`rust (component) > should match everything 1`] = `
   "google.sheets",
   "graphql-client-rust",
   "grpc",
+  "gtk",
   "hashicorp_vault",
   "hyper-rust",
   "influxdb",
@@ -594,6 +595,16 @@ exports[`rust (component) > should match everything 2`] = `
   [
     "rust",
     "graphql_client",
+    "1.0.0",
+  ],
+  [
+    "rust",
+    "gtk",
+    "1.0.0",
+  ],
+  [
+    "rust",
+    "gtk4",
     "1.0.0",
   ],
   [
