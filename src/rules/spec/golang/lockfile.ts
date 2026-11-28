@@ -33,6 +33,8 @@ function goMod(source: string): { modules: Map<string, string>; replacements: Re
     }
     const directive = block ?? /^([a-z]+)\s/.exec(line)?.[1];
     const declaration = block ? line : line.slice(directive?.length ?? 0).trim();
+    // No real module line is this long, and the patterns below are not meant for one.
+    if (declaration.length > 4096) continue;
     if (directive === 'replace') {
       const fields = /^(\S+)(?:\s+(\S+))?\s*=>\s*(\S+)(?:\s+\S+)?$/.exec(declaration);
       if (fields)

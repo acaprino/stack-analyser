@@ -241,16 +241,25 @@ export function tokens(source: string, language: Language): Token[] {
 
 /** End of a balanced call, list or tuple, ignoring delimiter characters inside literals. */
 export function closing(items: Token[], start: number): number {
-  const pairs: Record<string, string> = { '(': ')', '[': ']', '{': '}' };
-  const stack = [pairs[items[start].value]];
-  for (let i = start + 1; i < items.length; i++) {
-    const token = items[i];
-    if (token.kind !== 'symbol') continue;
-    if (pairs[token.value]) stack.push(pairs[token.value]);
-    else if (token.value === stack.at(-1)) {
-      stack.pop();
-      if (stack.length === 0) return i;
+  let partners = closers.get(items);
+  if (!partners) {
+    // One pass for the whole file: asking again for each opener would rescan it every time.
+    partners = new Int32Array(items.length).fill(-1);
+    const pairs: Record<string, string> = { '(': ')', '[': ']', '{': '}' };
+    const open: number[] = [];
+    for (const [i, token] of items.entries()) {
+      if (token.kind !== 'symbol') continue;
+      const last = open.at(-1);
+      if (pairs[token.value]) open.push(i);
+      else if (last !== undefined && token.value === pairs[items[last].value]) {
+        partners[last] = i;
+        open.pop();
+      }
     }
+    closers.set(items, partners);
   }
-  return -1;
+  return partners[start];
 }
+
+/** For each token list, the index of the closer of every opener, or -1 when it is never closed. */
+const closers = new WeakMap<Token[], Int32Array>();

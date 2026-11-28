@@ -137,3 +137,22 @@ describe('writing the output', () => {
     }
   });
 });
+
+describe('long inputs', () => {
+  it('should read a requirements file with one very long run of spaces in linear time', async () => {
+    const start = performance.now();
+    const result = await analyse({
+      'requirements.txt': `django==5.0 ${' '.repeat(200_000)}x\nflask==3.0   # web\n`,
+    });
+
+    expect(performance.now() - start).toBeLessThan(2000);
+    expect(result.dependencies).toContainEqual(['python', 'flask', '3.0']);
+  });
+
+  it('should read a setup.py that opens a list a hundred thousand times in linear time', async () => {
+    const start = performance.now();
+    await analyse({ 'setup.py': 'install_requires=[ '.repeat(100_000) });
+
+    expect(performance.now() - start).toBeLessThan(5000);
+  });
+});

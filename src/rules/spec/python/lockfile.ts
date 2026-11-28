@@ -114,11 +114,20 @@ export const detectPythonLockfile: ComponentMatcher = async (files, provider) =>
   return manifests.length > 0 ? manifests : false;
 };
 
+/**
+ * `line` up to the first `marker`, a pattern that starts with one whitespace character. Removing `\s+…$` instead
+ * would rescan a long run of spaces from each of its positions.
+ */
+function before(line: string, marker: RegExp): string {
+  const cut = line.search(marker);
+  return cut === -1 ? line : line.slice(0, cut).trimEnd();
+}
+
 function requirements(lines: unknown[]): Dependency[] {
   const dependencies: Dependency[] = [];
   for (const raw of lines) {
     if (typeof raw !== 'string') continue;
-    const line = raw.trim().replace(/\s+#.*$/, '');
+    const line = before(raw.trim(), /\s#/);
     const match = requirement.exec(line);
     if (!match) continue;
     const specifier = line.slice(match[0].length).split(';', 1)[0].trim();
@@ -238,7 +247,7 @@ export function parseRequirementsTxt(
   const lines = content
     .replaceAll(/\\\r?\n/g, ' ')
     .split(/\r?\n/)
-    .map((line) => line.replace(/\s+--hash[=\s].*$/, ''));
+    .map((line) => before(line, /\s--hash[=\s]/));
   pl.dependencies = requirements(lines);
   pl.addDependencyTechs(
     pl.dependencies.map(([, name]) => name),

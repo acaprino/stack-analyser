@@ -30,6 +30,8 @@ function repository(location: string): string | undefined {
   try {
     const url = new URL(location.replace(/^git@([^:]+):/, 'ssh://$1/'));
     if (!['https:', 'http:', 'git:', 'ssh:'].includes(url.protocol)) return undefined;
+    // No real repository path is this long, and the pattern below is not meant for one.
+    if (url.pathname.length > 4096) return undefined;
     const repo = url.pathname.replace(/\/+$/, '').replace(/\.git$/i, '');
     return repo.length > 1 ? url.host.toLowerCase() + repo : undefined;
   } catch {
