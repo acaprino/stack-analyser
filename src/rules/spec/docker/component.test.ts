@@ -35,7 +35,7 @@ describe('docker', () => {
     });
     const result = flatten(await analyser({ provider }), { merge: true });
 
-    expect([...result.techs]).toEqual(expect.arrayContaining(['docker', 'redis']));
+    expect([...result.techs]).toStrictEqual(expect.arrayContaining(['docker', 'redis']));
     expect(result.techs.has('postgresql')).toBe(false);
 
     const unrelated = new FakeProvider({

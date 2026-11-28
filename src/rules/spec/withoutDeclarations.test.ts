@@ -42,7 +42,7 @@ describe('build tools', () => {
       'elixir/mix.exs': 'defmodule Demo.MixProject do\n  use Mix.Project\nend\n',
     });
 
-    expect([...result.techs]).toEqual(
+    expect([...result.techs]).toStrictEqual(
       expect.arrayContaining(['cmake', 'autotools', 'dotnet', 'nuget', 'mix', 'elixir'])
     );
   });
@@ -63,9 +63,9 @@ describe('build tools', () => {
       'project/plugins.sbt': 'addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.5.2")\n',
     });
 
-    expect([...result.techs]).toEqual(expect.arrayContaining(['sbt', 'cats', 'scalatest']));
+    expect([...result.techs]).toStrictEqual(expect.arrayContaining(['sbt', 'cats', 'scalatest']));
     expect(result.techs.has('h2')).toBe(false);
-    expect(result.dependencies).toEqual(
+    expect(result.dependencies).toStrictEqual(
       expect.arrayContaining([
         ['maven', 'org.typelevel:cats-core', '2.12.0'],
         ['maven', 'org.scalatest:scalatest', ''],
@@ -89,7 +89,7 @@ describe('maven, Gradle and MSBuild manifests', () => {
       ].join(''),
     });
 
-    expect([...result.techs]).toEqual(expect.arrayContaining(['maven', 'h2', 'postgresql']));
+    expect([...result.techs]).toStrictEqual(expect.arrayContaining(['maven', 'h2', 'postgresql']));
   });
 
   it('should read Gradle declarations in an if or else branch and over continued lines, not a computed one', async () => {
@@ -116,14 +116,14 @@ describe('maven, Gradle and MSBuild manifests', () => {
       ].join('\n'),
     });
 
-    expect(result.dependencies).toEqual(
+    expect(result.dependencies).toStrictEqual(
       expect.arrayContaining([
         ['maven', 'io.grpc:grpc-stub', '1.0'],
         ['maven', 'io.prometheus:prometheus-metrics-core', ''],
         ['maven', 'com.fasterxml.jackson.core:jackson-databind', ''],
       ])
     );
-    expect([...result.techs]).toEqual(
+    expect([...result.techs]).toStrictEqual(
       expect.arrayContaining(['gradle', 'grpc', 'prometheus', 'jackson'])
     );
     expect(result.techs.has('h2')).toBe(false);
@@ -137,7 +137,7 @@ describe('maven, Gradle and MSBuild manifests', () => {
         '<Project Sdk="Microsoft.NET.Sdk"><Sdk Name="Aspire.AppHost.Sdk" Version="9.0.0"/></Project>',
     });
 
-    expect([...result.techs]).toEqual(
+    expect([...result.techs]).toStrictEqual(
       expect.arrayContaining(['mstest', 'dotnet-aspire', 'dotnet'])
     );
   });
@@ -169,7 +169,7 @@ describe('python manifests', () => {
       ].join('\n'),
     });
 
-    expect([...result.techs]).toEqual(expect.arrayContaining(['pytest', 'ruff', 'click', 'numpy']));
+    expect([...result.techs]).toStrictEqual(expect.arrayContaining(['pytest', 'ruff', 'click', 'numpy']));
   });
 
   it('should read requirements files by the names pip users give them, and no other text file', async () => {
@@ -180,7 +180,7 @@ describe('python manifests', () => {
       'notes.txt': 'django==5.0\n',
     });
 
-    expect([...result.techs]).toEqual(expect.arrayContaining(['ruff', 'pytest', 'click', 'numpy']));
+    expect([...result.techs]).toStrictEqual(expect.arrayContaining(['ruff', 'pytest', 'click', 'numpy']));
     expect(result.techs.has('django')).toBe(false);
   });
 
@@ -196,7 +196,7 @@ describe('python manifests', () => {
       ].join('\n'),
     });
 
-    expect([...result.techs]).toEqual(expect.arrayContaining(['click', 'requests', 'ruff']));
+    expect([...result.techs]).toStrictEqual(expect.arrayContaining(['click', 'requests', 'ruff']));
     expect(result.techs.has('numpy')).toBe(false);
     expect(result.dependencies).toContainEqual(['python', 'ruff', 'latest']);
   });
@@ -222,7 +222,7 @@ describe('python manifests', () => {
       ].join('\n'),
     });
 
-    expect([...result.techs]).toEqual(expect.arrayContaining(['requests', 'click', 'sphinx']));
+    expect([...result.techs]).toStrictEqual(expect.arrayContaining(['requests', 'click', 'sphinx']));
   });
 
   it('should read the literal requirements of setup.py and never a computed list', async () => {
@@ -234,7 +234,7 @@ describe('python manifests', () => {
       ].join('\n'),
     });
 
-    expect([...literal.techs]).toEqual(expect.arrayContaining(['requests', 'pyyaml']));
+    expect([...literal.techs]).toStrictEqual(expect.arrayContaining(['requests', 'pyyaml']));
     expect(literal.techs.has('django')).toBe(false);
 
     const computed = await scan({

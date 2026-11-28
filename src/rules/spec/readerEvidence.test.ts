@@ -43,7 +43,7 @@ test('matches the npm registry target of an alias, retaining local declarations 
     }),
   });
 
-  expect([...result.techs]).toEqual(expect.arrayContaining(['preactjs', 'vite', 'playwright']));
+  expect([...result.techs]).toStrictEqual(expect.arrayContaining(['preactjs', 'vite', 'playwright']));
 
   for (const id of ['react', 'vuejs', 'angular', 'zod'])
     expect([...result.techs]).not.toContain(id);
@@ -65,7 +65,7 @@ test('reads Python dependency groups and Poetry tables, retaining extras and ign
     'pyproject.toml': `[dependency-groups]\ntest = ["pytest>=7", {include-group="web"}]\nweb = ["fastapi[standard] (>=0.100)"]\n[tool.poetry.dependencies]\npython="^3.11"\nflask="^3"\ndjango={path="../django"}\n[tool.poetry.group.optional.dependencies]\npydantic={version="^2",optional=true}\n`,
   });
 
-  expect([...result.techs]).toEqual(
+  expect([...result.techs]).toStrictEqual(
     expect.arrayContaining(['pytest', 'fastapi', 'flask', 'pydantic'])
   );
   expect([...result.techs]).not.toContain('django');
@@ -89,7 +89,7 @@ pytest = [{ path = "../pytest", marker = "sys_platform == 'linux'" }, { index = 
 `,
   });
 
-  expect([...result.techs]).toEqual(
+  expect([...result.techs]).toStrictEqual(
     expect.arrayContaining(['fastapi', 'flask', 'pydantic', 'pytest'])
   );
 
@@ -103,7 +103,7 @@ test('leaves out a Python distribution referenced by a file URL, as PDM writes a
     'svc/requirements.txt': 'httpx @ file:///srv/httpx ; python_version >= "3.8"\ncelery==5\n',
   });
 
-  expect([...result.techs]).toEqual(expect.arrayContaining(['fastapi', 'celery']));
+  expect([...result.techs]).toStrictEqual(expect.arrayContaining(['fastapi', 'celery']));
 
   for (const id of ['requests', 'httpx']) expect([...result.techs]).not.toContain(id);
 });
@@ -138,7 +138,7 @@ test('keeps foreign XML out of a Maven POM and resolves nested local properties'
     '<doc:dependency><doc:groupId>example</doc:groupId><doc:artifactId>documentation</doc:artifactId></doc:dependency>' +
     '</dependencies></project>';
 
-  expect(mavenProject(pom)?.dependencies).toEqual([
+  expect(mavenProject(pom)?.dependencies).toStrictEqual([
     ['maven', 'org.springframework.boot:spring-boot-starter-web', ''],
   ]);
   expect(
@@ -157,7 +157,7 @@ test('ignores statically inactive NuGet declarations and removed entries, retain
       '<ItemGroup Condition="\'$(TargetFramework)\' == \'net9.0\'"><PackageReference Include="OptionalTarget"/></ItemGroup></Project>',
   });
 
-  expect(result.dependencies.map((d) => d[1]).sort()).toEqual(['OptionalTarget', 'xunit']);
+  expect(result.dependencies.map((d) => d[1]).sort()).toStrictEqual(['OptionalTarget', 'xunit']);
 });
 
 test('reads dependencies declared in a Kotlin source set and ignores conditional or sibling blocks', () => {
@@ -170,7 +170,7 @@ test('reads dependencies declared in a Kotlin source set and ignores conditional
   subprojects { dependencies { implementation("com.example:sibling:1") } }
   apply(plugin = "org.springframework.boot" + suffix)`;
 
-  expect(gradleDependencies(source, new Map())).toEqual([
+  expect(gradleDependencies(source, new Map())).toStrictEqual([
     ['maven', 'com.example:shared', '1'],
     ['maven', 'com.example:tests', '2'],
   ]);
@@ -186,7 +186,7 @@ test('records where each package, image, action and resource was declared', asyn
   });
   const all = [result, ...result.childs].flatMap((c) => c.toJson('').evidence);
 
-  expect(all).toEqual(
+  expect(all).toStrictEqual(
     expect.arrayContaining([
       {
         tech: 'react',
@@ -239,7 +239,7 @@ test('records the manifest of every other ecosystem that declares packages or im
   });
   const all = result.toJson('').evidence;
 
-  expect(all).toEqual(
+  expect(all).toStrictEqual(
     expect.arrayContaining([
       {
         tech: 'pytest',
@@ -297,7 +297,7 @@ test('records an image as the file writes it, and its dependency as the rules co
   });
   const all = [result, ...result.childs].flatMap((c) => c.toJson('').evidence);
 
-  expect(all).toEqual(
+  expect(all).toStrictEqual(
     expect.arrayContaining([
       {
         tech: 'nodejs',
@@ -322,7 +322,7 @@ test('records an image as the file writes it, and its dependency as the rules co
       },
     ])
   );
-  expect(result.dependencies).toEqual(
+  expect(result.dependencies).toStrictEqual(
     expect.arrayContaining([
       ['docker', 'node', '20'],
       ['docker', 'bitnami/postgresql', '16'],

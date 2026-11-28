@@ -42,7 +42,7 @@ test('recognizes Spring Boot in the Maven and Gradle modules that declare it', a
       .flatMap((pl) => [...pl.path])
       .map((p) => path.relative(root, p).split(path.sep).join('/'));
 
-    expect(paths.sort()).toEqual(['api/pom.xml', 'web/build.gradle', 'worker/build.gradle.kts']);
+    expect(paths.sort()).toStrictEqual(['api/pom.xml', 'web/build.gradle', 'worker/build.gradle.kts']);
     expect(components.find((pl) => pl.name === 'other')?.techs.has('maven')).toBe(true);
     expect(spring.find((pl) => pl.name === 'worker')?.techs.has('gradle')).toBe(true);
     expect(spring.find((pl) => pl.name === 'api')?.dependencies).toContainEqual([
@@ -70,7 +70,7 @@ test('reads local declarations and those of profiles without promoting POM defau
     <profiles><profile><dependencies><dependency><groupId>x</groupId><artifactId>conditional</artifactId></dependency>
     </dependencies></profile></profiles><!-- <dependencies>unused</dependencies> --></project>`)
       ?.dependencies
-  ).toEqual([
+  ).toStrictEqual([
     ['maven', 'org.springframework.boot:spring-boot-starter-parent', '3'],
     ['maven', 'io.test:used-plugin', ''],
     ['maven', 'x:conditional', ''],
@@ -106,7 +106,7 @@ test('reads literal Gradle dependencies and skips unapplied plugins and non-depe
   subprojects { dependencies { implementation("child:only:1") } }`,
       new Map()
     )
-  ).toEqual([
+  ).toStrictEqual([
     ['maven', 'org.example.actual:org.example.actual.gradle.plugin', '1'],
     ['maven', 'com.example:core', '2'],
     ['maven', 'group:conditional', '3'],
@@ -145,6 +145,6 @@ test('does not read a linked catalog as the declaring project’s version catalo
     }
   );
 
-  expect(opened).toEqual([build]);
-  expect(result instanceof Payload && result.dependencies).toEqual([]);
+  expect(opened).toStrictEqual([build]);
+  expect(result instanceof Payload && result.dependencies).toStrictEqual([]);
 });

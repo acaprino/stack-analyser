@@ -202,7 +202,7 @@ const wrongSigns: [string, SupportedDeps, string][] = [
 
 describe('package identities', () => {
   it.each(cases)('should % %s', (type, name, expected) => {
-    expect([...matchDependencies([name], type).keys()].sort()).toEqual(expected);
+    expect([...matchDependencies([name], type).keys()].sort()).toStrictEqual(expected);
   });
 
   it.each(wrongSigns)('should % is not identified by the wrong sign %s %s', (tech, type, name) => {
@@ -214,7 +214,7 @@ describe('package identities', () => {
     const before = counts();
     loadAllRules();
 
-    expect(counts()).toEqual(before);
+    expect(counts()).toStrictEqual(before);
   });
 
   it('should not let one package identify two technologies', () => {

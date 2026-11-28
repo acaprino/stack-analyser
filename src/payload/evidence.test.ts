@@ -19,9 +19,9 @@ test('flatten can be repeated without changing the source graph or double-counti
   const first = flatten(root, { merge: true }).toJson();
   const second = flatten(root, { merge: true }).toJson();
 
-  expect(first.languages).toEqual({ JavaScript: 6 });
-  expect(second.languages).toEqual(first.languages);
-  expect(root.toJson()).toEqual(original);
+  expect(first.languages).toStrictEqual({ JavaScript: 6 });
+  expect(second.languages).toStrictEqual(first.languages);
+  expect(root.toJson()).toStrictEqual(original);
 });
 
 test('connects repeated service evidence to a real component and keeps technologies with colliding names', () => {
@@ -31,11 +31,11 @@ test('connects repeated service evidence to a real component and keeps technolog
 
   expect(root.edges).toHaveLength(1);
   expect(root.edges[0].target).toBe(root.childs[0]);
-  expect([...root.childs[0].reason]).toEqual(['redis client', 'redis build']);
+  expect([...root.childs[0].reason]).toStrictEqual(['redis client', 'redis build']);
 
   root.addChild(new Payload({ name: root.childs[0].name, folderPath: '/pg', tech: 'postgresql' }));
 
-  expect(new Set(flatten(root, { merge: true }).childs.map((c) => c.tech))).toEqual(
+  expect(new Set(flatten(root, { merge: true }).childs.map((c) => c.tech))).toStrictEqual(
     new Set(['redis', 'postgresql'])
   );
 });
@@ -51,7 +51,7 @@ test('keeps cloud SDK recognition while assigning hosting only from deployment c
   }
   const sdkOnly = await application({ '/package.json': manifest });
 
-  expect([...sdkOnly.techs]).toEqual(expect.arrayContaining(['aws', 'vercel']));
+  expect([...sdkOnly.techs]).toStrictEqual(expect.arrayContaining(['aws', 'vercel']));
   expect(sdkOnly.inComponent).toBeNull();
 
   const configured = await application({ '/package.json': manifest, '/vercel.json': '{}' });
@@ -71,7 +71,7 @@ test('keeps unowned folder evidence visible when multiple manifests share a dire
   const result = await analyser({ provider });
 
   expect(result.mentions.map((m) => m.path)).toContain('adapter.py');
-  expect(result.childs.flatMap((c) => c.mentions)).toEqual([]);
+  expect(result.childs.flatMap((c) => c.mentions)).toStrictEqual([]);
 });
 
 test('toJson makes evidence paths relative and portable', () => {
@@ -84,7 +84,7 @@ test('toJson makes evidence paths relative and portable', () => {
   );
   root.addEvidence('react', [{ kind: 'extension', value: '.tsx', path: base }]);
 
-  expect(root.toJson(base).evidence).toEqual([
+  expect(root.toJson(base).evidence).toStrictEqual([
     { tech: 'react', kind: 'extension', value: '.tsx', path: '/', source: 'stack-analyser' },
     {
       tech: 'react',
@@ -105,7 +105,7 @@ test('gives the deduced component the evidence of the technology that implied it
   );
 
   expect(root.childs[0].tech).toBe('postgresql');
-  expect(root.childs[0].evidence).toEqual([
+  expect(root.childs[0].evidence).toStrictEqual([
     {
       tech: 'postgresql',
       kind: 'package',
@@ -129,8 +129,8 @@ test('flatten keeps the union of evidence', () => {
   const before = structuredClone(root.toJson());
   const redis = flatten(root, { merge: true }).childs.find((c) => c.tech === 'redis')!;
 
-  expect(redis.evidence.map((e) => e.path).sort()).toEqual(['/a/package.json', '/b/package.json']);
-  expect(root.toJson()).toEqual(before);
+  expect(redis.evidence.map((e) => e.path).sort()).toStrictEqual(['/a/package.json', '/b/package.json']);
+  expect(root.toJson()).toStrictEqual(before);
 });
 
 test('does not repeat evidence, keeps a declared source and ignores evidence of a Payload without tech', () => {
@@ -142,7 +142,7 @@ test('does not repeat evidence, keeps a declared source and ignores evidence of 
     { kind: 'source', value: 'createClient', path: '/index.ts', line: 3 },
   ]);
 
-  expect(root.evidence).toEqual([
+  expect(root.evidence).toStrictEqual([
     { tech: 'redis', ...found, source: 'stack-analyser' },
     { tech: 'redis', ...found, source: 'declared' },
     {
@@ -154,7 +154,7 @@ test('does not repeat evidence, keeps a declared source and ignores evidence of 
       source: 'stack-analyser',
     },
   ]);
-  expect(new Payload({ name: 'plain', folderPath: '/', evidence: [found] }).evidence).toEqual([]);
+  expect(new Payload({ name: 'plain', folderPath: '/', evidence: [found] }).evidence).toStrictEqual([]);
 });
 
 test('gives the host component of a dotted technology the evidence of the service and merges it on the next one', () => {
@@ -171,8 +171,8 @@ test('gives the host component of a dotted technology the evidence of the servic
   );
   const aws = root.childs.find((c) => c.tech === 'aws')!;
 
-  expect([...aws.reason]).toEqual(['implicit: aws.s3', 'implicit: aws.athena']);
-  expect(aws.evidence).toEqual([
+  expect([...aws.reason]).toStrictEqual(['implicit: aws.s3', 'implicit: aws.athena']);
+  expect(aws.evidence).toStrictEqual([
     {
       tech: 'aws',
       kind: 'package',
@@ -188,13 +188,13 @@ test('gives the host component of a dotted technology the evidence of the servic
       source: 'stack-analyser',
     },
   ]);
-  expect(root.childs.find((c) => c.tech === 'aws.s3')!.evidence.map((e) => e.tech)).toEqual([
+  expect(root.childs.find((c) => c.tech === 'aws.s3')!.evidence.map((e) => e.tech)).toStrictEqual([
     'aws.s3',
   ]);
 
   const copy = aws.copy();
 
-  expect(copy.evidence).toEqual(aws.evidence);
+  expect(copy.evidence).toStrictEqual(aws.evidence);
 
   copy.evidence.pop();
 
@@ -317,9 +317,9 @@ test('keeps what a copy has already seen apart from the original', () => {
   const copy = root.copy();
   copy.addEvidence('redis', [found, other]);
 
-  expect(copy.evidence.map((e) => e.value)).toEqual(['redis', 'ioredis']);
+  expect(copy.evidence.map((e) => e.value)).toStrictEqual(['redis', 'ioredis']);
 
   root.addEvidence('redis', [other]);
 
-  expect(root.evidence.map((e) => e.value)).toEqual(['redis', 'ioredis']);
+  expect(root.evidence.map((e) => e.value)).toStrictEqual(['redis', 'ioredis']);
 });

@@ -177,7 +177,7 @@ describe('no duplicate', () => {
         const prior = deps.get(str);
         if (prior) {
           expect(prior).not.toBe(rule.tech);
-          expect(integrations[str], str).toEqual(expect.arrayContaining([prior, rule.tech]));
+          expect(integrations[str], str).toStrictEqual(expect.arrayContaining([prior, rule.tech]));
         }
         deps.set(str, rule.tech);
       }
@@ -209,7 +209,7 @@ describe('no duplicate', () => {
             .filter((matcher) => matcher.match.test(ex))
             .map((matcher) => matcher.tech);
 
-          expect(new Set(hits), ex).toEqual(new Set(expected));
+          expect(new Set(hits), ex).toStrictEqual(new Set(expected));
 
           remaining.delete(`${name}:${ex}`);
           continue;
@@ -233,7 +233,7 @@ describe('no duplicate', () => {
       }
     }
 
-    expect([...remaining]).toEqual([]);
+    expect([...remaining]).toStrictEqual([]);
   });
 });
 
@@ -249,7 +249,7 @@ describe('dependency names', () => {
       }
     }
 
-    expect(padded).toEqual([]);
+    expect(padded).toStrictEqual([]);
   });
 });
 

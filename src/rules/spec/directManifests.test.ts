@@ -29,7 +29,7 @@ describe('direct manifest dependencies', () => {
       ].join('\n')
     );
 
-    expect(result.dependencies).toEqual([
+    expect(result.dependencies).toStrictEqual([
       ['golang', 'github.com/gin-gonic/gin', 'v1.10.0'],
       ['golang', 'go.uber.org/zap', 'v1.0.0'],
     ]);
@@ -48,16 +48,16 @@ describe('direct manifest dependencies', () => {
       })
     );
 
-    expect(result.dependencies).toEqual([
+    expect(result.dependencies).toStrictEqual([
       ['php', 'laravel/framework', '^11.0'],
       ['php', 'phpunit/phpunit', '^10'],
     ]);
     expect(result.techs.has('phpcomposer')).toBe(true);
     expect(result.techs.has('sentry')).toBe(false);
-    expect([...result.licenses].sort()).toEqual(['Apache-2.0', 'MIT']);
+    expect([...result.licenses].sort()).toStrictEqual(['Apache-2.0', 'MIT']);
   });
 
   it('should isolate an invalid Composer root from the other detectors', async () => {
-    expect((await scan('composer.json', 'null')).dependencies).toEqual([]);
+    expect((await scan('composer.json', 'null')).dependencies).toStrictEqual([]);
   });
 });

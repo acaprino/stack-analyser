@@ -37,7 +37,7 @@ describe('catalogue', () => {
     const techs = entries.map((entry) => entry.tech);
 
     expect(new Set(techs).size).toBe(techs.length);
-    expect(techs).toEqual(rules.list.map((rule) => rule.tech).sort());
+    expect(techs).toStrictEqual(rules.list.map((rule) => rule.tech).sort());
 
     for (const rule of rules.list) {
       const entry = entries.find((item) => item.tech === rule.tech);
@@ -59,7 +59,7 @@ describe('catalogue', () => {
     ] as unknown as Rule[]);
 
     // A locale order puts "a" and "b" before "Z".
-    expect(entries.map((entry) => entry.tech)).toEqual(['Z', 'a', 'b']);
+    expect(entries.map((entry) => entry.tech)).toStrictEqual(['Z', 'a', 'b']);
   });
 
   it('should give each entry only the known keys, in order, and none that is empty', () => {
@@ -70,8 +70,8 @@ describe('catalogue', () => {
     for (const entry of entries) {
       const keys = Object.keys(entry);
 
-      expect(keys, entry.tech).toEqual(keyOrder.filter((key) => keys.includes(key)));
-      expect(keys.slice(0, 3)).toEqual(['tech', 'name', 'type']);
+      expect(keys, entry.tech).toStrictEqual(keyOrder.filter((key) => keys.includes(key)));
+      expect(keys.slice(0, 3)).toStrictEqual(['tech', 'name', 'type']);
 
       for (const value of Object.values(entry)) {
         if (Array.isArray(value)) expect(value.length, entry.tech).toBeGreaterThan(0);
@@ -95,7 +95,7 @@ describe('catalogue', () => {
 
     const back = JSON.parse(JSON.stringify(entry)) as typeof entry;
 
-    expect(back).toEqual(entry);
+    expect(back).toStrictEqual(entry);
 
     const written = (back.dependencies as { pattern?: string; flags?: string }[]).find((dep) =>
       dep.pattern?.includes('spring-boot(?:')
@@ -111,7 +111,7 @@ describe('catalogue', () => {
   });
 
   it('should write the flags of a pattern only when it has some', () => {
-    expect(entryOf('aspnetcore').dependencies).toEqual([
+    expect(entryOf('aspnetcore').dependencies).toStrictEqual([
       { type: 'nuget', pattern: String.raw`^Microsoft\.AspNetCore\.`, flags: 'i' },
     ]);
 
@@ -122,13 +122,13 @@ describe('catalogue', () => {
   });
 
   it('should write the files of a rule as a list or as the source of a pattern', () => {
-    expect(entryOf('typescript').files).toEqual({
+    expect(entryOf('typescript').files).toStrictEqual({
       pattern: String.raw`^tsconfig(?:\.[\w-]+)*\.json$`,
     });
 
     const withList = rules.list.find((rule) => Array.isArray(rule.files) && rule.files.length > 0)!;
 
-    expect(entryOf(withList.tech).files).toEqual(withList.files);
+    expect(entryOf(withList.tech).files).toStrictEqual(withList.files);
 
     const withoutFiles = rules.list.find((rule) => rule.files === undefined)!;
 
@@ -183,13 +183,13 @@ describe('catalogue', () => {
       }),
     ]);
 
-    expect(entry).toEqual({ tech: 'one', name: 'One', type: 'tool' });
+    expect(entry).toStrictEqual({ tech: 'one', name: 'One', type: 'tool' });
 
     const [computed] = catalogue([
       frozen({ tech: 'two', name: 'Two', type: 'tool', files: () => [] }),
     ]);
 
-    expect(computed).toEqual({ tech: 'two', name: 'Two', type: 'tool', files: { computed: true } });
+    expect(computed).toStrictEqual({ tech: 'two', name: 'Two', type: 'tool', files: { computed: true } });
   });
 
   it('should copy the lists, so that an entry can be changed without touching the rule', () => {
@@ -206,7 +206,7 @@ describe('catalogue', () => {
     (entry.hosts as string[]).push('b.example');
     (entry.files as string[]).push('two.cfg');
 
-    expect(rule.hosts).toEqual(['a.example']);
-    expect(rule.files).toEqual(['one.cfg']);
+    expect(rule.hosts).toStrictEqual(['a.example']);
+    expect(rule.files).toStrictEqual(['one.cfg']);
   });
 });

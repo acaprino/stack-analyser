@@ -12,13 +12,13 @@ describe('declared package identity', () => {
   });
 
   it('should distinguish a registry port, tag, digest and official Docker Hub names', () => {
-    expect(imageReference('localhost:5000/library/redis:7@sha256:abcd')).toEqual({
+    expect(imageReference('localhost:5000/library/redis:7@sha256:abcd')).toStrictEqual({
       name: 'localhost:5000/library/redis',
       version: '7@sha256:abcd',
     });
     expect(imageReference('index.docker.io/library/redis:7').name).toBe('redis');
     expect(imageReference('registry-1.docker.io/bitnami/redis:latest').name).toBe('bitnami/redis');
-    expect(imageReference('gcr.io/cloud/redis@sha256:abcd')).toEqual({
+    expect(imageReference('gcr.io/cloud/redis@sha256:abcd')).toStrictEqual({
       name: 'gcr.io/cloud/redis',
       version: 'sha256:abcd',
     });

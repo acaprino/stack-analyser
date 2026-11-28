@@ -39,7 +39,7 @@ gem %q[pg]
       'Gemfile.lock': lock,
     });
 
-    expect(data.dependencies).toEqual(
+    expect(data.dependencies).toStrictEqual(
       expect.arrayContaining([
         ['ruby', 'rails', '8.0.2'],
         ['ruby', 'redis', '>= 4, < 6'],
@@ -78,7 +78,7 @@ gem %q[pg]
       ].join('\n'),
     });
 
-    expect(data.dependencies).toEqual([['ruby', 'pg', 'latest']]);
+    expect(data.dependencies).toStrictEqual([['ruby', 'pg', 'latest']]);
   });
 
   it('should read development and runtime dependencies from the gemspec receiver', async () => {
@@ -95,21 +95,21 @@ spec.add_dependency 'after_block'
 `,
     });
 
-    expect(data.dependencies.map(([, name]) => name).sort()).toEqual(['rails', 'redis', 'rspec']);
+    expect(data.dependencies.map(([, name]) => name).sort()).toStrictEqual(['rails', 'redis', 'rspec']);
     expect(data.techs.has('rails')).toBe(true);
   });
 
   it('should ignore stale and transitive lock entries when a manifest is present', async () => {
     const data = await scan({ Gemfile: "gem 'pg'", 'Gemfile.lock': lock });
 
-    expect(data.dependencies).toEqual([['ruby', 'pg', 'latest']]);
+    expect(data.dependencies).toStrictEqual([['ruby', 'pg', 'latest']]);
     expect(data.techs.has('rails')).toBe(false);
   });
 
   it('should limit a standalone lock to direct registry dependencies', async () => {
     const data = await scan({ 'Gemfile.lock': lock });
 
-    expect(data.dependencies).toEqual([
+    expect(data.dependencies).toStrictEqual([
       ['ruby', 'rails', '8.0.2'],
       ['ruby', 'redis', '5.1.0'],
     ]);

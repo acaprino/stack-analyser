@@ -31,11 +31,11 @@ describe('GitHub workflow evidence', () => {
         'on: push\njobs:\n  shared:\n    uses: org/shared/.github/workflows/build.yml@v2\n  steps:\n    runs-on: ubuntu-latest\n    steps:\n    - uses: docker://nginx:1.27\n    - uses: actions/setup-node@v4\n',
     });
 
-    expect([...result.techs]).toEqual(
+    expect([...result.techs]).toStrictEqual(
       expect.arrayContaining(['github.actions', 'redis', 'nginx', 'nodejs'])
     );
     expect(result.techs.has('postgresql')).toBe(false);
-    expect(result.dependencies).toEqual(
+    expect(result.dependencies).toStrictEqual(
       expect.arrayContaining([
         ['docker', 'redis', '7'],
         ['docker', 'registry.example:5000/acme/postgres', '4@sha256:abc'],
@@ -56,7 +56,7 @@ describe('GitHub workflow evidence', () => {
       '/.github/workflows/config.yaml': 'jobs: null\n',
     });
 
-    expect(result.dependencies).toEqual([]);
+    expect(result.dependencies).toStrictEqual([]);
     expect(result.techs.has('github.actions')).toBe(false);
   });
 

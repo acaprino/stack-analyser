@@ -85,7 +85,7 @@ describe('service endpoint mentions', () => {
     });
     const pinned = await findHostMentions(await provider.listDir('/'), provider);
 
-    expect(pinned.map(({ path, line }) => [path, line])).toEqual([
+    expect(pinned.map(({ path, line }) => [path, line])).toStrictEqual([
       ['client.dart', 1],
       ['client.py', 1],
       ['client.swift', 2],

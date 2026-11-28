@@ -49,7 +49,7 @@ describe('the report of the registry port', () => {
       ...report.differences.map((d) => d.id),
     ];
 
-    expect(named.filter((id) => !registeredTech.has(id as AllowedKeys))).toEqual([]);
+    expect(named.filter((id) => !registeredTech.has(id as AllowedKeys))).toStrictEqual([]);
   });
 
   it('should keep a registry id and a rule id apart', () => {

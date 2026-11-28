@@ -35,7 +35,7 @@ function allEvidence(graph: AnalyserJson): AnalyserJson['evidence'] {
 test('every technology carries evidence', async () => {
   const graph = (await analyser({ provider: new FSProvider({ path: root }) })).toJson(root);
 
-  expect(withoutEvidence(graph)).toEqual([]);
+  expect(withoutEvidence(graph)).toStrictEqual([]);
 });
 
 test('records the file, extension, variable or source behind a hand-written reason', async () => {
@@ -78,7 +78,7 @@ test('records the file, extension, variable or source behind a hand-written reas
   }
   const graph = (await analyser({ provider: new FakeProvider({ paths, files }) })).toJson();
 
-  expect(withoutEvidence(graph)).toEqual([]);
+  expect(withoutEvidence(graph)).toStrictEqual([]);
 
   const found = allEvidence(graph);
   const file = (tech: string, value: string, at: string) => ({

@@ -35,14 +35,14 @@ test('reads literal FROM repositories through the CLI and skips stages, comments
     const result = JSON.parse(await fs.readFile(path.join(cwd, 'output.json'), 'utf8'));
 
     expect(result.dependencies).toHaveLength(3);
-    expect(result.dependencies).toEqual(
+    expect(result.dependencies).toStrictEqual(
       expect.arrayContaining([
         ['docker', 'redis', '7'],
         ['docker', 'registry.internal:5000/acme/mongo', '2@sha256:abc'],
         ['docker', 'nginx', '${TAG}'],
       ])
     );
-    expect(result.techs).toEqual(expect.arrayContaining(['redis', 'nginx', 'docker']));
+    expect(result.techs).toStrictEqual(expect.arrayContaining(['redis', 'nginx', 'docker']));
 
     for (const tech of ['mongodb', 'mysql', 'rabbitmq', 'traefik'])
       expect(result.techs).not.toContain(tech);

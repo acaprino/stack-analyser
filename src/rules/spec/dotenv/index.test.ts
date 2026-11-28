@@ -49,7 +49,7 @@ describe('dotenv', () => {
     });
     const hits = flatten(await analyser({ provider }), { merge: true }).techs;
 
-    expect([...hits]).toEqual(expect.arrayContaining(['supabase', 'rollbar', 'sentry']));
+    expect([...hits]).toStrictEqual(expect.arrayContaining(['supabase', 'rollbar', 'sentry']));
 
     for (const other of ['openai', 'stripe', 'redis', 'datadog', 'apple'] as const)
       expect(hits.has(other)).toBe(false);

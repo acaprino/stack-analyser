@@ -126,7 +126,7 @@ test('writes evidence paths relative to the root when the root ends with a separ
   );
 
   expect(code).toBe(0);
-  expect(evidencePaths(output)).toEqual(evidenceOfProj);
+  expect(evidencePaths(output)).toStrictEqual(evidenceOfProj);
 }, 20_000);
 
 test('writes evidence paths relative to the root when an absolute root goes through ..', async () => {
@@ -136,7 +136,7 @@ test('writes evidence paths relative to the root when an absolute root goes thro
   );
 
   expect(code).toBe(0);
-  expect(evidencePaths(output)).toEqual(evidenceOfProj);
+  expect(evidencePaths(output)).toStrictEqual(evidenceOfProj);
 }, 20_000);
 
 test('writes the output where an absolute --output says', async () => {
@@ -146,7 +146,7 @@ test('writes the output where an absolute --output says', async () => {
   );
 
   expect(code).toBe(0);
-  expect(evidencePaths(output)).toEqual(evidenceOfProj);
+  expect(evidencePaths(output)).toStrictEqual(evidenceOfProj);
 }, 20_000);
 
 const manifest = JSON.stringify({ name: 'app', dependencies: { react: '18' } });
@@ -275,7 +275,7 @@ test.each([
 
     const found = new Set<string>(output.techs);
 
-    expect(['react', 'express', 'vitest'].filter((tech) => found.has(tech))).toEqual(expected);
+    expect(['react', 'express', 'vitest'].filter((tech) => found.has(tech))).toStrictEqual(expected);
   },
   20_000
 );
@@ -297,7 +297,7 @@ test('leaves out a folder to --ignore however its path is written', async () => 
 
   const found = new Set<string>(output.techs);
 
-  expect(['react', ...Object.values(folders)].filter((tech) => found.has(tech))).toEqual(['react']);
+  expect(['react', ...Object.values(folders)].filter((tech) => found.has(tech))).toStrictEqual(['react']);
 }, 20_000);
 
 test.each([
@@ -374,8 +374,8 @@ test('gives the same output from --perimeter as from --skip-dirs and --ignore', 
 
   expect(options.code).toBe(0);
   expect(file.code).toBe(0);
-  expect(techsOfTree(options.output)).toEqual(['react', 'vitest', 'fastify']);
-  expect(withoutIds(file.output)).toEqual(withoutIds(options.output));
+  expect(techsOfTree(options.output)).toStrictEqual(['react', 'vitest', 'fastify']);
+  expect(withoutIds(file.output)).toStrictEqual(withoutIds(options.output));
 }, 40_000);
 
 test('keeps what an absent key means, and reads a perimeter that starts with a byte order mark', async () => {
@@ -395,9 +395,9 @@ test('keeps what an absent key means, and reads a perimeter that starts with a b
   ]);
 
   expect(withoutSkipDirs.code).toBe(0);
-  expect(techsOfTree(withoutSkipDirs.output)).toEqual(['react', 'vue', 'fastify']);
+  expect(techsOfTree(withoutSkipDirs.output)).toStrictEqual(['react', 'vue', 'fastify']);
   expect(withoutIgnore.code).toBe(0);
-  expect(techsOfTree(withoutIgnore.output)).toEqual([
+  expect(techsOfTree(withoutIgnore.output)).toStrictEqual([
     'react',
     'express',
     'vitest',
@@ -517,7 +517,7 @@ test('writes the catalogue of the rules without a project, and leaves nothing el
   expect(code).toBe(0);
   expect(out).toContain('rules.json');
   // Nothing was analysed (no output.json) and the temporary file, which was in the same folder, was renamed.
-  expect(files).toEqual(['out/keep.txt', 'out/rules.json', 'package.json']);
+  expect(files).toStrictEqual(['out/keep.txt', 'out/rules.json', 'package.json']);
   expect(bytes).not.toBeNull();
   // UTF-8 without a byte order mark: the first byte is the bracket of the array.
   expect(bytes![0]).toBe('['.codePointAt(0));
@@ -568,7 +568,7 @@ test('exits with 1 and writes nothing when --catalogue is given with a project o
     expect(result.code).toBe(1);
     expect(result.out).toMatch(/--catalogue stands alone/);
     expect(result.bytes).toBeNull();
-    expect(result.files).toEqual(['package.json']);
+    expect(result.files).toStrictEqual(['package.json']);
   }
   for (const name of [
     'the project',
@@ -599,13 +599,13 @@ test('exits with 1 and names the file when the catalogue cannot be written, and 
 
   expect(missingFolder.code).toBe(1);
   expect(missingFolder.out).toMatch(/Catalogue ".*rules\.json"/);
-  expect(missingFolder.files).toEqual(['package.json']);
+  expect(missingFolder.files).toStrictEqual(['package.json']);
   expect(aFolder.code).toBe(1);
   expect(aFolder.out).toMatch(/Catalogue ".*out"/);
-  expect(aFolder.files).toEqual(['out/keep.txt']);
+  expect(aFolder.files).toStrictEqual(['out/keep.txt']);
   expect(nothing.code).toBe(1);
   expect(nothing.out).toMatch(/missing required argument 'path'/);
-  expect(nothing.files).toEqual(['package.json']);
+  expect(nothing.files).toStrictEqual(['package.json']);
   expect(help.code).toBe(0);
   expect(help.out).toContain('Usage: stack-analyser-daodan ');
 }, 40_000);
@@ -651,7 +651,7 @@ test.skipIf(!hasBuild)(
     const [modules, bundle] = await Promise.all([runBuilt('cli.js'), runBuilt('cli.mjs')]);
 
     expect(modules.childs.length).toBeGreaterThan(0);
-    expect(withoutIds(bundle)).toEqual(withoutIds(modules));
+    expect(withoutIds(bundle)).toStrictEqual(withoutIds(modules));
   },
   60_000
 );

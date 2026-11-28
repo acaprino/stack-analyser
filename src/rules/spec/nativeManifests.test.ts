@@ -42,7 +42,7 @@ describe('native package manifests', () => {
       ].join('\n'),
     });
 
-    expect(result.dependencies.sort()).toEqual([
+    expect(result.dependencies.sort()).toStrictEqual([
       ['pub', 'flutter', 'sdk:flutter'],
       ['pub', 'flutter_test', 'sdk:flutter'],
       ['pub', 'test', '1.25.0'],
@@ -71,7 +71,7 @@ describe('native package manifests', () => {
       }),
     });
 
-    expect(result.dependencies.sort()).toEqual([
+    expect(result.dependencies.sort()).toStrictEqual([
       ['nuget', 'MudBlazor', '8.0.0'],
       ['nuget', 'Serilog', '4.2.0'],
       ['nuget', 'xunit', '2.9.0'],
@@ -106,8 +106,8 @@ describe('native package manifests', () => {
 
     expect(
       result.childs.filter((child) => child.techs.has('winui')).map((child) => child.name)
-    ).toEqual(['Desktop']);
-    expect(result.toJson().reason.filter((reason) => reason.includes('UseWinUI'))).toEqual([
+    ).toStrictEqual(['Desktop']);
+    expect(result.toJson().reason.filter((reason) => reason.includes('UseWinUI'))).toStrictEqual([
       'MSBuild UseWinUI=true in Desktop.csproj',
     ]);
   });
@@ -128,12 +128,12 @@ describe('native package manifests', () => {
       'test_helper.exs': '# ExUnit.configuration()\n~S"ExUnit.start()"\nExUnit.start()\n',
     });
 
-    expect(result.dependencies.sort()).toEqual([
+    expect(result.dependencies.sort()).toStrictEqual([
       ['hex', 'ecto_sql', '~> 3.0'],
       ['hex', 'phoenix', '1.7.15'],
     ]);
     expect(result.techs).toContain('exunit');
-    expect(result.toJson().reason.filter((r) => r.startsWith('ExUnit.'))).toEqual([
+    expect(result.toJson().reason.filter((r) => r.startsWith('ExUnit.'))).toStrictEqual([
       'ExUnit.start at test_helper.exs:3',
     ]);
     expect(result.techs).toContain('ecto');
@@ -163,13 +163,13 @@ describe('native package manifests', () => {
         'let note = #"import FirebaseMessaging"#\nimport SwiftUI\nimport struct MapKit.MKMapRect\n',
     });
 
-    expect(result.dependencies).toEqual([['swiftpm', 'firebase-ios-sdk', '10.1.0']]);
+    expect(result.dependencies).toStrictEqual([['swiftpm', 'firebase-ios-sdk', '10.1.0']]);
     expect(result.techs).toContain('swiftui');
     expect(result.techs).toContain('mapkit');
     expect(result.techs).toContain('firebase');
     expect(result.techs).not.toContain('uikit');
     expect(result.techs).not.toContain('flutter');
-    expect(result.toJson().reason.filter((r) => r.startsWith('Swift import'))).toEqual([
+    expect(result.toJson().reason.filter((r) => r.startsWith('Swift import'))).toStrictEqual([
       'Swift import SwiftUI at ContentView.swift:3',
       'Swift import MapKit at ContentView.swift:4',
     ]);

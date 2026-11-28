@@ -57,7 +57,7 @@ describe('declarations', () => {
       .map((e) => e.source)
       .sort();
 
-    expect(sources).toEqual(['renovate', 'stack-analyser']);
+    expect(sources).toStrictEqual(['renovate', 'stack-analyser']);
   });
 
   it('should reject a declaration outside the project or of an unknown type', async () => {
@@ -84,12 +84,12 @@ describe('declarations', () => {
     });
     const baseline = await analyser({ provider: project() });
 
-    expect(result.toJson('')).toEqual({
+    expect(result.toJson('')).toStrictEqual({
       ...baseline.toJson(''),
       id: result.id,
       childs: expect.anything(),
     });
-    expect(result.evidence).toEqual([]);
+    expect(result.evidence).toStrictEqual([]);
     expect(result.techs.size).toBe(0);
   });
 
@@ -102,7 +102,7 @@ describe('declarations', () => {
     });
 
     expect(result.techs.has('requests')).toBe(true);
-    expect(result.evidence.map((e) => e.tech)).toEqual(['requests']);
+    expect(result.evidence.map((e) => e.tech)).toStrictEqual(['requests']);
 
     // The only other place is the component the technology implies, the same as for a manifest.
     const others = result.childs
@@ -246,7 +246,7 @@ describe('declarations', () => {
       { merge: true }
     );
 
-    expect(result.toJson('').evidence.filter((e) => e.tech === 'react')).toEqual([
+    expect(result.toJson('').evidence.filter((e) => e.tech === 'react')).toStrictEqual([
       {
         tech: 'react',
         kind: 'package',
@@ -261,8 +261,8 @@ describe('declarations', () => {
     const withList = await analyser({ provider: project(), declarations: [] });
     const without = await analyser({ provider: project() });
 
-    expect(withList.toJson('').evidence).toEqual(without.toJson('').evidence);
-    expect(withList.toJson('').techs).toEqual(without.toJson('').techs);
+    expect(withList.toJson('').evidence).toStrictEqual(without.toJson('').evidence);
+    expect(withList.toJson('').techs).toStrictEqual(without.toJson('').techs);
   });
 
   describe('validation', () => {
