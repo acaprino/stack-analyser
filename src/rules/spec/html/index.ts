@@ -1,3 +1,5 @@
+import path from 'node:path';
+
 import { Payload } from '../../../payload/index.js';
 
 import type { BaseProvider, ProviderFile } from '../../../provider/base.js';
@@ -6,6 +8,9 @@ import type { BaseProvider, ProviderFile } from '../../../provider/base.js';
 const pageFile =
   /\.(?:html?|xhtml|cshtml|razor|jsp|erb|ejs|hbs|handlebars|mustache|njk|twig|jinja2?|j2|liquid|gohtml|tmpl)$|\.blade\.php$/i;
 const maxFileSize = 500_000;
+// The folders the endpoint reader leaves out too: a test page, a fixture or an example is not the project's page.
+const notTheProject =
+  /(?:^|\/)(?:docs?|examples?|fixtures?|tests?|__tests__|__fixtures__|testdata|node_modules|vendor|generated)(?:\/|$)/i;
 const cdnHost =
   /(?:cdn|fastly)\.jsdelivr\.net|unpkg\.com|code\.jquery\.com|ajax\.googleapis\.com|code\.ionicframework\.com/i;
 
@@ -105,6 +110,8 @@ export async function detectPageReferences(
   let payload: Payload | undefined;
   for (const file of files) {
     if (file.type !== 'file' || !pageFile.test(file.name)) continue;
+    const relative = path.relative(provider.basePath, file.fp).split(path.sep).join('/');
+    if (notTheProject.test(path.posix.dirname(relative))) continue;
     const content = await provider.open(file.fp, maxFileSize);
     if (!content || content.includes('\0') || !cdnHost.test(content)) continue;
     for (const { address, line } of pageReferences(content)) {

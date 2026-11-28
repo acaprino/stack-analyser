@@ -79,14 +79,21 @@ describe('pages that load a package from a CDN', () => {
         '<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>',
       'templates/base.jinja2':
         '<!-- <link href="//code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css"> -->\n' +
-        '<script src="https://unpkg.com/left-pad@1.3.0/index.js"></script>',
+        '<script src="https://unpkg.com/left-pad@1.3.0/index.js"></script>\n' +
+        '<script src="https://unpkg.com/htmx.org@1.9.10"></script>',
       'notes.txt': '<script src="https://cdn.jsdelivr.net/npm/vue@3"></script>',
+      'tests/data/page.html':
+        '<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>',
     };
     const provider = new FakeProvider({
       paths: {
-        '/': ['package.json', 'index.html', 'notes.txt', 'templates'],
+        '/': ['package.json', 'index.html', 'notes.txt', 'templates/', 'tests/'],
         '/templates': ['base.jinja2'],
+        '/tests': ['data/'],
+        '/tests/data': ['page.html'],
       },
+      // A test page is left out even where the perimeter enters the folder.
+      skipDirs: [],
       files: Object.fromEntries(
         Object.entries(files).map(([name, text]) => [path.join('/', name), text])
       ),
@@ -95,8 +102,10 @@ describe('pages that load a package from a CDN', () => {
 
     expect(result.techs).toContain('bootstrap');
     expect(result.techs).toContain('angularjs');
+    expect(result.techs).toContain('htmx');
     expect(result.techs).not.toContain('ionicons');
     expect(result.techs).not.toContain('vue');
+    expect(result.techs).not.toContain('jquery-ui');
     expect(
       result
         .toJson('/')
