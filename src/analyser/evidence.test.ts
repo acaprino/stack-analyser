@@ -8,13 +8,14 @@ import { FSProvider } from '../provider/fs.js';
 import '../autoload.js';
 
 import type { AnalyserJson } from '../types/index.js';
+import type { AllowedKeys } from '../types/techs.js';
 
 const root = path.join(import.meta.dirname, '../../tests/__fixtures__');
 
 /** Every technology of a component with no evidence behind it, as `component: tech`. */
 function withoutEvidence(graph: AnalyserJson): string[] {
   const missing: string[] = [];
-  const visit = (node: AnalyserJson) => {
+  const visit = (node: AnalyserJson): void => {
     for (const id of node.tech ? [node.tech, ...node.techs] : node.techs) {
       if (!node.evidence.some((item) => item.tech === id)) missing.push(`${node.name}: ${id}`);
     }
@@ -22,18 +23,27 @@ function withoutEvidence(graph: AnalyserJson): string[] {
       expect(item.path.startsWith('/'), item.path).toBe(true);
       expect(item.path).not.toMatch(/\\|^\/[A-Za-z]:/);
     }
-    node.childs.forEach(visit);
+    for (const child of node.childs) visit(child);
   };
   visit(graph);
   return missing;
 }
 
 function allEvidence(graph: AnalyserJson): AnalyserJson['evidence'] {
-  return [...graph.evidence, ...graph.childs.flatMap(allEvidence)];
+  return [...graph.evidence, ...graph.childs.flatMap((child) => allEvidence(child))];
+}
+
+/** A file evidence item, as the analyser writes it for a manifest it reads itself. */
+function fileEvidence(
+  tech: string,
+  { value, at }: { value: string; at: string }
+): AnalyserJson['evidence'][number] {
+  return { tech: tech as AllowedKeys, kind: 'file', value, path: at, source: 'stack-analyser' };
 }
 
 test('every technology carries evidence', async () => {
-  const graph = (await analyser({ provider: new FSProvider({ path: root }) })).toJson(root);
+  const analysed = await analyser({ provider: new FSProvider({ path: root }) });
+  const graph = analysed.toJson(root);
 
   expect(withoutEvidence(graph)).toStrictEqual([]);
 });
@@ -76,20 +86,14 @@ test('records the file, extension, variable or source behind a hand-written reas
       paths[folder] ??= [];
     }
   }
-  const graph = (await analyser({ provider: new FakeProvider({ paths, files }) })).toJson();
+  const analysed = await analyser({ provider: new FakeProvider({ paths, files }) });
+  const graph = analysed.toJson();
 
   expect(withoutEvidence(graph)).toStrictEqual([]);
 
   const found = allEvidence(graph);
-  const file = (tech: string, value: string, at: string) => ({
-    tech,
-    kind: 'file',
-    value,
-    path: at,
-    source: 'stack-analyser',
-  });
   const expected = [
-    file('elixir', 'mix.exs', '/elixir/mix.exs'),
+    fileEvidence('elixir', { value: 'mix.exs', at: '/elixir/mix.exs' }),
     {
       tech: 'exunit',
       kind: 'source',
@@ -98,7 +102,7 @@ test('records the file, extension, variable or source behind a hand-written reas
       line: 3,
       source: 'stack-analyser',
     },
-    file('swift', 'Package.swift', '/swift/Package.swift'),
+    fileEvidence('swift', { value: 'Package.swift', at: '/swift/Package.swift' }),
     {
       tech: 'swiftui',
       kind: 'source',
@@ -107,23 +111,23 @@ test('records the file, extension, variable or source behind a hand-written reas
       line: 2,
       source: 'stack-analyser',
     },
-    file('maven', 'pom.xml', '/maven/pom.xml'),
-    file('gradle', 'build.gradle', '/gradle/build.gradle'),
-    file('maestro', 'smoke.yaml', '/mobile/.maestro/smoke.yaml'),
-    file('nuget', 'Desktop.csproj', '/dotnet/Desktop.csproj'),
-    file('winui', 'Desktop.csproj', '/dotnet/Desktop.csproj'),
-    file('phpcomposer', 'composer.json', '/php/composer.json'),
-    file('dart', 'pubspec.yaml', '/dart/pubspec.yaml'),
-    file('ruby', 'demo.gemspec', '/gemspec/demo.gemspec'),
-    file('bundler', 'Gemfile', '/bundler/Gemfile'),
-    file('bundler', 'Gemfile.lock', '/locked/Gemfile.lock'),
-    file('ruby', 'Gemfile.lock', '/locked/Gemfile.lock'),
-    file('cargo', 'Cargo.toml', '/rust/Cargo.toml'),
-    file('shadcn', 'components.json', '/ui/components.json'),
-    file('golang', 'main.go', '/go/cmd/server/main.go'),
-    file('docker', 'docker-compose.yml', '/compose/docker-compose.yml'),
-    file('docker', 'Dockerfile', '/image/Dockerfile'),
-    file('github.actions', 'build.yml', '/.github/workflows/build.yml'),
+    fileEvidence('maven', { value: 'pom.xml', at: '/maven/pom.xml' }),
+    fileEvidence('gradle', { value: 'build.gradle', at: '/gradle/build.gradle' }),
+    fileEvidence('maestro', { value: 'smoke.yaml', at: '/mobile/.maestro/smoke.yaml' }),
+    fileEvidence('nuget', { value: 'Desktop.csproj', at: '/dotnet/Desktop.csproj' }),
+    fileEvidence('winui', { value: 'Desktop.csproj', at: '/dotnet/Desktop.csproj' }),
+    fileEvidence('phpcomposer', { value: 'composer.json', at: '/php/composer.json' }),
+    fileEvidence('dart', { value: 'pubspec.yaml', at: '/dart/pubspec.yaml' }),
+    fileEvidence('ruby', { value: 'demo.gemspec', at: '/gemspec/demo.gemspec' }),
+    fileEvidence('bundler', { value: 'Gemfile', at: '/bundler/Gemfile' }),
+    fileEvidence('bundler', { value: 'Gemfile.lock', at: '/locked/Gemfile.lock' }),
+    fileEvidence('ruby', { value: 'Gemfile.lock', at: '/locked/Gemfile.lock' }),
+    fileEvidence('cargo', { value: 'Cargo.toml', at: '/rust/Cargo.toml' }),
+    fileEvidence('shadcn', { value: 'components.json', at: '/ui/components.json' }),
+    fileEvidence('golang', { value: 'main.go', at: '/go/cmd/server/main.go' }),
+    fileEvidence('docker', { value: 'docker-compose.yml', at: '/compose/docker-compose.yml' }),
+    fileEvidence('docker', { value: 'Dockerfile', at: '/image/Dockerfile' }),
+    fileEvidence('github.actions', { value: 'build.yml', at: '/.github/workflows/build.yml' }),
     {
       tech: 'stripe',
       kind: 'env',

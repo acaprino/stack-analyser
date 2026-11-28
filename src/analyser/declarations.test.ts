@@ -5,7 +5,9 @@ import { flatten } from '../payload/helpers.js';
 import { FakeProvider } from '../provider/fake.js';
 import '../autoload.js';
 
-const project = () =>
+import type { Payload } from '../payload/index.js';
+
+const project = (): FakeProvider =>
   new FakeProvider({
     paths: { '/': ['package.json', 'setup.cfg'] },
     files: {
@@ -13,6 +15,10 @@ const project = () =>
       '/setup.cfg': '',
     },
   });
+
+/** Analyses the test project with `declarations` passed as they are, valid or not. */
+const analyseWith = (declarations: unknown): Promise<Payload> =>
+  analyser({ provider: project(), declarations: declarations as never });
 
 describe('declarations', () => {
   it('should recognise external declarations and keep their source', async () => {
@@ -61,18 +67,15 @@ describe('declarations', () => {
   });
 
   it('should reject a declaration outside the project or of an unknown type', async () => {
-    const bad = (declaration: object) =>
-      analyser({ provider: project(), declarations: [declaration as never] });
-
     await expect(
-      bad({ type: 'npm', name: 'react', path: '../other/package.json', source: 'x' })
+      analyseWith([{ type: 'npm', name: 'react', path: '../other/package.json', source: 'x' }])
     ).rejects.toThrow(/declaration 0/);
     await expect(
-      bad({ type: 'cobol', name: 'react', path: 'package.json', source: 'x' })
+      analyseWith([{ type: 'cobol', name: 'react', path: 'package.json', source: 'x' }])
     ).rejects.toThrow(/declaration 0/);
-    await expect(bad({ type: 'npm', name: 'react', path: 'package.json' })).rejects.toThrow(
-      /declaration 0/
-    );
+    await expect(
+      analyseWith([{ type: 'npm', name: 'react', path: 'package.json' }])
+    ).rejects.toThrow(/declaration 0/);
   });
 
   it('should keep an unknown name out of the result', async () => {
@@ -267,8 +270,6 @@ describe('declarations', () => {
 
   describe('validation', () => {
     const valid = { type: 'npm', name: 'react', path: 'package.json', source: 'x' };
-    const run = (...declarations: unknown[]) =>
-      analyser({ provider: project(), declarations: declarations as never });
 
     it.each([
       ['an absolute path', { ...valid, path: '/etc/package.json' }, /"path"/],
@@ -294,17 +295,14 @@ describe('declarations', () => {
       ['a line that is not a number', { ...valid, line: '4' }, /"line"/],
       ['an entry that is not an object', 'react', /expected an object/],
       ['a null entry', null, /expected an object/],
-    ])('should reject %s, naming the entry', async (_label, entry, message) => {
-      await expect(run(entry)).rejects.toThrow(message);
-      await expect(run(valid, entry)).rejects.toThrow(/declaration 1/);
+    ])('should reject %s, naming the entry', async (...[, entry, message]) => {
+      await expect(analyseWith([entry])).rejects.toThrow(message);
+      await expect(analyseWith([valid, entry])).rejects.toThrow(/declaration 1/);
     });
 
     it('should reject a value that is not an array', async () => {
-      const bad = (declarations: unknown) =>
-        analyser({ provider: project(), declarations: declarations as never });
-
-      await expect(bad({ type: 'npm' })).rejects.toThrow(/must be an array/);
-      await expect(bad('react')).rejects.toThrow(/must be an array/);
+      await expect(analyseWith({ type: 'npm' })).rejects.toThrow(/must be an array/);
+      await expect(analyseWith('react')).rejects.toThrow(/must be an array/);
     });
 
     it('should accept every supported type', async () => {
@@ -327,7 +325,7 @@ describe('declarations', () => {
         'terraform',
       ];
 
-      await expect(run(...types.map((type) => ({ ...valid, type })))).resolves.toBeDefined();
+      await expect(analyseWith(types.map((type) => ({ ...valid, type })))).resolves.toBeDefined();
     });
   });
 });
