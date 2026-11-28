@@ -51,12 +51,8 @@ const integrations: Record<string, string[]> = {
   'maven:org.mockito:mockito-junit-jupiter': ['junit-jupiter', 'mockito'],
   'maven:org.testcontainers:junit-jupiter': ['junit-jupiter', 'testcontainers'],
   'maven:org.testcontainers:testcontainers-junit-jupiter': ['junit-jupiter', 'testcontainers'],
-  // spring-boot-starter-test holds JUnit Jupiter and Mockito, and every Spring Boot 4 test starter depends on it.
-  'maven:org.springframework.boot:spring-boot-starter-test': [
-    'junit-jupiter',
-    'mockito',
-    'spring-boot',
-  ],
+  // spring-boot-starter-test holds Mockito, and every Spring Boot 4 test starter depends on it.
+  'maven:org.springframework.boot:spring-boot-starter-test': ['mockito', 'spring-boot'],
   // A starter that brings the driver of one server gives that server as well.
   'maven:org.springframework.boot:spring-boot-starter-amqp': [
     'rabbitmq',
@@ -199,14 +195,21 @@ describe('no duplicate', () => {
       }
 
       for (const dep of rule.dependencies) {
-        // An expression stands for the package of its example: the table of integrations names packages.
+        // An expression stands for the package of its example: the table of integrations names packages. The same
+        // expression with another example is the same dependency all the same.
         const str = `${dep.type}:${'example' in dep ? dep.example : dep.name}`;
-        const prior = deps.get(str);
-        if (prior) {
-          expect(prior).not.toBe(rule.tech);
-          expect(integrations[str], str).toStrictEqual(expect.arrayContaining([prior, rule.tech]));
+        const keys =
+          typeof dep.name === 'string' ? [str] : [str, `${dep.type}:${String(dep.name)}`];
+        for (const key of keys) {
+          const prior = deps.get(key);
+          if (prior) {
+            expect(prior).not.toBe(rule.tech);
+            expect(integrations[str], str).toStrictEqual(
+              expect.arrayContaining([prior, rule.tech])
+            );
+          }
+          deps.set(key, rule.tech);
         }
-        deps.set(str, rule.tech);
       }
     }
   });

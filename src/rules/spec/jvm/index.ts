@@ -7,9 +7,35 @@ import { Payload } from '../../../payload/index.js';
 import { sourceText } from '../manifestTokens.js';
 import { oncePerRun, projectPath } from '../packageManifest.js';
 
+import type { TestFramework } from './gradle.js';
 import type { BaseProvider, ProviderFile } from '../../../provider/base.js';
 import type { Dependency } from '../../../types/index.js';
 import type { ComponentMatcher } from '../../../types/rule.js';
+
+// spring-boot-starter-test and the test starter of each Spring Boot 4 module, which depends on it.
+const bootTestStarter =
+  /^org\.springframework\.boot:spring-boot-starter-(?:[\w-]+-)?test(?:-classic)?$/;
+// What says the Spring Boot version of a build: its parent, its plugin, its BOM, or Spring Boot itself.
+const bootVersionSource =
+  /^org\.springframework\.boot:(?:spring-boot-starter-parent|spring-boot-dependencies|org\.springframework\.boot\.gradle\.plugin|spring-boot)$/;
+
+/**
+ * The test starter of Spring Boot that brings JUnit Jupiter, when the build has one. spring-boot-starter-test held
+ * JUnit 4 up to Spring Boot 2.1 and JUnit Jupiter from 2.2 ("Starter for testing Spring Boot applications with
+ * libraries including JUnit Jupiter"): a version below 2.2 that the build states rules it out, an unknown one does not.
+ */
+function bootJupiterStarter(deps: Dependency[]): string | undefined {
+  const starter = deps.find(([, key]) => bootTestStarter.test(key));
+  if (!starter) return undefined;
+  const stated = [starter, ...deps.filter(([, key]) => bootVersionSource.test(key))];
+  const beforeJupiter = stated.some((dependency) => {
+    const release = /^(\d+)\.(\d+)(?:\D|$)/.exec(dependency[2]);
+    if (!release) return false;
+    const [major, minor] = [Number(release[1]), Number(release[2])];
+    return major < 2 || (major === 2 && minor < 2);
+  });
+  return beforeJupiter ? undefined : starter[1];
+}
 
 function component(
   tool: 'gradle' | 'maven' | 'sbt',
@@ -25,6 +51,13 @@ function component(
     dependencies.map(([, key]) => key),
     { type: 'maven', file }
   );
+  const starter = bootJupiterStarter(dependencies);
+  if (starter) {
+    pl.addTech('junit-jupiter', {
+      reason: [`${starter} brings JUnit Jupiter from Spring Boot 2.2`],
+      evidence: [{ kind: 'package', value: starter, path: file }],
+    });
+  }
   return pl;
 }
 
@@ -75,6 +108,41 @@ async function catalogFile(
   }
 }
 
+/**
+ * The test framework calls that the root build of the Gradle build that `folder` belongs to makes for its subprojects,
+ * with that build file; nothing when `folder` is the root itself or has no root above it in the analysed copy.
+ */
+async function rootTestFrameworks(
+  provider: BaseProvider,
+  { folder, files }: { folder: string; files: ProviderFile[] }
+): Promise<{ file: ProviderFile; calls: Map<TestFramework, number> } | null> {
+  const base = path.resolve(provider.basePath);
+  const settings = (list: ProviderFile[]): boolean =>
+    list.some((f) => ['settings.gradle', 'settings.gradle.kts'].includes(f.name));
+  if (settings(files)) return null;
+  let current = path.resolve(folder);
+  for (;;) {
+    const parent = path.dirname(current);
+    const relative = path.relative(base, parent);
+    if (parent === current || relative === '..' || relative.startsWith(`..${path.sep}`))
+      return null;
+    if (path.isAbsolute(relative)) return null;
+    current = parent;
+    const children = await provider.listDir(current);
+    if (!settings(children)) continue;
+    const build = children.find(
+      (f) => f.type === 'file' && ['build.gradle', 'build.gradle.kts'].includes(f.name)
+    );
+    if (!build) return null;
+    // Every module of the build asks for the same root script.
+    const calls = await oncePerRun(provider, {
+      key: `gradle-tests:${build.fp}`,
+      read: async () => gradleTestFrameworks((await provider.open(build.fp)) ?? '').shared,
+    });
+    return { file: build, calls };
+  }
+}
+
 export const detectGradle: ComponentMatcher = async (files, provider) => {
   const build = files.find(
     (f) => f.type === 'file' && ['build.gradle', 'build.gradle.kts'].includes(f.name)
@@ -90,25 +158,37 @@ export const detectGradle: ComponentMatcher = async (files, provider) => {
     file: build.fp,
     deps,
   });
-  const where = projectPath(provider.basePath, build.fp);
-  const calls = gradleTestFrameworks(source);
-  const testNG = calls.get('useTestNG');
-  if (testNG !== undefined) {
+  // The test task's framework, chosen in this script or, for its subprojects, in the root script of the build.
+  const { own } = gradleTestFrameworks(source);
+  const root = await rootTestFrameworks(provider, { folder, files });
+  const chosen = (method: TestFramework): { file: ProviderFile; line: number } | undefined => {
+    const line = own.get(method);
+    if (line !== undefined) return { file: build, line };
+    const inherited = root?.calls.get(method);
+    return root && inherited !== undefined ? { file: root.file, line: inherited } : undefined;
+  };
+  const testNG = chosen('useTestNG');
+  if (testNG) {
     pl.addTech('testng', {
-      reason: [`Gradle useTestNG() at ${where}:${testNG}`],
-      evidence: [{ kind: 'file', value: build.name, path: build.fp, line: testNG }],
+      reason: [
+        `Gradle useTestNG() at ${projectPath(provider.basePath, testNG.file.fp)}:${testNG.line}`,
+      ],
+      evidence: [
+        { kind: 'file', value: testNG.file.name, path: testNG.file.fp, line: testNG.line },
+      ],
     });
   }
   // kotlin("test") resolves to the variant of the framework the test task uses: kotlin-test-junit5 for the
   // JUnit Platform, which brings JUnit Jupiter.
-  const platform = calls.get('useJUnitPlatform');
-  if (
-    platform !== undefined &&
-    deps.some(([, name]) => name === 'org.jetbrains.kotlin:kotlin-test')
-  ) {
+  const platform = chosen('useJUnitPlatform');
+  if (platform && deps.some(([, name]) => name === 'org.jetbrains.kotlin:kotlin-test')) {
     pl.addTech('junit-jupiter', {
-      reason: [`kotlin.test with Gradle useJUnitPlatform() at ${where}:${platform}`],
-      evidence: [{ kind: 'file', value: build.name, path: build.fp, line: platform }],
+      reason: [
+        `kotlin.test with Gradle useJUnitPlatform() at ${projectPath(provider.basePath, platform.file.fp)}:${platform.line}`,
+      ],
+      evidence: [
+        { kind: 'file', value: platform.file.name, path: platform.file.fp, line: platform.line },
+      ],
     });
   }
   return pl;

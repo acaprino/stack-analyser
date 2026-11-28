@@ -178,24 +178,17 @@ const cases: [SupportedDeps, string, string[]][] = [
   ['npm', '@nestjs/sequelize', ['sequelize']],
   ['terraform.resource', 'google_container_azure_client', ['gcp.gke']],
   ['terraform.resource', 'google_container_analysis_note', []],
-  // A test starter or the JUnit Jupiter support of another project brings JUnit Jupiter, Mockito with Spring Boot's.
+  // The JUnit Jupiter support of another project brings JUnit Jupiter; Spring Boot's test starters bring Mockito, and
+  // JUnit Jupiter from Spring Boot 2.2, which the JVM reader decides from the build's Boot version.
   ['maven', 'org.junit.jupiter:junit-jupiter-params', ['junit-jupiter']],
   ['maven', 'org.junit.platform:junit-platform-launcher', []],
   ['maven', 'org.junit:junit-bom', []],
-  [
-    'maven',
-    'org.springframework.boot:spring-boot-starter-test',
-    ['junit-jupiter', 'mockito', 'spring-boot'],
-  ],
-  [
-    'maven',
-    'org.springframework.boot:spring-boot-starter-webmvc-test',
-    ['junit-jupiter', 'mockito', 'spring-boot'],
-  ],
+  ['maven', 'org.springframework.boot:spring-boot-starter-test', ['mockito', 'spring-boot']],
+  ['maven', 'org.springframework.boot:spring-boot-starter-webmvc-test', ['mockito', 'spring-boot']],
   [
     'maven',
     'org.springframework.boot:spring-boot-starter-test-classic',
-    ['junit-jupiter', 'mockito', 'spring-boot'],
+    ['mockito', 'spring-boot'],
   ],
   ['maven', 'org.springframework.boot:spring-boot-test', ['spring-boot']],
   ['maven', 'io.quarkus:quarkus-junit', ['junit-jupiter', 'quarkus']],
@@ -292,6 +285,8 @@ const cases: [SupportedDeps, string, string[]][] = [
   ['maven', 'io.netty:netty-all', ['netty']],
   ['maven', 'io.netty:netty', ['netty']],
   ['maven', 'com.example:netty-all', []],
+  // A native fix of the platform, which Spring WebFlux and gRPC projects add, is not Netty code.
+  ['maven', 'io.netty:netty-resolver-dns-native-macos', []],
   ['maven', 'com.sun.jersey:jersey-server', ['jersey']],
   ['maven', 'org.glassfish.jersey.core:jersey-server', ['jersey']],
   ['php', 'livewire/livewire', ['livewire']],

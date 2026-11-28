@@ -145,29 +145,36 @@ test('reads the Kotlin DSL kotlin(module) notation as org.jetbrains.kotlin:kotli
 });
 
 test('finds the test framework a Gradle test task chooses, not a comment or a string', () => {
-  expect([
-    ...gradleTestFrameworks(
-      `// useTestNG()
+  const { own, shared } = gradleTestFrameworks(
+    `// useTestNG()
   val note = "useJUnitPlatform()"
   tasks.test {
     useJUnitPlatform()
   }
   tasks.register<Test>("slow") { useJUnitPlatform { includeTags("slow") } }
-  test.useTestNG() {
-    suites("testng.xml")
+  subprojects {
+    test.useTestNG() {
+      suites("testng.xml")
+    }
   }`
-    ),
-  ]).toStrictEqual([
+  );
+
+  expect([...own]).toStrictEqual([
     ['useJUnitPlatform', 4],
-    ['useTestNG', 7],
+    ['useTestNG', 8],
   ]);
+  // Only the call inside `subprojects` chooses for the builds below the root.
+  expect([...shared]).toStrictEqual([['useTestNG', 8]]);
 });
 
 test('gives TestNG for useTestNG(), and JUnit Jupiter for kotlin.test on the JUnit Platform only', async () => {
   const root = await mkdtemp(path.join(os.tmpdir(), 'specfy-jvm-'));
   try {
     const files = {
-      'settings.gradle.kts': 'include("ng", "kt", "platform")',
+      'settings.gradle.kts': 'include("ng", "kt", "platform", "child")',
+      'build.gradle.kts':
+        'allprojects {\n  tasks.withType<Test> { useJUnitPlatform() }\n}\ntasks.test { useTestNG() }',
+      'child/build.gradle.kts': 'dependencies { testImplementation(kotlin("test")) }',
       'ng/build.gradle.kts': 'tasks.test {\n  useTestNG()\n}',
       'kt/build.gradle.kts':
         'dependencies { testImplementation(kotlin("test")) }\ntasks.test { useJUnitPlatform() }',
@@ -189,14 +196,59 @@ test('gives TestNG for useTestNG(), and JUnit Jupiter for kotlin.test on the JUn
     expect(named('kt').has('kotlin-test')).toBe(true);
     expect(named('kt').has('junit-jupiter')).toBe(true);
     expect(named('platform').has('junit-jupiter')).toBe(false);
+    // The root's allprojects block chooses the JUnit Platform for child; its own useTestNG() stays its own.
+    expect(named('child').has('junit-jupiter')).toBe(true);
+    expect(named('child').has('testng')).toBe(false);
     expect(
       components
         .flatMap((pl) => [...pl.reason].filter((reason) => reason.includes('Gradle use')))
         .sort()
     ).toStrictEqual([
+      'Gradle useTestNG() at build.gradle.kts:4',
       'Gradle useTestNG() at ng/build.gradle.kts:2',
+      'kotlin.test with Gradle useJUnitPlatform() at build.gradle.kts:2',
       'kotlin.test with Gradle useJUnitPlatform() at kt/build.gradle.kts:2',
     ]);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
+test('gives JUnit Jupiter for a Spring Boot test starter only from Spring Boot 2.2', async () => {
+  const root = await mkdtemp(path.join(os.tmpdir(), 'specfy-jvm-'));
+  try {
+    const pom = (id: string, version: string): string => `<project><artifactId>${id}</artifactId>
+      <parent><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-parent</artifactId>
+      <version>${version}</version></parent><dependencies><dependency><groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId><scope>test</scope></dependency></dependencies></project>`;
+    const files = {
+      'legacy/pom.xml': pom('legacy', '1.5.22.RELEASE'),
+      'vintage/pom.xml': pom('vintage', '2.1.4.RELEASE'),
+      'current/pom.xml': pom('current', '3.4.0'),
+      'modules/pom.xml':
+        '<project><artifactId>modules</artifactId><parent><groupId>com.example</groupId><artifactId>parent</artifactId>' +
+        '<version>1.0</version></parent><dependencies><dependency><groupId>org.springframework.boot</groupId>' +
+        '<artifactId>spring-boot-starter-webmvc-test</artifactId></dependency></dependencies></project>',
+      'gradle/build.gradle.kts':
+        'plugins { id("org.springframework.boot") version "2.0.9.RELEASE" }\n' +
+        'dependencies { testImplementation("org.springframework.boot:spring-boot-starter-test") }',
+    };
+    for (const [file, content] of Object.entries(files)) {
+      const full = path.join(root, file);
+      await mkdir(path.dirname(full), { recursive: true });
+      await writeFile(full, content);
+    }
+    const result = await analyser({ provider: new FSProvider({ path: root }) });
+    const components = result.childs.flatMap((pl) => [pl, ...pl.childs]);
+    const holders = (tech: 'junit-jupiter' | 'mockito'): string[] =>
+      components
+        .filter((pl) => pl.techs.has(tech))
+        .map((pl) => pl.name)
+        .sort();
+
+    // JUnit 4 up to Spring Boot 2.1; an unknown version is taken to be a current one.
+    expect(holders('junit-jupiter')).toStrictEqual(['current', 'modules']);
+    expect(holders('mockito')).toStrictEqual(['current', 'gradle', 'legacy', 'modules', 'vintage']);
   } finally {
     await rm(root, { recursive: true, force: true });
   }

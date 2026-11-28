@@ -32,6 +32,7 @@ describe('pages that load a package from a CDN', () => {
     ['https://code.jquery.com/ui/1.13.2/jquery-ui.min.js', 'jquery-ui', '1.13.2'],
     ['https://ajax.googleapis.com/ajax/libs/angularjs/1.6.7/angular.js', 'angular', '1.6.7'],
     ['//code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css', 'ionicons', '2.0.1'],
+    ['https://unpkg.com/browse/bootstrap@5.3.2/dist/', 'bootstrap', '5.3.2'],
   ])('should read %s as %s', (...[address, name, version]) => {
     expect(cdnPackage(address)).toStrictEqual({ name, version });
   });
@@ -45,6 +46,7 @@ describe('pages that load a package from a CDN', () => {
     'static/js/bootstrap.min.js',
     "{{ url_for('static', filename='bootstrap.css') }}",
     'javascript:void(0)',
+    'https://unpkg.com/-/search?q=react',
   ])('should read no package from %s', (address) => {
     expect(cdnPackage(address)).toBeUndefined();
   });
@@ -60,6 +62,7 @@ describe('pages that load a package from a CDN', () => {
           '      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">',
           "<script data-src='x' src='https://code.jquery.com/jquery-3.7.1.min.js'></script>",
           '<a href="https://unpkg.com/react@18">not loaded</a><img src="https://unpkg.com/vue@3">',
+          '<script data-when="{{ 1 if n > 0 }}" src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.0"></script>',
         ].join('\n')
       )
     ).toStrictEqual([
@@ -68,6 +71,8 @@ describe('pages that load a package from a CDN', () => {
         line: 5,
       },
       { address: 'https://code.jquery.com/jquery-3.7.1.min.js', line: 6 },
+      // A `>` inside a quoted value does not end the tag.
+      { address: 'https://cdn.jsdelivr.net/npm/htmx.org@2.0.0', line: 8 },
     ]);
   });
 
@@ -82,13 +87,14 @@ describe('pages that load a package from a CDN', () => {
         '<script src="https://unpkg.com/left-pad@1.3.0/index.js"></script>\n' +
         '<script src="https://unpkg.com/htmx.org@1.9.10"></script>',
       'notes.txt': '<script src="https://cdn.jsdelivr.net/npm/vue@3"></script>',
+      'templates/mail.html': '<script src="https://unpkg.com/left-pad@1.3.0/index.js"></script>',
       'tests/data/page.html':
         '<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>',
     };
     const provider = new FakeProvider({
       paths: {
         '/': ['package.json', 'index.html', 'notes.txt', 'templates/', 'tests/'],
-        '/templates': ['base.jinja2'],
+        '/templates': ['base.jinja2', 'mail.html'],
         '/tests': ['data/'],
         '/tests/data': ['page.html'],
       },
@@ -106,6 +112,9 @@ describe('pages that load a package from a CDN', () => {
     expect(result.techs).not.toContain('ionicons');
     expect(result.techs).not.toContain('vue');
     expect(result.techs).not.toContain('jquery-ui');
+    // A page whose package gives no technology is no path of the module.
+    expect([...result.path]).toContain('/templates/base.jinja2');
+    expect([...result.path]).not.toContain('/templates/mail.html');
     expect(
       result
         .toJson('/')

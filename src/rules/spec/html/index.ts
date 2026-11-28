@@ -1,5 +1,6 @@
 import path from 'node:path';
 
+import { matchDependencies } from '../../../matchDependencies.js';
 import { Payload } from '../../../payload/index.js';
 
 import type { BaseProvider, ProviderFile } from '../../../provider/base.js';
@@ -57,7 +58,9 @@ export function cdnPackage(address: string): { name: string; version: string } |
   if (host === 'cdn.jsdelivr.net' || host === 'fastly.jsdelivr.net') {
     return parts[0] === 'npm' ? named(parts.slice(1)) : undefined;
   }
-  if (host === 'unpkg.com') return named(parts);
+  // unpkg's file browser and its own routes (/browse/…, /-/…) name no package in their first segment.
+  if (host === 'unpkg.com')
+    return parts[0] === '-' ? undefined : named(parts[0] === 'browse' ? parts.slice(1) : parts);
   if (host === 'code.jquery.com') {
     const file = /^jquery-(\d+\.\d+(?:\.\d+)?)(?:\.slim)?(?:\.min)?\.js$/.exec(parts[0] ?? '');
     if (file && parts.length === 1) return { name: 'jquery', version: file[1] };
@@ -89,7 +92,8 @@ export function pageReferences(content: string): { address: string; line: number
   const found: { address: string; line: number }[] = [];
   let line = 1;
   let cursor = 0;
-  for (const tag of text.matchAll(/<(script|link)\b([^>]*)>/gi)) {
+  // A quoted value can hold `>`, as a template expression does: the tag ends at the first `>` outside one.
+  for (const tag of text.matchAll(/<(script|link)\b((?:"[^"]*"|'[^']*'|[^"'>])*)>/gi)) {
     const value = (tag[1].toLowerCase() === 'script' ? scriptSource : linkTarget).exec(tag[2]);
     if (!value) continue;
     // The tags come in order: count the line breaks since the previous one.
@@ -117,6 +121,8 @@ export async function detectPageReferences(
     for (const { address, line } of pageReferences(content)) {
       const served = cdnPackage(address);
       if (!served) continue;
+      // Only a page that gives a technology is a path of the module.
+      if (matchDependencies([served.name], 'npm').size === 0) continue;
       payload ??= new Payload({ name: 'virtual', folderPath: file.fp });
       payload.path.add(file.fp);
       payload.addDependencyTechs([served.name], { type: 'npm', file: file.fp, line });

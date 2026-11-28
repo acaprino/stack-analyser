@@ -1,5 +1,7 @@
 import { register } from '../../register.js';
 
+// The JVM reader also gives it for Spring Boot's test starters, from Spring Boot 2.2: they held JUnit 4 before.
+
 register({
   tech: 'junit-jupiter',
   name: 'JUnit Jupiter',
@@ -19,11 +21,5 @@ register({
     { type: 'maven', name: 'org.mockito:mockito-junit-jupiter' },
     { type: 'maven', name: 'org.testcontainers:junit-jupiter' },
     { type: 'maven', name: 'org.testcontainers:testcontainers-junit-jupiter' },
-    // spring-boot-starter-test and the test starter of each Spring Boot 4 module, which depends on it.
-    {
-      type: 'maven',
-      name: /^org\.springframework\.boot:spring-boot-starter-(?:[\w-]+-)?test(?:-classic)?$/,
-      example: 'org.springframework.boot:spring-boot-starter-test',
-    },
   ],
 });

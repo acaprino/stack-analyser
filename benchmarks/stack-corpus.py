@@ -22,10 +22,12 @@ import re
 import subprocess
 import sys
 import tempfile
+import time
 from pathlib import Path, PurePosixPath
 
 
 def fetch(corpus, trees):
+    failed = []
     for source in sorted((corpus / "fixtures").glob("*/source.json")):
         pin = json.loads(source.read_text())
         dest = trees / source.parent.name
@@ -35,11 +37,21 @@ def fetch(corpus, trees):
         env = {**os.environ, "GIT_LFS_SKIP_SMUDGE": "1"}
         git = ["git", "-c", "core.hooksPath=/dev/null", "-c", "advice.detachedHead=false", "-C", str(dest)]
         subprocess.run(["git", "init", "-q", str(dest)], check=True)
-        subprocess.run(git + ["remote", "add", "origin", pin["repo"]], check=False)
-        subprocess.run(git + ["fetch", "-q", "--depth", "1", "origin", pin["commit"]], check=True, env=env)
-        subprocess.run(git + ["checkout", "-q", "FETCH_HEAD"], check=True, env=env)
+        subprocess.run(git + ["remote", "add", "origin", pin["repo"]], check=False, capture_output=True)
+        # A busy remote or proxy fails one fetch now and then: try again, then leave the fixture out and go on.
+        for attempt in range(1, 4):
+            fetched = subprocess.run(git + ["fetch", "-q", "--depth", "1", "origin", pin["commit"]], env=env).returncode == 0
+            if fetched:
+                break
+            time.sleep(5 * attempt)
+        if not fetched or subprocess.run(git + ["checkout", "-q", "FETCH_HEAD"], env=env).returncode != 0:
+            failed.append(source.parent.name)
+            print("failed", source.parent.name, flush=True)
+            continue
         (dest / ".fetched").touch()
         print("fetched", source.parent.name, flush=True)
+    if failed:
+        raise SystemExit(f"not fetched: {', '.join(failed)}")
 
 
 def category(entry):

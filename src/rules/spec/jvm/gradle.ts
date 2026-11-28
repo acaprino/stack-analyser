@@ -172,25 +172,36 @@ export type TestFramework = 'useJUnitPlatform' | 'useTestNG';
 
 /**
  * The line of the first call of each method that chooses the framework of a Gradle test task, `useJUnitPlatform` and
- * `useTestNG`, followed by its arguments or its configuration block. Comments and strings call nothing.
+ * `useTestNG`, followed by its arguments or its configuration block: every call of the script (`own`), and those inside
+ * a `subprojects` or `allprojects` block (`shared`), which choose for the builds below it too. Comments and strings
+ * call nothing.
  */
-export function gradleTestFrameworks(source: string): Map<TestFramework, number> {
-  const found = new Map<TestFramework, number>();
+export function gradleTestFrameworks(source: string): {
+  own: Map<TestFramework, number>;
+  shared: Map<TestFramework, number>;
+} {
+  const own = new Map<TestFramework, number>();
+  const shared = new Map<TestFramework, number>();
+  const blocks: string[] = [];
   let line = 1;
   let previous = '';
   for (const [token] of source.matchAll(tokens)) {
     const method = previous.slice(previous.lastIndexOf('.') + 1);
     if (
       (token === '(' || token === '{') &&
-      (method === 'useJUnitPlatform' || method === 'useTestNG') &&
-      !found.has(method)
-    )
-      found.set(method, line);
+      (method === 'useJUnitPlatform' || method === 'useTestNG')
+    ) {
+      if (!own.has(method)) own.set(method, line);
+      const below = blocks.some((block) => block === 'subprojects' || block === 'allprojects');
+      if (below && !shared.has(method)) shared.set(method, line);
+    }
+    if (token === '{') blocks.push(previous);
+    if (token === '}') blocks.pop();
     for (const character of token) if (character === '\n') line++;
     if (!token.startsWith('//') && !token.startsWith('/*') && !token.endsWith('\n'))
       previous = token;
   }
-  return found;
+  return { own, shared };
 }
 
 export function gradleDependencies(source: string, catalog: Catalog): Dependency[] {
