@@ -1,4 +1,4 @@
-import './aliyun-oss.js';
+import './aliyunOss.js';
 import './aws.cloudfront.js';
 import './aws.ebs.js';
 import './aws.ecr.js';
@@ -11,10 +11,10 @@ import './cloudflare.r2.js';
 import './gcp.artifactregistry.js';
 import './gcp.containerregistry.js';
 import './gcp.gcs.js';
-import './huawei-obs.js';
+import './huaweiObs.js';
 import './openstack.swift.js';
 import './ovh.storage.js';
 import './scaleway.storage.js';
 import './supabase.storage.js';
-import './tencent-cos.js';
+import './tencentCos.js';
 import './tigris.js';

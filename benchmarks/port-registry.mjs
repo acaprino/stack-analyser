@@ -416,7 +416,9 @@ function addKeys(text, ids) {
 async function changes(plan, fork) {
   const files = new Map();
   for (const draft of plan.fresh) {
-    const file = join(ROOT, 'src', 'rules', draft.type, `${draft.id}.ts`);
+    // File names are camelCase (unicorn/filename-case): `rocket-chat` is written to `rocketChat.ts`.
+    const name = draft.id.replaceAll(/-([a-z\d])/g, (_, c) => c.toUpperCase());
+    const file = join(ROOT, 'src', 'rules', draft.type, `${name}.ts`);
     if (!existsSync(file)) files.set(file, ruleText(draft));
     else if (!(await readFile(file, 'utf8')).includes(`tech: ${quote(draft.id)}`)) throw new Error(`${file} is another rule's`);
   }

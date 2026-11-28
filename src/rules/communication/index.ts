@@ -8,7 +8,7 @@ import './linkedin.js';
 import './matrix.js';
 import './mattermost.js';
 import './reddit.js';
-import './rocket-chat.js';
+import './rocketChat.js';
 import './slack.js';
 import './telegram.js';
 import './twitch.js';

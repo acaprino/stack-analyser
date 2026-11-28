@@ -1,6 +1,6 @@
-import './apache-pulsar.js';
 import './apacheKafka.js';
-import './apicurio-registry.js';
+import './apachePulsar.js';
+import './apicurioRegistry.js';
 import './aws.kafka.js';
 import './aws.kinesis.js';
 import './aws.mq.js';

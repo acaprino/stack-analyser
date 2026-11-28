@@ -17,7 +17,7 @@ import './denodeploy.js';
 import './digitalocean.js';
 import './elasticcloud.js';
 import './expodev.js';
-import './fastapi-cloud.js';
+import './fastapiCloud.js';
 import './fastly.js';
 import './gcp.appengine.js';
 import './gcp.cloudrun.js';

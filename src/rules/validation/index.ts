@@ -1,6 +1,6 @@
 import './arktype.js';
-import './class-transformer.js';
-import './class-validator.js';
+import './classTransformer.js';
+import './classValidator.js';
 import './joijs.js';
 import './jsonschema.js';
 import './marshmallow.js';

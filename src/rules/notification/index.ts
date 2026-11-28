@@ -15,7 +15,7 @@ import './mandrill.js';
 import './microsoft.outlook.js';
 import './novu.js';
 import './pagertree.js';
-import './papercut-smtp.js';
+import './papercutSmtp.js';
 import './pushbullet.js';
 import './pushover.js';
 import './resend.js';

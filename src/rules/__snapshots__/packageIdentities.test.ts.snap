@@ -13,8 +13,8 @@ exports[`package identities > no package identifies two technologies 1`] = `
   "nuget:mudblazor → blazor, mudblazor",
   "maven:io.quarkus:quarkus-rest-qute → quarkus-rest, qute",
   "maven:org.springframework.boot:spring-boot-starter-amqp → rabbitmq, spring-amqp",
-  "maven:io.quarkus:quarkus-hibernate-reactive-panache → hibernate-reactive, panache",
   "maven:io.quarkus:quarkus-hibernate-orm-panache → hibernate, panache",
   "maven:io.quarkus:quarkus-hibernate-orm-panache-kotlin → hibernate, panache",
+  "maven:io.quarkus:quarkus-hibernate-reactive-panache → hibernate-reactive, panache",
 ]
 `;
