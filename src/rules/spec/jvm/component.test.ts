@@ -5,12 +5,12 @@ import path from 'node:path';
 import { expect, it } from 'vitest';
 
 import '../../../autoload.js';
-import { analyser } from '../../../analyser/index.js';
-import { FSProvider } from '../../../provider/fs.js';
-import { Payload } from '../../../payload/index.js';
 import { gradleDependencies } from './gradle.js';
 import { detectGradle } from './index.js';
 import { mavenProject } from './maven.js';
+import { analyser } from '../../../analyser/index.js';
+import { Payload } from '../../../payload/index.js';
+import { FSProvider } from '../../../provider/fs.js';
 
 it('recognizes Spring Boot in the Maven and Gradle modules that declare it', async () => {
   const root = await mkdtemp(path.join(os.tmpdir(), 'specfy-jvm-'));
@@ -41,6 +41,7 @@ it('recognizes Spring Boot in the Maven and Gradle modules that declare it', asy
     const paths = spring
       .flatMap((pl) => [...pl.path])
       .map((p) => path.relative(root, p).split(path.sep).join('/'));
+
     expect(paths.sort()).toEqual(['api/pom.xml', 'web/build.gradle', 'worker/build.gradle.kts']);
     expect(components.find((pl) => pl.name === 'other')?.techs.has('maven')).toBe(true);
     expect(spring.find((pl) => pl.name === 'worker')?.techs.has('gradle')).toBe(true);
@@ -143,6 +144,7 @@ it('does not read a linked catalog as the declaring project’s version catalog'
       },
     }
   );
+
   expect(opened).toEqual([build]);
   expect(result instanceof Payload && result.dependencies).toEqual([]);
 });

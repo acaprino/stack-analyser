@@ -20,10 +20,10 @@ function sourceValues(content: string, name: string, emit: (value: string, line:
   const hash = /\.(?:py|rb|php|exs?)$/i.test(name);
   const slashComments = !/\.(?:py|rb|exs?)$/i.test(name);
   const literals =
-    /"""[\s\S]*?(?:"""|$)|'''[\s\S]*?(?:'''|$)|"(?:\\[^\n]|[^"\\\r\n])*"|'(?:\\[^\n]|[^'\\\r\n])*'|\x60(?:\\[\s\S]|[^\x60\\])*\x60/;
+    /"""[\s\S]*?(?:"""|$)|'''[\s\S]*?(?:'''|$)|"(?:\\[^\n]|[^"\\\r\n])*"|'(?:\\[^\n]|[^'\\\r\n])*'|\u0060(?:\\[\s\S]|[^\u0060\\])*\u0060/;
   const comments = /<!--[\s\S]*?(?:-->|$)|\/\*[\s\S]*?(?:\*\/|$)|\/\/[^\n]*/;
   const tokens = new RegExp(
-    (hash ? '#[^\\n]*|' : '') + (slashComments ? comments.source + '|' : '') + literals.source,
+    (hash ? String.raw`#[^\n]*|` : '') + (slashComments ? comments.source + '|' : '') + literals.source,
     'g'
   );
   let line = 1;
@@ -32,7 +32,7 @@ function sourceValues(content: string, name: string, emit: (value: string, line:
     for (; cursor < match.index; cursor++) {
       if (content[cursor] === '\n') line++;
     }
-    if (/^["'\x60]https?:\/\//i.test(match[0])) {
+    if (/^["'\u0060]https?:\/\//i.test(match[0])) {
       emit(match[0].slice(1, -1), line);
     }
   }
@@ -48,7 +48,7 @@ function configValues(content: string, name: string, emit: (value: string, line:
   }
   const lineCounter = new LineCounter();
   for (const doc of parseAllDocuments(content, { lineCounter, logLevel: 'silent' })) {
-    if (doc.errors.length) continue;
+    if (doc.errors.length > 0) continue;
     visit(doc, {
       Scalar(key, node) {
         if (key !== 'key' && typeof node.value === 'string' && node.range) {
@@ -69,7 +69,7 @@ function envValues(content: string, emit: (value: string, line: number) => void)
 /** Files read at the same time: enough to hide the latency of each read, few enough to stay far from the descriptor limit. */
 const concurrentReads = 16;
 
-async function readCandidate(file: ProviderFile, provider: BaseProvider): Promise<string | null> {
+async function readCandidate(file: ProviderFile, provider: BaseProvider): Promise<null | string> {
   try {
     const stat = await provider.stat(file.fp);
     if (!stat || stat.size > maxFileSize) return null;
@@ -88,7 +88,7 @@ interface Candidate {
 }
 
 function scanContent(
-  content: string | null,
+  content: null | string,
   { file: { name }, relative, env, config }: Candidate
 ): HostMention[] {
   const results: HostMention[] = [];

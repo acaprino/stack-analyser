@@ -1,5 +1,5 @@
-import { detectPubComponent } from '../spec/pub/component.js';
 import { register } from '../../register.js';
+import { detectPubComponent } from '../spec/pub/component.js';
 
 register({
   tech: 'dart',

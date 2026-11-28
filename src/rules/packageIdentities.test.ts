@@ -213,6 +213,7 @@ describe('package identities', () => {
     const counts = () => [dependencies.npm.length, rawList.length, rulesComponents.length];
     const before = counts();
     loadAllRules();
+
     expect(counts()).toEqual(before);
   });
 
@@ -228,6 +229,7 @@ describe('package identities', () => {
     const shared = [...owners]
       .filter(([, techs]) => techs.size > 1)
       .map(([key, techs]) => `${key} → ${[...techs].sort().join(', ')}`);
+
     expect(shared).toMatchSnapshot();
   });
 });

@@ -1,5 +1,5 @@
-import { matchExtensions, matchFiles, matchFilesRegex } from './common/rules/matchFiles.js';
 import { packagePattern } from './common/packageIdentity.js';
+import { matchExtensions, matchFiles, matchFilesRegex } from './common/rules/matchFiles.js';
 import { registeredRules } from './register.js';
 import { matchDotEnv } from './rules/spec/dotenv/matcher.js';
 

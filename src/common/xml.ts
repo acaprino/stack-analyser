@@ -2,19 +2,19 @@ import { SaxesParser } from 'saxes';
 
 const orderedChildren = Symbol('ordered XML elements');
 type NamedElement = readonly [string, unknown];
-type Element = Record<string, unknown> & { [orderedChildren]?: NamedElement[] };
+type Element = { [orderedChildren]?: NamedElement[] } & Record<string, unknown>;
 
 export function xmlChildren(element: Element): readonly NamedElement[] {
   return element[orderedChildren] ?? [];
 }
 
-type Frame = { name: string; fields: Record<string, unknown>; text: string; ignored: boolean };
+interface Frame { name: string; fields: Record<string, unknown>; text: string; ignored: boolean }
 
 export function parseProjectXml(
   content: string,
   namespaces: readonly string[] = [],
   preserveOrder = false
-): Record<string, unknown> | null {
+): null | Record<string, unknown> {
   const root: Record<string, unknown> = Object.create(null);
   const stack: Frame[] = [];
   const parser = new SaxesParser({ xmlns: true });
@@ -24,7 +24,7 @@ export function parseProjectXml(
   });
   parser.on('opentag', (tag) => {
     if (stack.length >= 256) throw new Error('Build manifest nesting limit');
-    if (!stack.length) {
+    if (stack.length === 0) {
       namespace = tag.uri;
       if (namespace && !namespaces.includes(namespace))
         throw new Error('Unrecognized project namespace');
@@ -46,7 +46,7 @@ export function parseProjectXml(
     const { name, fields, text: raw, ignored } = stack.pop()!;
     if (ignored) return;
     const parent: Element = stack.at(-1)?.fields ?? root;
-    const value = Object.keys(fields).length ? fields : raw.trim();
+    const value = Object.keys(fields).length > 0 ? fields : raw.trim();
     if (typeof value !== 'string' && raw.trim()) value['#text'] = raw.trim();
     if (preserveOrder) (parent[orderedChildren] ??= []).push([name, value]);
     const previous = parent[name];

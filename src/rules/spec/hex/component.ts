@@ -2,8 +2,8 @@ import { Payload } from '../../../payload/index.js';
 import { closing, sourceText, tokens } from '../manifestTokens.js';
 import { packageComponent, projectPath } from '../packageManifest.js';
 
-import type { Token } from '../manifestTokens.js';
 import type { ComponentMatcher } from '../../../types/rule.js';
+import type { Token } from '../manifestTokens.js';
 
 function dependency(
   items: Token[],
@@ -105,7 +105,7 @@ export const detectHexComponent: ComponentMatcher = async (files, provider) => {
         if (!manifest || packages.has(id)) packages.set(id, version);
       }
     }
-    if (manifest || packages.size) {
+    if (manifest || packages.size > 0) {
       const file = manifest || lock!;
       const pl = packageComponent(name, file.fp, 'hex', packages, file.fp);
       pl.addTech(
@@ -152,7 +152,7 @@ export const detectHexComponent: ComponentMatcher = async (files, provider) => {
         );
       }
     }
-    if (pl.techs.size && !payloads.length) payloads.push(pl);
+    if (pl.techs.size > 0 && payloads.length === 0) payloads.push(pl);
   }
-  return payloads.length ? payloads : false;
+  return payloads.length > 0 ? payloads : false;
 };

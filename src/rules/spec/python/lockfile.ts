@@ -8,10 +8,10 @@ import { detectLicense } from '../licenses/index.js';
 import { closing, tokens } from '../manifestTokens.js';
 import { isRecord } from '../packageManifest.js';
 
-import type { Token } from '../manifestTokens.js';
 import type { ProviderFile } from '../../../provider/base.js';
 import type { Dependency } from '../../../types/index.js';
 import type { ComponentMatcher } from '../../../types/rule.js';
+import type { Token } from '../manifestTokens.js';
 
 const PROJECT = 'pyproject.toml';
 // pip fixes no name for a requirements file. These are the names Renovate's `pip_requirements` manager reads by default
@@ -23,7 +23,7 @@ const requirement =
   /^([A-Za-z0-9](?:[A-Za-z0-9._-]*[A-Za-z0-9])?)(?:\[[\w., -]+\])?\s*(?=$|[<>=!~;@(])/;
 
 /** PEP 503: names that differ only in case and in runs of `-`, `_` and `.` are one distribution. */
-const normalized = (name: string): string => name.toLowerCase().replace(/[-_.]+/g, '-');
+const normalized = (name: string): string => name.toLowerCase().replaceAll(/[-_.]+/g, '-');
 
 /** A PEP 508 direct reference to a `file:` URL (`name @ file:///…`, as PDM writes a path) names a local distribution. */
 function localReference(specifier: string): boolean {
@@ -48,7 +48,7 @@ function uvLocalSources(tool: unknown): Set<string> {
     isRecord(source) && (source.workspace === true || typeof source.path === 'string');
   for (const [name, value] of Object.entries(sources)) {
     const entries: unknown[] = Array.isArray(value) ? value : [value];
-    if (entries.length && entries.every(isLocal)) local.add(normalized(name));
+    if (entries.length > 0 && entries.every(isLocal)) local.add(normalized(name));
   }
   return local;
 }
@@ -98,7 +98,7 @@ export const detectPythonLockfile: ComponentMatcher = async (files, provider) =>
           : file.name === 'setup.cfg'
             ? setupCfg(content)
             : setupPy(content);
-      if (!read.length) continue;
+      if (read.length === 0) continue;
       const pl = new Payload({ name: 'virtual', folderPath: path.dirname(file.fp) });
       pl.dependencies = read;
       pl.addDependencyTechs(
@@ -112,7 +112,7 @@ export const detectPythonLockfile: ComponentMatcher = async (files, provider) =>
     }
   }
 
-  return manifests.length ? manifests : false;
+  return manifests.length > 0 ? manifests : false;
 };
 
 function requirements(lines: unknown[]): Dependency[] {
@@ -178,7 +178,7 @@ function setupCfg(content: string): Dependency[] {
       continue;
     }
     const entry = /^([^=:]+)[=:](.*)$/.exec(raw);
-    const key = entry?.[1].trim().replace(/-/g, '_');
+    const key = entry?.[1].trim().replaceAll('-', '_');
     wanted = Boolean(
       entry &&
         ((section === 'options' && key === 'install_requires') ||
@@ -233,7 +233,7 @@ function setupPy(content: string): Dependency[] {
 
 export function parseRequirementsTxt(content: string, pl: Payload, file: string): void {
   const lines = content
-    .replace(/\\\r?\n/g, ' ')
+    .replaceAll(/\\\r?\n/g, ' ')
     .split(/\r?\n/)
     .map((line) => line.replace(/\s+--hash[=\s].*$/, ''));
   pl.dependencies = requirements(lines);
@@ -305,7 +305,7 @@ export function parsePyproject({
       }
     }
   }
-  if (!isRecord(json.project) && !dependencies.length) return false;
+  if (!isRecord(json.project) && dependencies.length === 0) return false;
   if ('license' in prj) {
     const tmp = isRecord(prj.license) ? prj.license.text : prj.license;
     if (typeof tmp === 'string' && tmp) {

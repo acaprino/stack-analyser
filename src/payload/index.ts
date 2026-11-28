@@ -6,7 +6,6 @@ import { nid } from '../common/nid.js';
 import { rulesComponents } from '../loader.js';
 import { matchAllFilesWithEvidence } from '../matchAllFiles.js';
 import { evidenceKind, matchDependenciesWithNames } from '../matchDependencies.js';
-import { findHostMentions } from '../rules/spec/hosts/index.js';
 import { IGNORED_DIVE_PATHS } from '../provider/base.js';
 import { listIndexed } from '../register.js';
 import {
@@ -18,7 +17,9 @@ import {
   toEvidence,
 } from './helpers.js';
 import { detectInDotEnv } from '../rules/spec/dotenv/index.js';
+import { findHostMentions } from '../rules/spec/hosts/index.js';
 
+import type { TechMatch } from '../matchAllFiles.js';
 import type { BaseProvider } from '../provider/base.js';
 import type {
   Analyser,
@@ -28,10 +29,9 @@ import type {
   EvidenceItem,
   HostMention,
 } from '../types/index.js';
-import type { SupportedDeps } from '../types/rule.js';
 import type { AllowedLicenses } from '../types/licenses.js';
+import type { SupportedDeps } from '../types/rule.js';
 import type { AllowedKeys } from '../types/techs.js';
-import type { TechMatch } from '../matchAllFiles.js';
 
 export class Payload implements Analyser {
   public id;
@@ -134,7 +134,7 @@ export class Payload implements Analyser {
     // Detect Tech
     const matched = matchAllFilesWithEvidence(files, provider.basePath, filePath);
     ctx.addTechs(matched);
-    if (modules.size === 1 || (!modules.size && filePath === provider.basePath))
+    if (modules.size === 1 || (modules.size === 0 && filePath === provider.basePath))
       findHosting(ctx, matched);
     ctx.mentions.push(...(await findHostMentions(files, provider)));
 

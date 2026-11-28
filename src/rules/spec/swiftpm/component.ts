@@ -2,9 +2,9 @@ import { Payload } from '../../../payload/index.js';
 import { closing, sourceText, tokens } from '../manifestTokens.js';
 import { isRecord, packageComponent, projectPath } from '../packageManifest.js';
 
-import type { Token } from '../manifestTokens.js';
 import type { ComponentMatcher } from '../../../types/rule.js';
 import type { AllowedKeys } from '../../../types/techs.js';
+import type { Token } from '../manifestTokens.js';
 
 const SDK_MODULES = new Map<string, AllowedKeys>([
   ['SwiftUI', 'swiftui'],
@@ -137,7 +137,7 @@ export const detectSwiftComponent: ComponentMatcher = async (files, provider) =>
         if (pin.repo) remotes.set(id, pin.repo);
       }
     }
-    if (manifest || packages.size) {
+    if (manifest || packages.size > 0) {
       const file = manifest || resolved!;
       const pl = packageComponent(name, file.fp, 'swiftpm', packages, file.fp);
       pl.addDependencyTechs([...remotes.values()], 'swiftpm', file.fp);
@@ -175,7 +175,7 @@ export const detectSwiftComponent: ComponentMatcher = async (files, provider) =>
         );
       }
     }
-    if (pl.techs.size && !payloads.length) payloads.push(pl);
+    if (pl.techs.size > 0 && payloads.length === 0) payloads.push(pl);
   }
-  return payloads.length ? payloads : false;
+  return payloads.length > 0 ? payloads : false;
 };

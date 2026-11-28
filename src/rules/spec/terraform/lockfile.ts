@@ -1,10 +1,10 @@
 import path from 'node:path';
 
+import { loadHcl } from './hcl.js';
 import { l } from '../../../common/log.js';
 import { matchDependencies } from '../../../matchDependencies.js';
 import { Payload } from '../../../payload/index.js';
 import { listIndexed } from '../../../register.js';
-import { loadHcl } from './hcl.js';
 
 import type { Dependency } from '../../../types/index.js';
 import type { ComponentMatcher } from '../../../types/rule.js';

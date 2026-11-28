@@ -2,11 +2,11 @@ import path from 'node:path';
 
 import { describe, expect, it, vi } from 'vitest';
 
+import { findHostMentions } from './index.js';
 import { analyser } from '../../../analyser/index.js';
 import { loadOne } from '../../../loader.js';
 import { flatten } from '../../../payload/helpers.js';
 import { FakeProvider } from '../../../provider/fake.js';
-import { findHostMentions } from './index.js';
 
 const host = 'api.telegram.org';
 
@@ -35,6 +35,7 @@ describe('service endpoint mentions', () => {
       { tech: 'telegram', host, path: 'service.json', line: 1 },
       { tech: 'telegram', host, path: 'transport.py', line: 2 },
     ];
+
     expect(result.toJson().mentions).toStrictEqual(expected);
     expect(flatten(result, { merge: true }).toJson().mentions).toStrictEqual(expected);
     expect(result.techs.has('telegram')).toBe(false);
@@ -57,6 +58,7 @@ describe('service endpoint mentions', () => {
       'app.yaml': '# url: https://api.telegram.org\n"https://api.telegram.org": none',
       '.env.example': '#URL=https://api.telegram.org\nURL=https://proxy.test/api.telegram.org',
     });
+
     expect(await findHostMentions(await provider.listDir('/'), provider)).toStrictEqual([]);
   });
 
@@ -66,6 +68,7 @@ describe('service endpoint mentions', () => {
     const open = vi.spyOn(provider, 'open');
     const files = await provider.listDir('/');
     for (const file of files) file.isSymbolicLink = file.name === 'linked.py';
+
     expect(await findHostMentions(files, provider)).toStrictEqual([]);
     expect(open).not.toHaveBeenCalled();
     expect(provider.stat).toHaveBeenCalledOnce();
@@ -81,6 +84,7 @@ describe('service endpoint mentions', () => {
       'broken.json': 'url: https://api.telegram.org',
     });
     const pinned = await findHostMentions(await provider.listDir('/'), provider);
+
     expect(pinned.map(({ path, line }) => [path, line])).toEqual([
       ['client.dart', 1],
       ['client.py', 1],
@@ -98,6 +102,7 @@ describe('service endpoint mentions', () => {
     vi.spyOn(provider, 'stat').mockRejectedValueOnce(new Error('metadata unavailable'));
     vi.spyOn(provider, 'open').mockRejectedValueOnce(new Error('content unavailable'));
     const result = await analyser({ provider });
+
     expect(result.toJson().mentions).toStrictEqual([
       { tech: 'telegram', host, path: 'c.ts', line: 1 },
     ]);

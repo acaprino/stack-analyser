@@ -27,9 +27,9 @@ async function folders(provider: BaseProvider, pattern: string): Promise<string[
     const name = new RegExp(
       '^' +
         part
-          .replace(/[.+^${}()|[\]\\]/g, '\\$&')
-          .replace(/\*/g, '.*')
-          .replace(/\?/g, '.') +
+          .replaceAll(/[.+^${}()|[\]\\]/g, String.raw`\$&`)
+          .replaceAll('*', '.*')
+          .replaceAll('?', '.') +
         '$'
     );
     const next: string[] = [];
@@ -96,7 +96,7 @@ export const detectPhpComponent: ComponentMatcher = async (files, provider) => {
   if (!isRecord(json)) return false;
   const name = typeof json.name === 'string' && json.name.trim() ? json.name : undefined;
   const sections = [json.require, json['require-dev']].filter(isRecord);
-  if (!name && !sections.length) return false;
+  if (!name && sections.length === 0) return false;
 
   const requirements = new Map<string, string>();
   for (const section of sections) {

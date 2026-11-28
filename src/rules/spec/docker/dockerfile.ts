@@ -20,7 +20,7 @@ export const detectDockerfile: ComponentMatcher = async (files, provider) => {
     const content = await provider.open(file.fp);
     if (!content) continue;
     const instructions = DockerfileParser.parse(content).getFROMs();
-    if (!instructions.length) continue;
+    if (instructions.length === 0) continue;
 
     const stages = new Set<string>();
     const images = new Set<string>();
@@ -49,5 +49,5 @@ export const detectDockerfile: ComponentMatcher = async (files, provider) => {
     group.addChild(component);
     group.path.add(file.fp);
   }
-  return group.childs.length ? group : false;
+  return group.childs.length > 0 ? group : false;
 };

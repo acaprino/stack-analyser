@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+
 import { analyser } from '../../../analyser/index.js';
 import { flatten } from '../../../payload/helpers.js';
 import { FakeProvider } from '../../../provider/fake.js';
@@ -29,6 +30,7 @@ describe('GitHub workflow evidence', () => {
       '/.github/workflows/deploy.yaml':
         'on: push\njobs:\n  shared:\n    uses: org/shared/.github/workflows/build.yml@v2\n  steps:\n    runs-on: ubuntu-latest\n    steps:\n    - uses: docker://nginx:1.27\n    - uses: actions/setup-node@v4\n',
     });
+
     expect([...result.techs]).toEqual(
       expect.arrayContaining(['github.actions', 'redis', 'nginx', 'nodejs'])
     );
@@ -53,6 +55,7 @@ describe('GitHub workflow evidence', () => {
       '/.github/workflows/sub/nested.yml': workflow,
       '/.github/workflows/config.yaml': 'jobs: null\n',
     });
+
     expect(result.dependencies).toEqual([]);
     expect(result.techs.has('github.actions')).toBe(false);
   });
@@ -62,6 +65,7 @@ describe('GitHub workflow evidence', () => {
       '/.github/workflows/main.yaml':
         'on: push\njobs:\n  disabled:\n  good:\n    steps: [null, {uses: 3}, {uses: "actions/setup-node@v4"}]\n    services: {unused: null}\n',
     });
+
     expect(result.dependencies).toContainEqual(['githubAction', 'actions/setup-node', 'v4']);
   });
 });

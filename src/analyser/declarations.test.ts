@@ -30,6 +30,7 @@ describe('declarations', () => {
         { type: 'python', name: 'not-a-known-package', path: 'setup.cfg', source: 'python-build' },
       ],
     });
+
     expect(result.toJson('').evidence).toContainEqual({
       tech: 'requests',
       kind: 'package',
@@ -55,12 +56,14 @@ describe('declarations', () => {
       .evidence.filter((e) => e.tech === 'react')
       .map((e) => e.source)
       .sort();
+
     expect(sources).toEqual(['renovate', 'stack-analyser']);
   });
 
   it('rejects a declaration outside the project or of an unknown type', async () => {
     const bad = (declaration: object) =>
       analyser({ provider: project(), declarations: [declaration as never] });
+
     await expect(
       bad({ type: 'npm', name: 'react', path: '../other/package.json', source: 'x' })
     ).rejects.toThrow(/declaration 0/);
@@ -80,6 +83,7 @@ describe('declarations', () => {
       ],
     });
     const baseline = await analyser({ provider: project() });
+
     expect(result.toJson('')).toEqual({
       ...baseline.toJson(''),
       id: result.id,
@@ -96,12 +100,15 @@ describe('declarations', () => {
         { type: 'python', name: 'requests', path: 'setup.cfg', line: 4, source: 'python-build' },
       ],
     });
+
     expect(result.techs.has('requests')).toBe(true);
     expect(result.evidence.map((e) => e.tech)).toEqual(['requests']);
+
     // The only other place is the component the technology implies, the same as for a manifest.
     const others = result.childs
       .flatMap((c) => c.evidence)
       .filter((e) => e.source === 'python-build');
+
     expect(others.every((e) => e.tech === 'requests')).toBe(true);
     expect(
       result.childs.find((c) => c.name === 'app')!.evidence.some((e) => e.source === 'python-build')
@@ -118,6 +125,7 @@ describe('declarations', () => {
         ],
       })
     );
+
     expect(flat.techs.has('requests')).toBe(true);
     // A technology that is not a component lives only on the root: flattening must not drop it.
     expect(flat.techs.has('vitest')).toBe(true);
@@ -152,6 +160,7 @@ describe('declarations', () => {
       ],
     });
     const evidence = result.toJson('').evidence;
+
     expect(evidence).toContainEqual({
       tech: 'postgresql',
       kind: 'image',
@@ -198,6 +207,7 @@ describe('declarations', () => {
       ],
     });
     const evidence = result.toJson('').evidence;
+
     expect(evidence).toContainEqual({
       tech: 'apachetika',
       kind: 'image',
@@ -235,6 +245,7 @@ describe('declarations', () => {
       }),
       { merge: true }
     );
+
     expect(result.toJson('').evidence.filter((e) => e.tech === 'react')).toEqual([
       {
         tech: 'react',
@@ -249,6 +260,7 @@ describe('declarations', () => {
   it('does not change anything when the list is empty', async () => {
     const withList = await analyser({ provider: project(), declarations: [] });
     const without = await analyser({ provider: project() });
+
     expect(withList.toJson('').evidence).toEqual(without.toJson('').evidence);
     expect(withList.toJson('').techs).toEqual(without.toJson('').techs);
   });
@@ -290,6 +302,7 @@ describe('declarations', () => {
     it('rejects a value that is not an array', async () => {
       const bad = (declarations: unknown) =>
         analyser({ provider: project(), declarations: declarations as never });
+
       await expect(bad({ type: 'npm' })).rejects.toThrow(/must be an array/);
       await expect(bad('react')).rejects.toThrow(/must be an array/);
     });
@@ -313,6 +326,7 @@ describe('declarations', () => {
         'terraform.resource',
         'terraform',
       ];
+
       await expect(run(...types.map((type) => ({ ...valid, type })))).resolves.toBeDefined();
     });
   });

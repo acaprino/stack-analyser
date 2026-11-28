@@ -28,6 +28,7 @@ describe('direct manifest dependencies', () => {
         'replace old.example/lib => github.com/getsentry/sentry-go v1.0.0',
       ].join('\n')
     );
+
     expect(result.dependencies).toEqual([
       ['golang', 'github.com/gin-gonic/gin', 'v1.10.0'],
       ['golang', 'go.uber.org/zap', 'v1.0.0'],
@@ -46,6 +47,7 @@ describe('direct manifest dependencies', () => {
         license: ['MIT', 'Apache-2.0'],
       })
     );
+
     expect(result.dependencies).toEqual([
       ['php', 'laravel/framework', '^11.0'],
       ['php', 'phpunit/phpunit', '^10'],

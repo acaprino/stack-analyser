@@ -2,15 +2,15 @@
 import { describe, expect, it } from 'vitest';
 
 import { analyser } from '../analyser/index.js';
-import { FakeProvider } from '../provider/fake.js';
 import { matchAllFiles } from '../matchAllFiles.js';
+import { FakeProvider } from '../provider/fake.js';
 import { registeredRules } from '../register.js';
 
 import '../autoload.js';
 
 describe('all', () => {
   it('recognizes actual filenames, directory markers and repository-root configuration', () => {
-    const cases: Array<[string, 'file' | 'dir', string, boolean]> = [
+    const cases: [string, 'dir' | 'file', string, boolean][] = [
       ['Jenkinsfile', 'file', 'jenkins', true],
       ['Caddyfile', 'file', 'caddy', true],
       ['dev.Caddyfile', 'file', 'caddy', true],
@@ -38,6 +38,7 @@ describe('all', () => {
     for (const [relative, type, tech, expected] of cases) {
       const name = relative.split('/').pop()!;
       const found = [...matchAllFiles([{ fp: '/repo/' + relative, name, type }], '/repo').keys()];
+
       expect(found.includes(tech as (typeof found)[number]), relative).toBe(expected);
     }
   });
@@ -59,9 +60,10 @@ describe('all', () => {
     ['.vitepress', 'vitepress'],
     ['.vuepress', 'vuepress'],
   ] as const)('recognizes the directory %s as %s and not a file of that name', (name, tech) => {
-    const found = (type: 'file' | 'dir') => [
+    const found = (type: 'dir' | 'file') => [
       ...matchAllFiles([{ fp: '/repo/' + name, name, type }], '/repo').keys(),
     ];
+
     expect(found('dir')).toContain(tech);
     expect(found('file')).not.toContain(tech);
   });

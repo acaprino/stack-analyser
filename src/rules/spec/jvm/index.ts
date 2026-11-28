@@ -1,9 +1,9 @@
 import path from 'node:path';
 
-import { Payload } from '../../../payload/index.js';
 import { gradleCatalog, gradleDependencies } from './gradle.js';
 import { mavenProject } from './maven.js';
 import { sbtDependencies } from './sbt.js';
+import { Payload } from '../../../payload/index.js';
 import { sourceText } from '../manifestTokens.js';
 
 import type { BaseProvider, ProviderFile } from '../../../provider/base.js';
@@ -11,7 +11,7 @@ import type { Dependency } from '../../../types/index.js';
 import type { ComponentMatcher } from '../../../types/rule.js';
 
 function component(
-  tool: 'maven' | 'gradle' | 'sbt',
+  tool: 'gradle' | 'maven' | 'sbt',
   name: string,
   file: string,
   deps: Dependency[]
@@ -88,7 +88,7 @@ export const detectSbt: ComponentMatcher = async (files, provider) => {
   const builds = files.filter(
     (f) => f.type === 'file' && !f.isSymbolicLink && f.name.endsWith('.sbt')
   );
-  if (!builds.length) return false;
+  if (builds.length === 0) return false;
   const payloads: Payload[] = [];
   for (const file of builds) {
     const source = await sourceText(provider, file.fp);
@@ -98,7 +98,7 @@ export const detectSbt: ComponentMatcher = async (files, provider) => {
       payloads.push(
         component('sbt', path.basename(path.dirname(file.fp)) || 'sbt project', file.fp, deps)
       );
-    } else if (deps.length) {
+    } else if (deps.length > 0) {
       const pl = new Payload({ name: 'virtual', folderPath: file.fp, dependencies: deps });
       pl.addDependencyTechs(
         deps.map(([, key]) => key),
@@ -108,5 +108,5 @@ export const detectSbt: ComponentMatcher = async (files, provider) => {
       payloads.push(pl);
     }
   }
-  return payloads.length ? payloads : false;
+  return payloads.length > 0 ? payloads : false;
 };

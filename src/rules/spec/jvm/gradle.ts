@@ -29,7 +29,7 @@ export function gradleCatalog(source: string): Catalog {
     return entries;
   }
   const versions = record(data['versions']);
-  const accessor = (alias: string) => alias.replace(/[-_]/g, '.');
+  const accessor = (alias: string) => alias.replaceAll(/[-_]/g, '.');
   for (const section of ['libraries', 'plugins']) {
     for (const [alias, item] of Object.entries(record(data[section]))) {
       const entry = record(item);
@@ -152,7 +152,7 @@ export function gradleDependencies(source: string, catalog: Catalog): Dependency
       const end = tokens.findIndex(
         (token) => (depth += token === '(' ? 1 : token === ')' ? -1 : 0) === 0 && token === ')'
       );
-      if (end < 0) return;
+      if (end === -1) return;
       tokens = tokens.slice(end + 1);
     }
     const [call, ...rest] = tokens;
@@ -177,13 +177,13 @@ export function gradleDependencies(source: string, catalog: Catalog): Dependency
     ) {
       if (args.length > 1 && !['version', '.version', 'apply', '.apply'].includes(args[1])) return;
       const applyAt = args.findIndex((arg) => arg === 'apply' || arg === '.apply');
-      if (applyAt >= 0 && args[applyAt + 1] !== 'true') return;
+      if (applyAt !== -1 && args[applyAt + 1] !== 'true') return;
       if (call === 'alias') {
         if (args[0]?.startsWith('libs.plugins.')) result.push(...(catalog.get(args[0]) ?? []));
       } else {
         const id = literal(args[0]);
         const versionAt = args.findIndex((arg) => arg === 'version' || arg === '.version');
-        const version = versionAt >= 0 ? literal(args[versionAt + 1]) : '';
+        const version = versionAt !== -1 ? literal(args[versionAt + 1]) : '';
         const entry =
           id && marker(call === 'kotlin' ? `org.jetbrains.kotlin.${id}` : id, version ?? '');
         if (entry) result.push(entry);

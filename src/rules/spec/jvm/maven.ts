@@ -4,13 +4,13 @@ import type { Dependency } from '../../../types/index.js';
 
 type XmlElement = Record<string, unknown>;
 
-function element(value: unknown): XmlElement | undefined {
+function element(value: unknown): undefined | XmlElement {
   return value !== null && typeof value === 'object' && !Array.isArray(value)
     ? (value as XmlElement)
     : undefined;
 }
 
-function children(parent: XmlElement | undefined, key: string): XmlElement[] {
+function children(parent: undefined | XmlElement, key: string): XmlElement[] {
   const value = parent?.[key];
   return (Array.isArray(value) ? value : [value])
     .map(element)
@@ -38,7 +38,7 @@ export function mavenProject(content: string): { name: string; dependencies: Dep
     for (let depth = 0; result.includes('${') && depth < 16; depth++) {
       if (result.length > 1024) return '';
       let unresolved = false;
-      result = result.replace(/\$\{([^}]+)\}/g, (_, key: string) => {
+      result = result.replaceAll(/\$\{([^}]+)\}/g, (_, key: string) => {
         const property = Object.hasOwn(properties, key) ? properties[key] : undefined;
         if (typeof property === 'string' && property.length <= 1024) return property;
         unresolved = true;

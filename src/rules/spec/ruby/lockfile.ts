@@ -1,8 +1,8 @@
 import { sourceText, tokens } from '../manifestTokens.js';
 import { packageComponent, projectPath } from '../packageManifest.js';
 
-import type { Token } from '../manifestTokens.js';
 import type { ComponentMatcher } from '../../../types/rule.js';
+import type { Token } from '../manifestTokens.js';
 
 const gemName = /^[a-z\d][a-z\d_.-]*$/i;
 const gemfiles = new Set(['Gemfile', 'gems.rb']);
@@ -28,7 +28,7 @@ function* statements(source: string) {
     }
     row.push(token);
   }
-  if (row.length) yield row;
+  if (row.length > 0) yield row;
 }
 
 // Keep literal declarations in the Bundler DSL or on the actual Gem::Specification
@@ -50,7 +50,7 @@ function declaredGems(source: string, gemspec: boolean): Map<string, string> {
     }
     const block = words.indexOf('do');
     const brace = words.indexOf('{');
-    const opener = block >= 0 ? block : brace >= 0 && words[brace + 1] === '|' ? brace : -1;
+    const opener = block !== -1 ? block : brace !== -1 && words[brace + 1] === '|' ? brace : -1;
     const parent = scopes.at(-1);
     if (opener >= 0 || /^(?:module|class|def|if|unless|case|begin|until|while|for)$/.test(first)) {
       const parameter =
@@ -92,7 +92,7 @@ function declaredGems(source: string, gemspec: boolean): Map<string, string> {
     const name = row[arg];
     if (name?.kind !== 'string' || !gemName.test(name.value)) continue;
     const tail = words.slice(arg + 1);
-    if (tail.length && ![',', ')', 'if', 'unless'].includes(tail[0])) continue;
+    if (tail.length > 0 && ![',', ')', 'if', 'unless'].includes(tail[0])) continue;
     if (
       (tail.at(-2) === 'if' && tail.at(-1) === 'false') ||
       (tail.at(-2) === 'unless' && tail.at(-1) === 'true')
@@ -162,10 +162,10 @@ export const detectRubyLockfile: ComponentMatcher = async (files, provider) => {
   }
   // When a manifest exists it is authoritative. A stale lock cannot create a new
   // dependency, and transitive requirements under the specs section are never promoted.
-  if (!manifests.length) {
+  if (manifests.length === 0) {
     for (const file of available.filter((entry) => [...locks.values()].includes(entry.name))) {
       const packages = lockedDirectGems((await sourceText(provider, file.fp)) || '');
-      if (!packages.size) continue;
+      if (packages.size === 0) continue;
       const pl = packageComponent('virtual', file.fp, 'ruby', packages, file.fp);
       const found = [{ kind: 'file' as const, value: file.name, path: file.fp }];
       pl.addTech('bundler', ['matched file: ' + file.name], found);
@@ -173,5 +173,5 @@ export const detectRubyLockfile: ComponentMatcher = async (files, provider) => {
       components.push(pl);
     }
   }
-  return components.length ? components : false;
+  return components.length > 0 ? components : false;
 };

@@ -1,4 +1,5 @@
 import path from 'node:path';
+
 import { describe, expect, it } from 'vitest';
 
 import { analyser } from '../../analyser/index.js';
@@ -40,6 +41,7 @@ describe('native package manifests', () => {
         '  in_workspace: {source: path, dependency: direct main, version: "1.0.0"}',
       ].join('\n'),
     });
+
     expect(result.dependencies.sort()).toEqual([
       ['pub', 'flutter', 'sdk:flutter'],
       ['pub', 'flutter_test', 'sdk:flutter'],
@@ -68,6 +70,7 @@ describe('native package manifests', () => {
         },
       }),
     });
+
     expect(result.dependencies.sort()).toEqual([
       ['nuget', 'MudBlazor', '8.0.0'],
       ['nuget', 'Serilog', '4.2.0'],
@@ -100,6 +103,7 @@ describe('native package manifests', () => {
       'ConditionalProperty.csproj':
         '<Project><PropertyGroup><UseWinUI Condition="42 == 42">true</UseWinUI></PropertyGroup></Project>',
     });
+
     expect(
       result.childs.filter((child) => child.techs.has('winui')).map((child) => child.name)
     ).toEqual(['Desktop']);
@@ -123,6 +127,7 @@ describe('native package manifests', () => {
         '%{"phoenix": {:hex, :phoenix, "1.7.15", [], []}, "other": {:hex, :other, "2.0", [], []}}',
       'test_helper.exs': '# ExUnit.configuration()\n~S"ExUnit.start()"\nExUnit.start()\n',
     });
+
     expect(result.dependencies.sort()).toEqual([
       ['hex', 'ecto_sql', '~> 3.0'],
       ['hex', 'phoenix', '1.7.15'],
@@ -157,6 +162,7 @@ describe('native package manifests', () => {
         '/* nested /* import UIKit */ import Flutter */\n' +
         'let note = #"import FirebaseMessaging"#\nimport SwiftUI\nimport struct MapKit.MKMapRect\n',
     });
+
     expect(result.dependencies).toEqual([['swiftpm', 'firebase-ios-sdk', '10.1.0']]);
     expect(result.techs).toContain('swiftui');
     expect(result.techs).toContain('mapkit');
@@ -179,6 +185,7 @@ describe('native package manifests', () => {
       'Package.swift':
         'let p = Package(name: "Local", dependencies: [.package(url: "https://github.com/other/firebase-ios-sdk", from: "1")])',
     });
+
     expect(result.techs).not.toContain('uikit');
     expect(result.techs).not.toContain('swiftui');
     expect(result.techs).not.toContain('exunit');

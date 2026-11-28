@@ -34,27 +34,33 @@ describe('docker', () => {
       },
     });
     const result = flatten(await analyser({ provider }), { merge: true });
+
     expect([...result.techs]).toEqual(expect.arrayContaining(['docker', 'redis']));
     expect(result.techs.has('postgresql')).toBe(false);
+
     const unrelated = new FakeProvider({
       paths: { '/': ['docker-compose.yml'] },
       files: {
         '/docker-compose.yml': 'services:\n  example:\n    address: postgres:15\n',
       },
     });
+
     expect(
       flatten(await analyser({ provider: unrelated }), { merge: true }).techs.has('docker')
     ).toBe(false);
+
     const build = new FakeProvider({
       paths: { '/': ['compose.yml'] },
       files: {
         '/compose.yml': 'services:\n  api:\n    build: .\n',
       },
     });
+
     expect(flatten(await analyser({ provider: build }), { merge: true }).techs.has('docker')).toBe(
       true
     );
   });
+
   it('should match everything', async () => {
     const res = await analyser({
       provider: new FakeProvider({

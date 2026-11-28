@@ -42,9 +42,9 @@ export const detectDockerComponent: ComponentMatcher = async (files, provider) =
     );
     // A file that only includes other Compose files (the top-level `include` of Compose 2.20) is Compose as well.
     const includes = Array.isArray(parsed.include) && parsed.include.length > 0;
-    if (!services.length && !includes) continue;
+    if (services.length === 0 && !includes) continue;
     const pl = new Payload({ name: 'virtual', folderPath: file.fp });
-    const reason = services.length
+    const reason = services.length > 0
       ? `Compose services in ${file.name}`
       : `Compose include in ${file.name}`;
     pl.addTech('docker', [reason], [{ kind: 'file', value: file.name, path: file.fp }]);

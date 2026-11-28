@@ -48,12 +48,12 @@ export type Rule = {
 
 export type RuleFiles =
   | {
-      files: RegExp;
-      example: string;
-    }
-  | {
       /** Literal filenames or directory names with a trailing slash. */
       files: string[];
+    }
+  | {
+      files: RegExp;
+      example: string;
     }
   | {
       files?: never;

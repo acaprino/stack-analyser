@@ -14,7 +14,6 @@ import type { ComponentMatcher } from '../../../types/rule.js';
 const FILES = new Set(['Cargo.toml']);
 
 type Dependency =
-  | string
   | {
       package?: string;
       git?: string;
@@ -23,7 +22,8 @@ type Dependency =
       path?: string;
       version?: string;
       workspace?: boolean;
-    };
+    }
+  | string;
 
 interface Dependencies {
   dependencies?: Record<string, Dependency>;

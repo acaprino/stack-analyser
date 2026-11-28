@@ -20,7 +20,7 @@ function goMod(source: string): { modules: Map<string, string>; replacements: Re
   let block: string | undefined;
   for (const raw of source.split(/\r?\n/)) {
     const comment = raw.indexOf('//');
-    const line = (comment < 0 ? raw : raw.slice(0, comment)).trim();
+    const line = (comment === -1 ? raw : raw.slice(0, comment)).trim();
     if (!line) continue;
     if (line === ')') {
       block = undefined;
@@ -43,7 +43,7 @@ function goMod(source: string): { modules: Map<string, string>; replacements: Re
         });
       continue;
     }
-    if (directive !== 'require' || (comment >= 0 && /^\/\/\s*indirect\b/.test(raw.slice(comment))))
+    if (directive !== 'require' || (comment !== -1 && /^\/\/\s*indirect\b/.test(raw.slice(comment))))
       continue;
     const fields = /^(?:"([^"\s]+)"|([^\s"]+))\s+(?:"(v[^"\s]+)"|(v[^\s"]+))$/.exec(declaration);
     if (fields) modules.set(fields[1] ?? fields[2], fields[3] ?? fields[4]);

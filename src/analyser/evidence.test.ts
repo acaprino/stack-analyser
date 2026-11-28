@@ -1,8 +1,10 @@
 import path from 'node:path';
+
 import { expect, it } from 'vitest';
+
 import { analyser } from './index.js';
-import { FSProvider } from '../provider/fs.js';
 import { FakeProvider } from '../provider/fake.js';
+import { FSProvider } from '../provider/fs.js';
 import '../autoload.js';
 
 import type { AnalyserJson } from '../types/index.js';
@@ -32,6 +34,7 @@ function allEvidence(graph: AnalyserJson): AnalyserJson['evidence'] {
 
 it('every technology carries evidence', async () => {
   const graph = (await analyser({ provider: new FSProvider({ path: root }) })).toJson(root);
+
   expect(withoutEvidence(graph)).toEqual([]);
 });
 
@@ -74,6 +77,7 @@ it('records the file, extension, variable or source behind a hand-written reason
     }
   }
   const graph = (await analyser({ provider: new FakeProvider({ paths, files }) })).toJson();
+
   expect(withoutEvidence(graph)).toEqual([]);
 
   const found = allEvidence(graph);

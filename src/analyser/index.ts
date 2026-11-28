@@ -14,7 +14,7 @@ export interface AnalyserOptions {
 }
 
 /** A declaration `path` as a normalized path inside the analysed root, or `null` when it is not one. */
-function insideRoot(value: string): string | null {
+function insideRoot(value: string): null | string {
   // Either kind of separator, and either kind of absolute path, whatever the platform running the analysis.
   const posix = value.replaceAll('\\', '/');
   if (path.posix.isAbsolute(posix) || path.win32.isAbsolute(value) || /^[A-Za-z]:/.test(value))

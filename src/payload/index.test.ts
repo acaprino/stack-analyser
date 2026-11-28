@@ -61,12 +61,15 @@ describe('payload', () => {
     try {
       matchDependencies(['pg', 'left-pad'], 'npm');
       const once = test.mock.calls.length;
+
       test.mockClear();
+
       new Payload({ name: 'root', folderPath: '/' }).addDependencyTechs(
         ['pg', 'left-pad'],
         'npm',
         '/package.json'
       );
+
       expect(once).toBeGreaterThan(0);
       expect(test.mock.calls.length).toBeLessThanOrEqual(once);
     } finally {
@@ -87,6 +90,7 @@ describe('payload', () => {
     b.mentions.push(mention(1), mention(2));
     a.combine(b);
     a.combine(b);
+
     expect(a.mentions).toStrictEqual([mention(1), mention(2)]);
   });
 });

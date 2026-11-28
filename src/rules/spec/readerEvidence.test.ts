@@ -3,11 +3,11 @@ import path from 'node:path';
 import { expect, it } from 'vitest';
 
 import '../../autoload.js';
+import { gradleDependencies } from './jvm/gradle.js';
+import { mavenProject } from './jvm/maven.js';
 import { analyser } from '../../analyser/index.js';
 import { flatten } from '../../payload/helpers.js';
 import { FakeProvider } from '../../provider/fake.js';
-import { mavenProject } from './jvm/maven.js';
-import { gradleDependencies } from './jvm/gradle.js';
 
 async function scan(files: Record<string, string>) {
   const dirs = new Map<string, Set<string>>();
@@ -42,9 +42,12 @@ it('matches the npm registry target of an alias, retaining local declarations wi
       },
     }),
   });
+
   expect([...result.techs]).toEqual(expect.arrayContaining(['preactjs', 'vite', 'playwright']));
+
   for (const id of ['react', 'vuejs', 'angular', 'zod'])
     expect([...result.techs]).not.toContain(id);
+
   expect(result.dependencies).toContainEqual(['npm', 'vue', 'file:../vue']);
 });
 
@@ -53,6 +56,7 @@ it('reads dependencies from an unnamed private npm project and tolerates non-obj
     'package.json': 'null',
     'app/package.json': '{"private":true,"dependencies":{"react":"^19"}}',
   });
+
   expect([...result.techs]).toContain('react');
 });
 
@@ -60,6 +64,7 @@ it('reads Python dependency groups and Poetry tables, retaining extras and ignor
   const result = await scan({
     'pyproject.toml': `[dependency-groups]\ntest = ["pytest>=7", {include-group="web"}]\nweb = ["fastapi[standard] (>=0.100)"]\n[tool.poetry.dependencies]\npython="^3.11"\nflask="^3"\ndjango={path="../django"}\n[tool.poetry.group.optional.dependencies]\npydantic={version="^2",optional=true}\n`,
   });
+
   expect([...result.techs]).toEqual(
     expect.arrayContaining(['pytest', 'fastapi', 'flask', 'pydantic'])
   );
@@ -83,9 +88,11 @@ pydantic = { url = "https://example.com/pydantic-2.0-py3-none-any.whl" }
 pytest = [{ path = "../pytest", marker = "sys_platform == 'linux'" }, { index = "pypi", marker = "sys_platform != 'linux'" }]
 `,
   });
+
   expect([...result.techs]).toEqual(
     expect.arrayContaining(['fastapi', 'flask', 'pydantic', 'pytest'])
   );
+
   for (const id of ['sentry', 'django']) expect([...result.techs]).not.toContain(id);
 });
 
@@ -95,7 +102,9 @@ it('leaves out a Python distribution referenced by a file URL, as PDM writes a p
       '[project]\nname = "app"\ndependencies = ["requests @ file:///${PROJECT_ROOT}/../requests", "fastapi"]\n',
     'svc/requirements.txt': 'httpx @ file:///srv/httpx ; python_version >= "3.8"\ncelery==5\n',
   });
+
   expect([...result.techs]).toEqual(expect.arrayContaining(['fastapi', 'celery']));
+
   for (const id of ['requests', 'httpx']) expect([...result.techs]).not.toContain(id);
 });
 
@@ -104,6 +113,7 @@ it('invalid pyproject metadata cannot abort analysis of independent projects', a
     'pyproject.toml': 'project = "invalid"',
     'app/requirements.txt': 'pytest==8',
   });
+
   expect([...result.techs]).toContain('pytest');
 });
 
@@ -114,6 +124,7 @@ it('resolves Cargo workspace aliases and avoids reporting a same-name local work
     'app/Cargo.toml':
       '[package]\nname="app"\nversion="1"\nlicense.workspace=true\n[dependencies]\ntokio.workspace=true\nx.workspace=true',
   });
+
   expect([...result.techs]).toContain('serde');
   expect([...result.techs]).not.toContain('tokio');
   expect([...result.techs]).not.toContain('axum');
@@ -126,6 +137,7 @@ it('keeps foreign XML out of a Maven POM and resolves nested local properties', 
     '<dependency><groupId>${group}</groupId><artifactId>spring-boot-starter-web</artifactId></dependency>' +
     '<doc:dependency><doc:groupId>example</doc:groupId><doc:artifactId>documentation</doc:artifactId></doc:dependency>' +
     '</dependencies></project>';
+
   expect(mavenProject(pom)?.dependencies).toEqual([
     ['maven', 'org.springframework.boot:spring-boot-starter-web', ''],
   ]);
@@ -144,6 +156,7 @@ it('ignores statically inactive NuGet declarations and removed entries, retainin
       '<Otherwise><ItemGroup><PackageReference Include="Npgsql"/></ItemGroup></Otherwise></Choose>' +
       '<ItemGroup Condition="\'$(TargetFramework)\' == \'net9.0\'"><PackageReference Include="OptionalTarget"/></ItemGroup></Project>',
   });
+
   expect(result.dependencies.map((d) => d[1]).sort()).toEqual(['OptionalTarget', 'xunit']);
 });
 
@@ -156,6 +169,7 @@ it('reads dependencies declared in a Kotlin source set and ignores conditional o
   } }
   subprojects { dependencies { implementation("com.example:sibling:1") } }
   apply(plugin = "org.springframework.boot" + suffix)`;
+
   expect(gradleDependencies(source, new Map())).toEqual([
     ['maven', 'com.example:shared', '1'],
     ['maven', 'com.example:tests', '2'],
@@ -171,6 +185,7 @@ it('records where each package, image, action and resource was declared', async 
     'main.tf': 'resource "aws_s3_bucket" "b" {}\n',
   });
   const all = [result, ...result.childs].flatMap((c) => c.toJson('').evidence);
+
   expect(all).toEqual(
     expect.arrayContaining([
       {
@@ -223,6 +238,7 @@ it('records the manifest of every other ecosystem that declares packages or imag
       '<project xmlns="http://maven.apache.org/POM/4.0.0"><artifactId>app</artifactId><dependencies><dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-web</artifactId></dependency></dependencies></project>',
   });
   const all = result.toJson('').evidence;
+
   expect(all).toEqual(
     expect.arrayContaining([
       {
@@ -280,6 +296,7 @@ it('records an image as the file writes it, and its dependency as the rules comp
       'on: push\njobs:\n  build:\n    runs-on: ubuntu-latest\n    container: index.docker.io/library/redis:7\n',
   });
   const all = [result, ...result.childs].flatMap((c) => c.toJson('').evidence);
+
   expect(all).toEqual(
     expect.arrayContaining([
       {
@@ -317,6 +334,7 @@ it('records an image as the file writes it, and its dependency as the rules comp
 // The registry lists these file names and source constructs as signs; the fork reads them itself, from the file,
 // without a rule that names them.
 const compose = 'services:\n  cache:\n    image: redis:7\n';
+
 it.each([
   ['Dockerfile', 'FROM node:20\n'],
   ['docker-compose.yml', compose],
@@ -324,6 +342,7 @@ it.each([
 ])('reads docker from the file %s', async (name, content) => {
   const result = await scan({ [name]: content });
   const all = [result, ...result.childs].flatMap((c) => c.toJson('').evidence);
+
   expect(result.techs.has('docker')).toBe(true);
   expect(all).toContainEqual({
     tech: 'docker',
@@ -339,6 +358,7 @@ it('reads docker from a Compose file that only includes other Compose files', as
     'docker-compose.yml': 'include:\n  - db/compose.yaml\n  - path: web/compose.yaml\n',
   });
   const all = [result, ...result.childs].flatMap((c) => c.toJson('').evidence);
+
   expect(result.techs.has('docker')).toBe(true);
   expect(all).toContainEqual({
     tech: 'docker',
@@ -362,6 +382,7 @@ it.each([
 ] as const)('reads %s from %s in a source file', async (tech, value, name, content) => {
   const result = await scan({ [name]: content });
   const all = [result, ...result.childs].flatMap((c) => c.toJson('').evidence);
+
   expect(result.techs.has(tech)).toBe(true);
   expect(all).toContainEqual({
     tech,

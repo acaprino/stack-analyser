@@ -21,14 +21,14 @@ export interface HostMention {
 }
 
 export type EvidenceKind =
-  | 'package'
-  | 'image'
   | 'action'
-  | 'terraform'
-  | 'file'
-  | 'extension'
   | 'env'
-  | 'source';
+  | 'extension'
+  | 'file'
+  | 'image'
+  | 'package'
+  | 'source'
+  | 'terraform';
 
 export interface Evidence {
   tech: AllowedKeys;
@@ -43,7 +43,7 @@ export interface Evidence {
 }
 
 /** Evidence as a reader reports it: `tech` comes from the receiver, a missing `source` means `stack-analyser`. */
-export type EvidenceItem = Omit<Evidence, 'tech' | 'source'> & { source?: string };
+export type EvidenceItem = { source?: string } & Omit<Evidence, 'source' | 'tech'>;
 
 /** A package, image or action that another tool has already read from the project. */
 export interface Declaration {

@@ -28,8 +28,11 @@ it('writes a stack for a Maven project using the normal CLI', async () => {
       ['--import', tsxImport, file, '.', '--flat'],
       { cwd, env: { ...process.env, LOG_LEVEL: 'info' } }
     );
+
     expect(stdout).toContain('Output');
+
     const output = JSON.parse(await fs.readFile(path.join(cwd, 'output.json'), 'utf8'));
+
     expect(output.techs).toContain('spring-boot');
     expect(output.dependencies).toContainEqual([
       'maven',
@@ -121,6 +124,7 @@ it('writes evidence paths relative to the root when the root ends with a separat
     () => ['..' + path.sep + 'proj' + path.sep, '--flat'],
     (tmp) => path.join(tmp, 'work', 'output.json')
   );
+
   expect(code).toBe(0);
   expect(evidencePaths(output)).toEqual(evidenceOfProj);
 }, 20_000);
@@ -130,6 +134,7 @@ it('writes evidence paths relative to the root when an absolute root goes throug
     (tmp) => [[tmp, 'work', '..', 'proj'].join(path.sep), '--flat'],
     (tmp) => path.join(tmp, 'work', 'output.json')
   );
+
   expect(code).toBe(0);
   expect(evidencePaths(output)).toEqual(evidenceOfProj);
 }, 20_000);
@@ -139,6 +144,7 @@ it('writes the output where an absolute --output says', async () => {
     (tmp) => ['..' + path.sep + 'proj', '--flat', '--output', path.join(tmp, 'out', 'result.json')],
     (tmp) => path.join(tmp, 'out', 'result.json')
   );
+
   expect(code).toBe(0);
   expect(evidencePaths(output)).toEqual(evidenceOfProj);
 }, 20_000);
@@ -160,6 +166,7 @@ it('reads declarations from a file and keeps their source', async () => {
     { 'package.json': manifest, 'declarations.json': declarations },
     ['--flat', '--declarations', 'declarations.json']
   );
+
   expect(code).toBe(0);
   expect(output.evidence).toContainEqual({
     tech: 'requests',
@@ -194,6 +201,7 @@ it.each([
       { 'package.json': manifest, 'declarations.json': content },
       ['--declarations', 'declarations.json']
     );
+
     expect(code).toBe(1);
     expect(out).toMatch(message);
     expect(output).toBeNull();
@@ -206,12 +214,14 @@ it('exits with 1 and writes nothing when the declarations file does not exist', 
     '--declarations',
     'missing.json',
   ]);
+
   expect(code).toBe(1);
   expect(output).toBeNull();
 }, 20_000);
 
 it('exits with 1 and writes nothing when --declarations is given an empty value', async () => {
   const { code, out, output } = await runCli({ 'package.json': manifest }, ['--declarations', '']);
+
   expect(code).toBe(1);
   expect(out).toMatch(/Declarations/);
   expect(output).toBeNull();
@@ -227,6 +237,7 @@ it('reads a declarations file that starts with a UTF-8 byte order mark', async (
     { 'package.json': manifest, 'declarations.json': declarations },
     ['--flat', '--declarations', 'declarations.json']
   );
+
   expect(code).toBe(0);
   expect(output.evidence).toContainEqual({
     tech: 'requests',
@@ -259,8 +270,11 @@ it.each([
   '%s',
   async (_label, args, expected) => {
     const { code, output } = await runCli(tree, ['--flat', ...args]);
+
     expect(code).toBe(0);
+
     const found = new Set<string>(output.techs);
+
     expect(['react', 'express', 'vitest'].filter((tech) => found.has(tech))).toEqual(expected);
   },
   20_000
@@ -278,18 +292,22 @@ it('leaves out a folder to --ignore however its path is written', async () => {
     ),
   };
   const { code, output } = await runCli(files, ['--flat', '--ignore', '/a, ./b, c/, d']);
+
   expect(code).toBe(0);
+
   const found = new Set<string>(output.techs);
+
   expect(['react', ...Object.values(folders)].filter((tech) => found.has(tech))).toEqual(['react']);
 }, 20_000);
 
 it.each([
   ['a path with a slash', 'tests,generated/sub', 'generated/sub'],
-  ['a path with a backslash', 'tests,generated\\sub', 'generated\\sub'],
+  ['a path with a backslash', String.raw`tests,generated\sub`, String.raw`generated\sub`],
 ])(
   'exits with 1 and writes nothing when --skip-dirs is given %s',
   async (_label, value, entry) => {
     const { code, out, output } = await runCli(tree, ['--skip-dirs', value]);
+
     expect(code).toBe(1);
     expect(out).toContain(`"${entry}"`);
     expect(out).toMatch(/--skip-dirs takes folder names, not paths/);
@@ -306,6 +324,7 @@ it.each([
   'exits with 1 and writes nothing when --ignore is given %s',
   async (_label, value, entry) => {
     const { code, err, output } = await runCli(tree, ['--ignore', value]);
+
     expect(code).toBe(1);
     // An error goes to stderr, so that a caller reading stdout does not take it for progress.
     expect(err).toContain(`"${entry}"`);
@@ -317,6 +336,7 @@ it.each([
 
 it('exits with 1 and writes nothing when --output is empty', async () => {
   const { code, err, output } = await runCli(tree, ['--output', '']);
+
   expect(code).toBe(1);
   expect(err).toMatch(/--output needs a file name/);
   expect(output).toBeNull();
@@ -324,6 +344,7 @@ it('exits with 1 and writes nothing when --output is empty', async () => {
 
 it('exits with 1 before analysing when the folder of --output does not exist', async () => {
   const { code, out, err } = await runCli(tree, ['--output', path.join('missing', 'out.json')]);
+
   expect(code).toBe(1);
   expect(err).toMatch(/the folder .*missing does not exist/);
   expect(out).not.toContain('Analysed');
@@ -350,6 +371,7 @@ it('gives the same output from --perimeter as from --skip-dirs and --ignore', as
     runCli(files, ['--flat', '--skip-dirs', 'generated', '--ignore', 'docs/old']),
     runCli(files, ['--flat', '--perimeter', 'perimeter.json']),
   ]);
+
   expect(options.code).toBe(0);
   expect(file.code).toBe(0);
   expect(techsOfTree(options.output)).toEqual(['react', 'vitest', 'fastify']);
@@ -371,6 +393,7 @@ it('keeps what an absent key means, and reads a perimeter that starts with a byt
       'perimeter.json',
     ]),
   ]);
+
   expect(withoutSkipDirs.code).toBe(0);
   expect(techsOfTree(withoutSkipDirs.output)).toEqual(['react', 'vue', 'fastify']);
   expect(withoutIgnore.code).toBe(0);
@@ -393,6 +416,7 @@ it.each([
       { ...tree, 'perimeter.json': JSON.stringify({ ignore: ['generated'] }) },
       ['--perimeter', 'perimeter.json', option, value]
     );
+
     expect(code).toBe(1);
     expect(out).toMatch(/--perimeter cannot be combined with --skip-dirs or --ignore/);
     expect(output).toBeNull();
@@ -431,6 +455,7 @@ it.each([
   async (_label, content, message) => {
     const files = content === undefined ? tree : { ...tree, 'perimeter.json': content };
     const { code, out, output } = await runCli(files, ['--perimeter', 'perimeter.json']);
+
     expect(code).toBe(1);
     // The message names the file, then what is wrong with it.
     expect(out).toMatch(/Perimeter ".*perimeter\.json":/);
@@ -488,6 +513,7 @@ it('writes the catalogue of the rules without a project, and leaves nothing else
     { 'package.json': manifest, 'out/keep.txt': 'keep' },
     'out/rules.json'
   );
+
   expect(code).toBe(0);
   expect(out).toContain('rules.json');
   // Nothing was analysed (no output.json) and the temporary file, which was in the same folder, was renamed.
@@ -495,9 +521,13 @@ it('writes the catalogue of the rules without a project, and leaves nothing else
   expect(bytes).not.toBeNull();
   // UTF-8 without a byte order mark: the first byte is the bracket of the array.
   expect(bytes![0]).toBe('['.codePointAt(0));
+
   const text = bytes!.toString('utf8');
+
   expect(text).toBe(JSON.stringify(catalogue(rules.list), undefined, 2));
+
   const entries = JSON.parse(text) as { tech: string }[];
+
   expect(entries).toHaveLength(rules.list.length);
   expect(entries.find((entry) => entry.tech === 'spring-mvc')).toMatchObject({
     dependencies: expect.arrayContaining([
@@ -551,6 +581,7 @@ it('exits with 1 and writes nothing when --catalogue is given with a project or 
   ]) {
     expect(all.out).toContain(name);
   }
+
   expect(project.out).toContain('the project');
   expect(output.out).toContain('--output');
 }, 40_000);
@@ -565,6 +596,7 @@ it('exits with 1 and names the file when the catalogue cannot be written, and wh
     // The program is named after the package, not after the original project.
     runCatalogueCli(['--help'], {}),
   ]);
+
   expect(missingFolder.code).toBe(1);
   expect(missingFolder.out).toMatch(/Catalogue ".*rules\.json"/);
   expect(missingFolder.files).toEqual(['package.json']);
@@ -584,7 +616,7 @@ const hasBuild = existsSync(path.join(dist, 'cli.js')) && existsSync(path.join(d
 
 interface FlatNode {
   id: string;
-  inComponent: string | null;
+  inComponent: null | string;
   edges: { target: string; read: boolean; write: boolean }[];
   childs: FlatNode[];
 }
@@ -619,6 +651,7 @@ it.skipIf(!hasBuild)(
     : 'gives the same output from the bundle as from the compiled modules (skipped: dist/cli.js or dist/cli.mjs is missing, run npm run build)',
   async () => {
     const [modules, bundle] = await Promise.all([runBuilt('cli.js'), runBuilt('cli.mjs')]);
+
     expect(modules.childs.length).toBeGreaterThan(0);
     expect(withoutIds(bundle)).toEqual(withoutIds(modules));
   },
@@ -648,6 +681,7 @@ it.skipIf(!hasBuild)(
       catalogueBuilt('cli.js'),
       catalogueBuilt('cli.mjs'),
     ]);
+
     expect(JSON.parse(modules.toString('utf8'))).toHaveLength(rules.list.length);
     // The same bytes, not only the same entries.
     expect(bundle.equals(modules)).toBe(true);

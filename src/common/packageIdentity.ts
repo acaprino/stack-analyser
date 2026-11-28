@@ -4,7 +4,7 @@ import type { SupportedDeps } from '../types/rule.js';
 export function imageRepository(image: string): string {
   const [tagged] = image.split('@', 1);
   const colon = tagged.indexOf(':', tagged.lastIndexOf('/') + 1);
-  return colon >= 0 ? tagged.slice(0, colon) : tagged;
+  return colon !== -1 ? tagged.slice(0, colon) : tagged;
 }
 
 /** The repository as the rules compare it, in lower case and without Docker Hub's registry and `library/`, and the tag or digest. */
@@ -20,12 +20,12 @@ export function imageReference(image: string): { name: string; version: string }
 }
 
 export function packagePattern(name: string, type: SupportedDeps): RegExp {
-  const escape = (part: string): string => part.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const escape = (part: string): string => part.replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
   if (type === 'githubAction') {
     const [owner, repo, ...subpath] = name.split('/');
-    if (!subpath.length) return new RegExp(`^${escape(name)}$`, 'i');
+    if (subpath.length === 0) return new RegExp(`^${escape(name)}$`, 'i');
     // GitHub folds case for repository identity but retains case in paths within the repository.
-    const repository = escape(`${owner}/${repo}`).replace(
+    const repository = escape(`${owner}/${repo}`).replaceAll(
       /[a-z]/gi,
       (c) => `[${c.toLowerCase()}${c.toUpperCase()}]`
     );

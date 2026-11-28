@@ -1,5 +1,5 @@
-import { dependencies } from './loader.js';
 import { imageReference, imageRepository } from './common/packageIdentity.js';
+import { dependencies } from './loader.js';
 
 import type { AllowedKeys, EvidenceKind, SupportedDeps } from './index.js';
 

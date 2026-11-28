@@ -127,7 +127,7 @@ export function findHosting(pl: Payload, fileMatches: ReadonlyMap<AllowedKeys, u
  * it can lead to some false positive with very generic names.
  */
 export function findEdgesInDependencies(pl: Payload): void {
-  const byName = new Map<string, Payload | null>();
+  const byName = new Map<string, null | Payload>();
   for (const child of pl.childs) byName.set(child.name, byName.has(child.name) ? null : child);
 
   for (const child of pl.childs) {

@@ -2,8 +2,8 @@ import { constants } from 'node:fs';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
-import { l } from '../common/log.js';
 import { portablePath } from '../common/helpers.js';
+import { l } from '../common/log.js';
 
 import type { BaseProvider, ProviderFile } from './base.js';
 import type { Stats } from 'node:fs';
@@ -52,7 +52,7 @@ export class FSProvider implements BaseProvider {
     const relative = path.relative(base, target);
     if (relative === '..' || relative.startsWith('..' + path.sep) || path.isAbsolute(relative))
       return false;
-    if (!relative || !(this.ignoredPaths.size || this.ignoredPatterns.length)) return true;
+    if (!relative || !(this.ignoredPaths.size > 0 || this.ignoredPatterns.length > 0)) return true;
     let prefix = '';
     for (const part of portablePath(relative).split('/')) {
       prefix = prefix ? `${prefix}/${part}` : part;
@@ -65,7 +65,7 @@ export class FSProvider implements BaseProvider {
     return true;
   }
 
-  private async resolve(target: string): Promise<string | null> {
+  private async resolve(target: string): Promise<null | string> {
     if (!this.allowed(this.basePath, target)) return null;
     this.root ??= fs.realpath(this.basePath);
     const [base, file] = await Promise.all([this.root, fs.realpath(target)]);

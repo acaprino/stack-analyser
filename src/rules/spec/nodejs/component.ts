@@ -41,7 +41,7 @@ export const detectNodeComponent: ComponentMatcher = async (files, provider) => 
       }
     }
     const name = typeof json.name === 'string' && json.name ? json.name : 'virtual';
-    if (name === 'virtual' && !deps.size) continue;
+    if (name === 'virtual' && deps.size === 0) continue;
     const declared: Analyser['dependencies'] = [];
     const external = new Set<string>();
     for (const [key, version] of deps) {

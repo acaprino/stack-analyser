@@ -54,7 +54,7 @@ function* itemGroups(project: Record<string, unknown>, certain = true): Generato
 function enablesWinUI(project: Record<string, unknown>): boolean {
   const pending = [project];
   let declared = false;
-  while (pending.length) {
+  while (pending.length > 0) {
     const container = pending.pop()!;
     for (const group of rows(container, 'PropertyGroup')) {
       for (const [name, values] of Object.entries(group)) {
@@ -182,7 +182,7 @@ export const detectNugetComponent: ComponentMatcher = async (files, provider) =>
     files.find((file) => file.type === 'file' && file.name.toLowerCase() === name);
   const legacy = namedFile('packages.config');
   const lock = namedFile('packages.lock.json');
-  if (!manifests.length && !legacy && !lock) return false;
+  if (manifests.length === 0 && !legacy && !lock) return false;
 
   const pinned = lock
     ? lockedPackages((await provider.open(lock.fp)) || '')
@@ -252,9 +252,9 @@ export const detectNugetComponent: ComponentMatcher = async (files, provider) =>
     payload.addDependencyTechs([...frameworks.keys(), ...projectSdks(project)], 'nuget', file.fp);
     payloads.push(payload);
   }
-  if (payloads.length) return payloads;
+  if (payloads.length > 0) return payloads;
   const source = legacy || lock;
-  if (!source || (!installed.size && !pinned.size)) return false;
+  if (!source || (installed.size === 0 && pinned.size === 0)) return false;
   return packageComponent(
     'virtual',
     source.fp,

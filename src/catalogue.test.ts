@@ -19,7 +19,9 @@ function frozen(rule: object): Rule {
 
 function entryOf(tech: string): Record<string, unknown> {
   const entry = catalogue(rules.list).find((item) => item.tech === tech);
+
   expect(entry, tech).toBeDefined();
+
   return entry as unknown as Record<string, unknown>;
 }
 
@@ -31,15 +33,21 @@ describe('catalogue', () => {
     expect(exported).toBe(catalogue);
     expect(rules.list.length).toBeGreaterThan(1000);
     expect(entries).toHaveLength(rules.list.length);
+
     const techs = entries.map((entry) => entry.tech);
+
     expect(new Set(techs).size).toBe(techs.length);
     expect(techs).toEqual(rules.list.map((rule) => rule.tech).sort());
+
     for (const rule of rules.list) {
       const entry = entries.find((item) => item.tech === rule.tech);
+
       expect(entry, rule.tech).toMatchObject({ name: rule.name, type: rule.type });
     }
+
     // The registry is left as it was: same rules, same order.
     expect(rules.list).toHaveLength(before.length);
+
     for (const [index, rule] of before.entries()) expect(rules.list[index]).toBe(rule);
   });
 
@@ -49,17 +57,22 @@ describe('catalogue', () => {
       { tech: 'a', name: 'A', type: 'tool' },
       { tech: 'Z', name: 'Z', type: 'tool' },
     ] as unknown as Rule[]);
+
     // A locale order puts "a" and "b" before "Z".
     expect(entries.map((entry) => entry.tech)).toEqual(['Z', 'a', 'b']);
   });
 
   it('gives each entry only the known keys, in order, and none that is empty', () => {
     const entries = catalogue(rules.list);
+
     expect(entries).toHaveLength(rules.list.length);
+
     for (const entry of entries) {
       const keys = Object.keys(entry);
+
       expect(keys, entry.tech).toEqual(keyOrder.filter((key) => keys.includes(key)));
       expect(keys.slice(0, 3)).toEqual(['tech', 'name', 'type']);
+
       for (const value of Object.values(entry)) {
         if (Array.isArray(value)) expect(value.length, entry.tech).toBeGreaterThan(0);
       }
@@ -79,11 +92,15 @@ describe('catalogue', () => {
       type: 'maven',
       pattern: String.raw`^org\.springframework\.boot:spring-boot(?:-[a-z0-9]+)*$`,
     });
+
     const back = JSON.parse(JSON.stringify(entry)) as typeof entry;
+
     expect(back).toEqual(entry);
+
     const written = (back.dependencies as { pattern?: string; flags?: string }[]).find((dep) =>
       dep.pattern?.includes('spring-boot(?:')
     )!;
+
     expect(new RegExp(written.pattern!, written.flags).source).toBe(pattern.source);
     // The example of a pattern is not written, and a string name has no pattern.
     expect(JSON.stringify(entry)).not.toContain('example');
@@ -97,7 +114,9 @@ describe('catalogue', () => {
     expect(entryOf('aspnetcore').dependencies).toEqual([
       { type: 'nuget', pattern: String.raw`^Microsoft\.AspNetCore\.`, flags: 'i' },
     ]);
+
     const spring = entryOf('spring-boot').dependencies as object[];
+
     expect(spring.filter((dep) => 'pattern' in dep)).toHaveLength(2);
     expect(spring.some((dep) => 'flags' in dep)).toBe(false);
   });
@@ -106,9 +125,13 @@ describe('catalogue', () => {
     expect(entryOf('typescript').files).toEqual({
       pattern: String.raw`^tsconfig(?:\.[\w-]+)*\.json$`,
     });
+
     const withList = rules.list.find((rule) => Array.isArray(rule.files) && rule.files.length > 0)!;
+
     expect(entryOf(withList.tech).files).toEqual(withList.files);
+
     const withoutFiles = rules.list.find((rule) => rule.files === undefined)!;
+
     expect(entryOf(withoutFiles.tech)).not.toHaveProperty('files');
   });
 
@@ -125,6 +148,7 @@ describe('catalogue', () => {
     expect(entryOf('spring-mvc')).not.toHaveProperty('hosts');
     expect(entryOf('spring-mvc')).not.toHaveProperty('dotenv');
     expect(entryOf('spring-mvc')).not.toHaveProperty('extensions');
+
     const byTech = new Map(catalogue(rules.list).map((entry) => [entry.tech, entry]));
     for (const rule of rules.list) {
       expect('hosts' in byTech.get(rule.tech)!, rule.tech).toBe((rule.hosts?.length ?? 0) > 0);
@@ -133,9 +157,13 @@ describe('catalogue', () => {
 
   it('leaves out what a rule carries beyond the eight keys', () => {
     const leaves = ['example', 'matchFullPath', 'deploymentConfig', 'detect'];
+
     expect(rules.list.some((rule) => leaves.some((key) => key in rule))).toBe(true);
+
     const entries = catalogue(rules.list);
+
     expect(entries).toHaveLength(rules.list.length);
+
     for (const entry of entries) {
       for (const key of leaves) expect(entry, entry.tech).not.toHaveProperty(key);
     }
@@ -154,11 +182,13 @@ describe('catalogue', () => {
         files: [],
       }),
     ]);
+
     expect(entry).toEqual({ tech: 'one', name: 'One', type: 'tool' });
 
     const [computed] = catalogue([
       frozen({ tech: 'two', name: 'Two', type: 'tool', files: () => [] }),
     ]);
+
     expect(computed).toEqual({ tech: 'two', name: 'Two', type: 'tool', files: { computed: true } });
   });
 
@@ -175,6 +205,7 @@ describe('catalogue', () => {
     const [entry] = catalogue([rule]);
     (entry.hosts as string[]).push('b.example');
     (entry.files as string[]).push('two.cfg');
+
     expect(rule.hosts).toEqual(['a.example']);
     expect(rule.files).toEqual(['one.cfg']);
   });

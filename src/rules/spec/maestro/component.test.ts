@@ -21,6 +21,7 @@ describe('Maestro mobile flows', () => {
   ] as const)('%s', async (file, content, found) => {
     const provider = new FakeProvider({ paths: { '/': [file] }, files: { ['/' + file]: content } });
     const result = await analyser({ provider });
+
     expect(result.techs.has('maestro')).toBe(found);
   });
 });

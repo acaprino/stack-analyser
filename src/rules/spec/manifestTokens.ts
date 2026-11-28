@@ -3,13 +3,13 @@ import type { BaseProvider } from '../../provider/base.js';
 /** Tokens for reading literal package declarations without evaluating project code. */
 export interface Token {
   value: string;
-  kind: 'word' | 'string' | 'symbol' | 'opaque';
+  kind: 'opaque' | 'string' | 'symbol' | 'word';
   line: number;
 }
 
 // Scala (sbt) shares Swift's comments and string delimiters; Python shares Elixir's quotes and `#` comments, without
 // interpolation, and takes `'` strings as literals.
-type Language = 'swift' | 'elixir' | 'ruby' | 'scala' | 'python';
+type Language = 'elixir' | 'python' | 'ruby' | 'scala' | 'swift';
 
 export async function sourceText(provider: BaseProvider, file: string): Promise<null | string> {
   const stat = await provider.stat(file);
@@ -54,7 +54,7 @@ function interpolationEnd(source: string, start: number, isSwift: boolean, level
       i = blockCommentEnd(source, i);
     } else if (isSwift ? source.startsWith('//', i) : source[i] === '#') {
       const newline = source.indexOf('\n', i);
-      i = newline < 0 ? source.length : newline + 1;
+      i = newline === -1 ? source.length : newline + 1;
     } else {
       if (source[i] === open) depth++;
       if (source[i] === close) depth--;
@@ -119,7 +119,7 @@ export function tokens(source: string, language: Language): Token[] {
       percentLiteral.lastIndex =
       heredoc.lastIndex =
         i;
-    let match: RegExpExecArray | null;
+    let match: null | RegExpExecArray;
     if (
       isRuby &&
       (i === 0 || source[i - 1] === '\n') &&
@@ -136,13 +136,13 @@ export function tokens(source: string, language: Language): Token[] {
       const end = /^=end(?:[^\S\n].*)?\r?$/gm;
       end.lastIndex = i + 6;
       i = end.exec(source) ? end.lastIndex : source.length;
-    } else if (isRuby && char === '\n' && pendingHeredocs.length) {
+    } else if (isRuby && char === '\n' && pendingHeredocs.length > 0) {
       i++;
       for (const { label, indented } of pendingHeredocs) {
         while (i < source.length) {
           const end = source.indexOf('\n', i);
-          const row = source.slice(i, end < 0 ? source.length : end).replace(/\r$/, '');
-          i = end < 0 ? source.length : end + 1;
+          const row = source.slice(i, end === -1 ? source.length : end).replace(/\r$/, '');
+          i = end === -1 ? source.length : end + 1;
           if ((indented ? row.trimStart() : row) === label) break;
         }
       }
@@ -243,7 +243,7 @@ export function closing(items: Token[], start: number): number {
     if (pairs[token.value]) stack.push(pairs[token.value]);
     else if (token.value === stack.at(-1)) {
       stack.pop();
-      if (!stack.length) return i;
+      if (stack.length === 0) return i;
     }
   }
   return -1;

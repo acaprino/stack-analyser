@@ -1,10 +1,12 @@
 import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
+
 import { expect, it, vi } from 'vitest';
+
+import { FSProvider } from './fs.js';
 import { analyser } from '../analyser/index.js';
 import { flatten } from '../payload/helpers.js';
-import { FSProvider } from './fs.js';
 import '../autoload.js';
 
 it('keeps filesystem reads inside the selected root and respects ignored relative paths', async () => {
@@ -19,11 +21,13 @@ it('keeps filesystem reads inside the selected root and respects ignored relativ
     await fs.writeFile(path.join(project, 'visible.json'), '{}');
     await fs.writeFile(path.join(project, 'generated/data.json'), '{}');
     const provider = new FSProvider({ path: project, ignorePaths: ['generated'] });
+
     expect(await provider.open(path.join(project, 'visible.json'))).toBe('{}');
     expect((await provider.listDir(project)).map((file) => file.name)).toEqual(['visible.json']);
     expect(await provider.open(path.join(sibling, 'sample.json'))).toBeNull();
     expect(await provider.open(path.join(project, 'generated/data.json'))).toBeNull();
     expect(await provider.stat(path.join(sibling, 'sample.json'))).toBeNull();
+
     const realpath = fs.realpath.bind(fs);
     const link = path.join(project, 'alias.json');
     const file = path.join(sibling, 'sample.json');
@@ -36,6 +40,7 @@ it('keeps filesystem reads inside the selected root and respects ignored relativ
         target === link ? Promise.resolve(file) : realpath(target)
       );
     }
+
     expect(await provider.open(link)).toBeNull();
     expect(await provider.stat(link)).toBeNull();
     expect(
@@ -63,6 +68,7 @@ it.each(['generated', '/generated', './generated', 'generated/', '/generated/'])
       await fs.mkdir(path.join(temp, 'generated-docs'));
       await fs.writeFile(path.join(temp, 'generated/data.json'), '{}');
       const provider = new FSProvider({ path: temp, ignorePaths: [rule] });
+
       // Only that folder: a folder whose name merely starts the same way is still read.
       expect((await provider.listDir(temp)).map((file) => file.name)).toEqual(['generated-docs']);
       expect(await provider.open(path.join(temp, 'generated/data.json'))).toBeNull();
@@ -84,9 +90,11 @@ it('reads a perimeter of five thousand paths', async () => {
     // Five thousand paths, the five of the first packages among them. Written in the ways the caller may write one.
     const ignorePaths = [
       ...Array.from({ length: 4995 }, (_, i) => `generated/area-${i}/code`),
-      ...['pkg-0/src', '/pkg-1/src', './pkg-2/src', 'pkg-3/src/', 'pkg-4'],
+      'pkg-0/src', '/pkg-1/src', './pkg-2/src', 'pkg-3/src/', 'pkg-4',
     ];
+
     expect(ignorePaths).toHaveLength(5000);
+
     const provider = new FSProvider({ path: temp, ignorePaths });
 
     const found: string[] = [];
@@ -124,6 +132,7 @@ it('applies a regular expression beside string paths, whatever its flags', async
       path: temp,
       ignorePaths: ['docs', /^generated/g, /^src\/other$/],
     });
+
     expect((await provider.listDir(temp)).map((file) => file.name)).toEqual(['src']);
     expect(await provider.open(path.join(temp, 'generated-docs', 'data.json'))).toBeNull();
     expect(await provider.open(path.join(temp, 'generated', 'data.json'))).toBeNull();
@@ -145,13 +154,16 @@ it('lets the caller replace the list of skipped folders, and keeps the default l
       flatten(await analyser({ provider: new FSProvider({ path: temp, skipDirs }) }), {
         merge: true,
       }).techs.has('vitest');
+
     expect(new FSProvider({ path: temp }).skipDirs).toBeUndefined();
     expect(new FSProvider({ path: temp, skipDirs: [] }).skipDirs).toEqual([]);
     expect(await found()).toBe(false);
     expect(await found([])).toBe(true);
     expect(await found(['tests'])).toBe(false);
+
     // `ignorePaths` still applies to a folder that `skipDirs` lets through.
     const ignored = new FSProvider({ path: temp, skipDirs: [], ignorePaths: ['tests'] });
+
     expect(
       flatten(await analyser({ provider: ignored }), { merge: true }).techs.has('vitest')
     ).toBe(false);

@@ -67,7 +67,7 @@ export const detectPubComponent: ComponentMatcher = async (files, provider) => {
       l.warn('Failed to parse Dart package file', file.fp, err);
     }
   }
-  if (name === 'virtual' && !requirements.size) return false;
+  if (name === 'virtual' && requirements.size === 0) return false;
   const source = manifest || lock!;
   const payload = packageComponent(name, source.fp, 'pub', requirements, source.fp);
   payload.addTech(

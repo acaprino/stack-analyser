@@ -51,7 +51,7 @@ export const detectGithubActionsComponent: ComponentMatcher = async (files, prov
     }
     if (!isRecord(parsed) || !Object.hasOwn(parsed, 'on') || !isRecord(parsed.jobs)) continue;
     const jobs = Object.values(parsed.jobs).filter(isRecord);
-    if (!jobs.length) continue;
+    if (jobs.length === 0) continue;
     const pl = new Payload({ name: 'virtual', folderPath: file.fp });
     pl.addTech(
       'github.actions',
@@ -72,5 +72,5 @@ export const detectGithubActionsComponent: ComponentMatcher = async (files, prov
     }
     workflows.push(pl);
   }
-  return workflows.length ? workflows : false;
+  return workflows.length > 0 ? workflows : false;
 };

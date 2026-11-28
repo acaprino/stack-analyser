@@ -208,7 +208,9 @@ describe('no duplicate', () => {
           const hits = matchers
             .filter((matcher) => matcher.match.test(ex))
             .map((matcher) => matcher.tech);
+
           expect(new Set(hits), ex).toEqual(new Set(expected));
+
           remaining.delete(`${name}:${ex}`);
           continue;
         }
@@ -230,6 +232,7 @@ describe('no duplicate', () => {
         }
       }
     }
+
     expect([...remaining]).toEqual([]);
   });
 });
@@ -245,6 +248,7 @@ describe('dependency names', () => {
         }
       }
     }
+
     expect(padded).toEqual([]);
   });
 });
@@ -278,7 +282,9 @@ describe('rule completeness', () => {
           rule.hosts?.length ||
           rule.dependencies?.length
       );
+
       expect(direct, rule.tech).toBe(!indirect.has(rule.tech));
+
       if (rule.files instanceof RegExp && 'example' in rule) {
         expect(rule.example).toMatch(rule.files);
       }

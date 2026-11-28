@@ -48,7 +48,9 @@ describe('dotenv', () => {
       },
     });
     const hits = flatten(await analyser({ provider }), { merge: true }).techs;
+
     expect([...hits]).toEqual(expect.arrayContaining(['supabase', 'rollbar', 'sentry']));
+
     for (const other of ['openai', 'stripe', 'redis', 'datadog', 'apple'] as const)
       expect(hits.has(other)).toBe(false);
   });
@@ -58,6 +60,7 @@ describe('dotenv', () => {
       paths: { '/': ['.env.example'] },
       files: { '/.env.example': 'ROOLBAR_TOKEN=x' },
     });
+
     expect(flatten(await analyser({ provider }), { merge: true }).techs.has('rollbar')).toBe(false);
   });
 });

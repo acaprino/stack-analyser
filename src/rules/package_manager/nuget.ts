@@ -1,5 +1,5 @@
-import { detectNugetComponent } from '../spec/nuget/component.js';
 import { register } from '../../register.js';
+import { detectNugetComponent } from '../spec/nuget/component.js';
 
 register({
   tech: 'nuget',

@@ -1,5 +1,5 @@
-import { detectHexComponent } from '../spec/hex/component.js';
 import { register } from '../../register.js';
+import { detectHexComponent } from '../spec/hex/component.js';
 
 register({
   tech: 'elixir',
