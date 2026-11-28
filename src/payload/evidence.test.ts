@@ -40,15 +40,18 @@ test('connects repeated service evidence to a real component and keeps technolog
   );
 });
 
+/** The `api` component that a root folder holding `files` gives. */
+async function application(files: Record<string, string>): Promise<Payload> {
+  const provider = new FakeProvider({
+    paths: { '/': Object.keys(files).map((f) => f.slice(1)) },
+    files,
+  });
+  const result = await analyser({ provider });
+  return result.childs.find((c) => c.name === 'api')!;
+}
+
 test('keeps cloud SDK recognition while assigning hosting only from deployment configuration', async () => {
   const manifest = JSON.stringify({ name: 'api', dependencies: { 'aws-sdk': '2', vercel: '36' } });
-  async function application(files: Record<string, string>) {
-    const provider = new FakeProvider({
-      paths: { '/': Object.keys(files).map((f) => f.slice(1)) },
-      files,
-    });
-    return (await analyser({ provider })).childs.find((c) => c.name === 'api')!;
-  }
   const sdkOnly = await application({ '/package.json': manifest });
 
   expect([...sdkOnly.techs]).toStrictEqual(expect.arrayContaining(['aws', 'vercel']));
@@ -206,10 +209,10 @@ test('dives into a folder the default list skips when the caller says so', async
   const files = {
     '/tests/package.json': JSON.stringify({ name: 't', dependencies: { vitest: '1' } }),
   };
-  const found = async (skipDirs?: string[]) =>
-    flatten(await analyser({ provider: new FakeProvider({ paths, files, skipDirs }) }), {
-      merge: true,
-    }).techs.has('vitest');
+  const found = async (skipDirs?: string[]): Promise<boolean> => {
+    const result = await analyser({ provider: new FakeProvider({ paths, files, skipDirs }) });
+    return flatten(result, { merge: true }).techs.has('vitest');
+  };
 
   expect(await found()).toBe(false);
   expect(await found([])).toBe(true);
@@ -217,7 +220,10 @@ test('dives into a folder the default list skips when the caller says so', async
 });
 
 /** `count` folders, each with one manifest that names the same known packages. */
-function manyManifests(manifest: string, content: (index: number) => string, count: number) {
+function manyManifests(
+  manifest: string,
+  { content, count }: { content: (index: number) => string; count: number }
+): FakeProvider {
   const paths: Record<string, string[]> = { '/': [] };
   const files: Record<string, string> = {};
   for (let i = 0; i < count; i++) {
@@ -278,13 +284,13 @@ const knownNpmPackages = [
 const bound = 10_000;
 
 test('analyses 800 Python manifests with 20 known packages each without the time growing with the square', async () => {
-  const provider = manyManifests(
-    'requirements.txt',
-    () => knownPythonPackages.map((name) => `${name}>=1`).join('\n'),
-    800
-  );
+  const provider = manyManifests('requirements.txt', {
+    content: () => knownPythonPackages.map((name) => `${name}>=1`).join('\n'),
+    count: 800,
+  });
   const start = performance.now();
-  const json = (await analyser({ provider })).toJson('/');
+  const result = await analyser({ provider });
+  const json = result.toJson('/');
   const elapsed = performance.now() - start;
 
   expect(json.evidence.length).toBeGreaterThanOrEqual(800 * 20);
@@ -292,15 +298,14 @@ test('analyses 800 Python manifests with 20 known packages each without the time
 }, 60_000);
 
 test('flattens 400 npm packages with 20 known dependencies each without the time growing with the square', async () => {
-  const provider = manyManifests(
-    'package.json',
-    (i) =>
+  const provider = manyManifests('package.json', {
+    content: (i) =>
       JSON.stringify({
         name: `pkg${i}`,
         dependencies: Object.fromEntries(knownNpmPackages.map((name) => [name, '1'])),
       }),
-    400
-  );
+    count: 400,
+  });
   const start = performance.now();
   const json = flatten(await analyser({ provider }), { merge: true }).toJson('/');
   const elapsed = performance.now() - start;

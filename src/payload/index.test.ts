@@ -5,6 +5,13 @@ import { matchDependencies } from '../matchDependencies.js';
 import { Payload } from './index.js';
 import '../autoload.js';
 
+import type { HostMention } from '../types/index.js';
+
+/** A Telegram mention of `c.ts` at `line`. */
+function mention(line: number): HostMention {
+  return { tech: 'telegram', host: 'api.telegram.org', path: 'c.ts', line };
+}
+
 let id = 0;
 vi.mock('../common/nid.ts', () => {
   return { nid: () => `${id++}` };
@@ -77,12 +84,6 @@ describe('payload', () => {
   });
 
   it('should keep one mention per tech, host, path and line when payloads are combined', () => {
-    const mention = (line: number) => ({
-      tech: 'telegram' as const,
-      host: 'api.telegram.org',
-      path: 'c.ts',
-      line,
-    });
     const a = new Payload({ name: 'a', folderPath: '/' });
     const b = new Payload({ name: 'b', folderPath: '/' });
     a.mentions.push(mention(1));
