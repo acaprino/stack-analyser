@@ -43,7 +43,10 @@ function goMod(source: string): { modules: Map<string, string>; replacements: Re
         });
       continue;
     }
-    if (directive !== 'require' || (comment !== -1 && /^\/\/\s*indirect\b/.test(raw.slice(comment))))
+    if (
+      directive !== 'require' ||
+      (comment !== -1 && /^\/\/\s*indirect\b/.test(raw.slice(comment)))
+    )
       continue;
     const fields = /^(?:"([^"\s]+)"|([^\s"]+))\s+(?:"(v[^"\s]+)"|(v[^\s"]+))$/.exec(declaration);
     if (fields) modules.set(fields[1] ?? fields[2], fields[3] ?? fields[4]);

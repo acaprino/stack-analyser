@@ -7,7 +7,10 @@ import type { AllowedKeys, ProviderFile } from './index.js';
 import type { EvidenceItem } from './types/index.js';
 
 /** What matched a technology in a folder: the reason sentences and the evidence behind them. */
-export interface TechMatch { reason: string[]; evidence: EvidenceItem[] }
+export interface TechMatch {
+  reason: string[];
+  evidence: EvidenceItem[];
+}
 
 /**
  * Same matching as `matchAllFiles`, with the evidence.

@@ -44,9 +44,8 @@ export const detectDockerComponent: ComponentMatcher = async (files, provider) =
     const includes = Array.isArray(parsed.include) && parsed.include.length > 0;
     if (services.length === 0 && !includes) continue;
     const pl = new Payload({ name: 'virtual', folderPath: file.fp });
-    const reason = services.length > 0
-      ? `Compose services in ${file.name}`
-      : `Compose include in ${file.name}`;
+    const reason =
+      services.length > 0 ? `Compose services in ${file.name}` : `Compose include in ${file.name}`;
     pl.addTech('docker', [reason], [{ kind: 'file', value: file.name, path: file.fp }]);
 
     for (const [name, service] of services) {

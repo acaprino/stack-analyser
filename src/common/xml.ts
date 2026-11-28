@@ -8,7 +8,12 @@ export function xmlChildren(element: Element): readonly NamedElement[] {
   return element[orderedChildren] ?? [];
 }
 
-interface Frame { name: string; fields: Record<string, unknown>; text: string; ignored: boolean }
+interface Frame {
+  name: string;
+  fields: Record<string, unknown>;
+  text: string;
+  ignored: boolean;
+}
 
 export function parseProjectXml(
   content: string,

@@ -90,7 +90,11 @@ test('reads a perimeter of five thousand paths', async () => {
     // Five thousand paths, the five of the first packages among them. Written in the ways the caller may write one.
     const ignorePaths = [
       ...Array.from({ length: 4995 }, (_, i) => `generated/area-${i}/code`),
-      'pkg-0/src', '/pkg-1/src', './pkg-2/src', 'pkg-3/src/', 'pkg-4',
+      'pkg-0/src',
+      '/pkg-1/src',
+      './pkg-2/src',
+      'pkg-3/src/',
+      'pkg-4',
     ];
 
     expect(ignorePaths).toHaveLength(5000);

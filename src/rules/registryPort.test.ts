@@ -12,7 +12,11 @@ import '../autoload.js';
 import type { SupportedDeps } from '../types/rule.js';
 import type { AllowedKeys } from '../types/techs.js';
 
-interface Difference { id: AllowedKeys; sign: string; reason: string }
+interface Difference {
+  id: AllowedKeys;
+  sign: string;
+  reason: string;
+}
 const report = JSON.parse(
   fs.readFileSync(path.join(import.meta.dirname, '../../benchmarks/registry-port.json'), 'utf8')
 ) as {

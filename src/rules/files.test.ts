@@ -59,14 +59,17 @@ describe('all', () => {
     ['.vercel', 'vercel'],
     ['.vitepress', 'vitepress'],
     ['.vuepress', 'vuepress'],
-  ] as const)('should recognize the directory %s as %s and not a file of that name', (name, tech) => {
-    const found = (type: 'dir' | 'file') => [
-      ...matchAllFiles([{ fp: '/repo/' + name, name, type }], '/repo').keys(),
-    ];
+  ] as const)(
+    'should recognize the directory %s as %s and not a file of that name',
+    (name, tech) => {
+      const found = (type: 'dir' | 'file') => [
+        ...matchAllFiles([{ fp: '/repo/' + name, name, type }], '/repo').keys(),
+      ];
 
-    expect(found('dir')).toContain(tech);
-    expect(found('file')).not.toContain(tech);
-  });
+      expect(found('dir')).toContain(tech);
+      expect(found('file')).not.toContain(tech);
+    }
+  );
 
   it('should not list multiple times the same files', () => {
     const files = new Set<string>();

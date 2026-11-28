@@ -644,11 +644,9 @@ async function runBuilt(file: string): Promise<FlatNode> {
   }
 }
 
-// The build is not committed, so a fresh checkout has nothing to compare: the title says why the test is skipped.
+// The build is not committed, so a fresh checkout has nothing to compare: the title says when the test is skipped.
 test.skipIf(!hasBuild)(
-  hasBuild
-    ? 'should give the same output from the one-file bundle as from the compiled modules'
-    : 'gives the same output from the bundle as from the compiled modules (skipped: dist/cli.js or dist/cli.mjs is missing, run npm run build)',
+  'gives the same output from the one-file bundle as from the compiled modules (skipped until npm run build)',
   async () => {
     const [modules, bundle] = await Promise.all([runBuilt('cli.js'), runBuilt('cli.mjs')]);
 
@@ -673,9 +671,7 @@ async function catalogueBuilt(file: string): Promise<Buffer> {
 }
 
 test.skipIf(!hasBuild)(
-  hasBuild
-    ? 'should give the same catalogue from the bundle as from the modules'
-    : 'gives the same catalogue from the bundle as from the modules (skipped: dist/cli.js or dist/cli.mjs is missing, run npm run build)',
+  'gives the same catalogue from the bundle as from the modules (skipped until npm run build)',
   async () => {
     const [modules, bundle] = await Promise.all([
       catalogueBuilt('cli.js'),

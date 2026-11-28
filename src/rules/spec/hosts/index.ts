@@ -23,7 +23,9 @@ function sourceValues(content: string, name: string, emit: (value: string, line:
     /"""[\s\S]*?(?:"""|$)|'''[\s\S]*?(?:'''|$)|"(?:\\[^\n]|[^"\\\r\n])*"|'(?:\\[^\n]|[^'\\\r\n])*'|\u0060(?:\\[\s\S]|[^\u0060\\])*\u0060/;
   const comments = /<!--[\s\S]*?(?:-->|$)|\/\*[\s\S]*?(?:\*\/|$)|\/\/[^\n]*/;
   const tokens = new RegExp(
-    (hash ? String.raw`#[^\n]*|` : '') + (slashComments ? comments.source + '|' : '') + literals.source,
+    (hash ? String.raw`#[^\n]*|` : '') +
+      (slashComments ? comments.source + '|' : '') +
+      literals.source,
     'g'
   );
   let line = 1;
