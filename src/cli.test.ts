@@ -222,6 +222,13 @@ it('exits with 1 and writes nothing when --output is empty', async () => {
   expect(output).toBeNull();
 }, 20_000);
 
+it('exits with 1 before analysing when the folder of --output does not exist', async () => {
+  const { code, out, err } = await runCli(tree, ['--output', path.join('missing', 'out.json')]);
+  expect(code).toBe(1);
+  expect(err).toMatch(/the folder .*missing does not exist/);
+  expect(out).not.toContain('Analysed');
+}, 20_000);
+
 /** The techs of `tree` that an output holds, in the order of `tree`. */
 function techsOfTree(output: { techs: string[] }): string[] {
   const found = new Set<string>(output.techs);

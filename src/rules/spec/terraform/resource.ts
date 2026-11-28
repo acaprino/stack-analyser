@@ -31,8 +31,9 @@ export const detectTerraformResource: ComponentMatcher = async (files, provider)
     }
 
     let json: TerraformResource;
+    // Outside the try: a parser that cannot load must stop the run, not pass for a bad file.
+    const { parse } = await loadHcl();
     try {
-      const { parse } = await loadHcl();
       json = (await parse(file.fp, content)) as TerraformResource;
     } catch (err) {
       l.warn('Failed to parse HCL', file.fp, err);

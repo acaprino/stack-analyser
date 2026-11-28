@@ -159,6 +159,8 @@ export function flatten(src: Payload, options: { merge?: boolean } = {}): Payloa
   // Generate a flat list of childs
   const merge = options.merge || false;
   const dest = new Payload({ name: 'flatten', folderPath: '/' });
+  // The root's mentions first, as they were before the components' ones are merged in.
+  dest.mentions = src.mentions.map((mention) => ({ ...mention }));
   pushChilds(src, dest);
 
   // Only equal technology IDs represent the same known service. Keep each project
