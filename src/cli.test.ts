@@ -633,7 +633,7 @@ test('exits with 1 and names the file when the catalogue cannot be written, and 
   expect(nothing.out).toMatch(/missing required argument 'path'/);
   expect(nothing.files).toStrictEqual(['package.json']);
   expect(help.code).toBe(0);
-  expect(help.out).toContain('Usage: stack-analyser-daodan ');
+  expect(help.out).toContain('Usage: stack-analyzer-daodan ');
 }, 40_000);
 
 const dist = path.join(import.meta.dirname, '..', 'dist');

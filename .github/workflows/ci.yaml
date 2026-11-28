@@ -1,7 +1,7 @@
 name: Main
 on:
   push:
-    branches: [main, feature/stack-detection]
+    branches: [main, stack-analyzer-daodan]
   pull_request:
     types: [opened, synchronize]
 
