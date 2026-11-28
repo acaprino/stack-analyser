@@ -1,13 +1,12 @@
 import { parseProjectXml } from '../../../common/xml.js';
+import { isRecord } from '../packageManifest.js';
 
 import type { Dependency } from '../../../types/index.js';
 
 type XmlElement = Record<string, unknown>;
 
 function element(value: unknown): undefined | XmlElement {
-  return value !== null && typeof value === 'object' && !Array.isArray(value)
-    ? (value as XmlElement)
-    : undefined;
+  return isRecord(value) ? value : undefined;
 }
 
 function children(parent: undefined | XmlElement, key: string): XmlElement[] {

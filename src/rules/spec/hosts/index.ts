@@ -3,13 +3,13 @@ import path from 'node:path';
 import { LineCounter, parseAllDocuments, visit } from 'yaml';
 
 import { endpointHosts } from '../../../loader.js';
+import { envTemplate } from '../dotenv/index.js';
 
 import type { BaseProvider, ProviderFile } from '../../../provider/base.js';
 import type { HostMention } from '../../../types/index.js';
 
 const sourceFile = /\.(?:[cm]?[jt]sx?|py|rb|php|exs?|rs|go|cs|kts?|java|swift|dart|vue)$/i;
 const configFile = /\.(?:json|ya?ml)$/i;
-const exampleEnv = /^\.env\.(?:example|sample|template)(?:\.|$)/;
 const excluded =
   /(?:^|\/)(?:docs?|examples?|fixtures?|tests?|__tests__|__fixtures__|node_modules|vendor|generated)(?:\/|$)|(?:[.-](?:test|spec|min|generated)|(?:^|\/)test_[^/]*)\.[^.]+$|(?:lock|shrinkwrap)\.(?:json|ya?ml)$|(?:^|\/)(?:package|composer)\.json$/i;
 const maxFileSize = 500_000;
@@ -148,7 +148,7 @@ export async function findHostMentions(
   const candidates: Candidate[] = [];
   for (const file of files) {
     const { name } = file;
-    const env = exampleEnv.test(name);
+    const env = envTemplate.test(name);
     const config = configFile.test(name);
     if (file.type !== 'file' || (!env && !config && !sourceFile.test(name))) continue;
     const relative = path.relative(provider.basePath, file.fp).split(path.sep).join('/');

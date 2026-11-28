@@ -224,14 +224,8 @@ export class Payload implements Analyser {
   /**
    * Register a tech.
    */
-  addTechs(tech: Map<AllowedKeys, string[] | TechMatch>): void {
-    for (const [key, match] of tech.entries()) {
-      if (Array.isArray(match)) {
-        this.addTech(key, { reason: match });
-      } else {
-        this.addTech(key, { reason: match.reason, evidence: match.evidence });
-      }
-    }
+  addTechs(tech: Map<AllowedKeys, TechMatch>): void {
+    for (const [key, match] of tech.entries()) this.addTech(key, match);
   }
 
   /**
@@ -269,15 +263,14 @@ export class Payload implements Analyser {
    */
   addTech(
     tech: AllowedKeys,
-    { reason, evidence }: { reason: string[]; evidence?: EvidenceItem[] }
+    { reason, evidence }: { reason: string[]; evidence: EvidenceItem[] }
   ): void {
     this.techs.add(tech);
     for (const r of reason) {
       this.reason.add(r);
     }
-    if (evidence) {
-      this.addEvidence(tech, evidence);
-    }
+    // Required: every technology of a Payload has at least one evidence item behind it.
+    this.addEvidence(tech, evidence);
 
     findImplicitComponent({ pl: this, tech, reason, evidence });
   }

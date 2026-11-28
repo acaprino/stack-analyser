@@ -5,7 +5,7 @@ import { parse as parseToml } from 'smol-toml';
 import { l } from '../../../common/log.js';
 import { Payload } from '../../../payload/index.js';
 import { detectLicense } from '../licenses/index.js';
-import { isRecord } from '../packageManifest.js';
+import { insideProject, isRecord } from '../packageManifest.js';
 
 import type { BaseProvider } from '../../../provider/base.js';
 import type { Analyser } from '../../../types/index.js';
@@ -53,9 +53,7 @@ async function inheritedDependencies(
   let dir = folder;
   while (path.resolve(dir) !== root && path.dirname(dir) !== dir) {
     dir = path.dirname(dir);
-    const relative = path.relative(root, path.resolve(dir));
-    if (relative === '..' || relative.startsWith('..' + path.sep) || path.isAbsolute(relative))
-      break;
+    if (!insideProject(root, { from: dir, target: '.' })) break;
     if (explicit && explicit !== path.resolve(dir)) continue;
     const items = await provider.listDir(dir);
     const manifest = items.find((item) => item.type === 'file' && item.name === 'Cargo.toml');

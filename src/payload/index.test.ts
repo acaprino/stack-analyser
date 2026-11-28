@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { matchAllFiles } from '../matchAllFiles.js';
+import { matchAllFilesWithEvidence } from '../matchAllFiles.js';
 import { matchDependencies } from '../matchDependencies.js';
 import { Payload } from './index.js';
 import '../autoload.js';
@@ -50,12 +50,12 @@ describe('payload', () => {
 
   it('should dedup matched tech', () => {
     const root = new Payload({ name: 'root', folderPath: '/' });
-    const res = matchAllFiles(
+    const res = matchAllFilesWithEvidence(
       [
         { name: 'index.ts', fp: 'index.ts', type: 'file' },
         { name: 'script.ts', fp: 'scripts.ts', type: 'file' },
       ],
-      '/'
+      { basePath: '/', folder: '/' }
     );
     root.addTechs(res);
 

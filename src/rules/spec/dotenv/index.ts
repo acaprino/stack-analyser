@@ -6,7 +6,11 @@ import { sourceText } from '../manifestTokens.js';
 
 import type { BaseProvider, ProviderFile } from '../../../provider/base.js';
 
-const template = /^\.env(?:\.[\w-]+)?\.(?:example|sample|template)$/;
+/**
+ * A `.env` file meant to be committed: `.env.example`, `.env.local.example`, `.env.example.local`.
+ * One definition for the variables and for the endpoints read from it.
+ */
+export const envTemplate = /^\.env(?:\.[\w-]+)?\.(?:example|sample|template)(?:\.[\w-]+)?$/;
 const clientPrefix =
   /^(?:NEXT_PUBLIC_|VITE_|EXPO_PUBLIC_|REACT_APP_|VUE_APP_|NUXT_PUBLIC_|GATSBY_|PUBLIC_)/;
 
@@ -16,7 +20,7 @@ export const detectInDotEnv = async (
 ): Promise<false | Payload> => {
   let payload: Payload | undefined;
   for (const file of files) {
-    if (file.type !== 'file' || !template.test(file.name)) {
+    if (file.type !== 'file' || !envTemplate.test(file.name)) {
       continue;
     }
 

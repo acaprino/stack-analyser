@@ -1,7 +1,7 @@
 import path from 'node:path';
 
 import { parseProjectXml, xmlChildren } from '../../../common/xml.js';
-import { isRecord, packageComponent, projectPath } from '../packageManifest.js';
+import { insideProject, isRecord, packageComponent, projectPath } from '../packageManifest.js';
 
 import type { BaseProvider, ProviderFile } from '../../../provider/base.js';
 import type { ComponentMatcher } from '../../../types/rule.js';
@@ -169,9 +169,7 @@ async function centralVersions(
     }
     if (path.resolve(dir) === base || path.dirname(dir) === dir) break;
     dir = path.dirname(dir);
-    const relative = path.relative(base, path.resolve(dir));
-    if (relative === '..' || relative.startsWith('..' + path.sep) || path.isAbsolute(relative))
-      break;
+    if (!insideProject(base, { from: dir, target: '.' })) break;
     siblings = await provider.listDir(dir);
   }
   return new Map();

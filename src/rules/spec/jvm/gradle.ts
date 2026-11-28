@@ -1,13 +1,13 @@
 import { parse as parseToml } from 'smol-toml';
 
+import { isRecord } from '../packageManifest.js';
+
 import type { Dependency } from '../../../types/index.js';
 
 type Catalog = Map<string, Dependency[]>;
 
 function record(value: unknown): Record<string, unknown> {
-  return value !== null && typeof value === 'object' && !Array.isArray(value)
-    ? (value as Record<string, unknown>)
-    : {};
+  return isRecord(value) ? value : {};
 }
 
 /** A text that is there and not empty. */

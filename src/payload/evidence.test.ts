@@ -26,8 +26,14 @@ test('flatten can be repeated without changing the source graph or double-counti
 
 test('connects repeated service evidence to a real component and keeps technologies with colliding names', () => {
   const root = new Payload({ name: 'main', folderPath: '/' });
-  root.addTech('redis', { reason: ['redis client'] });
-  root.addTech('redis', { reason: ['redis build'] });
+  root.addTech('redis', {
+    reason: ['redis client'],
+    evidence: [{ kind: 'package', value: 'redis', path: '/package.json' }],
+  });
+  root.addTech('redis', {
+    reason: ['redis build'],
+    evidence: [{ kind: 'package', value: 'redis', path: '/package.json' }],
+  });
 
   expect(root.edges).toHaveLength(1);
   expect(root.edges[0].target).toBe(root.childs[0]);
