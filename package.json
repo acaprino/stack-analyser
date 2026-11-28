@@ -1,7 +1,7 @@
 {
   "name": "stack-analyser-daodan",
   "version": "1.27.6-daodan.6",
-  "description": "",
+  "description": "Static detection of the technologies a repository uses, with evidence for each one. Fork of @specfy/stack-analyser.",
   "main": "./dist/index.js",
   "bin": {
     "stack-analyser-daodan": "./dist/cli.mjs"
@@ -22,7 +22,7 @@
     "bundle": "tsx src/scripts/bundle.ts",
     "build:watch": "tsc -w",
     "dev": "node dist/index.js",
-    "cli": "node dist/cli.js",
+    "cli": "node dist/cli.mjs",
     "build-test": "npm run prebuild && npm run test",
     "test": "vitest",
     "lint": "eslint src/"

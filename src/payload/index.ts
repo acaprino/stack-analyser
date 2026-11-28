@@ -9,7 +9,7 @@ import { evidenceKind, matchDependenciesWithNames } from '../matchDependencies.j
 import { findHostMentions } from '../rules/spec/hosts/index.js';
 import { IGNORED_DIVE_PATHS } from '../provider/base.js';
 import { listIndexed } from '../register.js';
-import { compareEvidence, evidenceKey, findHosting, findImplicitComponent, toEvidence } from './helpers.js';
+import { compareEvidence, evidenceKey, findHosting, findImplicitComponent, mentionKey, toEvidence } from './helpers.js';
 import { detectInDotEnv } from '../rules/spec/dotenv/index.js';
 
 import type { BaseProvider } from '../provider/base.js';
@@ -327,8 +327,13 @@ export class Payload implements Analyser {
   combine(pl: Payload): void {
     for (const reason of pl.reason) this.reason.add(reason);
     this.mergeEvidence(pl.evidence);
-    if (pl.mentions.length > 0) {
-      this.mentions = [...new Set([...this.mentions, ...pl.mentions])];
+    // Equal by value, not by reference: the same mention can reach a payload as two objects.
+    const seen = new Set(this.mentions.map((mention) => mentionKey(mention)));
+    for (const mention of pl.mentions) {
+      const key = mentionKey(mention);
+      if (seen.has(key)) continue;
+      seen.add(key);
+      this.mentions.push({ ...mention });
     }
     // Log all paths were it was found
     this.path = new Set([...this.path, ...pl.path]);

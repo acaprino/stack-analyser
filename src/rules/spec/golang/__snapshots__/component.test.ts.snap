@@ -37,17 +37,32 @@ exports[`golang > should match a service 1`] = `
   ],
   "dependencies": [],
   "edges": [],
-  "evidence": [],
+  "evidence": [
+    {
+      "kind": "file",
+      "path": "/go.mod",
+      "source": "stack-analyser",
+      "tech": "golang",
+      "value": "go.mod",
+    },
+  ],
   "id": "",
   "inComponent": "",
-  "languages": {},
+  "languages": {
+    "AMPL": 1,
+  },
   "licenses": [],
   "name": "flatten",
   "path": [
     "/",
+    "/go.mod",
   ],
-  "reason": [],
+  "reason": [
+    "matched file: go.mod",
+  ],
   "tech": null,
-  "techs": [],
+  "techs": [
+    "golang",
+  ],
 }
 `;

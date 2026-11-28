@@ -25,6 +25,16 @@ It can be helpful for other to get all dependencies or SaaS used in a given git 
 
 The CLI and the library need Node.js 20 or later.
 
+The package is not on the npm registry: each version is a `.tgz` attached to a
+[GitHub Release](https://github.com/acaprino/stack-analyser-daodan/releases). Install the CLI from it, replacing
+`<version>` (for example `1.27.6-daodan.5`):
+
+```sh
+npm install -g https://github.com/acaprino/stack-analyser-daodan/releases/download/v<version>/stack-analyser-daodan-<version>.tgz
+```
+
+The `.tgz` holds every dependency, so it installs without reaching the npm registry. Once installed:
+
 ```bash
 npx stack-analyser-daodan <PATH> [--output=<filename>] [--flat] [--declarations=<file>] [--skip-dirs=<names>] [--ignore=<paths>] [--perimeter=<file>]
 npx stack-analyser-daodan --catalogue=<file>
@@ -59,6 +69,8 @@ applying the Spring Boot plugin gets the technology ID `spring-boot`. A version 
 management or a Gradle plugin declared with `apply false` does not establish module use. The scanner reads static
 declarations without invoking project builds. In the JSON, `techs` contains detected technologies and an optional
 `mentions` array records known service endpoints with the source file and line.
+A mention's `path` is relative to the analysed root with no leading slash (`src/a.ts`), while an evidence `path`
+starts with one (`/src/a.ts`), as in the upstream format.
 
 ### Declarations read by other tools
 
@@ -174,8 +186,8 @@ A program gets the same list from `catalogue(rules.list)`, both exported from th
 
 ## Programmatic Usage
 
-```ts
-npm install -E stack-analyser-daodan
+```sh
+npm install -E https://github.com/acaprino/stack-analyser-daodan/releases/download/v<version>/stack-analyser-daodan-<version>.tgz
 ```
 
 ```ts
@@ -200,6 +212,8 @@ const flat = flatten(result);
 ```
 
 `flatten` returns a new graph and leaves `result` untouched, so it can be called more than once.
+Its root keeps what `result` itself holds, including the technologies of `declarations`;
+`flatten(result, { merge: true })` also brings the fields of every component down to the root, as `--flat` does.
 
 `analyser` also accepts `declarations`, the packages, images and actions that another tool already read from the
 project (see [Declarations read by other tools](#declarations-read-by-other-tools)). The `Declaration` type is exported.

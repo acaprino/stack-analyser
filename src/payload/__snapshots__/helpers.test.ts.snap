@@ -314,6 +314,7 @@ exports[`flatten > should flatten but not merge 1`] = `
   "name": "flatten",
   "path": [
     "/",
+    "",
   ],
   "reason": [],
   "tech": null,

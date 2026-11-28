@@ -61,10 +61,64 @@ function envValues(content: string, emit: (value: string, line: number) => void)
   }
 }
 
+/** Files read at the same time: enough to hide the latency of each read, few enough to stay far from the descriptor limit. */
+const concurrentReads = 16;
+
+async function readCandidate(file: ProviderFile, provider: BaseProvider): Promise<string | null> {
+  try {
+    const stat = await provider.stat(file.fp);
+    if (!stat || stat.size > maxFileSize) return null;
+    return await provider.open(file.fp);
+  } catch {
+    // A provider can list a source but be unable to read its metadata or content.
+    return null;
+  }
+}
+
+interface Candidate {
+  file: ProviderFile;
+  relative: string;
+  env: boolean;
+  config: boolean;
+}
+
+function scanContent(content: string | null, { file: { name }, relative, env, config }: Candidate): HostMention[] {
+  const results: HostMention[] = [];
+  if (!content || content.length > maxFileSize || content.includes('\0')) return results;
+  let possible = false;
+  for (const candidate of content.matchAll(/https?:\/\/([a-z\d.-]+)/gi)) {
+    if (endpointHosts.has(candidate[1].toLowerCase())) {
+      possible = true;
+      break;
+    }
+  }
+  if (!possible) return results;
+
+  const seen = new Set<string>();
+  const emit = (value: string, line: number) => {
+    // Inspect only the literal authority. Reject escaped or computed hosts, userinfo and
+    // lookalike suffixes. Never put paths, queries, fragments or credentials in the output.
+    const authority = /^https?:\/\/([a-z\d.-]+)(?::(\d{1,5}))?(?:[/?#]|$)/i.exec(value);
+    if (!authority || (authority[2] && Number(authority[2]) > 65_535)) return;
+    const host = authority[1].toLowerCase();
+    if (seen.has(host)) return;
+    seen.add(host);
+    for (const tech of endpointHosts.get(host) ?? []) {
+      results.push({ tech, host, path: relative, line });
+    }
+  };
+
+  if (env) envValues(content, emit);
+  else if (config) configValues(content, name, emit);
+  else sourceValues(content, name, emit);
+  return results;
+}
+
 export async function findHostMentions(files: ProviderFile[], provider: BaseProvider): Promise<HostMention[]> {
   const results: HostMention[] = [];
   if (endpointHosts.size === 0) return results;
 
+  const candidates: Candidate[] = [];
   for (const file of files) {
     const { name } = file;
     const env = exampleEnv.test(name);
@@ -72,43 +126,15 @@ export async function findHostMentions(files: ProviderFile[], provider: BaseProv
     if (file.type !== 'file' || file.isSymbolicLink || (!env && !config && !sourceFile.test(name))) continue;
     const relative = path.relative(provider.basePath, file.fp).split(path.sep).join('/');
     if (relative.startsWith('../') || path.isAbsolute(relative) || excluded.test(relative)) continue;
+    candidates.push({ file, relative, env, config });
+  }
 
-    let content: string | null;
-    try {
-      const stat = await provider.stat(file.fp);
-      if (!stat || stat.size > maxFileSize) continue;
-      content = await provider.open(file.fp);
-    } catch {
-      // A provider can list a source but be unable to read its metadata or content.
-      continue;
-    }
-    if (!content || content.length > maxFileSize || content.includes('\0')) continue;
-    let possible = false;
-    for (const candidate of content.matchAll(/https?:\/\/([a-z\d.-]+)/gi)) {
-      if (endpointHosts.has(candidate[1].toLowerCase())) {
-        possible = true;
-        break;
-      }
-    }
-    if (!possible) continue;
-
-    const seen = new Set<string>();
-    const emit = (value: string, line: number) => {
-      // Inspect only the literal authority. Reject escaped or computed hosts, userinfo and
-      // lookalike suffixes. Never put paths, queries, fragments or credentials in the output.
-      const authority = /^https?:\/\/([a-z\d.-]+)(?::(\d{1,5}))?(?:[/?#]|$)/i.exec(value);
-      if (!authority || (authority[2] && Number(authority[2]) > 65_535)) return;
-      const host = authority[1].toLowerCase();
-      if (seen.has(host)) return;
-      seen.add(host);
-      for (const tech of endpointHosts.get(host) ?? []) {
-        results.push({ tech, host, path: relative, line });
-      }
-    };
-
-    if (env) envValues(content, emit);
-    else if (config) configValues(content, name, emit);
-    else sourceValues(content, name, emit);
+  // A batch is scanned before the next is read, so at most `concurrentReads` contents are held at once.
+  // Results keep the order of the listing, whatever order the reads finished in.
+  for (let start = 0; start < candidates.length; start += concurrentReads) {
+    const batch = candidates.slice(start, start + concurrentReads);
+    const contents = await Promise.all(batch.map(({ file }) => readCandidate(file, provider)));
+    for (const [index, candidate] of batch.entries()) results.push(...scanContent(contents[index], candidate));
   }
   return results;
 }

@@ -1,11 +1,10 @@
 import path from 'node:path';
 
-import { parse } from '@cdktf/hcl2json';
-
 import { l } from '../../../common/log.js';
 import { matchDependencies } from '../../../matchDependencies.js';
 import { Payload } from '../../../payload/index.js';
 import { listIndexed } from '../../../register.js';
+import { loadHcl } from './hcl.js';
 
 import type { Dependency } from '../../../types/index.js';
 import type { ComponentMatcher } from '../../../types/rule.js';
@@ -28,6 +27,7 @@ export const detectTerraformLockfile: ComponentMatcher = async (files, provider)
 
     let json: TerraformLockfile;
     try {
+      const { parse } = await loadHcl();
       json = (await parse(file.fp, content)) as TerraformLockfile;
     } catch (err) {
       l.warn('Failed to parse HCL', file.fp, err);

@@ -1,7 +1,7 @@
 import { listIndexed } from '../register.js';
 import { Payload } from './index.js';
 
-import type { Evidence, EvidenceItem } from '../types/index.js';
+import type { Evidence, EvidenceItem, HostMention } from '../types/index.js';
 import type { AllowedKeys, TechType } from '../types/techs.js';
 
 /** Who reads a project by itself, when an evidence item does not name another source. */
@@ -78,6 +78,11 @@ export function toEvidence(tech: AllowedKeys, item: EvidenceItem): Evidence {
   };
 }
 
+/** Two mentions are the same when they agree on technology, host, path and line. */
+export function mentionKey({ tech, host, path, line }: HostMention): string {
+  return JSON.stringify([tech, host, path, line]);
+}
+
 /**
  * Two evidences are the same when they agree on technology, kind, value, path, line and source.
  */
@@ -145,14 +150,15 @@ function pushChilds(src: Payload, dest: Payload): void {
  * flatten takes a nested Payload and brings everything down to a single level.
  * It deduplicates components that are strictly similar, and keep references in path.
  *
- * If merge = true, it merges all fields that can be merged down to the parent (e.g: dependencies).
+ * The root always keeps the fields of `src` itself (techs, evidence, mentions, reasons, paths, languages, ...),
+ * such as the technologies of declarations, which analyser() puts on the root.
+ * If merge = true, it also merges the fields of every child down to the root (e.g: dependencies).
  * Merging is only useful to get a summary of everything at the root level.
  */
 export function flatten(src: Payload, options: { merge?: boolean } = {}): Payload {
   // Generate a flat list of childs
   const merge = options.merge || false;
   const dest = new Payload({ name: 'flatten', folderPath: '/' });
-  dest.mentions = [...src.mentions];
   pushChilds(src, dest);
 
   // Only equal technology IDs represent the same known service. Keep each project
@@ -192,7 +198,8 @@ export function flatten(src: Payload, options: { merge?: boolean } = {}): Payloa
   findEdgesInDependencies(dest);
   if (merge) {
     for (const child of unique) dest.combine(child);
-    dest.combine(src);
   }
+  // `dest` stands for `src`, so every field of `src` itself is kept, even without merge.
+  dest.combine(src);
   return dest;
 }

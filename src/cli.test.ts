@@ -43,8 +43,8 @@ async function runCli(files: Record<string, string>, args: string[]) {
     const result = await promisify(execFile)(process.execPath, [
       '--import', tsxImport, file, '.', ...args,
     ], { cwd, env: { ...process.env, LOG_LEVEL: 'info' } }).then(
-      (done) => ({ code: 0, out: done.stdout + done.stderr }),
-      (err: { code: number; stdout: string; stderr: string }) => ({ code: err.code, out: err.stdout + err.stderr })
+      (done) => ({ code: 0, out: done.stdout + done.stderr, err: done.stderr }),
+      (err: { code: number; stdout: string; stderr: string }) => ({ code: err.code, out: err.stdout + err.stderr, err: err.stderr })
     );
     const output = await fs.readFile(path.join(cwd, 'output.json'), 'utf8').then((json) => JSON.parse(json), () => null);
     return { ...result, output };
@@ -204,12 +204,21 @@ it.each([
 
 it.each([
   ['a drive letter', 'generated, C:/generated', 'C:/generated'],
+  ['a drive-relative path', 'generated, C:generated', 'C:generated'],
   ['a parent folder', 'generated,tests/../..', 'tests/../..'],
 ])('exits with 1 and writes nothing when --ignore is given %s', async (_label, value, entry) => {
-  const { code, out, output } = await runCli(tree, ['--ignore', value]);
+  const { code, err, output } = await runCli(tree, ['--ignore', value]);
   expect(code).toBe(1);
-  expect(out).toContain(`"${entry}"`);
-  expect(out).toMatch(/--ignore takes paths inside the project/);
+  // An error goes to stderr, so that a caller reading stdout does not take it for progress.
+  expect(err).toContain(`"${entry}"`);
+  expect(err).toMatch(/--ignore takes paths inside the project/);
+  expect(output).toBeNull();
+}, 20_000);
+
+it('exits with 1 and writes nothing when --output is empty', async () => {
+  const { code, err, output } = await runCli(tree, ['--output', '']);
+  expect(code).toBe(1);
+  expect(err).toMatch(/--output needs a file name/);
   expect(output).toBeNull();
 }, 20_000);
 

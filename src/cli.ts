@@ -46,7 +46,8 @@ function perimeterProblem(perimeter: Perimeter, names: { skipDirs: string; ignor
   if (notAName !== undefined) {
     return `${names.skipDirs} takes folder names, not paths: "${notAName}" (to leave out one path, use ${names.ignore})`;
   }
-  const outside = perimeter.ignore.find((entry) => /^[A-Za-z]:[\\/]/.test(entry) || entry.split(/[\\/]/).includes('..'));
+  // `C:foo` is relative to the current folder of drive C, not to the project: refused like `C:\foo`.
+  const outside = perimeter.ignore.find((entry) => /^[A-Za-z]:/.test(entry) || entry.split(/[\\/]/).includes('..'));
   if (outside !== undefined) {
     return `${names.ignore} takes paths inside the project, relative to its root: "${outside}" is not one`;
   }
@@ -77,6 +78,15 @@ const pkg = JSON.parse((await fs.readFile(path.join(dirname, './../package.json'
   name: string;
   version: string;
 };
+
+/**
+ * Writes the message to stderr, so that a caller reading stdout does not take it for progress, and exits with 1.
+ * Not through `l`: a silent LOG_LEVEL must not hide why the CLI failed.
+ */
+function fail(...message: string[]): never {
+  process.stderr.write(`${[kleur.bold().red(figureSet.cross), ...message].join(' ')}\n`);
+  process.exit(1);
+}
 
 /** Writes `text` to `file` by way of a temporary file in the same folder, so that a reader never finds half of it. */
 async function writeAtomically(file: string, text: string): Promise<void> {
@@ -128,16 +138,14 @@ program
         ...Object.entries(analysisOptions).filter(([name]) => command.getOptionValueSource(name) === 'cli').map(([, flag]) => flag),
       ];
       if (given.length > 0) {
-        l.log(kleur.bold().red(figureSet.cross), `--catalogue stands alone and analyses nothing: it cannot be combined with ${given.join(', ')}`);
-        process.exit(1);
+        fail(`--catalogue stands alone and analyses nothing: it cannot be combined with ${given.join(', ')}`);
       }
       const file = path.resolve(pathAtExecution, options.catalogue);
       const entries = catalogue(registeredRules);
       try {
         await writeAtomically(file, JSON.stringify(entries, undefined, 2));
       } catch (err) {
-        l.log(kleur.bold().red(figureSet.cross), `Catalogue "${file}":`, (err as Error).message);
-        process.exit(1);
+        fail(`Catalogue "${file}":`, (err as Error).message);
       }
       l.log('Catalogue', kleur.green(file), `(${entries.length} rules)`);
       return;
@@ -150,20 +158,17 @@ program
     try {
       const stat = await fs.stat(root);
       if (!stat.isDirectory()) {
-        l.log(kleur.bold().red(figureSet.cross), `Path "${root}" is not a folder`);
-        process.exit(1);
+        fail(`Path "${root}" is not a folder`);
       }
     } catch {
-      l.log(kleur.bold().red(figureSet.cross), `Path "${root}" does not exist`);
-      process.exit(1);
+      fail(`Path "${root}" does not exist`);
     }
 
     l.log(kleur.bold().magenta(figureSet.triangleRight), 'Path', kleur.cyan(root));
 
     // Everything below is checked before anything is analysed, so a bad option never leaves an output behind.
     if (options.perimeter !== undefined && (options.skipDirs !== undefined || options.ignore !== undefined)) {
-      l.log(kleur.bold().red(figureSet.cross), '--perimeter cannot be combined with --skip-dirs or --ignore: give the two lists in the file');
-      process.exit(1);
+      fail('--perimeter cannot be combined with --skip-dirs or --ignore: give the two lists in the file');
     }
 
     // The perimeter comes from the two options or from the file, and either way its entries get the same check.
@@ -184,15 +189,16 @@ program
         const text = (await fs.readFile(perimeterFile, 'utf8')).replace(/^\uFEFF/, '');
         perimeter = parsePerimeter(JSON.parse(text));
       } catch (err) {
-        l.log(kleur.bold().red(figureSet.cross), label + (err as Error).message);
-        process.exit(1);
+        fail(label + (err as Error).message);
       }
     }
     const problem = perimeterProblem(perimeter, names);
     if (problem !== undefined) {
-      l.log(kleur.bold().red(figureSet.cross), label + problem);
-      process.exit(1);
+      fail(label + problem);
     }
+
+    if (!options.output) fail('--output needs a file name');
+    const outputFile = path.resolve(pathAtExecution, options.output);
 
     let declarations: Declaration[] | undefined;
     if (options.declarations !== undefined) {
@@ -202,8 +208,7 @@ program
         const text = (await fs.readFile(declarationsFile, 'utf8')).replace(/^\uFEFF/, '');
         declarations = parseDeclarations(JSON.parse(text));
       } catch (err) {
-        l.log(kleur.bold().red(figureSet.cross), `Declarations "${declarationsFile}":`, (err as Error).message);
-        process.exit(1);
+        fail(`Declarations "${declarationsFile}":`, (err as Error).message);
       }
     }
 
@@ -213,14 +218,15 @@ program
     const res = await analyser({ provider, declarations });
     spinner.succeed('Analysed');
 
-    if (options.output) {
-      const output = options.flat ? flatten(res, { merge: true }) : res;
-      const file = path.resolve(pathAtExecution, options.output);
+    const output = options.flat ? flatten(res, { merge: true }) : res;
+    try {
       // The base the provider writes its paths with, which is what has to come off them.
-      await fs.writeFile(file, JSON.stringify(output.toJson(provider.basePath), undefined, 2));
-      l.log('');
-      l.log('Output', kleur.green(file));
+      await writeAtomically(outputFile, JSON.stringify(output.toJson(provider.basePath), undefined, 2));
+    } catch (err) {
+      fail(`Output "${outputFile}":`, (err as Error).message);
     }
+    l.log('');
+    l.log('Output', kleur.green(outputFile));
   });
 
 program.parse(process.argv);

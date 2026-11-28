@@ -58,6 +58,18 @@ describe('declarations', () => {
     expect(result.childs.find((c) => c.name === 'app')!.evidence.some((e) => e.source === 'python-build')).toBe(false);
   });
 
+  it('keeps the root technologies of a declaration when flattening without merge', async () => {
+    const flat = flatten(await analyser({ provider: project(), declarations: [
+      { type: 'python', name: 'requests', path: 'setup.cfg', line: 4, source: 'python-build' },
+      { type: 'npm', name: 'vitest', path: 'package.json', source: 'renovate' },
+    ] }));
+    expect(flat.techs.has('requests')).toBe(true);
+    // A technology that is not a component lives only on the root: flattening must not drop it.
+    expect(flat.techs.has('vitest')).toBe(true);
+    expect(flat.toJson('').evidence).toContainEqual(
+      { tech: 'vitest', kind: 'package', value: 'vitest', path: '/package.json', source: 'renovate' });
+  });
+
   it('gives each ecosystem its own evidence kind and reduces an image to its repository', async () => {
     const result = await analyser({ provider: project(), declarations: [
       { type: 'docker', name: 'postgres:15.1-alpine', path: 'Dockerfile', line: 1, source: 'image-scan' },

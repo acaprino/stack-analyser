@@ -69,4 +69,15 @@ describe('payload', () => {
       test.mockRestore();
     }
   });
+
+  it('keeps one mention per tech, host, path and line when payloads are combined', () => {
+    const mention = (line: number) => ({ tech: 'telegram' as const, host: 'api.telegram.org', path: 'c.ts', line });
+    const a = new Payload({ name: 'a', folderPath: '/' });
+    const b = new Payload({ name: 'b', folderPath: '/' });
+    a.mentions.push(mention(1));
+    b.mentions.push(mention(1), mention(2));
+    a.combine(b);
+    a.combine(b);
+    expect(a.mentions).toStrictEqual([mention(1), mention(2)]);
+  });
 });

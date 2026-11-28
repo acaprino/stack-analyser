@@ -81,5 +81,14 @@ jobs:
           fi
           sha256=$(sha256sum "$TGZ" | cut -d' ' -f1)
           echo "sha256 $sha256  $TGZ"
-          gh release create "$version" "$TGZ" --target "$GITHUB_SHA" --title "$version" \
-            --notes "Built by GitHub Actions from $GITHUB_SHA. sha256 of $TGZ: $sha256"
+          # A published version is never replaced: a rerun only finishes a release whose upload failed.
+          if assets=$(gh release view "$version" --json assets --jq '.assets[].name' 2>/dev/null); then
+            if grep -qxF "$TGZ" <<< "$assets"; then
+              echo "::notice::$version already has $TGZ: nothing to do (bump the version in package.json to release again)"
+            else
+              gh release upload "$version" "$TGZ"
+            fi
+          else
+            gh release create "$version" "$TGZ" --target "$GITHUB_SHA" --title "$version" \
+              --notes "Built by GitHub Actions from $GITHUB_SHA. sha256 of $TGZ: $sha256"
+          fi
