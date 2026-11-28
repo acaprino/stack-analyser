@@ -11,9 +11,13 @@ export interface Token {
 // interpolation, and takes `'` strings as literals.
 type Language = 'elixir' | 'python' | 'ruby' | 'scala' | 'swift';
 
+const MAX_SOURCE_BYTES = 2_000_000;
+
+/** The text of a source file of at most 2 MB. The provider checks the size as it opens the file, in one go. */
 export async function sourceText(provider: BaseProvider, file: string): Promise<null | string> {
-  const stat = await provider.stat(file);
-  return stat && stat.size <= 2_000_000 ? provider.open(file) : null;
+  const text = await provider.open(file, MAX_SOURCE_BYTES);
+  // A provider written before `maxBytes` existed ignores it: the length is checked here as well.
+  return text !== null && text.length <= MAX_SOURCE_BYTES ? text : null;
 }
 
 function blockCommentEnd(source: string, start: number): number {

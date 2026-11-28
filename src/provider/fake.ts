@@ -50,12 +50,13 @@ export class FakeProvider implements BaseProvider {
     return Promise.resolve({ size: 1000 });
   }
 
-  open(pathRelative: string): Promise<string> {
+  open(pathRelative: string, maxBytes = Infinity): Promise<null | string> {
     pathRelative = fixturePath(pathRelative);
     if (!(pathRelative in this.files)) {
       throw new Error(`not found "${pathRelative}"`);
     }
 
-    return Promise.resolve(this.files[pathRelative]);
+    const text = this.files[pathRelative];
+    return Promise.resolve(text.length > maxBytes ? null : text);
   }
 }

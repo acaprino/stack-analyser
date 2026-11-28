@@ -79,7 +79,7 @@ export class FSProvider implements BaseProvider {
     }
   }
 
-  async open(target: string): Promise<null | string> {
+  async open(target: string, maxBytes = Infinity): Promise<null | string> {
     try {
       const resolved = await this.resolve(target);
       if (!resolved) return null;
@@ -92,7 +92,7 @@ export class FSProvider implements BaseProvider {
       const handle = await fs.open(resolved, constants.O_RDONLY | nonBlocking | noFollow);
       try {
         const info = await handle.stat();
-        if (!info.isFile()) return null;
+        if (!info.isFile() || info.size > maxBytes) return null;
         if (info.size > this.maxFileBytes) {
           l.warn('File exceeds maxFileBytes', target);
           return null;

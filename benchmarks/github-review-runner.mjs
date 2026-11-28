@@ -301,9 +301,13 @@ await Promise.all(Array.from({ length: Math.min(jobs, projects.length) }, worker
 const afterBuilds = await Promise.all([baseRoot, candidateRoot].map(fingerprint));
 if (builds.some((build, index) => build.sha256 !== afterBuilds[index].sha256)) throw new Error('A CLI build changed during the run');
 const paired = reports.filter((r) => r.baseline?.status === 'ok' && r.candidate?.status === 'ok');
-function outcomes(side, kind) {
+// `split` keeps the holdout apart: a score that also counts the projects the rules were tuned on says less.
+function outcomes(side, kind, split) {
   const totals = { tp: 0, fn: 0, fp: 0, tn: 0, unscored: 0 };
-  for (const row of paired) for (const item of row.cases) if (item.kind === kind) totals[item[side]]++;
+  for (const row of paired) {
+    if (split && row.split !== split) continue;
+    for (const item of row.cases) if (item.kind === kind) totals[item[side]]++;
+  }
   return totals;
 }
 const summary = { projects: reports.length, paired: paired.length, labeled: paired.filter((r) => r.cases.length).length,
@@ -311,6 +315,10 @@ const summary = { projects: reports.length, paired: paired.length, labeled: pair
 for (const side of ['baseline', 'candidate']) {
   summary.technologies[side] = outcomes(side, 'tech');
   summary.mentions[side] = outcomes(side, 'mention');
+}
+summary.bySplit = {};
+for (const split of new Set(paired.map((row) => row.split))) {
+  summary.bySplit[split] = Object.fromEntries(['baseline', 'candidate'].map((side) => [side, outcomes(side, 'tech', split)]));
 }
 const report = { schemaVersion: 1, node: process.version, jobs, timeoutMs: timeout, manifest: basename(manifestPath),
   manifestSha256: createHash('sha256').update(manifestBytes).digest('hex'), baselineBuild: builds[0],

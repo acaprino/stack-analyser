@@ -87,9 +87,7 @@ const concurrentReads = 16;
 
 async function readCandidate(file: ProviderFile, provider: BaseProvider): Promise<null | string> {
   try {
-    const stat = await provider.stat(file.fp);
-    if (!stat || stat.size > maxFileSize) return null;
-    return await provider.open(file.fp);
+    return await provider.open(file.fp, maxFileSize);
   } catch {
     // A provider can list a source but be unable to read its metadata or content.
     return null;

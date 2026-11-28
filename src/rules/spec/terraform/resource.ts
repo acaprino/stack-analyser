@@ -21,13 +21,8 @@ export const detectTerraformResource: ComponentMatcher = async (files, provider)
       continue;
     }
 
-    const stat = await provider.stat(file.fp);
-    if (!stat || stat.size > 500_000) {
-      continue;
-    }
-
-    const content = await provider.open(file.fp);
-    if (!content) {
+    const content = await provider.open(file.fp, 500_000);
+    if (!content || content.length > 500_000) {
       continue;
     }
 

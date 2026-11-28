@@ -63,14 +63,14 @@ describe('service endpoint mentions', () => {
   });
 
   it('should not read excluded paths or oversized files', async () => {
-    const provider = fixture({ 'docs/help.ts': '', 'large.ts': '' });
-    vi.spyOn(provider, 'stat').mockResolvedValue({ size: 600_000 });
+    const url = 'fetch("https://api.telegram.org")';
+    const provider = fixture({ 'docs/help.ts': url, 'large.ts': url + ' '.repeat(600_000) });
     const open = vi.spyOn(provider, 'open');
     const files = await provider.listDir('/');
 
     expect(await findHostMentions(files, provider)).toStrictEqual([]);
-    expect(open).not.toHaveBeenCalled();
-    expect(provider.stat).toHaveBeenCalledOnce();
+    // The excluded path is never opened; the large file is refused by the provider, with the limit it was given.
+    expect(open.mock.calls).toStrictEqual([['/large.ts', 500_000]]);
   });
 
   it('should recognize literal mobile and multi-document configuration endpoints while respecting the source syntax', async () => {
@@ -92,13 +92,12 @@ describe('service endpoint mentions', () => {
     ]);
   });
 
-  it('should continue after provider errors while obtaining a source size or text', async () => {
+  it('should continue after a provider error while reading a source', async () => {
     const provider = fixture({
       'a.ts': '',
       'b.ts': '',
       'c.ts': 'fetch("https://api.telegram.org")',
     });
-    vi.spyOn(provider, 'stat').mockRejectedValueOnce(new Error('metadata unavailable'));
     vi.spyOn(provider, 'open').mockRejectedValueOnce(new Error('content unavailable'));
     const result = await analyser({ provider });
 
