@@ -1,6 +1,6 @@
 {
   "name": "stack-analyzer-daodan",
-  "version": "1.27.6-daodan.6",
+  "version": "1.27.6-daodan.7",
   "description": "Static detection of the technologies a repository uses, with evidence for each one. Fork of @specfy/stack-analyser.",
   "main": "./dist/index.js",
   "bin": {

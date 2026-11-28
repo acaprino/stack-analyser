@@ -188,9 +188,9 @@ The first pass still misses what its words do not name: `jquery` (998,742 depend
 
 ### Before and after on Daodan's corpus
 
-Both measures ran on Daodan's `develop` checkout of 28 November 2026 (`1f3934f`), release 1.27.6-daodan.6 against this branch. `stack-corpus.py` approximates Daodan's `stack` step on the 186 projects with the pinned checkouts: it reproduces Daodan's own record of the release within one name (585 against 586 of 645: Daodan also finds Cypress on `real-bank-of-anthos`).
+Both measures ran on Daodan's `develop` checkout of 28 November 2026 (`1f3934f`), release 1.27.6-daodan.6 against release 1.27.6-daodan.7, this branch. `stack-corpus.py` approximates Daodan's `stack` step on the 186 projects with the pinned checkouts: it reproduces Daodan's own record of the release within one name (585 against 586 of 645: Daodan also finds Cypress on `real-bank-of-anthos`).
 
-| Measure | 1.27.6-daodan.6 | This branch | Gained | Lost |
+| Measure | 1.27.6-daodan.6 | 1.27.6-daodan.7 | Gained | Lost |
 | --- | ---: | ---: | ---: | ---: |
 | Replay of the recorded declarations, frameworks, libraries and tools | 478 / 569 | 479 / 569 | 1 | 0 |
 | Replay of the recorded declarations, services | 219 / 518 | 219 / 518 | 0 | 0 |
@@ -237,6 +237,6 @@ npm run build
 node benchmarks/verify-package.mjs
 ```
 
-It runs `npm pack` in the repository, which names the file `stack-analyzer-daodan-<version>.tgz` (`stack-analyzer-daodan-1.27.6-daodan.5.tgz` for this release), unpacks the `.tgz` into a temporary folder outside it, and runs `node package/dist/cli.mjs` from there with `NODE_PATH` empty: `--catalogue catalogue.json`, which must write a non-empty JSON array whose entries all have `tech`, `name` and `type`; an analysis of `tests/__fixtures__` with `--perimeter perimeter.json` (`{"skipDirs": [], "ignore": []}`), which must write its output; and the analysis `tests/__fixtures__ --output out.json` that the checks below read. `npm pack` does not build, so run `npm run build` first or the CLI is not in the package. Before it runs anything, the script checks that no `node_modules` folder exists above the unpacked package, because Node would find from there a dependency that the `.tgz` does not carry. It needs `tar` on the path.
+It runs `npm pack` in the repository, which names the file `stack-analyzer-daodan-<version>.tgz` (`stack-analyzer-daodan-1.27.6-daodan.7.tgz` for this release), unpacks the `.tgz` into a temporary folder outside it, and runs `node package/dist/cli.mjs` from there with `NODE_PATH` empty: `--catalogue catalogue.json`, which must write a non-empty JSON array whose entries all have `tech`, `name` and `type`; an analysis of `tests/__fixtures__` with `--perimeter perimeter.json` (`{"skipDirs": [], "ignore": []}`), which must write its output; and the analysis `tests/__fixtures__ --output out.json` that the checks below read. `npm pack` does not build, so run `npm run build` first or the CLI is not in the package. Before it runs anything, the script checks that no `node_modules` folder exists above the unpacked package, because Node would find from there a dependency that the `.tgz` does not carry. It needs `tar` on the path.
 
 It exits with 1 when a command fails, when the catalogue or the perimeter run does not give what is described above, or when no component of the output has evidence of kind `terraform` (the WebAssembly file of `@cdktf/hcl2json` did not load, or `.terraform.lock.hcl` was not parsed) or of kind `package` (the `package.json` of the fixtures was not read). When it succeeds it prints the path of the `.tgz`, its sha256 and its size. The `.tgz` stays where it is, so that it can be uploaded; a failed run removes it, and the unpacked folder is always removed.
