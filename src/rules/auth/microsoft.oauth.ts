@@ -4,7 +4,5 @@ register({
   tech: 'microsoft.oauth',
   name: 'Microsoft OAuth',
   type: 'auth',
-  dependencies: [
-    { type: 'npm', name: 'passport-microsoft' },
-  ],
+  dependencies: [{ type: 'npm', name: 'passport-microsoft' }],
 });

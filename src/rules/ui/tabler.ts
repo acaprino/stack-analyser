@@ -4,7 +4,5 @@ register({
   tech: 'tabler',
   name: 'Tabler',
   type: 'ui',
-  dependencies: [
-    { type: 'npm', name: '@tabler/core' },
-  ],
+  dependencies: [{ type: 'npm', name: '@tabler/core' }],
 });

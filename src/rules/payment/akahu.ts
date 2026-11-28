@@ -4,7 +4,5 @@ register({
   tech: 'akahu',
   name: 'Akahu',
   type: 'payment',
-  dependencies: [
-    { type: 'npm', name: 'akahu' },
-  ],
+  dependencies: [{ type: 'npm', name: 'akahu' }],
 });

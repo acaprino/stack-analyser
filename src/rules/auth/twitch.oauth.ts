@@ -4,7 +4,5 @@ register({
   tech: 'twitch.oauth',
   name: 'Twitch OAuth',
   type: 'auth',
-  dependencies: [
-    { type: 'php', name: 'socialiteproviders/twitch' },
-  ],
+  dependencies: [{ type: 'php', name: 'socialiteproviders/twitch' }],
 });

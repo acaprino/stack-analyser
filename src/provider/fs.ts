@@ -34,7 +34,12 @@ export class FSProvider implements BaseProvider {
     this.skipDirs = opts.skipDirs && [...opts.skipDirs];
     for (const rule of opts.ignorePaths ?? []) {
       // `/gen`, `./gen`, `gen/` and `gen` all name the same folder, relative to the root.
-      if (typeof rule === 'string') this.ignoredPaths.add(portablePath(rule).replace(/^(?:\.?\/)+/, '').replace(/\/+$/, ''));
+      if (typeof rule === 'string')
+        this.ignoredPaths.add(
+          portablePath(rule)
+            .replace(/^(?:\.?\/)+/, '')
+            .replace(/\/+$/, '')
+        );
       else this.ignoredPatterns.push(rule);
     }
     this.maxFileBytes = opts.maxFileBytes ?? 32 * 1024 * 1024;
@@ -45,7 +50,8 @@ export class FSProvider implements BaseProvider {
 
   private allowed(base: string, target: string): boolean {
     const relative = path.relative(base, target);
-    if (relative === '..' || relative.startsWith('..' + path.sep) || path.isAbsolute(relative)) return false;
+    if (relative === '..' || relative.startsWith('..' + path.sep) || path.isAbsolute(relative))
+      return false;
     if (!relative || !(this.ignoredPaths.size || this.ignoredPatterns.length)) return true;
     let prefix = '';
     for (const part of portablePath(relative).split('/')) {
@@ -80,7 +86,8 @@ export class FSProvider implements BaseProvider {
         } else if (entry.isSymbolicLink()) {
           // File aliases inside the repository are valid manifests. Do not recurse into directory aliases.
           const info = await this.stat(fp);
-          if (info?.isFile()) files.push({ name: entry.name, type: 'file', fp, isSymbolicLink: true });
+          if (info?.isFile())
+            files.push({ name: entry.name, type: 'file', fp, isSymbolicLink: true });
         }
       }
       return files;
@@ -106,7 +113,10 @@ export class FSProvider implements BaseProvider {
       if (!resolved) return null;
       // Reject non-regular files before opening. Nonblocking mode also covers changes between stat and open.
       if (!(await fs.stat(resolved)).isFile()) return null;
-      const handle = await fs.open(resolved, constants.O_RDONLY | (constants.O_NONBLOCK ?? 0) | (constants.O_NOFOLLOW ?? 0));
+      const handle = await fs.open(
+        resolved,
+        constants.O_RDONLY | (constants.O_NONBLOCK ?? 0) | (constants.O_NOFOLLOW ?? 0)
+      );
       try {
         const info = await handle.stat();
         if (!info.isFile()) return null;

@@ -4,7 +4,5 @@ register({
   tech: 'sqlc',
   name: 'sqlc',
   type: 'tool',
-  dependencies: [
-    { type: 'golang', name: 'github.com/sqlc-dev/sqlc' },
-  ],
+  dependencies: [{ type: 'golang', name: 'github.com/sqlc-dev/sqlc' }],
 });

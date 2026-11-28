@@ -4,7 +4,5 @@ register({
   tech: 'langchain4j',
   name: 'LangChain4j',
   type: 'framework',
-  dependencies: [
-    { type: 'maven', name: 'io.quarkiverse.langchain4j:quarkus-langchain4j-openai' },
-  ],
+  dependencies: [{ type: 'maven', name: 'io.quarkiverse.langchain4j:quarkus-langchain4j-openai' }],
 });

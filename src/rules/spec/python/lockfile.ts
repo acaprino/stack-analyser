@@ -19,7 +19,8 @@ const PROJECT = 'pyproject.toml';
 // them (`requirements/base.txt`): a file name, text without grammar.
 const requirementsName = /^[\w-]*requirements(?:[-.]\w+)?\.(?:txt|pip)$/;
 // A bare URL, directive or local path cannot establish a distribution name.
-const requirement = /^([A-Za-z0-9](?:[A-Za-z0-9._-]*[A-Za-z0-9])?)(?:\[[\w., -]+\])?\s*(?=$|[<>=!~;@(])/;
+const requirement =
+  /^([A-Za-z0-9](?:[A-Za-z0-9._-]*[A-Za-z0-9])?)(?:\[[\w., -]+\])?\s*(?=$|[<>=!~;@(])/;
 
 /** PEP 503: names that differ only in case and in runs of `-`, `_` and `.` are one distribution. */
 const normalized = (name: string): string => name.toLowerCase().replace(/[-_.]+/g, '-');
@@ -71,8 +72,11 @@ export const detectPythonLockfile: ComponentMatcher = async (files, provider) =>
       }
 
       manifests.push(pl);
-    } else if (file.type === 'file' && (requirementsName.test(file.name) ||
-        (path.basename(path.dirname(file.fp)) === 'requirements' && file.name.endsWith('.txt')))) {
+    } else if (
+      file.type === 'file' &&
+      (requirementsName.test(file.name) ||
+        (path.basename(path.dirname(file.fp)) === 'requirements' && file.name.endsWith('.txt')))
+    ) {
       const content = await provider.open(file.fp);
       if (!content) {
         continue;
@@ -88,11 +92,20 @@ export const detectPythonLockfile: ComponentMatcher = async (files, provider) =>
     } else if (file.type === 'file' && ['Pipfile', 'setup.cfg', 'setup.py'].includes(file.name)) {
       const content = await provider.open(file.fp);
       if (!content) continue;
-      const read = file.name === 'Pipfile' ? pipfile(content) : file.name === 'setup.cfg' ? setupCfg(content) : setupPy(content);
+      const read =
+        file.name === 'Pipfile'
+          ? pipfile(content)
+          : file.name === 'setup.cfg'
+            ? setupCfg(content)
+            : setupPy(content);
       if (!read.length) continue;
       const pl = new Payload({ name: 'virtual', folderPath: path.dirname(file.fp) });
       pl.dependencies = read;
-      pl.addDependencyTechs(read.map(([, name]) => name), 'python', file.fp);
+      pl.addDependencyTechs(
+        read.map(([, name]) => name),
+        'python',
+        file.fp
+      );
       manifests.push(pl);
     } else {
       continue;
@@ -129,9 +142,14 @@ function pipfile(content: string): Dependency[] {
   for (const table of [json.packages, json['dev-packages']]) {
     if (!isRecord(table)) continue;
     for (const [name, entry] of Object.entries(table)) {
-      if (typeof entry === 'string') dependencies.push(['python', name, entry === '*' ? 'latest' : entry]);
+      if (typeof entry === 'string')
+        dependencies.push(['python', name, entry === '*' ? 'latest' : entry]);
       else if (isRecord(entry) && !('path' in entry) && !('file' in entry)) {
-        dependencies.push(['python', name, typeof entry.version === 'string' && entry.version !== '*' ? entry.version : 'latest']);
+        dependencies.push([
+          'python',
+          name,
+          typeof entry.version === 'string' && entry.version !== '*' ? entry.version : 'latest',
+        ]);
       }
     }
   }
@@ -161,7 +179,11 @@ function setupCfg(content: string): Dependency[] {
     }
     const entry = /^([^=:]+)[=:](.*)$/.exec(raw);
     const key = entry?.[1].trim().replace(/-/g, '_');
-    wanted = Boolean(entry && ((section === 'options' && key === 'install_requires') || section === 'options.extras_require'));
+    wanted = Boolean(
+      entry &&
+        ((section === 'options' && key === 'install_requires') ||
+          section === 'options.extras_require')
+    );
     if (wanted && entry![2].trim()) lines.push(entry![2].trim());
   }
   return requirements(lines);
@@ -190,12 +212,17 @@ function setupPy(content: string): Dependency[] {
     const { kind, value } = items[i];
     if (kind !== 'word' || items[i + 1].value !== '=' || items[i + 2].value === '=') continue;
     if (value === 'install_requires' && ['[', '('].includes(items[i + 2].value)) {
-      lines.push(...stringList(items, i + 2) ?? []);
+      lines.push(...(stringList(items, i + 2) ?? []));
     } else if (value === 'extras_require' && items[i + 2].value === '{') {
       const stop = closing(items, i + 2);
       for (let j = i + 3; j + 2 < stop; j++) {
-        if (items[j].kind !== 'string' || items[j + 1].value !== ':' || !['[', '('].includes(items[j + 2].value)) continue;
-        lines.push(...stringList(items, j + 2) ?? []);
+        if (
+          items[j].kind !== 'string' ||
+          items[j + 1].value !== ':' ||
+          !['[', '('].includes(items[j + 2].value)
+        )
+          continue;
+        lines.push(...(stringList(items, j + 2) ?? []));
         j = closing(items, j + 2);
         if (j < 0) break;
       }
@@ -205,9 +232,16 @@ function setupPy(content: string): Dependency[] {
 }
 
 export function parseRequirementsTxt(content: string, pl: Payload, file: string): void {
-  const lines = content.replace(/\\\r?\n/g, ' ').split(/\r?\n/).map((line) => line.replace(/\s+--hash[=\s].*$/, ''));
+  const lines = content
+    .replace(/\\\r?\n/g, ' ')
+    .split(/\r?\n/)
+    .map((line) => line.replace(/\s+--hash[=\s].*$/, ''));
   pl.dependencies = requirements(lines);
-  pl.addDependencyTechs(pl.dependencies.map(([, name]) => name), 'python', file);
+  pl.addDependencyTechs(
+    pl.dependencies.map(([, name]) => name),
+    'python',
+    file
+  );
 }
 
 export function parsePyproject({
@@ -244,12 +278,15 @@ export function parsePyproject({
   }
   if (isRecord(tool.uv)) groups.push(tool.uv['dev-dependencies']);
   const local = uvLocalSources(json.tool);
-  const dependencies = requirements(groups.filter(Array.isArray).flat()).filter(([, name]) => !local.has(normalized(name)));
+  const dependencies = requirements(groups.filter(Array.isArray).flat()).filter(
+    ([, name]) => !local.has(normalized(name))
+  );
   const poetry = isRecord(json.tool) ? json.tool.poetry : undefined;
   if (isRecord(poetry)) {
     const tables: unknown[] = [poetry.dependencies, poetry['dev-dependencies']];
     if (isRecord(poetry.group)) {
-      for (const group of Object.values(poetry.group)) if (isRecord(group)) tables.push(group.dependencies);
+      for (const group of Object.values(poetry.group))
+        if (isRecord(group)) tables.push(group.dependencies);
     }
     for (const table of tables) {
       if (!isRecord(table)) continue;
@@ -258,7 +295,11 @@ export function parsePyproject({
         for (const entry of Array.isArray(constraint) ? constraint : [constraint]) {
           if (typeof entry === 'string') dependencies.push(['python', name, entry]);
           else if (isRecord(entry) && !('path' in entry)) {
-            dependencies.push(['python', name, typeof entry.version === 'string' ? entry.version : 'latest']);
+            dependencies.push([
+              'python',
+              name,
+              typeof entry.version === 'string' ? entry.version : 'latest',
+            ]);
           }
         }
       }
@@ -276,6 +317,10 @@ export function parsePyproject({
   }
 
   pl.dependencies = [...new Map(dependencies.map((dep) => [JSON.stringify(dep), dep])).values()];
-  pl.addDependencyTechs(pl.dependencies.map(([, name]) => name), 'python', file.fp);
+  pl.addDependencyTechs(
+    pl.dependencies.map(([, name]) => name),
+    'python',
+    file.fp
+  );
   return true;
 }

@@ -4,7 +4,5 @@ register({
   tech: 'sqlmodel',
   name: 'SQLModel',
   type: 'orm',
-  dependencies: [
-    { type: 'python', name: 'sqlmodel' },
-  ],
+  dependencies: [{ type: 'python', name: 'sqlmodel' }],
 });

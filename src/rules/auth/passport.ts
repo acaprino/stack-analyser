@@ -4,7 +4,5 @@ register({
   tech: 'passport',
   name: 'Passport',
   type: 'auth',
-  dependencies: [
-    { type: 'npm', name: 'passport' },
-  ],
+  dependencies: [{ type: 'npm', name: 'passport' }],
 });

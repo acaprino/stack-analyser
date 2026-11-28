@@ -5,6 +5,10 @@ register({
   name: 'ScalaTest',
   type: 'test',
   dependencies: [
-    { type: 'maven', name: /^org\.scalatest:scalatest(?:[-_][a-z0-9._-]+)?$/, example: 'org.scalatest:scalatest' },
+    {
+      type: 'maven',
+      name: /^org\.scalatest:scalatest(?:[-_][a-z0-9._-]+)?$/,
+      example: 'org.scalatest:scalatest',
+    },
   ],
 });

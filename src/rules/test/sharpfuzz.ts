@@ -4,7 +4,5 @@ register({
   tech: 'sharpfuzz',
   name: 'SharpFuzz',
   type: 'test',
-  dependencies: [
-    { type: 'nuget', name: 'SharpFuzz' },
-  ],
+  dependencies: [{ type: 'nuget', name: 'SharpFuzz' }],
 });

@@ -13,10 +13,15 @@ function manifestRequirements(data: Record<string, unknown>): Map<string, string
       if (spec === null || typeof spec === 'string') {
         packages.set(key, spec || 'any');
       } else if (isRecord(spec) && !('path' in spec)) {
-        const name = isRecord(spec.hosted) && typeof spec.hosted.name === 'string' ? spec.hosted.name : key;
+        const name =
+          isRecord(spec.hosted) && typeof spec.hosted.name === 'string' ? spec.hosted.name : key;
         const version = typeof spec.version === 'string' ? spec.version : undefined;
-        const git = isRecord(spec.git) && typeof spec.git.ref === 'string' ? spec.git.ref : undefined;
-        packages.set(name, version || git || (typeof spec.sdk === 'string' ? `sdk:${spec.sdk}` : 'any'));
+        const git =
+          isRecord(spec.git) && typeof spec.git.ref === 'string' ? spec.git.ref : undefined;
+        packages.set(
+          name,
+          version || git || (typeof spec.sdk === 'string' ? `sdk:${spec.sdk}` : 'any')
+        );
       }
     }
   }

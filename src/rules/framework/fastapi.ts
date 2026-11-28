@@ -4,7 +4,5 @@ register({
   tech: 'fastapi',
   name: 'FastAPI',
   type: 'framework',
-  dependencies: [
-    { type: 'python', name: 'fastapi' },
-  ],
+  dependencies: [{ type: 'python', name: 'fastapi' }],
 });

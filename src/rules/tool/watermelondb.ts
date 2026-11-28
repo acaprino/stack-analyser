@@ -4,7 +4,5 @@ register({
   tech: 'watermelondb',
   name: 'WatermelonDB',
   type: 'tool',
-  dependencies: [
-    { type: 'npm', name: '@nozbe/watermelondb' },
-  ],
+  dependencies: [{ type: 'npm', name: '@nozbe/watermelondb' }],
 });

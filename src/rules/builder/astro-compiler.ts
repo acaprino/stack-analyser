@@ -4,7 +4,5 @@ register({
   tech: 'astro-compiler',
   name: 'Astro compiler',
   type: 'builder',
-  dependencies: [
-    { type: 'npm', name: '@astrojs/compiler' },
-  ],
+  dependencies: [{ type: 'npm', name: '@astrojs/compiler' }],
 });

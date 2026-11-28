@@ -4,7 +4,5 @@ register({
   tech: 'maildev',
   name: 'MailDev',
   type: 'notification',
-  dependencies: [
-    { type: 'npm', name: 'maildev' },
-  ],
+  dependencies: [{ type: 'npm', name: 'maildev' }],
 });

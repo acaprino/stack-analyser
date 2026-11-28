@@ -4,7 +4,5 @@ register({
   tech: 'mockall',
   name: 'Mockall',
   type: 'test',
-  dependencies: [
-    { type: 'rust', name: 'mockall' },
-  ],
+  dependencies: [{ type: 'rust', name: 'mockall' }],
 });

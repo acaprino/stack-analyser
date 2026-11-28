@@ -4,7 +4,5 @@ register({
   tech: 'vuetify',
   name: 'Vuetify',
   type: 'ui_framework',
-  dependencies: [
-    { type: 'npm', name: 'vuetify' },
-  ],
+  dependencies: [{ type: 'npm', name: 'vuetify' }],
 });

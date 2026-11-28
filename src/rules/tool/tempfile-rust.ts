@@ -4,7 +4,5 @@ register({
   tech: 'tempfile-rust',
   name: 'tempfile',
   type: 'tool',
-  dependencies: [
-    { type: 'rust', name: 'tempfile' },
-  ],
+  dependencies: [{ type: 'rust', name: 'tempfile' }],
 });

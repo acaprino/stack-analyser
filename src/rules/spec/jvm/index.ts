@@ -10,11 +10,24 @@ import type { BaseProvider, ProviderFile } from '../../../provider/base.js';
 import type { Dependency } from '../../../types/index.js';
 import type { ComponentMatcher } from '../../../types/rule.js';
 
-function component(tool: 'maven' | 'gradle' | 'sbt', name: string, file: string, deps: Dependency[]): Payload {
+function component(
+  tool: 'maven' | 'gradle' | 'sbt',
+  name: string,
+  file: string,
+  deps: Dependency[]
+): Payload {
   const dependencies = [...new Map(deps.map((d) => [JSON.stringify(d), d])).values()];
   const pl = new Payload({ name, folderPath: file, dependencies });
-  pl.addTech(tool, [`build manifest: ${path.basename(file)}`], [{ kind: 'file', value: path.basename(file), path: file }]);
-  pl.addDependencyTechs(dependencies.map(([, key]) => key), 'maven', file);
+  pl.addTech(
+    tool,
+    [`build manifest: ${path.basename(file)}`],
+    [{ kind: 'file', value: path.basename(file), path: file }]
+  );
+  pl.addDependencyTechs(
+    dependencies.map(([, key]) => key),
+    'maven',
+    file
+  );
   return pl;
 }
 
@@ -32,12 +45,19 @@ async function catalogFile(provider: BaseProvider, folder: string, files: Provid
   let children = files;
   while (true) {
     const relative = path.relative(base, current);
-    if (relative === '..' || relative.startsWith(`..${path.sep}`) || path.isAbsolute(relative)) return null;
-    if (!relative || children.some((f) => ['settings.gradle', 'settings.gradle.kts'].includes(f.name))) {
-      const gradleDir = children.find((f) => f.type === 'dir' && !f.isSymbolicLink && f.name === 'gradle');
+    if (relative === '..' || relative.startsWith(`..${path.sep}`) || path.isAbsolute(relative))
+      return null;
+    if (
+      !relative ||
+      children.some((f) => ['settings.gradle', 'settings.gradle.kts'].includes(f.name))
+    ) {
+      const gradleDir = children.find(
+        (f) => f.type === 'dir' && !f.isSymbolicLink && f.name === 'gradle'
+      );
       if (!gradleDir) return null;
-      const catalog = (await provider.listDir(gradleDir.fp))
-        .find((f) => f.type === 'file' && !f.isSymbolicLink && f.name === 'libs.versions.toml');
+      const catalog = (await provider.listDir(gradleDir.fp)).find(
+        (f) => f.type === 'file' && !f.isSymbolicLink && f.name === 'libs.versions.toml'
+      );
       return catalog ? provider.open(catalog.fp) : null;
     }
     const parent = path.dirname(current);
@@ -48,7 +68,12 @@ async function catalogFile(provider: BaseProvider, folder: string, files: Provid
 }
 
 export const detectGradle: ComponentMatcher = async (files, provider) => {
-  const build = files.find((f) => f.type === 'file' && !f.isSymbolicLink && ['build.gradle', 'build.gradle.kts'].includes(f.name));
+  const build = files.find(
+    (f) =>
+      f.type === 'file' &&
+      !f.isSymbolicLink &&
+      ['build.gradle', 'build.gradle.kts'].includes(f.name)
+  );
   if (!build) return false;
   const source = await provider.open(build.fp);
   if (source === null) return false;
@@ -60,7 +85,9 @@ export const detectGradle: ComponentMatcher = async (files, provider) => {
 
 // `build.sbt` is the project; the other `.sbt` files of its folder and of `project/` (plugins) add their module IDs.
 export const detectSbt: ComponentMatcher = async (files, provider) => {
-  const builds = files.filter((f) => f.type === 'file' && !f.isSymbolicLink && f.name.endsWith('.sbt'));
+  const builds = files.filter(
+    (f) => f.type === 'file' && !f.isSymbolicLink && f.name.endsWith('.sbt')
+  );
   if (!builds.length) return false;
   const payloads: Payload[] = [];
   for (const file of builds) {
@@ -68,10 +95,16 @@ export const detectSbt: ComponentMatcher = async (files, provider) => {
     if (source === null) continue;
     const deps = sbtDependencies(source);
     if (file.name === 'build.sbt') {
-      payloads.push(component('sbt', path.basename(path.dirname(file.fp)) || 'sbt project', file.fp, deps));
+      payloads.push(
+        component('sbt', path.basename(path.dirname(file.fp)) || 'sbt project', file.fp, deps)
+      );
     } else if (deps.length) {
       const pl = new Payload({ name: 'virtual', folderPath: file.fp, dependencies: deps });
-      pl.addDependencyTechs(deps.map(([, key]) => key), 'maven', file.fp);
+      pl.addDependencyTechs(
+        deps.map(([, key]) => key),
+        'maven',
+        file.fp
+      );
       payloads.push(pl);
     }
   }

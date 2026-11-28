@@ -4,7 +4,5 @@ register({
   tech: 'sidekiq',
   name: 'Sidekiq',
   type: 'tool',
-  dependencies: [
-    { type: 'ruby', name: 'sidekiq' },
-  ],
+  dependencies: [{ type: 'ruby', name: 'sidekiq' }],
 });

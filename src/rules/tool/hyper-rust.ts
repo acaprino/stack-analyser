@@ -4,7 +4,5 @@ register({
   tech: 'hyper-rust',
   name: 'Hyper',
   type: 'tool',
-  dependencies: [
-    { type: 'rust', name: 'hyper' },
-  ],
+  dependencies: [{ type: 'rust', name: 'hyper' }],
 });

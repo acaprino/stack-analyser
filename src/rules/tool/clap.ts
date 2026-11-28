@@ -4,7 +4,5 @@ register({
   tech: 'clap',
   name: 'clap',
   type: 'tool',
-  dependencies: [
-    { type: 'rust', name: 'clap' },
-  ],
+  dependencies: [{ type: 'rust', name: 'clap' }],
 });

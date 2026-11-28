@@ -5,6 +5,10 @@ register({
   name: 'Exposed',
   type: 'orm',
   dependencies: [
-    { type: 'maven', name: /^org\.jetbrains\.exposed:exposed-/, example: 'org.jetbrains.exposed:exposed-core' },
+    {
+      type: 'maven',
+      name: /^org\.jetbrains\.exposed:exposed-/,
+      example: 'org.jetbrains.exposed:exposed-core',
+    },
   ],
 });

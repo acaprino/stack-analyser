@@ -4,7 +4,5 @@ register({
   tech: 'detox',
   name: 'Detox',
   type: 'test',
-  dependencies: [
-    { type: 'npm', name: 'detox' },
-  ],
+  dependencies: [{ type: 'npm', name: 'detox' }],
 });

@@ -4,7 +4,5 @@ register({
   tech: 'sqlglot',
   name: 'SQLGlot',
   type: 'tool',
-  dependencies: [
-    { type: 'python', name: 'sqlglot' },
-  ],
+  dependencies: [{ type: 'python', name: 'sqlglot' }],
 });

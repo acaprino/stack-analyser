@@ -29,7 +29,8 @@ const parse = ({ sign }: Difference): [string, string] => {
   const colon = sign.indexOf(':');
   return [sign.slice(0, colon), sign.slice(colon + 1)];
 };
-const differences = (wanted: (kind: string) => boolean) => report.differences.filter((d) => wanted(parse(d)[0]));
+const differences = (wanted: (kind: string) => boolean) =>
+  report.differences.filter((d) => wanted(parse(d)[0]));
 
 describe('the report of the registry port', () => {
   it('records the registry it was made from', () => {
@@ -47,13 +48,16 @@ describe('the report of the registry port', () => {
   });
 
   it('keeps a registry id and a rule id apart', () => {
-    for (const id of Object.keys(report.renamed)) expect(registeredTech.has(id as AllowedKeys), id).toBe(false);
+    for (const id of Object.keys(report.renamed))
+      expect(registeredTech.has(id as AllowedKeys), id).toBe(false);
   });
 
   it('gives every difference a reason of its own', () => {
     const reasons = report.differences.map((d) => d.reason);
     for (const reason of reasons) expect(reason.length).toBeGreaterThan(40);
-    expect(new Set(report.differences.map((d) => `${d.id} ${d.sign}`)).size).toBe(report.differences.length);
+    expect(new Set(report.differences.map((d) => `${d.id} ${d.sign}`)).size).toBe(
+      report.differences.length
+    );
   });
 
   it.each(differences((kind) => !kinds.includes(kind)).map((d) => [d.id, d.sign, d] as const))(

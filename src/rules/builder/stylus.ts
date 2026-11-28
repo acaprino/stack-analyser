@@ -4,7 +4,5 @@ register({
   tech: 'stylus',
   name: 'Stylus',
   type: 'builder',
-  dependencies: [
-    { type: 'npm', name: 'stylus' },
-  ],
+  dependencies: [{ type: 'npm', name: 'stylus' }],
 });

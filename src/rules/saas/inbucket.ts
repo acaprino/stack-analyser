@@ -4,7 +4,5 @@ register({
   tech: 'inbucket',
   name: 'Inbucket',
   type: 'saas',
-  dependencies: [
-    { type: 'docker', name: 'inbucket/inbucket' },
-  ],
+  dependencies: [{ type: 'docker', name: 'inbucket/inbucket' }],
 });

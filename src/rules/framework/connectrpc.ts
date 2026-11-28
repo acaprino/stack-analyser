@@ -4,7 +4,5 @@ register({
   tech: 'connectrpc',
   name: 'Connect',
   type: 'framework',
-  dependencies: [
-    { type: 'golang', name: 'connectrpc.com/connect' },
-  ],
+  dependencies: [{ type: 'golang', name: 'connectrpc.com/connect' }],
 });

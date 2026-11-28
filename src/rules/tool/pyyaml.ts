@@ -4,7 +4,5 @@ register({
   tech: 'pyyaml',
   name: 'PyYAML',
   type: 'tool',
-  dependencies: [
-    { type: 'python', name: 'PyYAML' },
-  ],
+  dependencies: [{ type: 'python', name: 'PyYAML' }],
 });

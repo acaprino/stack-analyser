@@ -4,7 +4,5 @@ register({
   tech: 'azure.documentintelligence',
   name: 'Azure AI Document Intelligence',
   type: 'ai',
-  dependencies: [
-    { type: 'python', name: 'azure-ai-documentintelligence' },
-  ],
+  dependencies: [{ type: 'python', name: 'azure-ai-documentintelligence' }],
 });

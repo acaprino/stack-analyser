@@ -5,6 +5,10 @@ register({
   name: 'ASP.NET Core',
   type: 'framework',
   dependencies: [
-    { type: 'nuget', name: /^Microsoft\.AspNetCore\./i, example: 'Microsoft.AspNetCore.Authentication.JwtBearer' },
+    {
+      type: 'nuget',
+      name: /^Microsoft\.AspNetCore\./i,
+      example: 'Microsoft.AspNetCore.Authentication.JwtBearer',
+    },
   ],
 });

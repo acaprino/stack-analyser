@@ -9,11 +9,25 @@ import { evidenceKind, matchDependenciesWithNames } from '../matchDependencies.j
 import { findHostMentions } from '../rules/spec/hosts/index.js';
 import { IGNORED_DIVE_PATHS } from '../provider/base.js';
 import { listIndexed } from '../register.js';
-import { compareEvidence, evidenceKey, findHosting, findImplicitComponent, mentionKey, toEvidence } from './helpers.js';
+import {
+  compareEvidence,
+  evidenceKey,
+  findHosting,
+  findImplicitComponent,
+  mentionKey,
+  toEvidence,
+} from './helpers.js';
 import { detectInDotEnv } from '../rules/spec/dotenv/index.js';
 
 import type { BaseProvider } from '../provider/base.js';
-import type { Analyser, AnalyserJson, Dependency, Evidence, EvidenceItem, HostMention } from '../types/index.js';
+import type {
+  Analyser,
+  AnalyserJson,
+  Dependency,
+  Evidence,
+  EvidenceItem,
+  HostMention,
+} from '../types/index.js';
 import type { SupportedDeps } from '../types/rule.js';
 import type { AllowedLicenses } from '../types/licenses.js';
 import type { AllowedKeys } from '../types/techs.js';
@@ -120,7 +134,8 @@ export class Payload implements Analyser {
     // Detect Tech
     const matched = matchAllFilesWithEvidence(files, provider.basePath, filePath);
     ctx.addTechs(matched);
-    if (modules.size === 1 || (!modules.size && filePath === provider.basePath)) findHosting(ctx, matched);
+    if (modules.size === 1 || (!modules.size && filePath === provider.basePath))
+      findHosting(ctx, matched);
     ctx.mentions.push(...(await findHostMentions(files, provider)));
 
     // Recursively dive in folders
@@ -145,7 +160,9 @@ export class Payload implements Analyser {
    * If a similar child is found at the same level, it will merge them.
    */
   addChild(service: Payload): Payload {
-    const exist = service.tech ? this.childs.find((child) => child.tech === service.tech) : undefined;
+    const exist = service.tech
+      ? this.childs.find((child) => child.tech === service.tech)
+      : undefined;
 
     if (service.tech?.includes('.')) {
       const [host] = service.tech.split('.');
@@ -223,7 +240,13 @@ export class Payload implements Analyser {
       this.addTech(
         tech,
         reason,
-        (matched.get(tech) ?? []).map((value) => ({ kind, value, path: file, line: origin.line, source: origin.source }))
+        (matched.get(tech) ?? []).map((value) => ({
+          kind,
+          value,
+          path: file,
+          line: origin.line,
+          source: origin.source,
+        }))
       );
     }
   }
@@ -425,7 +448,9 @@ export class Payload implements Analyser {
           source: item.source,
         }))
         .sort(compareEvidence),
-      ...(this.mentions.length > 0 && { mentions: this.mentions.map((mention) => ({ ...mention })) }),
+      ...(this.mentions.length > 0 && {
+        mentions: this.mentions.map((mention) => ({ ...mention })),
+      }),
     };
   }
 }

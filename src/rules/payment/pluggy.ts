@@ -4,7 +4,5 @@ register({
   tech: 'pluggy',
   name: 'Pluggy',
   type: 'payment',
-  dependencies: [
-    { type: 'npm', name: 'pluggy-sdk' },
-  ],
+  dependencies: [{ type: 'npm', name: 'pluggy-sdk' }],
 });

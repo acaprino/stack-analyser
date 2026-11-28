@@ -4,7 +4,5 @@ register({
   tech: 'sea-orm',
   name: 'SeaORM',
   type: 'orm',
-  dependencies: [
-    { type: 'rust', name: 'sea-orm' },
-  ],
+  dependencies: [{ type: 'rust', name: 'sea-orm' }],
 });

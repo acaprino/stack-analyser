@@ -4,7 +4,5 @@ register({
   tech: 'spring-amqp',
   name: 'Spring AMQP',
   type: 'framework',
-  dependencies: [
-    { type: 'maven', name: 'org.springframework.boot:spring-boot-starter-amqp' },
-  ],
+  dependencies: [{ type: 'maven', name: 'org.springframework.boot:spring-boot-starter-amqp' }],
 });

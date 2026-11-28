@@ -37,14 +37,17 @@ it('every technology carries evidence', async () => {
 
 it('records the file, extension, variable or source behind a hand-written reason', async () => {
   const files: Record<string, string> = {
-    '/elixir/mix.exs': 'defmodule Demo.MixProject do\n  def project, do: [app: :demo, deps: []]\nend\n',
+    '/elixir/mix.exs':
+      'defmodule Demo.MixProject do\n  def project, do: [app: :demo, deps: []]\nend\n',
     '/elixir/test_helper.exs': 'defmodule T do\nend\nExUnit.start()\n',
     '/swift/Package.swift': 'let package = Package(name: "Mobile", dependencies: [])\n',
     '/swift/View.swift': 'import Foundation\nimport SwiftUI\n',
-    '/maven/pom.xml': '<project xmlns="http://maven.apache.org/POM/4.0.0"><artifactId>app</artifactId></project>',
+    '/maven/pom.xml':
+      '<project xmlns="http://maven.apache.org/POM/4.0.0"><artifactId>app</artifactId></project>',
     '/gradle/build.gradle': 'plugins { id "java" }\n',
     '/mobile/.maestro/smoke.yaml': 'appId: com.example\n---\n- launchApp\n',
-    '/dotnet/Desktop.csproj': '<Project><PropertyGroup><UseWinUI>true</UseWinUI></PropertyGroup></Project>',
+    '/dotnet/Desktop.csproj':
+      '<Project><PropertyGroup><UseWinUI>true</UseWinUI></PropertyGroup></Project>',
     '/php/composer.json': '{"name": "acme/app", "require": {}}',
     '/dart/pubspec.yaml': 'name: reader\ndependencies:\n  test: ^1.2\n',
     '/gemspec/demo.gemspec': "Gem::Specification.new do |s|\n  s.add_dependency 'rails'\nend\n",
@@ -55,7 +58,8 @@ it('records the file, extension, variable or source behind a hand-written reason
     '/go/cmd/server/main.go': 'package main\n',
     '/compose/docker-compose.yml': 'services:\n  db:\n    image: postgres:14\n',
     '/image/Dockerfile': 'FROM node:20\n',
-    '/.github/workflows/build.yml': 'on: push\njobs:\n  build:\n    steps:\n      - uses: actions/setup-node@v4\n',
+    '/.github/workflows/build.yml':
+      'on: push\njobs:\n  build:\n    steps:\n      - uses: actions/setup-node@v4\n',
     '/env/.env.example': 'STRIPE_SECRET_KEY=x\n',
   };
   const paths: Record<string, string[]> = { '/': [] };
@@ -73,12 +77,32 @@ it('records the file, extension, variable or source behind a hand-written reason
   expect(withoutEvidence(graph)).toEqual([]);
 
   const found = allEvidence(graph);
-  const file = (tech: string, value: string, at: string) => ({ tech, kind: 'file', value, path: at, source: 'stack-analyser' });
+  const file = (tech: string, value: string, at: string) => ({
+    tech,
+    kind: 'file',
+    value,
+    path: at,
+    source: 'stack-analyser',
+  });
   const expected = [
     file('elixir', 'mix.exs', '/elixir/mix.exs'),
-    { tech: 'exunit', kind: 'source', value: 'ExUnit.start', path: '/elixir/test_helper.exs', line: 3, source: 'stack-analyser' },
+    {
+      tech: 'exunit',
+      kind: 'source',
+      value: 'ExUnit.start',
+      path: '/elixir/test_helper.exs',
+      line: 3,
+      source: 'stack-analyser',
+    },
     file('swift', 'Package.swift', '/swift/Package.swift'),
-    { tech: 'swiftui', kind: 'source', value: 'SwiftUI', path: '/swift/View.swift', line: 2, source: 'stack-analyser' },
+    {
+      tech: 'swiftui',
+      kind: 'source',
+      value: 'SwiftUI',
+      path: '/swift/View.swift',
+      line: 2,
+      source: 'stack-analyser',
+    },
     file('maven', 'pom.xml', '/maven/pom.xml'),
     file('gradle', 'build.gradle', '/gradle/build.gradle'),
     file('maestro', 'smoke.yaml', '/mobile/.maestro/smoke.yaml'),
@@ -96,7 +120,13 @@ it('records the file, extension, variable or source behind a hand-written reason
     file('docker', 'docker-compose.yml', '/compose/docker-compose.yml'),
     file('docker', 'Dockerfile', '/image/Dockerfile'),
     file('github.actions', 'build.yml', '/.github/workflows/build.yml'),
-    { tech: 'stripe', kind: 'env', value: 'STRIPE_', path: '/env/.env.example', source: 'stack-analyser' },
+    {
+      tech: 'stripe',
+      kind: 'env',
+      value: 'STRIPE_',
+      path: '/env/.env.example',
+      source: 'stack-analyser',
+    },
   ];
   for (const item of expected) expect(found).toContainEqual(item);
 });

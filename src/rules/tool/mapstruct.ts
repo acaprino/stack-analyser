@@ -4,7 +4,5 @@ register({
   tech: 'mapstruct',
   name: 'MapStruct',
   type: 'tool',
-  dependencies: [
-    { type: 'maven', name: 'org.mapstruct:mapstruct' },
-  ],
+  dependencies: [{ type: 'maven', name: 'org.mapstruct:mapstruct' }],
 });

@@ -4,7 +4,5 @@ register({
   tech: 'fastmcp',
   name: 'FastMCP',
   type: 'framework',
-  dependencies: [
-    { type: 'python', name: 'fastmcp' },
-  ],
+  dependencies: [{ type: 'python', name: 'fastmcp' }],
 });

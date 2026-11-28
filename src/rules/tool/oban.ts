@@ -4,7 +4,5 @@ register({
   tech: 'oban',
   name: 'Oban',
   type: 'tool',
-  dependencies: [
-    { type: 'hex', name: 'oban' },
-  ],
+  dependencies: [{ type: 'hex', name: 'oban' }],
 });

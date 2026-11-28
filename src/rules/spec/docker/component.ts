@@ -31,15 +31,22 @@ export const detectDockerComponent: ComponentMatcher = async (files, provider) =
     }
     if (!isRecord(parsed)) continue;
     const declared: Record<string, unknown> = isRecord(parsed.services) ? parsed.services : {};
-    const services = Object.entries(declared).filter((entry): entry is [string, Record<string, unknown>] => {
-      const [, service] = entry;
-      return isRecord(service) && ['image', 'build', 'extends', 'provider'].some((key) => Object.hasOwn(service, key));
-    });
+    const services = Object.entries(declared).filter(
+      (entry): entry is [string, Record<string, unknown>] => {
+        const [, service] = entry;
+        return (
+          isRecord(service) &&
+          ['image', 'build', 'extends', 'provider'].some((key) => Object.hasOwn(service, key))
+        );
+      }
+    );
     // A file that only includes other Compose files (the top-level `include` of Compose 2.20) is Compose as well.
     const includes = Array.isArray(parsed.include) && parsed.include.length > 0;
     if (!services.length && !includes) continue;
     const pl = new Payload({ name: 'virtual', folderPath: file.fp });
-    const reason = services.length ? `Compose services in ${file.name}` : `Compose include in ${file.name}`;
+    const reason = services.length
+      ? `Compose services in ${file.name}`
+      : `Compose include in ${file.name}`;
     pl.addTech('docker', [reason], [{ kind: 'file', value: file.name, path: file.fp }]);
 
     for (const [name, service] of services) {
@@ -56,7 +63,10 @@ export const detectDockerComponent: ComponentMatcher = async (files, provider) =
       const tech = matched[0];
       pl.addChild(
         new Payload({
-          name: typeof service.container_name === 'string' && service.container_name ? service.container_name : name,
+          name:
+            typeof service.container_name === 'string' && service.container_name
+              ? service.container_name
+              : name,
           folderPath: file.fp,
           tech: tech ? tech[0] : null,
           parent: pl,

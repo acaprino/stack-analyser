@@ -24,7 +24,11 @@ const integrations: Record<string, string[]> = {
   'maven:io.quarkus:quarkus-apicurio-registry-avro': ['avro', 'quarkus'],
   'maven:io.quarkus:quarkus-hibernate-orm-panache': ['hibernate', 'panache', 'quarkus'],
   'maven:io.quarkus:quarkus-hibernate-orm-panache-kotlin': ['hibernate', 'panache', 'quarkus'],
-  'maven:io.quarkus:quarkus-hibernate-reactive-panache': ['hibernate-reactive', 'panache', 'quarkus'],
+  'maven:io.quarkus:quarkus-hibernate-reactive-panache': [
+    'hibernate-reactive',
+    'panache',
+    'quarkus',
+  ],
   'maven:io.quarkus:quarkus-junit-mockito': ['mockito', 'quarkus'],
   'maven:io.quarkus:quarkus-messaging-kafka': ['quarkus', 'smallrye-reactive-messaging'],
   'maven:io.quarkus:quarkus-mongodb-panache': ['panache', 'quarkus'],
@@ -33,18 +37,49 @@ const integrations: Record<string, string[]> = {
   'maven:io.quarkus:quarkus-rest-qute': ['quarkus', 'quarkus-rest', 'qute'],
   'maven:io.quarkus:quarkus-websockets-next': ['quarkus', 'quarkus-websockets-next'],
   // A starter that brings the driver of one server gives that server as well.
-  'maven:org.springframework.boot:spring-boot-starter-amqp': ['rabbitmq', 'spring-amqp', 'spring-boot'],
-  'maven:org.springframework.boot:spring-boot-starter-data-cassandra': ['apache_cassandra', 'spring-boot'],
-  'maven:org.springframework.boot:spring-boot-starter-data-cassandra-reactive': ['apache_cassandra', 'spring-boot'],
+  'maven:org.springframework.boot:spring-boot-starter-amqp': [
+    'rabbitmq',
+    'spring-amqp',
+    'spring-boot',
+  ],
+  'maven:org.springframework.boot:spring-boot-starter-data-cassandra': [
+    'apache_cassandra',
+    'spring-boot',
+  ],
+  'maven:org.springframework.boot:spring-boot-starter-data-cassandra-reactive': [
+    'apache_cassandra',
+    'spring-boot',
+  ],
   'maven:org.springframework.boot:spring-boot-starter-data-couchbase': ['couchbase', 'spring-boot'],
-  'maven:org.springframework.boot:spring-boot-starter-data-couchbase-reactive': ['couchbase', 'spring-boot'],
-  'maven:org.springframework.boot:spring-boot-starter-data-elasticsearch': ['elasticsearch', 'spring-boot', 'spring-data-elasticsearch'],
+  'maven:org.springframework.boot:spring-boot-starter-data-couchbase-reactive': [
+    'couchbase',
+    'spring-boot',
+  ],
+  'maven:org.springframework.boot:spring-boot-starter-data-elasticsearch': [
+    'elasticsearch',
+    'spring-boot',
+    'spring-data-elasticsearch',
+  ],
   'maven:org.springframework.boot:spring-boot-starter-data-jpa': ['spring-boot', 'spring-data-jpa'],
-  'maven:org.springframework.boot:spring-boot-starter-data-mongodb': ['mongodb', 'spring-boot', 'spring-data-mongodb'],
-  'maven:org.springframework.boot:spring-boot-starter-data-mongodb-reactive': ['mongodb', 'spring-boot'],
+  'maven:org.springframework.boot:spring-boot-starter-data-mongodb': [
+    'mongodb',
+    'spring-boot',
+    'spring-data-mongodb',
+  ],
+  'maven:org.springframework.boot:spring-boot-starter-data-mongodb-reactive': [
+    'mongodb',
+    'spring-boot',
+  ],
   'maven:org.springframework.boot:spring-boot-starter-data-neo4j': ['neo4j', 'spring-boot'],
-  'maven:org.springframework.boot:spring-boot-starter-data-redis': ['redis', 'spring-boot', 'spring-data-redis'],
-  'maven:org.springframework.boot:spring-boot-starter-data-redis-reactive': ['redis', 'spring-boot'],
+  'maven:org.springframework.boot:spring-boot-starter-data-redis': [
+    'redis',
+    'spring-boot',
+    'spring-data-redis',
+  ],
+  'maven:org.springframework.boot:spring-boot-starter-data-redis-reactive': [
+    'redis',
+    'spring-boot',
+  ],
   'maven:org.springframework.boot:spring-boot-starter-security': ['spring-boot', 'spring-security'],
   'maven:org.springframework.boot:spring-boot-starter-thymeleaf': ['spring-boot', 'thymeleaf'],
   'maven:org.springframework.boot:spring-boot-starter-web': ['spring-boot', 'spring-mvc'],
@@ -58,13 +93,20 @@ const integrations: Record<string, string[]> = {
   'nuget:Aspire.Hosting.SqlServer': ['dotnet-aspire', 'microsoft-sql-server'],
   'nuget:Aspire.Hosting.Yarp': ['dotnet-aspire', 'yarp'],
   'nuget:Aspire.Npgsql': ['dotnet-aspire', 'postgresql'],
-  'nuget:Aspire.Npgsql.EntityFrameworkCore.PostgreSQL': ['dotnet-aspire', 'entity-framework-core', 'postgresql'],
+  'nuget:Aspire.Npgsql.EntityFrameworkCore.PostgreSQL': [
+    'dotnet-aspire',
+    'entity-framework-core',
+    'postgresql',
+  ],
   'nuget:Aspire.RabbitMQ.Client': ['dotnet-aspire', 'rabbitmq'],
   'nuget:Aspire.StackExchange.Redis': ['dotnet-aspire', 'redis'],
   'nuget:Microsoft.AspNetCore.Components.Web': ['aspnetcore', 'blazor'],
   'nuget:Microsoft.AspNetCore.Components.WebAssembly': ['aspnetcore', 'blazor'],
   'nuget:Microsoft.EntityFrameworkCore.Sqlite': ['entity-framework-core', 'sqlite'],
-  'nuget:Microsoft.EntityFrameworkCore.SqlServer': ['entity-framework-core', 'microsoft-sql-server'],
+  'nuget:Microsoft.EntityFrameworkCore.SqlServer': [
+    'entity-framework-core',
+    'microsoft-sql-server',
+  ],
   'nuget:MudBlazor': ['blazor', 'mudblazor'],
   'nuget:Npgsql.EntityFrameworkCore.PostgreSQL': ['entity-framework-core', 'postgresql'],
 };
@@ -163,7 +205,9 @@ describe('no duplicate', () => {
       for (const ex of examples) {
         const expected = integrations[`${name}:${ex}`];
         if (expected) {
-          const hits = matchers.filter((matcher) => matcher.match.test(ex)).map((matcher) => matcher.tech);
+          const hits = matchers
+            .filter((matcher) => matcher.match.test(ex))
+            .map((matcher) => matcher.tech);
           expect(new Set(hits), ex).toEqual(new Set(expected));
           remaining.delete(`${name}:${ex}`);
           continue;
@@ -210,16 +254,30 @@ describe('dependency names', () => {
 const sharedReaderIds = ['cargo', 'phpcomposer', 'exunit', 'mapkit', 'swiftui', 'uikit', 'winui'];
 const parentIds = ['adobe', 'microsoft'];
 const catalogueOnly = [
-  'fabric', 'meilisearchcloud', 'railway.mongodb', 'railway.mysql', 'railway.postgres', 'railway.redis',
-  'replit.postgres', 'typesensecloud', 'apple.maps', 'vialink',
+  'fabric',
+  'meilisearchcloud',
+  'railway.mongodb',
+  'railway.mysql',
+  'railway.postgres',
+  'railway.redis',
+  'replit.postgres',
+  'typesensecloud',
+  'apple.maps',
+  'vialink',
 ];
 const indirect = new Set([...sharedReaderIds, ...parentIds, ...catalogueOnly]);
 
 describe('rule completeness', () => {
   for (const rule of registeredRules) {
     it(`${rule.tech} has working examples or an explicit indirect status`, () => {
-      const direct = Boolean(rule.detect || rule.files || rule.extensions?.length || rule.dotenv?.length ||
-        rule.hosts?.length || rule.dependencies?.length);
+      const direct = Boolean(
+        rule.detect ||
+          rule.files ||
+          rule.extensions?.length ||
+          rule.dotenv?.length ||
+          rule.hosts?.length ||
+          rule.dependencies?.length
+      );
       expect(direct, rule.tech).toBe(!indirect.has(rule.tech));
       if (rule.files instanceof RegExp && 'example' in rule) {
         expect(rule.example).toMatch(rule.files);

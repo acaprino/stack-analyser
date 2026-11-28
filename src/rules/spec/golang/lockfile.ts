@@ -4,7 +4,11 @@ import { insideProject, packageComponent } from '../packageManifest.js';
 
 import type { ComponentMatcher } from '../../../types/rule.js';
 
-interface Replacement { module: string; version?: string; target: string }
+interface Replacement {
+  module: string;
+  version?: string;
+  target: string;
+}
 
 const unquote = (value: string): string => value.replace(/^"(.*)"$/, '$1');
 
@@ -18,17 +22,29 @@ function goMod(source: string): { modules: Map<string, string>; replacements: Re
     const comment = raw.indexOf('//');
     const line = (comment < 0 ? raw : raw.slice(0, comment)).trim();
     if (!line) continue;
-    if (line === ')') { block = undefined; continue; }
+    if (line === ')') {
+      block = undefined;
+      continue;
+    }
     const open = /^([a-z]+)\s*\($/.exec(line);
-    if (open) { block = open[1]; continue; }
+    if (open) {
+      block = open[1];
+      continue;
+    }
     const directive = block ?? /^([a-z]+)\s/.exec(line)?.[1];
     const declaration = block ? line : line.slice(directive?.length ?? 0).trim();
     if (directive === 'replace') {
       const fields = /^(\S+)(?:\s+(\S+))?\s*=>\s*(\S+)(?:\s+\S+)?$/.exec(declaration);
-      if (fields) replacements.push({ module: unquote(fields[1]), version: fields[2] && unquote(fields[2]), target: unquote(fields[3]) });
+      if (fields)
+        replacements.push({
+          module: unquote(fields[1]),
+          version: fields[2] && unquote(fields[2]),
+          target: unquote(fields[3]),
+        });
       continue;
     }
-    if (directive !== 'require' || (comment >= 0 && /^\/\/\s*indirect\b/.test(raw.slice(comment)))) continue;
+    if (directive !== 'require' || (comment >= 0 && /^\/\/\s*indirect\b/.test(raw.slice(comment))))
+      continue;
     const fields = /^(?:"([^"\s]+)"|([^\s"]+))\s+(?:"(v[^"\s]+)"|(v[^\s"]+))$/.exec(declaration);
     if (fields) modules.set(fields[1] ?? fields[2], fields[3] ?? fields[4]);
   }
@@ -36,7 +52,9 @@ function goMod(source: string): { modules: Map<string, string>; replacements: Re
 }
 
 export const detectGolangLockfile: ComponentMatcher = async (files, provider) => {
-  const file = files.find((item) => item.type === 'file' && !item.isSymbolicLink && item.name === 'go.mod');
+  const file = files.find(
+    (item) => item.type === 'file' && !item.isSymbolicLink && item.name === 'go.mod'
+  );
   if (!file) return false;
   const content = await provider.open(file.fp);
   if (!content) return false;

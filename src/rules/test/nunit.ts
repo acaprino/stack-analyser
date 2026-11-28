@@ -4,7 +4,5 @@ register({
   tech: 'nunit',
   name: 'NUnit',
   type: 'test',
-  dependencies: [
-    { type: 'nuget', name: 'NUnit' },
-  ],
+  dependencies: [{ type: 'nuget', name: 'NUnit' }],
 });

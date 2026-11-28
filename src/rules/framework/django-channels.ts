@@ -4,7 +4,5 @@ register({
   tech: 'django-channels',
   name: 'Django Channels',
   type: 'framework',
-  dependencies: [
-    { type: 'python', name: 'channels' },
-  ],
+  dependencies: [{ type: 'python', name: 'channels' }],
 });

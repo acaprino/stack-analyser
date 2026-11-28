@@ -22,7 +22,9 @@ export function matchFiles({
 }): [Rule, string, string] | false {
   for (const file of files) {
     if (file.isSymbolicLink) continue;
-    const name = matchFullPath ? portablePath(basePath ? path.relative(basePath, file.fp) : file.fp) : file.name;
+    const name = matchFullPath
+      ? portablePath(basePath ? path.relative(basePath, file.fp) : file.fp)
+      : file.name;
     if (matches.includes(file.type === 'dir' ? name + '/' : name)) {
       return [listIndexed[key], matchFullPath ? file.fp : file.name, file.fp];
     }
@@ -46,7 +48,9 @@ export function matchFilesRegex({
 }): [Rule, string, string] | false {
   for (const file of files) {
     if (file.type !== 'file' || file.isSymbolicLink) continue;
-    const name = matchFullPath ? portablePath(basePath ? path.relative(basePath, file.fp) : file.fp) : file.name;
+    const name = matchFullPath
+      ? portablePath(basePath ? path.relative(basePath, file.fp) : file.fp)
+      : file.name;
     match.lastIndex = 0;
     if (match.test(name)) {
       return [listIndexed[key], matchFullPath ? file.fp : file.name, file.fp];

@@ -4,7 +4,5 @@ register({
   tech: 'plain',
   name: 'Plain',
   type: 'saas',
-  dependencies: [
-    { type: 'npm', name: '@team-plain/typescript-sdk' },
-  ],
+  dependencies: [{ type: 'npm', name: '@team-plain/typescript-sdk' }],
 });

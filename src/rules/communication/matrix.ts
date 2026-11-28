@@ -4,7 +4,5 @@ register({
   tech: 'matrix',
   name: 'Matrix',
   type: 'communication',
-  dependencies: [
-    { type: 'npm', name: 'matrix-js-sdk' },
-  ],
+  dependencies: [{ type: 'npm', name: 'matrix-js-sdk' }],
 });

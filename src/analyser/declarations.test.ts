@@ -5,110 +5,244 @@ import { flatten } from '../payload/helpers.js';
 import { FakeProvider } from '../provider/fake.js';
 import '../autoload.js';
 
-const project = () => new FakeProvider({
-  paths: { '/': ['package.json', 'setup.cfg'] },
-  files: { '/package.json': JSON.stringify({ name: 'app', dependencies: { react: '18' } }), '/setup.cfg': '' },
-});
+const project = () =>
+  new FakeProvider({
+    paths: { '/': ['package.json', 'setup.cfg'] },
+    files: {
+      '/package.json': JSON.stringify({ name: 'app', dependencies: { react: '18' } }),
+      '/setup.cfg': '',
+    },
+  });
 
 describe('declarations', () => {
   it('recognises external declarations and keeps their source', async () => {
-    const result = await analyser({ provider: project(), declarations: [
-      { type: 'python', name: 'requests', version: '>=2', path: 'setup.cfg', line: 4, source: 'python-build' },
-      { type: 'python', name: 'not-a-known-package', path: 'setup.cfg', source: 'python-build' },
-    ] });
-    expect(result.toJson('').evidence).toContainEqual(
-      { tech: 'requests', kind: 'package', value: 'requests', path: '/setup.cfg', line: 4, source: 'python-build' });
+    const result = await analyser({
+      provider: project(),
+      declarations: [
+        {
+          type: 'python',
+          name: 'requests',
+          version: '>=2',
+          path: 'setup.cfg',
+          line: 4,
+          source: 'python-build',
+        },
+        { type: 'python', name: 'not-a-known-package', path: 'setup.cfg', source: 'python-build' },
+      ],
+    });
+    expect(result.toJson('').evidence).toContainEqual({
+      tech: 'requests',
+      kind: 'package',
+      value: 'requests',
+      path: '/setup.cfg',
+      line: 4,
+      source: 'python-build',
+    });
   });
 
   it('keeps both proofs when the fork and a declaration agree', async () => {
-    const result = flatten(await analyser({ provider: project(), declarations: [
-      { type: 'npm', name: 'react', path: 'package.json', line: 1, source: 'renovate' },
-    ] }), { merge: true });
-    const sources = result.toJson('').evidence
-      .filter((e) => e.tech === 'react').map((e) => e.source).sort();
+    const result = flatten(
+      await analyser({
+        provider: project(),
+        declarations: [
+          { type: 'npm', name: 'react', path: 'package.json', line: 1, source: 'renovate' },
+        ],
+      }),
+      { merge: true }
+    );
+    const sources = result
+      .toJson('')
+      .evidence.filter((e) => e.tech === 'react')
+      .map((e) => e.source)
+      .sort();
     expect(sources).toEqual(['renovate', 'stack-analyser']);
   });
 
   it('rejects a declaration outside the project or of an unknown type', async () => {
-    const bad = (declaration: object) => analyser({ provider: project(), declarations: [declaration as never] });
-    await expect(bad({ type: 'npm', name: 'react', path: '../other/package.json', source: 'x' })).rejects.toThrow(/declaration 0/);
-    await expect(bad({ type: 'cobol', name: 'react', path: 'package.json', source: 'x' })).rejects.toThrow(/declaration 0/);
-    await expect(bad({ type: 'npm', name: 'react', path: 'package.json' })).rejects.toThrow(/declaration 0/);
+    const bad = (declaration: object) =>
+      analyser({ provider: project(), declarations: [declaration as never] });
+    await expect(
+      bad({ type: 'npm', name: 'react', path: '../other/package.json', source: 'x' })
+    ).rejects.toThrow(/declaration 0/);
+    await expect(
+      bad({ type: 'cobol', name: 'react', path: 'package.json', source: 'x' })
+    ).rejects.toThrow(/declaration 0/);
+    await expect(bad({ type: 'npm', name: 'react', path: 'package.json' })).rejects.toThrow(
+      /declaration 0/
+    );
   });
 
   it('keeps an unknown name out of the result', async () => {
-    const result = await analyser({ provider: project(), declarations: [
-      { type: 'python', name: 'not-a-known-package', path: 'setup.cfg', source: 'python-build' },
-    ] });
+    const result = await analyser({
+      provider: project(),
+      declarations: [
+        { type: 'python', name: 'not-a-known-package', path: 'setup.cfg', source: 'python-build' },
+      ],
+    });
     const baseline = await analyser({ provider: project() });
-    expect(result.toJson('')).toEqual({ ...baseline.toJson(''), id: result.id, childs: expect.anything() });
+    expect(result.toJson('')).toEqual({
+      ...baseline.toJson(''),
+      id: result.id,
+      childs: expect.anything(),
+    });
     expect(result.evidence).toEqual([]);
     expect(result.techs.size).toBe(0);
   });
 
   it('puts the technologies and their evidence on the root component', async () => {
-    const result = await analyser({ provider: project(), declarations: [
-      { type: 'python', name: 'requests', path: 'setup.cfg', line: 4, source: 'python-build' },
-    ] });
+    const result = await analyser({
+      provider: project(),
+      declarations: [
+        { type: 'python', name: 'requests', path: 'setup.cfg', line: 4, source: 'python-build' },
+      ],
+    });
     expect(result.techs.has('requests')).toBe(true);
     expect(result.evidence.map((e) => e.tech)).toEqual(['requests']);
     // The only other place is the component the technology implies, the same as for a manifest.
-    const others = result.childs.flatMap((c) => c.evidence).filter((e) => e.source === 'python-build');
+    const others = result.childs
+      .flatMap((c) => c.evidence)
+      .filter((e) => e.source === 'python-build');
     expect(others.every((e) => e.tech === 'requests')).toBe(true);
-    expect(result.childs.find((c) => c.name === 'app')!.evidence.some((e) => e.source === 'python-build')).toBe(false);
+    expect(
+      result.childs.find((c) => c.name === 'app')!.evidence.some((e) => e.source === 'python-build')
+    ).toBe(false);
   });
 
   it('keeps the root technologies of a declaration when flattening without merge', async () => {
-    const flat = flatten(await analyser({ provider: project(), declarations: [
-      { type: 'python', name: 'requests', path: 'setup.cfg', line: 4, source: 'python-build' },
-      { type: 'npm', name: 'vitest', path: 'package.json', source: 'renovate' },
-    ] }));
+    const flat = flatten(
+      await analyser({
+        provider: project(),
+        declarations: [
+          { type: 'python', name: 'requests', path: 'setup.cfg', line: 4, source: 'python-build' },
+          { type: 'npm', name: 'vitest', path: 'package.json', source: 'renovate' },
+        ],
+      })
+    );
     expect(flat.techs.has('requests')).toBe(true);
     // A technology that is not a component lives only on the root: flattening must not drop it.
     expect(flat.techs.has('vitest')).toBe(true);
-    expect(flat.toJson('').evidence).toContainEqual(
-      { tech: 'vitest', kind: 'package', value: 'vitest', path: '/package.json', source: 'renovate' });
+    expect(flat.toJson('').evidence).toContainEqual({
+      tech: 'vitest',
+      kind: 'package',
+      value: 'vitest',
+      path: '/package.json',
+      source: 'renovate',
+    });
   });
 
   it('gives each ecosystem its own evidence kind and reduces an image to its repository', async () => {
-    const result = await analyser({ provider: project(), declarations: [
-      { type: 'docker', name: 'postgres:15.1-alpine', path: 'Dockerfile', line: 1, source: 'image-scan' },
-      { type: 'githubAction', name: 'google-github-actions/auth', version: 'v4', path: '.github/workflows/ci.yml', line: 9, source: 'workflow-scan' },
-    ] });
+    const result = await analyser({
+      provider: project(),
+      declarations: [
+        {
+          type: 'docker',
+          name: 'postgres:15.1-alpine',
+          path: 'Dockerfile',
+          line: 1,
+          source: 'image-scan',
+        },
+        {
+          type: 'githubAction',
+          name: 'google-github-actions/auth',
+          version: 'v4',
+          path: '.github/workflows/ci.yml',
+          line: 9,
+          source: 'workflow-scan',
+        },
+      ],
+    });
     const evidence = result.toJson('').evidence;
-    expect(evidence).toContainEqual(
-      { tech: 'postgresql', kind: 'image', value: 'postgres', path: '/Dockerfile', line: 1, source: 'image-scan' });
     expect(evidence).toContainEqual({
-      tech: 'gcp', kind: 'action', value: 'google-github-actions/auth', path: '/.github/workflows/ci.yml', line: 9, source: 'workflow-scan',
+      tech: 'postgresql',
+      kind: 'image',
+      value: 'postgres',
+      path: '/Dockerfile',
+      line: 1,
+      source: 'image-scan',
+    });
+    expect(evidence).toContainEqual({
+      tech: 'gcp',
+      kind: 'action',
+      value: 'google-github-actions/auth',
+      path: '/.github/workflows/ci.yml',
+      line: 9,
+      source: 'workflow-scan',
     });
   });
 
   it('reports a declared image by the name that was sent, not by the repository it is matched as', async () => {
-    const result = await analyser({ provider: project(), declarations: [
-      { type: 'docker', name: 'docker.io/apache/tika', path: 'compose.yaml', line: 3, source: 'image-scan' },
-      { type: 'docker', name: 'index.docker.io/library/postgres', path: 'compose.yaml', line: 7, source: 'image-scan' },
-      { type: 'docker', name: 'registry-1.docker.io/bitnami/postgresql', path: 'compose.yaml', line: 9, source: 'image-scan' },
-    ] });
+    const result = await analyser({
+      provider: project(),
+      declarations: [
+        {
+          type: 'docker',
+          name: 'docker.io/apache/tika',
+          path: 'compose.yaml',
+          line: 3,
+          source: 'image-scan',
+        },
+        {
+          type: 'docker',
+          name: 'index.docker.io/library/postgres',
+          path: 'compose.yaml',
+          line: 7,
+          source: 'image-scan',
+        },
+        {
+          type: 'docker',
+          name: 'registry-1.docker.io/bitnami/postgresql',
+          path: 'compose.yaml',
+          line: 9,
+          source: 'image-scan',
+        },
+      ],
+    });
     const evidence = result.toJson('').evidence;
     expect(evidence).toContainEqual({
-      tech: 'apachetika', kind: 'image', value: 'docker.io/apache/tika', path: '/compose.yaml', line: 3, source: 'image-scan',
+      tech: 'apachetika',
+      kind: 'image',
+      value: 'docker.io/apache/tika',
+      path: '/compose.yaml',
+      line: 3,
+      source: 'image-scan',
     });
     expect(evidence).toContainEqual({
-      tech: 'postgresql', kind: 'image', value: 'index.docker.io/library/postgres', path: '/compose.yaml', line: 7, source: 'image-scan',
+      tech: 'postgresql',
+      kind: 'image',
+      value: 'index.docker.io/library/postgres',
+      path: '/compose.yaml',
+      line: 7,
+      source: 'image-scan',
     });
     expect(evidence).toContainEqual({
-      tech: 'postgresql', kind: 'image', value: 'registry-1.docker.io/bitnami/postgresql', path: '/compose.yaml', line: 9,
+      tech: 'postgresql',
+      kind: 'image',
+      value: 'registry-1.docker.io/bitnami/postgresql',
+      path: '/compose.yaml',
+      line: 9,
       source: 'image-scan',
     });
   });
 
   it('writes the path of a declaration the way the readers write theirs', async () => {
     // The same file, the same name and the same source as the fork's own evidence: they are one item.
-    const result = flatten(await analyser({ provider: project(), declarations: [
-      { type: 'npm', name: 'react', path: './package.json', source: 'stack-analyser' },
-    ] }), { merge: true });
+    const result = flatten(
+      await analyser({
+        provider: project(),
+        declarations: [
+          { type: 'npm', name: 'react', path: './package.json', source: 'stack-analyser' },
+        ],
+      }),
+      { merge: true }
+    );
     expect(result.toJson('').evidence.filter((e) => e.tech === 'react')).toEqual([
-      { tech: 'react', kind: 'package', value: 'react', path: '/package.json', source: 'stack-analyser' },
+      {
+        tech: 'react',
+        kind: 'package',
+        value: 'react',
+        path: '/package.json',
+        source: 'stack-analyser',
+      },
     ]);
   });
 
@@ -121,14 +255,19 @@ describe('declarations', () => {
 
   describe('validation', () => {
     const valid = { type: 'npm', name: 'react', path: 'package.json', source: 'x' };
-    const run = (...declarations: unknown[]) => analyser({ provider: project(), declarations: declarations as never });
+    const run = (...declarations: unknown[]) =>
+      analyser({ provider: project(), declarations: declarations as never });
 
     it.each([
       ['an absolute path', { ...valid, path: '/etc/package.json' }, /"path"/],
       ['a Windows absolute path', { ...valid, path: String.raw`C:\other\package.json` }, /"path"/],
       ['a Windows drive-relative path', { ...valid, path: 'C:package.json' }, /"path"/],
       ['a path that leaves the root', { ...valid, path: 'a/../../package.json' }, /"path"/],
-      ['a backslash path that leaves the root', { ...valid, path: String.raw`..\package.json` }, /"path"/],
+      [
+        'a backslash path that leaves the root',
+        { ...valid, path: String.raw`..\package.json` },
+        /"path"/,
+      ],
       ['the root itself', { ...valid, path: '.' }, /"path"/],
       ['an unknown type', { ...valid, type: 'cobol' }, /"type"/],
       ['an inherited property as a type', { ...valid, type: 'constructor' }, /"type"/],
@@ -149,14 +288,31 @@ describe('declarations', () => {
     });
 
     it('rejects a value that is not an array', async () => {
-      const bad = (declarations: unknown) => analyser({ provider: project(), declarations: declarations as never });
+      const bad = (declarations: unknown) =>
+        analyser({ provider: project(), declarations: declarations as never });
       await expect(bad({ type: 'npm' })).rejects.toThrow(/must be an array/);
       await expect(bad('react')).rejects.toThrow(/must be an array/);
     });
 
     it('accepts every supported type', async () => {
-      const types = ['deno', 'docker', 'githubAction', 'golang', 'hex', 'maven', 'npm', 'nuget', 'php', 'pub', 'python',
-        'ruby', 'rust', 'swiftpm', 'terraform.resource', 'terraform'];
+      const types = [
+        'deno',
+        'docker',
+        'githubAction',
+        'golang',
+        'hex',
+        'maven',
+        'npm',
+        'nuget',
+        'php',
+        'pub',
+        'python',
+        'ruby',
+        'rust',
+        'swiftpm',
+        'terraform.resource',
+        'terraform',
+      ];
       await expect(run(...types.map((type) => ({ ...valid, type })))).resolves.toBeDefined();
     });
   });

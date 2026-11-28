@@ -4,7 +4,5 @@ register({
   tech: 'django-rest-framework',
   name: 'Django REST framework',
   type: 'framework',
-  dependencies: [
-    { type: 'python', name: 'djangorestframework' },
-  ],
+  dependencies: [{ type: 'python', name: 'djangorestframework' }],
 });

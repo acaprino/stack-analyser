@@ -15,7 +15,9 @@ describe('dotenv', () => {
         continue;
       }
 
-      env.push(...item.ref.dotenv.map((name) => `${name}${name.endsWith('_') ? 'KEY' : ''}=example`));
+      env.push(
+        ...item.ref.dotenv.map((name) => `${name}${name.endsWith('_') ? 'KEY' : ''}=example`)
+      );
     }
 
     const res = await analyser({
@@ -39,13 +41,16 @@ describe('dotenv', () => {
     const provider = new FakeProvider({
       paths: { '/': ['.env.example', '.env.production.sample'] },
       files: {
-        '/.env.example': '# OPENAI_API_KEY=x\nNOTE="STRIPE_TOKEN"\nNOT_REDIS_URL=x\nADD_PORT=3\nAPPLE_IDENTITY=x',
-        '/.env.production.sample': 'export NEXT_PUBLIC_SUPABASE_URL=demo\nROLLBAR_TOKEN=\nVITE_SENTRY_DSN=x',
+        '/.env.example':
+          '# OPENAI_API_KEY=x\nNOTE="STRIPE_TOKEN"\nNOT_REDIS_URL=x\nADD_PORT=3\nAPPLE_IDENTITY=x',
+        '/.env.production.sample':
+          'export NEXT_PUBLIC_SUPABASE_URL=demo\nROLLBAR_TOKEN=\nVITE_SENTRY_DSN=x',
       },
     });
     const hits = flatten(await analyser({ provider }), { merge: true }).techs;
     expect([...hits]).toEqual(expect.arrayContaining(['supabase', 'rollbar', 'sentry']));
-    for (const other of ['openai', 'stripe', 'redis', 'datadog', 'apple'] as const) expect(hits.has(other)).toBe(false);
+    for (const other of ['openai', 'stripe', 'redis', 'datadog', 'apple'] as const)
+      expect(hits.has(other)).toBe(false);
   });
 
   it('does not read a misspelt Rollbar variable', async () => {

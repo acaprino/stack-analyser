@@ -4,7 +4,5 @@ register({
   tech: 'serde',
   name: 'Serde',
   type: 'tool',
-  dependencies: [
-    { type: 'rust', name: 'serde' },
-  ],
+  dependencies: [{ type: 'rust', name: 'serde' }],
 });

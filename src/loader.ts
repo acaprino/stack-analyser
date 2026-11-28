@@ -60,7 +60,8 @@ export function loadAllRules(): void {
 export function loadOne(rule: Rule): void {
   if (loadedRules.has(rule)) return;
   const invalid = rule.dependencies?.find((dep) => dep.name === '');
-  if (invalid) throw new Error(`empty dependency name for ${rule.name} (${rule.type} > ${rule.tech})`);
+  if (invalid)
+    throw new Error(`empty dependency name for ${rule.name} (${rule.type} > ${rule.tech})`);
   for (const value of rule.hosts ?? []) {
     const host = value.toLowerCase();
     const techs = endpointHosts.get(host) ?? new Set<AllowedKeys>();

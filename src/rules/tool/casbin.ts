@@ -4,7 +4,5 @@ register({
   tech: 'casbin',
   name: 'Casbin',
   type: 'tool',
-  dependencies: [
-    { type: 'golang', name: 'github.com/casbin/casbin' },
-  ],
+  dependencies: [{ type: 'golang', name: 'github.com/casbin/casbin' }],
 });

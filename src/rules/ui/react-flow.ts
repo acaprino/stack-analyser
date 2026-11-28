@@ -4,7 +4,5 @@ register({
   tech: 'react-flow',
   name: 'React Flow',
   type: 'ui',
-  dependencies: [
-    { type: 'npm', name: '@xyflow/react' },
-  ],
+  dependencies: [{ type: 'npm', name: '@xyflow/react' }],
 });

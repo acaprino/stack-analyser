@@ -4,7 +4,5 @@ register({
   tech: 'qute',
   name: 'Qute',
   type: 'tool',
-  dependencies: [
-    { type: 'maven', name: 'io.quarkus:quarkus-rest-qute' },
-  ],
+  dependencies: [{ type: 'maven', name: 'io.quarkus:quarkus-rest-qute' }],
 });

@@ -4,7 +4,5 @@ register({
   tech: 'reqnroll',
   name: 'Reqnroll',
   type: 'test',
-  dependencies: [
-    { type: 'nuget', name: 'Reqnroll.NUnit' },
-  ],
+  dependencies: [{ type: 'nuget', name: 'Reqnroll.NUnit' }],
 });

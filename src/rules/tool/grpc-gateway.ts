@@ -4,7 +4,5 @@ register({
   tech: 'grpc-gateway',
   name: 'gRPC-Gateway',
   type: 'tool',
-  dependencies: [
-    { type: 'golang', name: 'github.com/grpc-ecosystem/grpc-gateway' },
-  ],
+  dependencies: [{ type: 'golang', name: 'github.com/grpc-ecosystem/grpc-gateway' }],
 });

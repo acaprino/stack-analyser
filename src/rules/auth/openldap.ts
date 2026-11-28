@@ -4,7 +4,5 @@ register({
   tech: 'openldap',
   name: 'OpenLDAP',
   type: 'auth',
-  dependencies: [
-    { type: 'docker', name: 'rroemhild/test-openldap' },
-  ],
+  dependencies: [{ type: 'docker', name: 'rroemhild/test-openldap' }],
 });

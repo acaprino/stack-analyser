@@ -4,7 +4,5 @@ register({
   tech: 'junit',
   name: 'JUnit',
   type: 'test',
-  dependencies: [
-    { type: 'maven', name: 'junit:junit' },
-  ],
+  dependencies: [{ type: 'maven', name: 'junit:junit' }],
 });

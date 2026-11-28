@@ -10,7 +10,9 @@ await build({
   format: 'esm',
   target: 'es2022',
   // Dependencies written as CommonJS call `require`, which an ES module does not have.
-  banner: { js: "import { createRequire as __createRequire } from 'node:module';\nconst require = __createRequire(import.meta.url);" },
+  banner: {
+    js: "import { createRequire as __createRequire } from 'node:module';\nconst require = __createRequire(import.meta.url);",
+  },
   // It loads a WebAssembly file by a path relative to its own module, so it has to stay a package in node_modules.
   external: ['@cdktf/hcl2json'],
 });

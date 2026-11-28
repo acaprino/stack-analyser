@@ -38,18 +38,30 @@ describe('all', () => {
     for (const [relative, type, tech, expected] of cases) {
       const name = relative.split('/').pop()!;
       const found = [...matchAllFiles([{ fp: '/repo/' + relative, name, type }], '/repo').keys()];
-      expect(found.includes(tech as typeof found[number]), relative).toBe(expected);
+      expect(found.includes(tech as (typeof found)[number]), relative).toBe(expected);
     }
   });
 
   // The registry writes a directory marker without the slash that the rules use for a directory.
   it.each([
-    ['.circleci', 'circleci'], ['.github', 'github'], ['.lego', 'goacmelego'], ['.jekyll-cache', 'jekyll'],
-    ['.jenkins', 'jenkins'], ['.meteor', 'meteorjs'], ['.nango', 'nango'], ['.sonarlint', 'sonarlint'],
-    ['.storybook', 'storybook'], ['.teamcity', 'teamcity'], ['.terraform', 'terraform'], ['.vercel', 'vercel'],
-    ['.vitepress', 'vitepress'], ['.vuepress', 'vuepress'],
+    ['.circleci', 'circleci'],
+    ['.github', 'github'],
+    ['.lego', 'goacmelego'],
+    ['.jekyll-cache', 'jekyll'],
+    ['.jenkins', 'jenkins'],
+    ['.meteor', 'meteorjs'],
+    ['.nango', 'nango'],
+    ['.sonarlint', 'sonarlint'],
+    ['.storybook', 'storybook'],
+    ['.teamcity', 'teamcity'],
+    ['.terraform', 'terraform'],
+    ['.vercel', 'vercel'],
+    ['.vitepress', 'vitepress'],
+    ['.vuepress', 'vuepress'],
   ] as const)('recognizes the directory %s as %s and not a file of that name', (name, tech) => {
-    const found = (type: 'file' | 'dir') => [...matchAllFiles([{ fp: '/repo/' + name, name, type }], '/repo').keys()];
+    const found = (type: 'file' | 'dir') => [
+      ...matchAllFiles([{ fp: '/repo/' + name, name, type }], '/repo').keys(),
+    ];
     expect(found('dir')).toContain(tech);
     expect(found('file')).not.toContain(tech);
   });

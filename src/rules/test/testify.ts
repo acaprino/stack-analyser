@@ -4,7 +4,5 @@ register({
   tech: 'testify',
   name: 'testify',
   type: 'test',
-  dependencies: [
-    { type: 'golang', name: 'github.com/stretchr/testify' },
-  ],
+  dependencies: [{ type: 'golang', name: 'github.com/stretchr/testify' }],
 });

@@ -4,7 +4,5 @@ register({
   tech: 'lombok',
   name: 'Lombok',
   type: 'tool',
-  dependencies: [
-    { type: 'maven', name: 'org.projectlombok:lombok' },
-  ],
+  dependencies: [{ type: 'maven', name: 'org.projectlombok:lombok' }],
 });

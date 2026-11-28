@@ -32,6 +32,10 @@ export function packageComponent(
 ): Payload {
   const payload = new Payload({ name, folderPath });
   payload.dependencies = [...requirements].map(([pkg, version]) => [ecosystem, pkg, version]);
-  payload.addDependencyTechs([...requirements.keys()].filter((pkg) => !local.has(pkg)), ecosystem, file);
+  payload.addDependencyTechs(
+    [...requirements.keys()].filter((pkg) => !local.has(pkg)),
+    ecosystem,
+    file
+  );
   return payload;
 }

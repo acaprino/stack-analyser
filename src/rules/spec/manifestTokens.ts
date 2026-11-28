@@ -20,9 +20,13 @@ function blockCommentEnd(source: string, start: number): number {
   let depth = 1;
   let i = start + 2;
   while (i < source.length && depth) {
-    if (source.startsWith('/*', i)) { depth++; i += 2; }
-    else if (source.startsWith('*/', i)) { depth--; i += 2; }
-    else i++;
+    if (source.startsWith('/*', i)) {
+      depth++;
+      i += 2;
+    } else if (source.startsWith('*/', i)) {
+      depth--;
+      i += 2;
+    } else i++;
   }
   return i;
 }
@@ -38,7 +42,14 @@ function interpolationEnd(source: string, start: number, isSwift: boolean, level
     innerString.lastIndex = i;
     const quote = innerString.exec(source);
     if (quote) {
-      i = stringEnd(source, innerString.lastIndex, quote[2] + quote[1], '\\' + quote[1], isSwift, level);
+      i = stringEnd(
+        source,
+        innerString.lastIndex,
+        quote[2] + quote[1],
+        '\\' + quote[1],
+        isSwift,
+        level
+      );
     } else if (isSwift && source.startsWith('/*', i)) {
       i = blockCommentEnd(source, i);
     } else if (isSwift ? source.startsWith('//', i) : source[i] === '#') {
@@ -53,8 +64,16 @@ function interpolationEnd(source: string, start: number, isSwift: boolean, level
   return i;
 }
 
-function stringEnd(source: string, start: number, close: string, escape: string, isSwift: boolean, level = 0,
-  interpolate = true, pairedOpen?: string): number {
+function stringEnd(
+  source: string,
+  start: number,
+  close: string,
+  escape: string,
+  isSwift: boolean,
+  level = 0,
+  interpolate = true,
+  pairedOpen?: string
+): number {
   let i = start;
   let depth = 1;
   const interpolation = isSwift ? escape + '(' : '#{';
@@ -94,13 +113,26 @@ export function tokens(source: string, language: Language): Token[] {
     const isRuby = language === 'ruby';
     const isPython = language === 'python';
     const quote = isSwift ? swiftQuote : isRuby ? rubyQuote : elixirQuote;
-    quote.lastIndex = sigil.lastIndex = word.lastIndex = percentLiteral.lastIndex = heredoc.lastIndex = i;
+    quote.lastIndex =
+      sigil.lastIndex =
+      word.lastIndex =
+      percentLiteral.lastIndex =
+      heredoc.lastIndex =
+        i;
     let match: RegExpExecArray | null;
-    if (isRuby && (i === 0 || source[i - 1] === '\n') && source.startsWith('__END__', i)
-        && /^(?:\r?\n|$)/.test(source.slice(i + 7, i + 9))) {
+    if (
+      isRuby &&
+      (i === 0 || source[i - 1] === '\n') &&
+      source.startsWith('__END__', i) &&
+      /^(?:\r?\n|$)/.test(source.slice(i + 7, i + 9))
+    ) {
       break;
-    } else if (isRuby && (i === 0 || source[i - 1] === '\n') && source.startsWith('=begin', i)
-        && /\s/.test(source[i + 6] || ' ')) {
+    } else if (
+      isRuby &&
+      (i === 0 || source[i - 1] === '\n') &&
+      source.startsWith('=begin', i) &&
+      /\s/.test(source[i + 6] || ' ')
+    ) {
       const end = /^=end(?:[^\S\n].*)?\r?$/gm;
       end.lastIndex = i + 6;
       i = end.exec(source) ? end.lastIndex : source.length;
@@ -119,18 +151,35 @@ export function tokens(source: string, language: Language): Token[] {
       pendingHeredocs.push({ label: match[3] || match[4], indented: !!match[1] });
       i = heredoc.lastIndex;
       out.push({ kind: 'opaque', value: '', line });
-    } else if (isRuby && char === '/' && (out.at(-1)?.line !== line ||
-        ['=', '~', '(', '[', '{', ',', ';', 'return', 'when', 'if', 'unless'].includes(out.at(-1)!.value))) {
+    } else if (
+      isRuby &&
+      char === '/' &&
+      (out.at(-1)?.line !== line ||
+        ['=', '~', '(', '[', '{', ',', ';', 'return', 'when', 'if', 'unless'].includes(
+          out.at(-1)!.value
+        ))
+    ) {
       i = stringEnd(source, i + 1, '/', '\\', false);
       out.push({ kind: 'opaque', value: '', line });
     } else if (isRuby && char === '%' && (match = percentLiteral.exec(source))) {
       const open = match[1];
       const end = closes[open] || open;
-      i = stringEnd(source, percentLiteral.lastIndex, end, '\\', false, 0,
-        !['q', 'w', 'i', 's'].includes(source[start + 1]), closes[open] ? open : undefined);
+      i = stringEnd(
+        source,
+        percentLiteral.lastIndex,
+        end,
+        '\\',
+        false,
+        0,
+        !['q', 'w', 'i', 's'].includes(source[start + 1]),
+        closes[open] ? open : undefined
+      );
       const value = source.slice(percentLiteral.lastIndex, i - end.length);
-      const literal = (match[0].length === 2 || ['q', 'Q'].includes(source[start + 1])) &&
-        source[i - 1] === end && !value.includes('\\') && !value.includes('#{');
+      const literal =
+        (match[0].length === 2 || ['q', 'Q'].includes(source[start + 1])) &&
+        source[i - 1] === end &&
+        !value.includes('\\') &&
+        !value.includes('#{');
       out.push(literal ? { kind: 'string', value, line } : { kind: 'opaque', value: '', line });
     } else if (/\s/.test(char)) {
       i++;
@@ -141,17 +190,36 @@ export function tokens(source: string, language: Language): Token[] {
       i = blockCommentEnd(source, i);
     } else if (language === 'elixir' && (match = sigil.exec(source))) {
       const open = match[1];
-      i = stringEnd(source, sigil.lastIndex, closes[open] || open, '\\', false, 0,
-        /[a-z]/.test(source[start + 1]), closes[open] ? open : undefined);
+      i = stringEnd(
+        source,
+        sigil.lastIndex,
+        closes[open] || open,
+        '\\',
+        false,
+        0,
+        /[a-z]/.test(source[start + 1]),
+        closes[open] ? open : undefined
+      );
       out.push({ kind: 'opaque', value: '', line });
     } else if ((match = quote.exec(source))) {
       const delimiter = isSwift ? match[2] : match[1];
       const marks = isSwift ? match[1] : '';
       const close = delimiter + marks;
-      i = stringEnd(source, quote.lastIndex, close, '\\' + marks, isSwift, 0, !isPython && (!isRuby || delimiter !== "'"));
+      i = stringEnd(
+        source,
+        quote.lastIndex,
+        close,
+        '\\' + marks,
+        isSwift,
+        0,
+        !isPython && (!isRuby || delimiter !== "'")
+      );
       const value = source.slice(quote.lastIndex, i - close.length);
-      const literal = (delimiter === '"' || ((isRuby || isPython) && delimiter === "'")) && source.slice(i - close.length, i) === close &&
-        !value.includes('\\' + marks) && (isSwift || !value.includes('#{'));
+      const literal =
+        (delimiter === '"' || ((isRuby || isPython) && delimiter === "'")) &&
+        source.slice(i - close.length, i) === close &&
+        !value.includes('\\' + marks) &&
+        (isSwift || !value.includes('#{'));
       out.push(literal ? { kind: 'string', value, line } : { kind: 'opaque', value: '', line });
     } else if ((match = word.exec(source))) {
       i = word.lastIndex;

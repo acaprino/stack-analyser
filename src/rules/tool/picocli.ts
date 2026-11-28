@@ -4,7 +4,5 @@ register({
   tech: 'picocli',
   name: 'picocli',
   type: 'tool',
-  dependencies: [
-    { type: 'maven', name: 'info.picocli:picocli' },
-  ],
+  dependencies: [{ type: 'maven', name: 'info.picocli:picocli' }],
 });

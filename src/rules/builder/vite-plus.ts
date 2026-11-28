@@ -4,7 +4,5 @@ register({
   tech: 'vite-plus',
   name: 'Vite+',
   type: 'builder',
-  dependencies: [
-    { type: 'npm', name: 'vite-plus' },
-  ],
+  dependencies: [{ type: 'npm', name: 'vite-plus' }],
 });

@@ -5,8 +5,18 @@ import { packageComponent, projectPath } from '../packageManifest.js';
 import type { Token } from '../manifestTokens.js';
 import type { ComponentMatcher } from '../../../types/rule.js';
 
-function dependency(items: Token[], start: number, stop: number, packages: Map<string, string>): void {
-  if (items[start + 1]?.value !== ':' || items[start + 2]?.kind !== 'word' || items[start + 3]?.value !== ',') return;
+function dependency(
+  items: Token[],
+  start: number,
+  stop: number,
+  packages: Map<string, string>
+): void {
+  if (
+    items[start + 1]?.value !== ':' ||
+    items[start + 2]?.kind !== 'word' ||
+    items[start + 3]?.value !== ','
+  )
+    return;
   let name = items[start + 2].value;
   const requirement = items[start + 4];
   let version = requirement?.kind === 'string' ? requirement.value : '';
@@ -14,8 +24,10 @@ function dependency(items: Token[], start: number, stop: number, packages: Map<s
     if (items[i].kind !== 'word' || items[i + 1].value !== ':') continue;
     const key = items[i].value;
     if (key === 'path' || key === 'in_umbrella') return;
-    if (key === 'hex' && items[i + 2].value === ':' && items[i + 3]?.kind === 'word') name = items[i + 3].value;
-    if (!version && ['tag', 'ref', 'branch'].includes(key) && items[i + 2].kind === 'string') version = items[i + 2].value;
+    if (key === 'hex' && items[i + 2].value === ':' && items[i + 3]?.kind === 'word')
+      name = items[i + 3].value;
+    if (!version && ['tag', 'ref', 'branch'].includes(key) && items[i + 2].kind === 'string')
+      version = items[i + 2].value;
   }
   packages.set(name, version);
 }
@@ -39,8 +51,13 @@ function readManifest(content: string): { name: string; packages: Map<string, st
   let name = 'virtual';
   for (let i = 0; i < items.length; i++) {
     if (items[i].kind !== 'word') continue;
-    if (items[i].value === 'app' && items[i + 1]?.value === ':' && items[i + 2]?.value === ':' &&
-        items[i + 3]?.kind === 'word') name = items[i + 3].value;
+    if (
+      items[i].value === 'app' &&
+      items[i + 1]?.value === ':' &&
+      items[i + 2]?.value === ':' &&
+      items[i + 3]?.kind === 'word'
+    )
+      name = items[i + 3].value;
     if (items[i].value === 'deps' && items[i + 1]?.value === ':' && items[i + 2]?.value === '[') {
       i = readList(items, i + 2, packages);
     } else if (['defp', 'def'].includes(items[i].value) && items[i + 1]?.value === 'deps') {
@@ -59,9 +76,16 @@ function lockedHex(content: string): Map<string, string> {
   for (let i = 0; i + 8 < items.length; i++) {
     // Each lock entry's value is {:hex, :published_name, "version", ...}.
     // The lock key can differ when a dependency uses the :hex alias option.
-    if (items[i].value === '{' && items[i + 1].value === ':' && items[i + 2].value === 'hex' &&
-        items[i + 3].value === ',' && items[i + 4].value === ':' && items[i + 5].kind === 'word' &&
-        items[i + 6].value === ',' && items[i + 7].kind === 'string') {
+    if (
+      items[i].value === '{' &&
+      items[i + 1].value === ':' &&
+      items[i + 2].value === 'hex' &&
+      items[i + 3].value === ',' &&
+      items[i + 4].value === ':' &&
+      items[i + 5].kind === 'word' &&
+      items[i + 6].value === ',' &&
+      items[i + 7].kind === 'string'
+    ) {
       packages.set(items[i + 5].value, items[i + 7].value);
     }
   }
@@ -73,7 +97,9 @@ export const detectHexComponent: ComponentMatcher = async (files, provider) => {
   const lock = files.find((file) => file.type === 'file' && file.name === 'mix.lock');
   const payloads: Payload[] = [];
   if (manifest || lock) {
-    const { name, packages } = readManifest(manifest ? (await provider.open(manifest.fp)) || '' : '');
+    const { name, packages } = readManifest(
+      manifest ? (await provider.open(manifest.fp)) || '' : ''
+    );
     if (lock) {
       for (const [id, version] of lockedHex((await provider.open(lock.fp)) || '')) {
         if (!manifest || packages.has(id)) packages.set(id, version);
@@ -97,15 +123,32 @@ export const detectHexComponent: ComponentMatcher = async (files, provider) => {
     const items = tokens(content, 'elixir');
     const pl = payloads[0] || new Payload({ name: 'virtual', folderPath: file.fp });
     for (let i = 0; i + 2 < items.length; i++) {
-      if (items[i].kind !== 'word' || items[i].value !== 'ExUnit' || items[i - 1]?.value === '.') continue;
+      if (items[i].kind !== 'word' || items[i].value !== 'ExUnit' || items[i - 1]?.value === '.')
+        continue;
       if (items[i + 1].value !== '.' || items[i + 2].kind !== 'word') continue;
-      if ((['start', 'configuration'].includes(items[i + 2].value) && items[i + 3]?.value === '(') ||
-          (items[i - 1]?.value === 'use' && items[i + 2].value === 'Case')) {
+      if (
+        (['start', 'configuration'].includes(items[i + 2].value) && items[i + 3]?.value === '(') ||
+        (items[i - 1]?.value === 'use' && items[i + 2].value === 'Case')
+      ) {
         pl.path.add(file.fp);
         pl.addTech(
           'exunit',
-          ['ExUnit.' + items[i + 2].value + ' at ' + projectPath(provider.basePath, file.fp) + ':' + items[i].line],
-          [{ kind: 'source', value: 'ExUnit.' + items[i + 2].value, path: file.fp, line: items[i].line }]
+          [
+            'ExUnit.' +
+              items[i + 2].value +
+              ' at ' +
+              projectPath(provider.basePath, file.fp) +
+              ':' +
+              items[i].line,
+          ],
+          [
+            {
+              kind: 'source',
+              value: 'ExUnit.' + items[i + 2].value,
+              path: file.fp,
+              line: items[i].line,
+            },
+          ]
         );
       }
     }

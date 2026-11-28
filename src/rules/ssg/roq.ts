@@ -4,7 +4,5 @@ register({
   tech: 'roq',
   name: 'Roq',
   type: 'ssg',
-  dependencies: [
-    { type: 'maven', name: 'io.quarkiverse.roq:quarkus-roq' },
-  ],
+  dependencies: [{ type: 'maven', name: 'io.quarkiverse.roq:quarkus-roq' }],
 });

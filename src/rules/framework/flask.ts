@@ -4,7 +4,5 @@ register({
   tech: 'flask',
   name: 'Flask',
   type: 'framework',
-  dependencies: [
-    { type: 'python', name: 'flask' },
-  ],
+  dependencies: [{ type: 'python', name: 'flask' }],
 });

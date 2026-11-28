@@ -4,7 +4,5 @@ register({
   tech: 'webview2-com',
   name: 'webview2-com',
   type: 'tool',
-  dependencies: [
-    { type: 'rust', name: 'webview2-com' },
-  ],
+  dependencies: [{ type: 'rust', name: 'webview2-com' }],
 });

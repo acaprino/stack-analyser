@@ -4,7 +4,5 @@ register({
   tech: 'echo',
   name: 'Echo',
   type: 'framework',
-  dependencies: [
-    { type: 'golang', name: 'github.com/labstack/echo/v4' },
-  ],
+  dependencies: [{ type: 'golang', name: 'github.com/labstack/echo/v4' }],
 });

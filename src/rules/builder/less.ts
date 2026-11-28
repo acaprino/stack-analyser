@@ -4,7 +4,5 @@ register({
   tech: 'less',
   name: 'Less',
   type: 'builder',
-  dependencies: [
-    { type: 'npm', name: 'less' },
-  ],
+  dependencies: [{ type: 'npm', name: 'less' }],
 });

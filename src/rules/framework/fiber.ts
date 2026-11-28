@@ -4,7 +4,5 @@ register({
   tech: 'fiber',
   name: 'Fiber',
   type: 'framework',
-  dependencies: [
-    { type: 'golang', name: 'github.com/gofiber/fiber' },
-  ],
+  dependencies: [{ type: 'golang', name: 'github.com/gofiber/fiber' }],
 });

@@ -4,7 +4,5 @@ register({
   tech: 'rocket-chat',
   name: 'Rocket.Chat',
   type: 'communication',
-  dependencies: [
-    { type: 'npm', name: '@rocket.chat/sdk' },
-  ],
+  dependencies: [{ type: 'npm', name: '@rocket.chat/sdk' }],
 });

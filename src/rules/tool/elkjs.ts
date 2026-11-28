@@ -4,7 +4,5 @@ register({
   tech: 'elkjs',
   name: 'ELK.js',
   type: 'tool',
-  dependencies: [
-    { type: 'npm', name: 'elkjs' },
-  ],
+  dependencies: [{ type: 'npm', name: 'elkjs' }],
 });

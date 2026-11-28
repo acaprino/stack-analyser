@@ -62,7 +62,11 @@ describe('payload', () => {
       matchDependencies(['pg', 'left-pad'], 'npm');
       const once = test.mock.calls.length;
       test.mockClear();
-      new Payload({ name: 'root', folderPath: '/' }).addDependencyTechs(['pg', 'left-pad'], 'npm', '/package.json');
+      new Payload({ name: 'root', folderPath: '/' }).addDependencyTechs(
+        ['pg', 'left-pad'],
+        'npm',
+        '/package.json'
+      );
       expect(once).toBeGreaterThan(0);
       expect(test.mock.calls.length).toBeLessThanOrEqual(once);
     } finally {
@@ -71,7 +75,12 @@ describe('payload', () => {
   });
 
   it('keeps one mention per tech, host, path and line when payloads are combined', () => {
-    const mention = (line: number) => ({ tech: 'telegram' as const, host: 'api.telegram.org', path: 'c.ts', line });
+    const mention = (line: number) => ({
+      tech: 'telegram' as const,
+      host: 'api.telegram.org',
+      path: 'c.ts',
+      line,
+    });
     const a = new Payload({ name: 'a', folderPath: '/' });
     const b = new Payload({ name: 'b', folderPath: '/' });
     a.mentions.push(mention(1));

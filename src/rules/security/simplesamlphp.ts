@@ -5,7 +5,5 @@ register({
   name: 'SimpleSAMLphp',
   type: 'security',
   dotenv: ['SIMPLESAMLPHP_SP_ASSERTION_CONSUMER_SERVICE'],
-  dependencies: [
-    { type: 'docker', name: 'kenchan0130/simplesamlphp' },
-  ],
+  dependencies: [{ type: 'docker', name: 'kenchan0130/simplesamlphp' }],
 });

@@ -4,7 +4,5 @@ register({
   tech: 'pebble',
   name: 'Pebble',
   type: 'tool',
-  dependencies: [
-    { type: 'maven', name: 'io.pebbletemplates:pebble' },
-  ],
+  dependencies: [{ type: 'maven', name: 'io.pebbletemplates:pebble' }],
 });

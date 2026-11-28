@@ -12,6 +12,10 @@ register({
     { type: 'maven', name: 'org.springframework.boot:spring-boot-starter' },
     { type: 'maven', name: 'org.springframework.boot:spring-boot-starter-parent' },
     { type: 'maven', name: /^org\.springframework\.boot$/, example: 'org.springframework.boot' },
-    { type: 'maven', name: /^org\.springframework\.boot:spring-boot(?:-[a-z0-9]+)*$/, example: 'org.springframework.boot:spring-boot-starter-web' },
+    {
+      type: 'maven',
+      name: /^org\.springframework\.boot:spring-boot(?:-[a-z0-9]+)*$/,
+      example: 'org.springframework.boot:spring-boot-starter-web',
+    },
   ],
 });

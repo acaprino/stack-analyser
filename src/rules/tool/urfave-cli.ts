@@ -4,7 +4,5 @@ register({
   tech: 'urfave-cli',
   name: 'urfave/cli',
   type: 'tool',
-  dependencies: [
-    { type: 'golang', name: 'github.com/urfave/cli' },
-  ],
+  dependencies: [{ type: 'golang', name: 'github.com/urfave/cli' }],
 });

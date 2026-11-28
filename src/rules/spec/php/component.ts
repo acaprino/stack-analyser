@@ -24,7 +24,14 @@ async function folders(provider: BaseProvider, pattern: string): Promise<string[
       found = found.map((folder) => path.join(folder, part));
       continue;
     }
-    const name = new RegExp('^' + part.replace(/[.+^${}()|[\]\\]/g, '\\$&').replace(/\*/g, '.*').replace(/\?/g, '.') + '$');
+    const name = new RegExp(
+      '^' +
+        part
+          .replace(/[.+^${}()|[\]\\]/g, '\\$&')
+          .replace(/\*/g, '.*')
+          .replace(/\?/g, '.') +
+        '$'
+    );
     const next: string[] = [];
     for (const folder of found) {
       for (const item of await provider.listDir(folder)) {
@@ -40,28 +47,41 @@ async function folders(provider: BaseProvider, pattern: string): Promise<string[
  * The names of the packages that `repositories` entries of type `path` take from a folder inside the copy: the `name`
  * of the composer.json in each folder of the `url`. Those that leave the copy are read as before.
  */
-async function localPackages(json: Record<string, unknown>, file: string, provider: BaseProvider): Promise<Set<string>> {
+async function localPackages(
+  json: Record<string, unknown>,
+  file: string,
+  provider: BaseProvider
+): Promise<Set<string>> {
   const names = new Set<string>();
-  const repositories = isRecord(json.repositories) ? Object.values(json.repositories) : json.repositories;
+  const repositories = isRecord(json.repositories)
+    ? Object.values(json.repositories)
+    : json.repositories;
   if (!Array.isArray(repositories)) return names;
   for (const repository of repositories) {
-    if (!isRecord(repository) || repository.type !== 'path' || typeof repository.url !== 'string') continue;
+    if (!isRecord(repository) || repository.type !== 'path' || typeof repository.url !== 'string')
+      continue;
     if (!insideProject(provider.basePath, path.dirname(file), repository.url)) continue;
-    for (const folder of await folders(provider, path.resolve(path.dirname(file), repository.url))) {
+    for (const folder of await folders(
+      provider,
+      path.resolve(path.dirname(file), repository.url)
+    )) {
       let manifest: unknown;
       try {
         manifest = JSON.parse((await provider.open(path.join(folder, 'composer.json'))) ?? '');
       } catch {
         continue;
       }
-      if (isRecord(manifest) && typeof manifest.name === 'string') names.add(manifest.name.toLowerCase());
+      if (isRecord(manifest) && typeof manifest.name === 'string')
+        names.add(manifest.name.toLowerCase());
     }
   }
   return names;
 }
 
 export const detectPhpComponent: ComponentMatcher = async (files, provider) => {
-  const file = files.find((item) => item.name === 'composer.json' && item.type === 'file' && !item.isSymbolicLink);
+  const file = files.find(
+    (item) => item.name === 'composer.json' && item.type === 'file' && !item.isSymbolicLink
+  );
   if (!file) return false;
   const content = await provider.open(file.fp);
   if (!content) return false;
@@ -86,9 +106,19 @@ export const detectPhpComponent: ComponentMatcher = async (files, provider) => {
   }
   const fromFolders = await localPackages(json, file.fp, provider);
   const local = new Set([...requirements.keys()].filter((id) => fromFolders.has(id.toLowerCase())));
-  const component = packageComponent(name ?? (path.basename(path.dirname(file.fp)) || 'virtual'), file.fp, 'php',
-    requirements, file.fp, local);
-  component.addTech('phpcomposer', ['matched file: composer.json'], [{ kind: 'file', value: file.name, path: file.fp }]);
+  const component = packageComponent(
+    name ?? (path.basename(path.dirname(file.fp)) || 'virtual'),
+    file.fp,
+    'php',
+    requirements,
+    file.fp,
+    local
+  );
+  component.addTech(
+    'phpcomposer',
+    ['matched file: composer.json'],
+    [{ kind: 'file', value: file.name, path: file.fp }]
+  );
   const licenses = Array.isArray(json.license) ? json.license : [json.license];
   for (const license of licenses) {
     if (typeof license !== 'string') continue;

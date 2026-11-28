@@ -5,7 +5,5 @@ register({
   name: 'Friendly Captcha',
   type: 'security',
   dotenv: ['FRIENDLY_CAPTCHA_API_KEY', 'FRIENDLY_CAPTCHA_SITEKEY'],
-  dependencies: [
-    { type: 'npm', name: '@friendlycaptcha/sdk' },
-  ],
+  dependencies: [{ type: 'npm', name: '@friendlycaptcha/sdk' }],
 });

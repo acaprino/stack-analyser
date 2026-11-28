@@ -4,7 +4,5 @@ register({
   tech: 'dart-test',
   name: 'test',
   type: 'test',
-  dependencies: [
-    { type: 'pub', name: 'test' },
-  ],
+  dependencies: [{ type: 'pub', name: 'test' }],
 });

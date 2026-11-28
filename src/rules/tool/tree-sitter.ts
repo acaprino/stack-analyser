@@ -4,7 +4,5 @@ register({
   tech: 'tree-sitter',
   name: 'Tree-sitter',
   type: 'tool',
-  dependencies: [
-    { type: 'python', name: 'tree-sitter' },
-  ],
+  dependencies: [{ type: 'python', name: 'tree-sitter' }],
 });

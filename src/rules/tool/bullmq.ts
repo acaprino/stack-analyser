@@ -4,7 +4,5 @@ register({
   tech: 'bullmq',
   name: 'BullMQ',
   type: 'tool',
-  dependencies: [
-    { type: 'npm', name: 'bullmq' },
-  ],
+  dependencies: [{ type: 'npm', name: 'bullmq' }],
 });

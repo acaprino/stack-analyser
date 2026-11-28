@@ -4,7 +4,5 @@ register({
   tech: 'slim',
   name: 'Slim',
   type: 'framework',
-  dependencies: [
-    { type: 'php', name: 'slim/slim' },
-  ],
+  dependencies: [{ type: 'php', name: 'slim/slim' }],
 });

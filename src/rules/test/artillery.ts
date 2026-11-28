@@ -4,7 +4,5 @@ register({
   tech: 'artillery',
   name: 'Artillery',
   type: 'test',
-  dependencies: [
-    { type: 'npm', name: 'artillery' },
-  ],
+  dependencies: [{ type: 'npm', name: 'artillery' }],
 });

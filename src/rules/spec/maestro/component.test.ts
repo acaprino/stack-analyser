@@ -4,7 +4,8 @@ import '../../../autoload.js';
 import { analyser } from '../../../analyser/index.js';
 import { FakeProvider } from '../../../provider/fake.js';
 
-const flow = 'tags: [mobile]\nappId: ${MAESTRO_APP_ID}\n---\n- runFlow: ../login.yml\n- tapOn:\n    id: settings\n';
+const flow =
+  'tags: [mobile]\nappId: ${MAESTRO_APP_ID}\n---\n- runFlow: ../login.yml\n- tapOn:\n    id: settings\n';
 
 describe('Maestro mobile flows', () => {
   it.each([

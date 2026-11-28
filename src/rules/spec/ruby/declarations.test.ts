@@ -29,32 +29,60 @@ DEPENDENCIES
 
 describe('Ruby package evidence', () => {
   it('reads literal Bundler declarations, versions and nested groups', async () => {
-    const data = await scan({ Gemfile: `gem 'rails'
+    const data = await scan({
+      Gemfile: `gem 'rails'
 group :development do
   gem("redis", ">= 4", "< 6")
 end
 gem %q[pg]
-`, 'Gemfile.lock': lock });
-    expect(data.dependencies).toEqual(expect.arrayContaining([
-      ['ruby', 'rails', '8.0.2'], ['ruby', 'redis', '>= 4, < 6'], ['ruby', 'pg', 'latest'],
-    ]));
+`,
+      'Gemfile.lock': lock,
+    });
+    expect(data.dependencies).toEqual(
+      expect.arrayContaining([
+        ['ruby', 'rails', '8.0.2'],
+        ['ruby', 'redis', '>= 4, < 6'],
+        ['ruby', 'pg', 'latest'],
+      ])
+    );
     expect(data.techs.has('rails')).toBe(true);
   });
 
   it('does not read quoted examples, comments, non-registry overrides or known inactive declarations', async () => {
-    const data = await scan({ Gemfile: [
-      '# gem "rails", "8"', 'template = %q{example', 'gem "rails", "8"', '}',
-      "text = <<~'README'", '  gem "rails", "8"', '  README',
-      'description = "example', "gem 'rails'", '"', '=begin', 'gem "rails", "8"', '=end',
-      'gem "redis", path: "../redis"', "gem 'rails' + '-extra'", "gem 'rails' if false",
-      'unless true', "  gem 'rails'", 'end', 'tool.gem "rails"', "gem 'pg'",
-      '__END__', 'gem "rails", "8"',
-    ].join('\n') });
+    const data = await scan({
+      Gemfile: [
+        '# gem "rails", "8"',
+        'template = %q{example',
+        'gem "rails", "8"',
+        '}',
+        "text = <<~'README'",
+        '  gem "rails", "8"',
+        '  README',
+        'description = "example',
+        "gem 'rails'",
+        '"',
+        '=begin',
+        'gem "rails", "8"',
+        '=end',
+        'gem "redis", path: "../redis"',
+        "gem 'rails' + '-extra'",
+        "gem 'rails' if false",
+        'unless true',
+        "  gem 'rails'",
+        'end',
+        'tool.gem "rails"',
+        "gem 'pg'",
+        '__END__',
+        'gem "rails", "8"',
+      ].join('\n'),
+    });
     expect(data.dependencies).toEqual([['ruby', 'pg', 'latest']]);
   });
 
   it('reads development and runtime dependencies from the gemspec receiver', async () => {
-    const data = await scan({ 'Gemfile': 'gemspec', 'example.gemspec': `Gem::Specification.new do |spec|
+    const data = await scan({
+      Gemfile: 'gemspec',
+      'example.gemspec': `Gem::Specification.new do |spec|
   spec.name = 'example'
   unrelated.add_dependency 'wrong'
   spec.add_runtime_dependency('rails', '>= 7')
@@ -62,7 +90,8 @@ gem %q[pg]
   spec.add_dependency 'redis', '~> 5'
 end
 spec.add_dependency 'after_block'
-` });
+`,
+    });
     expect(data.dependencies.map(([, name]) => name).sort()).toEqual(['rails', 'redis', 'rspec']);
     expect(data.techs.has('rails')).toBe(true);
   });
@@ -75,7 +104,10 @@ spec.add_dependency 'after_block'
 
   it('limits a standalone lock to direct registry dependencies', async () => {
     const data = await scan({ 'Gemfile.lock': lock });
-    expect(data.dependencies).toEqual([['ruby', 'rails', '8.0.2'], ['ruby', 'redis', '5.1.0']]);
+    expect(data.dependencies).toEqual([
+      ['ruby', 'rails', '8.0.2'],
+      ['ruby', 'redis', '5.1.0'],
+    ]);
     expect(data.techs.has('bundler')).toBe(true);
   });
 });

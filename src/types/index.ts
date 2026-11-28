@@ -20,7 +20,15 @@ export interface HostMention {
   line: number;
 }
 
-export type EvidenceKind = 'package' | 'image' | 'action' | 'terraform' | 'file' | 'extension' | 'env' | 'source';
+export type EvidenceKind =
+  | 'package'
+  | 'image'
+  | 'action'
+  | 'terraform'
+  | 'file'
+  | 'extension'
+  | 'env'
+  | 'source';
 
 export interface Evidence {
   tech: AllowedKeys;

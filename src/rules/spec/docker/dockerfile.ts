@@ -5,12 +5,18 @@ import { Payload } from '../../../payload/index.js';
 
 import type { ComponentMatcher } from '../../../types/rule.js';
 
-const dockerfile = /^(?:(?:Dockerfile|Containerfile)(?:\.[\w.-]+)?|[\w.-]+\.(?:Dockerfile|Containerfile))$/i;
+const dockerfile =
+  /^(?:(?:Dockerfile|Containerfile)(?:\.[\w.-]+)?|[\w.-]+\.(?:Dockerfile|Containerfile))$/i;
 
 export const detectDockerfile: ComponentMatcher = async (files, provider) => {
   const group = new Payload({ name: 'virtual', folderPath: new Set<string>() });
   for (const file of files) {
-    if (file.type !== 'file' || !dockerfile.test(file.name) || file.name.toLowerCase().endsWith('.dockerignore')) continue;
+    if (
+      file.type !== 'file' ||
+      !dockerfile.test(file.name) ||
+      file.name.toLowerCase().endsWith('.dockerignore')
+    )
+      continue;
     const content = await provider.open(file.fp);
     if (!content) continue;
     const instructions = DockerfileParser.parse(content).getFROMs();
@@ -26,7 +32,11 @@ export const detectDockerfile: ComponentMatcher = async (files, provider) => {
     }
 
     const component = new Payload({ name: file.name, folderPath: file.fp });
-    component.addTech('docker', [`FROM in ${file.name}`], [{ kind: 'file', value: file.name, path: file.fp }]);
+    component.addTech(
+      'docker',
+      [`FROM in ${file.name}`],
+      [{ kind: 'file', value: file.name, path: file.fp }]
+    );
     // The evidence names an image as the file writes it; the dependency, as the rules compare it.
     const declared: string[] = [];
     for (const reference of images) {

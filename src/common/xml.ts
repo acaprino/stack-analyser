@@ -10,17 +10,24 @@ export function xmlChildren(element: Element): readonly NamedElement[] {
 
 type Frame = { name: string; fields: Record<string, unknown>; text: string; ignored: boolean };
 
-export function parseProjectXml(content: string, namespaces: readonly string[] = [], preserveOrder = false): Record<string, unknown> | null {
+export function parseProjectXml(
+  content: string,
+  namespaces: readonly string[] = [],
+  preserveOrder = false
+): Record<string, unknown> | null {
   const root: Record<string, unknown> = Object.create(null);
   const stack: Frame[] = [];
   const parser = new SaxesParser({ xmlns: true });
   let namespace = '';
-  parser.on('doctype', () => { throw new Error('DTD in build manifest'); });
+  parser.on('doctype', () => {
+    throw new Error('DTD in build manifest');
+  });
   parser.on('opentag', (tag) => {
     if (stack.length >= 256) throw new Error('Build manifest nesting limit');
     if (!stack.length) {
       namespace = tag.uri;
-      if (namespace && !namespaces.includes(namespace)) throw new Error('Unrecognized project namespace');
+      if (namespace && !namespaces.includes(namespace))
+        throw new Error('Unrecognized project namespace');
     }
     const ignored = tag.uri !== namespace || stack.at(-1)?.ignored === true;
     const fields: Record<string, unknown> = Object.create(null);

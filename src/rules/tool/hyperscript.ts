@@ -4,7 +4,5 @@ register({
   tech: 'hyperscript',
   name: '_hyperscript',
   type: 'tool',
-  dependencies: [
-    { type: 'npm', name: 'hyperscript.org' },
-  ],
+  dependencies: [{ type: 'npm', name: 'hyperscript.org' }],
 });

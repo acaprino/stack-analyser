@@ -29,13 +29,18 @@ it('connects repeated service evidence to a real component and keeps technologie
   expect(root.edges[0].target).toBe(root.childs[0]);
   expect([...root.childs[0].reason]).toEqual(['redis client', 'redis build']);
   root.addChild(new Payload({ name: root.childs[0].name, folderPath: '/pg', tech: 'postgresql' }));
-  expect(new Set(flatten(root, { merge: true }).childs.map((c) => c.tech))).toEqual(new Set(['redis', 'postgresql']));
+  expect(new Set(flatten(root, { merge: true }).childs.map((c) => c.tech))).toEqual(
+    new Set(['redis', 'postgresql'])
+  );
 });
 
 it('keeps cloud SDK recognition while assigning hosting only from deployment configuration', async () => {
   const manifest = JSON.stringify({ name: 'api', dependencies: { 'aws-sdk': '2', vercel: '36' } });
   async function application(files: Record<string, string>) {
-    const provider = new FakeProvider({ paths: { '/': Object.keys(files).map((f) => f.slice(1)) }, files });
+    const provider = new FakeProvider({
+      paths: { '/': Object.keys(files).map((f) => f.slice(1)) },
+      files,
+    });
     return (await analyser({ provider })).childs.find((c) => c.name === 'api')!;
   }
   const sdkOnly = await application({ '/package.json': manifest });
@@ -49,7 +54,8 @@ it('keeps unowned folder evidence visible when multiple manifests share a direct
   const provider = new FakeProvider({
     paths: { '/': ['package.json', 'Cargo.toml', 'adapter.py'] },
     files: {
-      '/package.json': '{"name":"ui"}', '/Cargo.toml': '[package]\nname="worker"\nversion="1"',
+      '/package.json': '{"name":"ui"}',
+      '/Cargo.toml': '[package]\nname="worker"\nversion="1"',
       '/adapter.py': 'service = "https://api.telegram.org/"',
     },
   });
@@ -61,26 +67,52 @@ it('keeps unowned folder evidence visible when multiple manifests share a direct
 it('toJson makes evidence paths relative and portable', () => {
   const base = path.resolve('repo'); // a path of the platform: with the Windows separator on Windows
   const root = new Payload({ name: 'main', folderPath: base });
-  root.addTech('react', ['react matched: /^react$/'], [{ kind: 'package', value: 'react', path: path.join(base, 'web', 'package.json') }]);
+  root.addTech(
+    'react',
+    ['react matched: /^react$/'],
+    [{ kind: 'package', value: 'react', path: path.join(base, 'web', 'package.json') }]
+  );
   root.addEvidence('react', [{ kind: 'extension', value: '.tsx', path: base }]);
   expect(root.toJson(base).evidence).toEqual([
     { tech: 'react', kind: 'extension', value: '.tsx', path: '/', source: 'stack-analyser' },
-    { tech: 'react', kind: 'package', value: 'react', path: '/web/package.json', source: 'stack-analyser' },
+    {
+      tech: 'react',
+      kind: 'package',
+      value: 'react',
+      path: '/web/package.json',
+      source: 'stack-analyser',
+    },
   ]);
 });
 
 it('gives the deduced component the evidence of the technology that implied it', () => {
   const root = new Payload({ name: 'api', folderPath: '/api' });
-  root.addTech('postgresql', ['postgresql matched: /^pg$/'], [{ kind: 'package', value: 'pg', path: '/api/package.json' }]);
+  root.addTech(
+    'postgresql',
+    ['postgresql matched: /^pg$/'],
+    [{ kind: 'package', value: 'pg', path: '/api/package.json' }]
+  );
   expect(root.childs[0].tech).toBe('postgresql');
-  expect(root.childs[0].evidence).toEqual([{ tech: 'postgresql', kind: 'package', value: 'pg', path: '/api/package.json', source: 'stack-analyser' }]);
+  expect(root.childs[0].evidence).toEqual([
+    {
+      tech: 'postgresql',
+      kind: 'package',
+      value: 'pg',
+      path: '/api/package.json',
+      source: 'stack-analyser',
+    },
+  ]);
 });
 
 it('flatten keeps the union of evidence', () => {
   const root = new Payload({ name: 'main', folderPath: '/' });
   for (const folder of ['/a', '/b', '/a']) {
     const child = root.addChild(new Payload({ name: folder, folderPath: folder }));
-    child.addTech('redis', ['redis client'], [{ kind: 'package', value: 'redis', path: `${folder}/package.json` }]);
+    child.addTech(
+      'redis',
+      ['redis client'],
+      [{ kind: 'package', value: 'redis', path: `${folder}/package.json` }]
+    );
   }
   const before = structuredClone(root.toJson());
   const redis = flatten(root, { merge: true }).childs.find((c) => c.tech === 'redis')!;
@@ -91,26 +123,59 @@ it('flatten keeps the union of evidence', () => {
 it('does not repeat evidence, keeps a declared source and ignores evidence of a Payload without tech', () => {
   const found = { kind: 'package', value: 'redis', path: '/package.json' } as const;
   const root = new Payload({ name: 'main', folderPath: '/', tech: 'redis', evidence: [found] });
-  root.addEvidence('redis', [found, { ...found, source: 'declared' }, { kind: 'source', value: 'createClient', path: '/index.ts', line: 3 }]);
+  root.addEvidence('redis', [
+    found,
+    { ...found, source: 'declared' },
+    { kind: 'source', value: 'createClient', path: '/index.ts', line: 3 },
+  ]);
   expect(root.evidence).toEqual([
     { tech: 'redis', ...found, source: 'stack-analyser' },
     { tech: 'redis', ...found, source: 'declared' },
-    { tech: 'redis', kind: 'source', value: 'createClient', path: '/index.ts', line: 3, source: 'stack-analyser' },
+    {
+      tech: 'redis',
+      kind: 'source',
+      value: 'createClient',
+      path: '/index.ts',
+      line: 3,
+      source: 'stack-analyser',
+    },
   ]);
   expect(new Payload({ name: 'plain', folderPath: '/', evidence: [found] }).evidence).toEqual([]);
 });
 
 it('gives the host component of a dotted technology the evidence of the service and merges it on the next one', () => {
   const root = new Payload({ name: 'main', folderPath: '/' });
-  root.addTech('aws.s3', ['aws.s3 matched'], [{ kind: 'package', value: '@aws-sdk/client-s3', path: '/package.json' }]);
-  root.addTech('aws.athena', ['aws.athena matched'], [{ kind: 'package', value: '@aws-sdk/client-athena', path: '/package.json' }]);
+  root.addTech(
+    'aws.s3',
+    ['aws.s3 matched'],
+    [{ kind: 'package', value: '@aws-sdk/client-s3', path: '/package.json' }]
+  );
+  root.addTech(
+    'aws.athena',
+    ['aws.athena matched'],
+    [{ kind: 'package', value: '@aws-sdk/client-athena', path: '/package.json' }]
+  );
   const aws = root.childs.find((c) => c.tech === 'aws')!;
   expect([...aws.reason]).toEqual(['implicit: aws.s3', 'implicit: aws.athena']);
   expect(aws.evidence).toEqual([
-    { tech: 'aws', kind: 'package', value: '@aws-sdk/client-s3', path: '/package.json', source: 'stack-analyser' },
-    { tech: 'aws', kind: 'package', value: '@aws-sdk/client-athena', path: '/package.json', source: 'stack-analyser' },
+    {
+      tech: 'aws',
+      kind: 'package',
+      value: '@aws-sdk/client-s3',
+      path: '/package.json',
+      source: 'stack-analyser',
+    },
+    {
+      tech: 'aws',
+      kind: 'package',
+      value: '@aws-sdk/client-athena',
+      path: '/package.json',
+      source: 'stack-analyser',
+    },
   ]);
-  expect(root.childs.find((c) => c.tech === 'aws.s3')!.evidence.map((e) => e.tech)).toEqual(['aws.s3']);
+  expect(root.childs.find((c) => c.tech === 'aws.s3')!.evidence.map((e) => e.tech)).toEqual([
+    'aws.s3',
+  ]);
 
   const copy = aws.copy();
   expect(copy.evidence).toEqual(aws.evidence);
@@ -120,9 +185,13 @@ it('gives the host component of a dotted technology the evidence of the service 
 
 it('dives into a folder the default list skips when the caller says so', async () => {
   const paths = { '/': ['tests/'], '/tests': ['package.json'] };
-  const files = { '/tests/package.json': JSON.stringify({ name: 't', dependencies: { vitest: '1' } }) };
+  const files = {
+    '/tests/package.json': JSON.stringify({ name: 't', dependencies: { vitest: '1' } }),
+  };
   const found = async (skipDirs?: string[]) =>
-    flatten(await analyser({ provider: new FakeProvider({ paths, files, skipDirs }) }), { merge: true }).techs.has('vitest');
+    flatten(await analyser({ provider: new FakeProvider({ paths, files, skipDirs }) }), {
+      merge: true,
+    }).techs.has('vitest');
   expect(await found()).toBe(false);
   expect(await found([])).toBe(true);
   expect(await found(['tests'])).toBe(false);
@@ -141,12 +210,48 @@ function manyManifests(manifest: string, content: (index: number) => string, cou
 }
 
 const knownPythonPackages = [
-  'django', 'flask', 'fastapi', 'celery', 'redis', 'psycopg2', 'sqlalchemy', 'pytest', 'numpy', 'pandas',
-  'boto3', 'pymongo', 'sentry-sdk', 'elasticsearch', 'gunicorn', 'requests', 'pydantic', 'openai', 'stripe', 'twilio',
+  'django',
+  'flask',
+  'fastapi',
+  'celery',
+  'redis',
+  'psycopg2',
+  'sqlalchemy',
+  'pytest',
+  'numpy',
+  'pandas',
+  'boto3',
+  'pymongo',
+  'sentry-sdk',
+  'elasticsearch',
+  'gunicorn',
+  'requests',
+  'pydantic',
+  'openai',
+  'stripe',
+  'twilio',
 ];
 const knownNpmPackages = [
-  'react', 'express', 'vue', 'next', 'jest', 'eslint', 'typescript', 'webpack', 'redis', 'pg',
-  'mongoose', 'prisma', 'fastify', 'vitest', 'tailwindcss', 'stripe', 'mysql2', 'socket.io', '@sentry/node', 'aws-sdk',
+  'react',
+  'express',
+  'vue',
+  'next',
+  'jest',
+  'eslint',
+  'typescript',
+  'webpack',
+  'redis',
+  'pg',
+  'mongoose',
+  'prisma',
+  'fastify',
+  'vitest',
+  'tailwindcss',
+  'stripe',
+  'mysql2',
+  'socket.io',
+  '@sentry/node',
+  'aws-sdk',
 ];
 
 // The work used to grow with the square of the evidence already found: the first of these took about 16 seconds.
@@ -154,7 +259,11 @@ const knownNpmPackages = [
 const bound = 10_000;
 
 it('analyses 800 Python manifests with 20 known packages each without the time growing with the square', async () => {
-  const provider = manyManifests('requirements.txt', () => knownPythonPackages.map((name) => `${name}>=1`).join('\n'), 800);
+  const provider = manyManifests(
+    'requirements.txt',
+    () => knownPythonPackages.map((name) => `${name}>=1`).join('\n'),
+    800
+  );
   const start = performance.now();
   const json = (await analyser({ provider })).toJson('/');
   const elapsed = performance.now() - start;
@@ -164,7 +273,14 @@ it('analyses 800 Python manifests with 20 known packages each without the time g
 
 it('flattens 400 npm packages with 20 known dependencies each without the time growing with the square', async () => {
   const provider = manyManifests(
-    'package.json', (i) => JSON.stringify({ name: `pkg${i}`, dependencies: Object.fromEntries(knownNpmPackages.map((name) => [name, '1'])) }), 400);
+    'package.json',
+    (i) =>
+      JSON.stringify({
+        name: `pkg${i}`,
+        dependencies: Object.fromEntries(knownNpmPackages.map((name) => [name, '1'])),
+      }),
+    400
+  );
   const start = performance.now();
   const json = flatten(await analyser({ provider }), { merge: true }).toJson('/');
   const elapsed = performance.now() - start;

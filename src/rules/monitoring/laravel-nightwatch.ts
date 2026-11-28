@@ -4,7 +4,5 @@ register({
   tech: 'laravel-nightwatch',
   name: 'Laravel Nightwatch',
   type: 'monitoring',
-  dependencies: [
-    { type: 'php', name: 'laravel/nightwatch' },
-  ],
+  dependencies: [{ type: 'php', name: 'laravel/nightwatch' }],
 });

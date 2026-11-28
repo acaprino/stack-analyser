@@ -6,7 +6,9 @@ export interface CataloguePattern {
   flags?: string;
 }
 
-export type CatalogueDependency = { type: RuleDependency['type']; name: string } | ({ type: RuleDependency['type'] } & CataloguePattern);
+export type CatalogueDependency =
+  | { type: RuleDependency['type']; name: string }
+  | ({ type: RuleDependency['type'] } & CataloguePattern);
 
 /** What the catalogue says of a rule, with the keys in this order. A key a rule has no value for is not there. */
 export interface CatalogueEntry {
@@ -22,7 +24,9 @@ export interface CatalogueEntry {
 }
 
 function patternOf(expression: RegExp): CataloguePattern {
-  return expression.flags === '' ? { pattern: expression.source } : { pattern: expression.source, flags: expression.flags };
+  return expression.flags === ''
+    ? { pattern: expression.source }
+    : { pattern: expression.source, flags: expression.flags };
 }
 
 function dependencyOf(dependency: RuleDependency): CatalogueDependency {
@@ -53,7 +57,8 @@ export function catalogue(rules: readonly Rule[]): CatalogueEntry[] {
       const entry: CatalogueEntry = { tech: rule.tech, name: rule.name, type: rule.type };
       const hosts = listOf(rule.hosts);
       if (hosts) entry.hosts = hosts;
-      if (rule.dependencies && rule.dependencies.length > 0) entry.dependencies = rule.dependencies.map((dep) => dependencyOf(dep));
+      if (rule.dependencies && rule.dependencies.length > 0)
+        entry.dependencies = rule.dependencies.map((dep) => dependencyOf(dep));
       const files = filesOf(rule.files);
       if (files) entry.files = files;
       const dotenv = listOf(rule.dotenv);

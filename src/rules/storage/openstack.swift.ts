@@ -4,7 +4,5 @@ register({
   tech: 'openstack.swift',
   name: 'OpenStack Swift',
   type: 'storage',
-  dependencies: [
-    { type: 'python', name: 'django-storage-swift' },
-  ],
+  dependencies: [{ type: 'python', name: 'django-storage-swift' }],
 });

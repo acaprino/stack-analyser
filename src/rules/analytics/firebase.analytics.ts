@@ -4,7 +4,5 @@ register({
   tech: 'firebase.analytics',
   name: 'Firebase Analytics',
   type: 'analytics',
-  dependencies: [
-    { type: 'maven', name: 'com.google.firebase:firebase-analytics' },
-  ],
+  dependencies: [{ type: 'maven', name: 'com.google.firebase:firebase-analytics' }],
 });

@@ -4,7 +4,5 @@ register({
   tech: 'imago',
   name: 'Imago',
   type: 'tool',
-  dependencies: [
-    { type: 'npm', name: '@acaprino/imago' },
-  ],
+  dependencies: [{ type: 'npm', name: '@acaprino/imago' }],
 });

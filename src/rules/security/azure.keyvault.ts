@@ -5,7 +5,5 @@ register({
   name: 'Azure Key Vault',
   type: 'security',
   dotenv: ['AZURE_KEY_VAULT_ENDPOINT'],
-  dependencies: [
-    { type: 'nuget', name: 'Azure.Extensions.AspNetCore.Configuration.Secrets' },
-  ],
+  dependencies: [{ type: 'nuget', name: 'Azure.Extensions.AspNetCore.Configuration.Secrets' }],
 });

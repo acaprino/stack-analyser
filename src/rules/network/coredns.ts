@@ -4,7 +4,5 @@ register({
   tech: 'coredns',
   name: 'CoreDNS',
   type: 'network',
-  dependencies: [
-    { type: 'docker', name: 'coredns/coredns' },
-  ],
+  dependencies: [{ type: 'docker', name: 'coredns/coredns' }],
 });

@@ -4,7 +4,5 @@ register({
   tech: 'internet-archive',
   name: 'Internet Archive',
   type: 'saas',
-  dependencies: [
-    { type: 'python', name: 'internetarchive' },
-  ],
+  dependencies: [{ type: 'python', name: 'internetarchive' }],
 });

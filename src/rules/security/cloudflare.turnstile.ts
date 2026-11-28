@@ -5,7 +5,5 @@ register({
   name: 'Cloudflare Turnstile',
   type: 'security',
   dotenv: ['TURNSTILE_SECRET_KEY', 'TURNSTILE_SITE_KEY'],
-  dependencies: [
-    { type: 'npm', name: '@marsidev/react-turnstile' },
-  ],
+  dependencies: [{ type: 'npm', name: '@marsidev/react-turnstile' }],
 });

@@ -4,7 +4,5 @@ register({
   tech: 'gitea',
   name: 'Gitea',
   type: 'tool',
-  dependencies: [
-    { type: 'golang', name: 'code.gitea.io/sdk/gitea' },
-  ],
+  dependencies: [{ type: 'golang', name: 'code.gitea.io/sdk/gitea' }],
 });

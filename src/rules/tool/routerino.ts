@@ -4,7 +4,5 @@ register({
   tech: 'routerino',
   name: 'Routerino',
   type: 'tool',
-  dependencies: [
-    { type: 'pub', name: 'routerino' },
-  ],
+  dependencies: [{ type: 'pub', name: 'routerino' }],
 });

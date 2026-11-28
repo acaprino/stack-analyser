@@ -7,7 +7,8 @@ import { sourceText } from '../manifestTokens.js';
 import type { BaseProvider, ProviderFile } from '../../../provider/base.js';
 
 const template = /^\.env(?:\.[\w-]+)?\.(?:example|sample|template)$/;
-const clientPrefix = /^(?:NEXT_PUBLIC_|VITE_|EXPO_PUBLIC_|REACT_APP_|VUE_APP_|NUXT_PUBLIC_|GATSBY_|PUBLIC_)/;
+const clientPrefix =
+  /^(?:NEXT_PUBLIC_|VITE_|EXPO_PUBLIC_|REACT_APP_|VUE_APP_|NUXT_PUBLIC_|GATSBY_|PUBLIC_)/;
 
 export const detectInDotEnv = async (
   files: ProviderFile[],

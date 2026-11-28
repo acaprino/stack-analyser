@@ -5,7 +5,5 @@ register({
   name: 'Angular',
   type: 'ui_framework',
   files: ['angular.json'],
-  dependencies: [
-    { type: 'npm', name: /^@angular\//, example: '@angular/forms' },
-  ],
+  dependencies: [{ type: 'npm', name: /^@angular\//, example: '@angular/forms' }],
 });

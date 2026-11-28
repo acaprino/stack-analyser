@@ -29,7 +29,12 @@ export const detectNodeComponent: ComponentMatcher = async (files, provider) => 
 
     if (!isRecord(json)) continue;
     const deps = new Map<string, string>();
-    for (const table of [json.peerDependencies, json.devDependencies, json.dependencies, json.optionalDependencies]) {
+    for (const table of [
+      json.peerDependencies,
+      json.devDependencies,
+      json.dependencies,
+      json.optionalDependencies,
+    ]) {
       if (!isRecord(table)) continue;
       for (const [key, version] of Object.entries(table)) {
         if (typeof version === 'string') deps.set(key, version);
@@ -42,7 +47,8 @@ export const detectNodeComponent: ComponentMatcher = async (files, provider) => 
     for (const [key, version] of deps) {
       declared.push(['npm', key, version]);
       const spec = version.trim();
-      if (/^(?:file:|link:|workspace:|portal:|\.{1,2}[/\\]|[/\\]|[A-Za-z]:[/\\]|~\/)/i.test(spec)) continue;
+      if (/^(?:file:|link:|workspace:|portal:|\.{1,2}[/\\]|[/\\]|[A-Za-z]:[/\\]|~\/)/i.test(spec))
+        continue;
       if (spec.startsWith('npm:')) {
         const target = /^npm:((?:@[\w.-]+\/)?[\w.-]+)(?:@[^\s]*)?$/.exec(spec)?.[1];
         if (target) external.add(target);

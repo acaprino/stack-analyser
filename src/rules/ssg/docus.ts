@@ -4,7 +4,5 @@ register({
   tech: 'docus',
   name: 'Docus',
   type: 'ssg',
-  dependencies: [
-    { type: 'npm', name: 'docus' },
-  ],
+  dependencies: [{ type: 'npm', name: 'docus' }],
 });

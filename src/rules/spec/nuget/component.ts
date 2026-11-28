@@ -24,7 +24,10 @@ function condition(item: Record<string, unknown>): boolean | undefined {
   return undefined;
 }
 
-interface ItemGroup { node: Record<string, unknown>; unconditional: boolean }
+interface ItemGroup {
+  node: Record<string, unknown>;
+  unconditional: boolean;
+}
 
 function* itemGroups(project: Record<string, unknown>, certain = true): Generator<ItemGroup> {
   for (const [tag, node] of xmlChildren(project)) {
@@ -59,7 +62,12 @@ function enablesWinUI(project: Record<string, unknown>): boolean {
         for (const value of Array.isArray(values) ? values : [values]) {
           const literal = isRecord(value) ? value['#text'] : value;
           if (typeof literal !== 'string' || literal.toLowerCase() !== 'true') return false;
-          if (container === project && !group['@_Condition'] && !(isRecord(value) && value['@_Condition'])) declared = true;
+          if (
+            container === project &&
+            !group['@_Condition'] &&
+            !(isRecord(value) && value['@_Condition'])
+          )
+            declared = true;
         }
       }
     }
@@ -83,10 +91,12 @@ function packageVersions(groups: Iterable<ItemGroup>, tag: string): Map<string, 
       }
       const include = item['@_Include'];
       if (typeof include !== 'string') continue;
-      const version = item['@_VersionOverride'] ?? item.VersionOverride ?? item['@_Version'] ?? item.Version;
+      const version =
+        item['@_VersionOverride'] ?? item.VersionOverride ?? item['@_Version'] ?? item.Version;
       for (const part of include.split(';')) {
         const id = part.trim();
-        if (/^[\w.-]+$/.test(id)) result.set(id.toLowerCase(), [id, typeof version === 'string' ? version : '']);
+        if (/^[\w.-]+$/.test(id))
+          result.set(id.toLowerCase(), [id, typeof version === 'string' ? version : '']);
       }
     }
   }
@@ -97,8 +107,10 @@ function packageVersions(groups: Iterable<ItemGroup>, tag: string): Map<string, 
 // `<Import Sdk>`. Its version comes from global.json's `msbuild-sdks` or the attribute; the name is enough to match.
 function projectSdks(project: Record<string, unknown>): string[] {
   const names = typeof project['@_Sdk'] === 'string' ? project['@_Sdk'].split(';') : [];
-  for (const item of rows(project, 'Sdk')) if (typeof item['@_Name'] === 'string') names.push(item['@_Name']);
-  for (const item of rows(project, 'Import')) if (typeof item['@_Sdk'] === 'string') names.push(item['@_Sdk']);
+  for (const item of rows(project, 'Sdk'))
+    if (typeof item['@_Name'] === 'string') names.push(item['@_Name']);
+  for (const item of rows(project, 'Import'))
+    if (typeof item['@_Sdk'] === 'string') names.push(item['@_Sdk']);
   return names.map((sdk) => sdk.split('/')[0].trim()).filter((sdk) => /^[\w.-]+$/.test(sdk));
 }
 
@@ -114,7 +126,11 @@ function lockedPackages(content: string): Map<string, string> {
   for (const framework of Object.values(data.dependencies)) {
     if (!isRecord(framework)) continue;
     for (const [id, packageInfo] of Object.entries(framework)) {
-      if (isRecord(packageInfo) && packageInfo.type === 'Direct' && typeof packageInfo.resolved === 'string') {
+      if (
+        isRecord(packageInfo) &&
+        packageInfo.type === 'Direct' &&
+        typeof packageInfo.resolved === 'string'
+      ) {
         pinned.set(id, packageInfo.resolved);
       }
     }
@@ -124,14 +140,24 @@ function lockedPackages(content: string): Map<string, string> {
 
 // MSBuild uses the nearest Directory.Packages.props. A version in that file is only evidence
 // for an actual PackageReference in the consuming project.
-async function centralVersions(file: ProviderFile, files: ProviderFile[], provider: BaseProvider): Promise<Map<string, string>> {
+async function centralVersions(
+  file: ProviderFile,
+  files: ProviderFile[],
+  provider: BaseProvider
+): Promise<Map<string, string>> {
   let dir = path.dirname(file.fp);
   const base = path.resolve(provider.basePath);
   let siblings = files;
   for (;;) {
-    const props = siblings.find((item) => item.type === 'file' && item.name === 'Directory.Packages.props');
+    const props = siblings.find(
+      (item) => item.type === 'file' && item.name === 'Directory.Packages.props'
+    );
     if (props) {
-      const root = parseProjectXml((await provider.open(props.fp)) || '', msbuildNamespaces, true)?.Project;
+      const root = parseProjectXml(
+        (await provider.open(props.fp)) || '',
+        msbuildNamespaces,
+        true
+      )?.Project;
       if (isRecord(root)) {
         const versions = packageVersions(itemGroups(root), 'PackageVersion');
         return new Map([...versions].map(([name, version]) => [name.toLowerCase(), version]));
@@ -141,21 +167,26 @@ async function centralVersions(file: ProviderFile, files: ProviderFile[], provid
     if (path.resolve(dir) === base || path.dirname(dir) === dir) break;
     dir = path.dirname(dir);
     const relative = path.relative(base, path.resolve(dir));
-    if (relative === '..' || relative.startsWith('..' + path.sep) || path.isAbsolute(relative)) break;
+    if (relative === '..' || relative.startsWith('..' + path.sep) || path.isAbsolute(relative))
+      break;
     siblings = await provider.listDir(dir);
   }
   return new Map();
 }
 
 export const detectNugetComponent: ComponentMatcher = async (files, provider) => {
-  const manifests = files.filter((file) => file.type === 'file' && /\.(cs|fs|vb)proj$/i.test(file.name));
+  const manifests = files.filter(
+    (file) => file.type === 'file' && /\.(cs|fs|vb)proj$/i.test(file.name)
+  );
   const namedFile = (name: string): ProviderFile | undefined =>
     files.find((file) => file.type === 'file' && file.name.toLowerCase() === name);
   const legacy = namedFile('packages.config');
   const lock = namedFile('packages.lock.json');
   if (!manifests.length && !legacy && !lock) return false;
 
-  const pinned = lock ? lockedPackages((await provider.open(lock.fp)) || '') : new Map<string, string>();
+  const pinned = lock
+    ? lockedPackages((await provider.open(lock.fp)) || '')
+    : new Map<string, string>();
   const installed = new Map<string, string>();
   if (legacy) {
     const xml = parseProjectXml((await provider.open(legacy.fp)) || '');
@@ -167,7 +198,11 @@ export const detectNugetComponent: ComponentMatcher = async (files, provider) =>
   }
   const payloads = [];
   for (const file of manifests) {
-    const project = parseProjectXml((await provider.open(file.fp)) || '', msbuildNamespaces, true)?.Project;
+    const project = parseProjectXml(
+      (await provider.open(file.fp)) || '',
+      msbuildNamespaces,
+      true
+    )?.Project;
     if (!isRecord(project)) continue;
     const groups = [...itemGroups(project)];
     const requirements = packageVersions(groups, 'PackageReference');
@@ -186,7 +221,13 @@ export const detectNugetComponent: ComponentMatcher = async (files, provider) =>
         if (!version && supplied) requirements.set(id, supplied);
       }
     }
-    const payload = packageComponent(path.parse(file.name).name, file.fp, 'nuget', requirements, file.fp);
+    const payload = packageComponent(
+      path.parse(file.name).name,
+      file.fp,
+      'nuget',
+      requirements,
+      file.fp
+    );
     payload.addTech(
       'nuget',
       [`MSBuild project: ${projectPath(provider.basePath, file.fp)}`],
@@ -200,8 +241,12 @@ export const detectNugetComponent: ComponentMatcher = async (files, provider) =>
       );
     }
     const frameworks = packageVersions(groups, 'FrameworkReference');
-    if (typeof project['@_Sdk'] === 'string' &&
-        project['@_Sdk'].split(';').some((sdk) => sdk.split('/')[0].trim() === 'Microsoft.NET.Sdk.Web')) {
+    if (
+      typeof project['@_Sdk'] === 'string' &&
+      project['@_Sdk']
+        .split(';')
+        .some((sdk) => sdk.split('/')[0].trim() === 'Microsoft.NET.Sdk.Web')
+    ) {
       frameworks.set('Microsoft.AspNetCore.App', '');
     }
     payload.addDependencyTechs([...frameworks.keys(), ...projectSdks(project)], 'nuget', file.fp);
@@ -210,5 +255,11 @@ export const detectNugetComponent: ComponentMatcher = async (files, provider) =>
   if (payloads.length) return payloads;
   const source = legacy || lock;
   if (!source || (!installed.size && !pinned.size)) return false;
-  return packageComponent('virtual', source.fp, 'nuget', new Map([...installed, ...pinned]), source.fp);
+  return packageComponent(
+    'virtual',
+    source.fp,
+    'nuget',
+    new Map([...installed, ...pinned]),
+    source.fp
+  );
 };

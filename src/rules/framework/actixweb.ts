@@ -4,7 +4,5 @@ register({
   tech: 'actixweb',
   name: 'Actix Web',
   type: 'framework',
-  dependencies: [
-    { type: 'rust', name: 'actix-web' },
-  ],
+  dependencies: [{ type: 'rust', name: 'actix-web' }],
 });

@@ -73,6 +73,9 @@ export type ComponentMatcher = (
 ) => MaybePromise<false | Payload | Payload[]>;
 
 /** The rule, the name its reason shows, and the absolute path of the file or directory that matched. */
-export type TechMatcher = (files: ProviderFile[], basePath?: string) => [Rule, string, string] | false;
+export type TechMatcher = (
+  files: ProviderFile[],
+  basePath?: string
+) => [Rule, string, string] | false;
 export type ExtensionMatcher = (list: Set<string>) => [Rule, string] | false;
 export type DotEnvMatcher = (variables: readonly string[]) => [Rule, string] | false;

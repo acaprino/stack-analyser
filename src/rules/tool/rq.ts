@@ -4,7 +4,5 @@ register({
   tech: 'rq',
   name: 'RQ',
   type: 'tool',
-  dependencies: [
-    { type: 'python', name: 'rq' },
-  ],
+  dependencies: [{ type: 'python', name: 'rq' }],
 });

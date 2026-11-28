@@ -6,10 +6,14 @@ import type { ComponentMatcher } from '../../../types/rule.js';
 
 const gemName = /^[a-z\d][a-z\d_.-]*$/i;
 const gemfiles = new Set(['Gemfile', 'gems.rb']);
-const locks = new Map([['Gemfile', 'Gemfile.lock'], ['gems.rb', 'gems.locked']]);
+const locks = new Map([
+  ['Gemfile', 'Gemfile.lock'],
+  ['gems.rb', 'gems.locked'],
+]);
 
 function* statements(source: string) {
-  let row: Token[] = [], nesting = 0;
+  let row: Token[] = [],
+    nesting = 0;
   for (const token of tokens(source, 'ruby')) {
     const last = row.at(-1);
     const separator = token.kind === 'symbol' && token.value === ';';
@@ -33,9 +37,12 @@ function declaredGems(source: string, gemspec: boolean): Map<string, string> {
   const found = new Map<string, string>();
   const scopes: { receiver?: string; disabled: boolean; condition?: boolean }[] = [];
   for (const row of statements(source)) {
-    const words = row.map((token) => token.kind === 'string' ? '' : token.value);
+    const words = row.map((token) => (token.kind === 'string' ? '' : token.value));
     const first = words[0];
-    if (first === 'end' || first === '}') { scopes.pop(); continue; }
+    if (first === 'end' || first === '}') {
+      scopes.pop();
+      continue;
+    }
     if (first === 'else' && scopes.at(-1)?.condition !== undefined) {
       const scope = scopes.at(-1)!;
       scope.disabled = !!scopes.at(-2)?.disabled || scope.condition === true;
@@ -46,21 +53,39 @@ function declaredGems(source: string, gemspec: boolean): Map<string, string> {
     const opener = block >= 0 ? block : brace >= 0 && words[brace + 1] === '|' ? brace : -1;
     const parent = scopes.at(-1);
     if (opener >= 0 || /^(?:module|class|def|if|unless|case|begin|until|while|for)$/.test(first)) {
-      const parameter = words[opener + 1] === '|' && row[opener + 2]?.kind === 'word' && words[opener + 3] === '|'
-        ? words[opener + 2] : undefined;
+      const parameter =
+        words[opener + 1] === '|' && row[opener + 2]?.kind === 'word' && words[opener + 3] === '|'
+          ? words[opener + 2]
+          : undefined;
       const constructor = words.slice(0, opener).join('');
       const spec = gemspec && /^(?:\w+=)?Gem::Specification\.new(?:\(\))?$/.test(constructor);
-      const condition = ['if', 'unless'].includes(first) && ['true', 'false'].includes(words[1])
-        && words.length === 2 ? (words[1] === 'true') === (first === 'if') : undefined;
-      const receiver = spec ? parameter : parameter === parent?.receiver ? undefined : parent?.receiver;
-      scopes.push({ receiver, disabled: !!parent?.disabled || first === 'def' || condition === false, condition });
+      const condition =
+        ['if', 'unless'].includes(first) &&
+        ['true', 'false'].includes(words[1]) &&
+        words.length === 2
+          ? (words[1] === 'true') === (first === 'if')
+          : undefined;
+      const receiver = spec
+        ? parameter
+        : parameter === parent?.receiver
+          ? undefined
+          : parent?.receiver;
+      scopes.push({
+        receiver,
+        disabled: !!parent?.disabled || first === 'def' || condition === false,
+        condition,
+      });
       continue;
     }
     if (parent?.disabled) continue;
     let arg = 1;
     if (gemspec) {
-      if (words[1] !== '.' || !/^add_(?:(?:development|runtime)_)?dependency$/.test(words[2]) ||
-          parent?.receiver !== first) continue;
+      if (
+        words[1] !== '.' ||
+        !/^add_(?:(?:development|runtime)_)?dependency$/.test(words[2]) ||
+        parent?.receiver !== first
+      )
+        continue;
       arg = 3;
     } else if (first !== 'gem') continue;
     if (words[arg] === '(') arg++;
@@ -68,10 +93,20 @@ function declaredGems(source: string, gemspec: boolean): Map<string, string> {
     if (name?.kind !== 'string' || !gemName.test(name.value)) continue;
     const tail = words.slice(arg + 1);
     if (tail.length && ![',', ')', 'if', 'unless'].includes(tail[0])) continue;
-    if ((tail.at(-2) === 'if' && tail.at(-1) === 'false') || (tail.at(-2) === 'unless' && tail.at(-1) === 'true')) continue;
+    if (
+      (tail.at(-2) === 'if' && tail.at(-1) === 'false') ||
+      (tail.at(-2) === 'unless' && tail.at(-1) === 'true')
+    )
+      continue;
     // A path or git override can reuse the name of an unrelated public gem.
-    if (tail.some((word, i) => ['path', 'git', 'github'].includes(word) &&
-        (tail[i + 1] === ':' || (tail[i - 1] === ':' && tail[i + 1] === '=')))) continue;
+    if (
+      tail.some(
+        (word, i) =>
+          ['path', 'git', 'github'].includes(word) &&
+          (tail[i + 1] === ':' || (tail[i - 1] === ':' && tail[i + 1] === '='))
+      )
+    )
+      continue;
     const versions: string[] = [];
     for (let i = arg + 1; words[i] === ',' && row[i + 1]?.kind === 'string'; i += 2) {
       versions.push(row[i + 1].value);
@@ -82,10 +117,14 @@ function declaredGems(source: string, gemspec: boolean): Map<string, string> {
 }
 
 function lockedDirectGems(source: string): Map<string, string> {
-  const direct = new Map<string, string>(), versions = new Map<string, string>();
+  const direct = new Map<string, string>(),
+    versions = new Map<string, string>();
   let section = '';
   for (const row of source.split(/\r?\n/)) {
-    if (/^\S/.test(row)) { section = row; continue; }
+    if (/^\S/.test(row)) {
+      section = row;
+      continue;
+    }
     if (section === 'GEM') {
       const spec = /^ {4}([\w.-]+) \(([^()]+)\)$/.exec(row);
       if (spec) versions.set(spec[1], spec[2]);
@@ -100,7 +139,9 @@ function lockedDirectGems(source: string): Map<string, string> {
 
 export const detectRubyLockfile: ComponentMatcher = async (files, provider) => {
   const available = files.filter((file) => file.type === 'file' && !file.isSymbolicLink);
-  const manifests = available.filter((file) => gemfiles.has(file.name) || file.name.endsWith('.gemspec'));
+  const manifests = available.filter(
+    (file) => gemfiles.has(file.name) || file.name.endsWith('.gemspec')
+  );
   const components = [];
   for (const file of manifests) {
     const source = await sourceText(provider, file.fp);
@@ -110,7 +151,8 @@ export const detectRubyLockfile: ComponentMatcher = async (files, provider) => {
     const lock = !gemspec && available.find((entry) => entry.name === locks.get(file.name));
     if (lock) {
       const pinned = lockedDirectGems((await sourceText(provider, lock.fp)) || '');
-      for (const [name, version] of packages) if (version === 'latest' && pinned.has(name)) packages.set(name, pinned.get(name)!);
+      for (const [name, version] of packages)
+        if (version === 'latest' && pinned.has(name)) packages.set(name, pinned.get(name)!);
     }
     const pl = packageComponent('virtual', file.fp, 'ruby', packages, file.fp);
     const found = [{ kind: 'file' as const, value: file.name, path: file.fp }];

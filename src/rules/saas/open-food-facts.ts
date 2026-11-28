@@ -4,7 +4,5 @@ register({
   tech: 'open-food-facts',
   name: 'Open Food Facts',
   type: 'saas',
-  dependencies: [
-    { type: 'python', name: 'openfoodfacts' },
-  ],
+  dependencies: [{ type: 'python', name: 'openfoodfacts' }],
 });

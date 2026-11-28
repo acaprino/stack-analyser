@@ -4,7 +4,5 @@ register({
   tech: 'graphql-client-rust',
   name: 'graphql_client',
   type: 'tool',
-  dependencies: [
-    { type: 'rust', name: 'graphql_client' },
-  ],
+  dependencies: [{ type: 'rust', name: 'graphql_client' }],
 });

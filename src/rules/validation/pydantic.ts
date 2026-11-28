@@ -4,7 +4,5 @@ register({
   tech: 'pydantic',
   name: 'Pydantic',
   type: 'validation',
-  dependencies: [
-    { type: 'python', name: 'pydantic' },
-  ],
+  dependencies: [{ type: 'python', name: 'pydantic' }],
 });

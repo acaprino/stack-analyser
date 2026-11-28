@@ -13,7 +13,17 @@ import type { ComponentMatcher } from '../../../types/rule.js';
 
 const FILES = new Set(['Cargo.toml']);
 
-type Dependency = string | { package?: string; git?: string; rev?: string; branch?: string; path?: string; version?: string; workspace?: boolean };
+type Dependency =
+  | string
+  | {
+      package?: string;
+      git?: string;
+      rev?: string;
+      branch?: string;
+      path?: string;
+      version?: string;
+      workspace?: boolean;
+    };
 
 interface Dependencies {
   dependencies?: Record<string, Dependency>;
@@ -30,23 +40,34 @@ interface RustCargo extends Dependencies {
   workspace?: Dependencies;
 }
 
-async function inheritedDependencies(member: RustCargo, folder: string, provider: BaseProvider): Promise<Record<string, unknown>> {
+async function inheritedDependencies(
+  member: RustCargo,
+  folder: string,
+  provider: BaseProvider
+): Promise<Record<string, unknown>> {
   if (member.workspace) return member.workspace.dependencies ?? {};
   const root = path.resolve(provider.basePath);
-  const explicit = typeof member.package?.workspace === 'string' ? path.resolve(folder, member.package.workspace) : undefined;
+  const explicit =
+    typeof member.package?.workspace === 'string'
+      ? path.resolve(folder, member.package.workspace)
+      : undefined;
   let dir = folder;
   while (path.resolve(dir) !== root && path.dirname(dir) !== dir) {
     dir = path.dirname(dir);
     const relative = path.relative(root, path.resolve(dir));
-    if (relative === '..' || relative.startsWith('..' + path.sep) || path.isAbsolute(relative)) break;
+    if (relative === '..' || relative.startsWith('..' + path.sep) || path.isAbsolute(relative))
+      break;
     if (explicit && explicit !== path.resolve(dir)) continue;
-    const manifest = (await provider.listDir(dir)).find((item) => item.type === 'file' && !item.isSymbolicLink && item.name === 'Cargo.toml');
+    const manifest = (await provider.listDir(dir)).find(
+      (item) => item.type === 'file' && !item.isSymbolicLink && item.name === 'Cargo.toml'
+    );
     if (!manifest) continue;
     const content = await provider.open(manifest.fp);
     if (!content) continue;
     try {
       const data = parseToml(content) as unknown as RustCargo;
-      if (isRecord(data.workspace)) return isRecord(data.workspace.dependencies) ? data.workspace.dependencies : {};
+      if (isRecord(data.workspace))
+        return isRecord(data.workspace.dependencies) ? data.workspace.dependencies : {};
     } catch {
       // A malformed parent does not identify an inherited package.
       return {};
@@ -91,7 +112,11 @@ export const detectRustComponent: ComponentMatcher = async (files, provider) => 
     // Workspace catalogs list available versions. Members declare what they actually use.
     for (const table of [json, ...Object.values(json.target ?? {})]) {
       if (!isRecord(table)) continue;
-      for (const group of [table.dependencies, table['dev-dependencies'], table['build-dependencies']]) {
+      for (const group of [
+        table.dependencies,
+        table['dev-dependencies'],
+        table['build-dependencies'],
+      ]) {
         if (!isRecord(group)) continue;
         for (const [alias, initial] of Object.entries(group)) {
           let value = initial;
@@ -118,7 +143,11 @@ export const detectRustComponent: ComponentMatcher = async (files, provider) => 
       }
     }
     pl.addDependencyTechs([...external], 'rust', file.fp);
-    pl.addTech('cargo', ['matched file: Cargo.toml'], [{ kind: 'file', value: file.name, path: file.fp }]);
+    pl.addTech(
+      'cargo',
+      ['matched file: Cargo.toml'],
+      [{ kind: 'file', value: file.name, path: file.fp }]
+    );
     pl.dependencies = dependencies;
 
     if (typeof json.package?.license === 'string') {

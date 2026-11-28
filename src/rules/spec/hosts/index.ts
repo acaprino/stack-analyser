@@ -10,7 +10,8 @@ import type { HostMention } from '../../../types/index.js';
 const sourceFile = /\.(?:[cm]?[jt]sx?|py|rb|php|exs?|rs|go|cs|kts?|java|swift|dart|vue)$/i;
 const configFile = /\.(?:json|ya?ml)$/i;
 const exampleEnv = /^\.env\.(?:example|sample|template)(?:\.|$)/;
-const excluded = /(?:^|\/)(?:docs?|examples?|fixtures?|tests?|__tests__|__fixtures__|node_modules|vendor|generated)(?:\/|$)|(?:[.-](?:test|spec|min|generated)|(?:^|\/)test_[^/]*)\.[^.]+$|(?:lock|shrinkwrap)\.(?:json|ya?ml)$|(?:^|\/)(?:package|composer)\.json$/i;
+const excluded =
+  /(?:^|\/)(?:docs?|examples?|fixtures?|tests?|__tests__|__fixtures__|node_modules|vendor|generated)(?:\/|$)|(?:[.-](?:test|spec|min|generated)|(?:^|\/)test_[^/]*)\.[^.]+$|(?:lock|shrinkwrap)\.(?:json|ya?ml)$|(?:^|\/)(?:package|composer)\.json$/i;
 const maxFileSize = 500_000;
 
 // Consume comments and complete strings so that a quoted URL in a comment, docstring or
@@ -18,9 +19,13 @@ const maxFileSize = 500_000;
 function sourceValues(content: string, name: string, emit: (value: string, line: number) => void) {
   const hash = /\.(?:py|rb|php|exs?)$/i.test(name);
   const slashComments = !/\.(?:py|rb|exs?)$/i.test(name);
-  const literals = /"""[\s\S]*?(?:"""|$)|'''[\s\S]*?(?:'''|$)|"(?:\\[^\n]|[^"\\\r\n])*"|'(?:\\[^\n]|[^'\\\r\n])*'|\x60(?:\\[\s\S]|[^\x60\\])*\x60/;
+  const literals =
+    /"""[\s\S]*?(?:"""|$)|'''[\s\S]*?(?:'''|$)|"(?:\\[^\n]|[^"\\\r\n])*"|'(?:\\[^\n]|[^'\\\r\n])*'|\x60(?:\\[\s\S]|[^\x60\\])*\x60/;
   const comments = /<!--[\s\S]*?(?:-->|$)|\/\*[\s\S]*?(?:\*\/|$)|\/\/[^\n]*/;
-  const tokens = new RegExp((hash ? '#[^\\n]*|' : '') + (slashComments ? comments.source + '|' : '') + literals.source, 'g');
+  const tokens = new RegExp(
+    (hash ? '#[^\\n]*|' : '') + (slashComments ? comments.source + '|' : '') + literals.source,
+    'g'
+  );
   let line = 1;
   let cursor = 0;
   for (const match of content.matchAll(tokens)) {
@@ -82,7 +87,10 @@ interface Candidate {
   config: boolean;
 }
 
-function scanContent(content: string | null, { file: { name }, relative, env, config }: Candidate): HostMention[] {
+function scanContent(
+  content: string | null,
+  { file: { name }, relative, env, config }: Candidate
+): HostMention[] {
   const results: HostMention[] = [];
   if (!content || content.length > maxFileSize || content.includes('\0')) return results;
   let possible = false;
@@ -114,7 +122,10 @@ function scanContent(content: string | null, { file: { name }, relative, env, co
   return results;
 }
 
-export async function findHostMentions(files: ProviderFile[], provider: BaseProvider): Promise<HostMention[]> {
+export async function findHostMentions(
+  files: ProviderFile[],
+  provider: BaseProvider
+): Promise<HostMention[]> {
   const results: HostMention[] = [];
   if (endpointHosts.size === 0) return results;
 
@@ -123,9 +134,11 @@ export async function findHostMentions(files: ProviderFile[], provider: BaseProv
     const { name } = file;
     const env = exampleEnv.test(name);
     const config = configFile.test(name);
-    if (file.type !== 'file' || file.isSymbolicLink || (!env && !config && !sourceFile.test(name))) continue;
+    if (file.type !== 'file' || file.isSymbolicLink || (!env && !config && !sourceFile.test(name)))
+      continue;
     const relative = path.relative(provider.basePath, file.fp).split(path.sep).join('/');
-    if (relative.startsWith('../') || path.isAbsolute(relative) || excluded.test(relative)) continue;
+    if (relative.startsWith('../') || path.isAbsolute(relative) || excluded.test(relative))
+      continue;
     candidates.push({ file, relative, env, config });
   }
 
@@ -134,7 +147,8 @@ export async function findHostMentions(files: ProviderFile[], provider: BaseProv
   for (let start = 0; start < candidates.length; start += concurrentReads) {
     const batch = candidates.slice(start, start + concurrentReads);
     const contents = await Promise.all(batch.map(({ file }) => readCandidate(file, provider)));
-    for (const [index, candidate] of batch.entries()) results.push(...scanContent(contents[index], candidate));
+    for (const [index, candidate] of batch.entries())
+      results.push(...scanContent(contents[index], candidate));
   }
   return results;
 }

@@ -7,8 +7,18 @@ import { projectPath } from '../packageManifest.js';
 import type { ComponentMatcher } from '../../../types/rule.js';
 
 const flowPath = /(?:^|\/)(?:\.maestro\/|maestro\/(?:flows|subflows)\/).+\.ya?ml$/;
-const commands = new Set(['launchApp', 'tapOn', 'runFlow', 'assertVisible', 'assertNotVisible',
-  'scrollUntilVisible', 'extendedWaitUntil', 'takeScreenshot', 'pressKey', 'inputText']);
+const commands = new Set([
+  'launchApp',
+  'tapOn',
+  'runFlow',
+  'assertVisible',
+  'assertNotVisible',
+  'scrollUntilVisible',
+  'extendedWaitUntil',
+  'takeScreenshot',
+  'pressKey',
+  'inputText',
+]);
 
 function isFlow(source: string): boolean {
   const docs = parseAllDocuments(source);
@@ -21,8 +31,13 @@ function isFlow(source: string): boolean {
     if (isScalar(step)) return step.value === 'launchApp';
     if (!isMap(step) || step.items.length !== 1) return false;
     const { key, value } = step.items[0];
-    return isScalar(key) && typeof key.value === 'string' && commands.has(key.value) &&
-      value !== null && (!isScalar(value) || value.value !== null);
+    return (
+      isScalar(key) &&
+      typeof key.value === 'string' &&
+      commands.has(key.value) &&
+      value !== null &&
+      (!isScalar(value) || value.value !== null)
+    );
   });
 }
 

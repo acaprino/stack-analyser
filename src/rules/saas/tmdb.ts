@@ -4,7 +4,5 @@ register({
   tech: 'tmdb',
   name: 'TMDb',
   type: 'saas',
-  dependencies: [
-    { type: 'nuget', name: 'TMDbLib' },
-  ],
+  dependencies: [{ type: 'nuget', name: 'TMDbLib' }],
 });

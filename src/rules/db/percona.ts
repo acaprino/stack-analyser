@@ -4,7 +4,5 @@ register({
   tech: 'percona',
   name: 'Percona',
   type: 'db',
-  dependencies: [
-    { type: 'docker', name: /^percona(?:\/|$)/, example: 'percona' },
-  ],
+  dependencies: [{ type: 'docker', name: /^percona(?:\/|$)/, example: 'percona' }],
 });

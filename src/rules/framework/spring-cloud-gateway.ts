@@ -7,6 +7,9 @@ register({
   dependencies: [
     { type: 'maven', name: 'org.springframework.cloud:spring-cloud-gateway-server' },
     { type: 'maven', name: 'org.springframework.cloud:spring-cloud-starter-gateway' },
-    { type: 'maven', name: 'org.springframework.cloud:spring-cloud-starter-gateway-server-webflux' },
+    {
+      type: 'maven',
+      name: 'org.springframework.cloud:spring-cloud-starter-gateway-server-webflux',
+    },
   ],
 });

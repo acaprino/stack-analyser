@@ -4,7 +4,5 @@ register({
   tech: 'basecoat',
   name: 'Basecoat',
   type: 'ui',
-  dependencies: [
-    { type: 'npm', name: 'basecoat-css' },
-  ],
+  dependencies: [{ type: 'npm', name: 'basecoat-css' }],
 });

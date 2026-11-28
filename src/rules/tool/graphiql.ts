@@ -4,7 +4,5 @@ register({
   tech: 'graphiql',
   name: 'GraphiQL',
   type: 'tool',
-  dependencies: [
-    { type: 'npm', name: 'graphiql' },
-  ],
+  dependencies: [{ type: 'npm', name: 'graphiql' }],
 });

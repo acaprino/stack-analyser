@@ -5,6 +5,9 @@ register({
   name: 'OpenTelemetry Collector',
   type: 'monitoring',
   dependencies: [
-    { type: 'docker', name: 'ghcr.io/open-telemetry/opentelemetry-collector-releases/opentelemetry-collector-contrib' },
+    {
+      type: 'docker',
+      name: 'ghcr.io/open-telemetry/opentelemetry-collector-releases/opentelemetry-collector-contrib',
+    },
   ],
 });

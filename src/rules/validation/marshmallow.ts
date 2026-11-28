@@ -4,7 +4,5 @@ register({
   tech: 'marshmallow',
   name: 'marshmallow',
   type: 'validation',
-  dependencies: [
-    { type: 'python', name: 'marshmallow' },
-  ],
+  dependencies: [{ type: 'python', name: 'marshmallow' }],
 });

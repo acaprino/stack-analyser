@@ -4,7 +4,5 @@ register({
   tech: 'github-catalyst',
   name: 'Catalyst',
   type: 'ui',
-  dependencies: [
-    { type: 'npm', name: '@github/catalyst' },
-  ],
+  dependencies: [{ type: 'npm', name: '@github/catalyst' }],
 });

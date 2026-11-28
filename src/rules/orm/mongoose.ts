@@ -4,7 +4,5 @@ register({
   tech: 'mongoose',
   name: 'Mongoose',
   type: 'orm',
-  dependencies: [
-    { type: 'npm', name: 'mongoose' },
-  ],
+  dependencies: [{ type: 'npm', name: 'mongoose' }],
 });

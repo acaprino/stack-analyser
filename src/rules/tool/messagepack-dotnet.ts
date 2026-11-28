@@ -4,7 +4,5 @@ register({
   tech: 'messagepack-dotnet',
   name: 'MessagePack',
   type: 'tool',
-  dependencies: [
-    { type: 'nuget', name: 'MessagePack' },
-  ],
+  dependencies: [{ type: 'nuget', name: 'MessagePack' }],
 });

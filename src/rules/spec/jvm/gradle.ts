@@ -6,13 +6,14 @@ type Catalog = Map<string, Dependency[]>;
 
 function record(value: unknown): Record<string, unknown> {
   return value !== null && typeof value === 'object' && !Array.isArray(value)
-    ? value as Record<string, unknown> : {};
+    ? (value as Record<string, unknown>)
+    : {};
 }
 
 function coordinate(value: string, version = ''): Dependency | undefined {
   const [group, artifact, pinned] = value.split('@')[0]!.split(':');
   if (!group || !artifact || !/^[\w.-]+$/.test(group) || !/^[\w.-]+$/.test(artifact)) return;
-  return ['maven', `${group}:${artifact}`, pinned?.includes('$') ? '' : pinned ?? version];
+  return ['maven', `${group}:${artifact}`, pinned?.includes('$') ? '' : (pinned ?? version)];
 }
 
 function marker(id: string, version: string): Dependency | undefined {
@@ -47,23 +48,34 @@ export function gradleCatalog(source: string): Catalog {
           dep = coordinate(`${entry['group']}:${entry['name']}`, pinned);
         }
       }
-      if (dep) entries.set(`${section === 'plugins' ? 'libs.plugins.' : 'libs.'}${accessor(alias)}`, [dep]);
+      if (dep)
+        entries.set(`${section === 'plugins' ? 'libs.plugins.' : 'libs.'}${accessor(alias)}`, [
+          dep,
+        ]);
     }
   }
   for (const [alias, members] of Object.entries(record(data['bundles']))) {
-    if (Array.isArray(members)) entries.set(`libs.bundles.${accessor(alias)}`, members.flatMap((member) =>
-      typeof member === 'string' ? entries.get(`libs.${accessor(member)}`) ?? [] : []));
+    if (Array.isArray(members))
+      entries.set(
+        `libs.bundles.${accessor(alias)}`,
+        members.flatMap((member) =>
+          typeof member === 'string' ? (entries.get(`libs.${accessor(member)}`) ?? []) : []
+        )
+      );
   }
   return entries;
 }
 
 // Read literal calls shared by the Groovy and Kotlin DSLs. Gradle scripts are executable:
 // strings/comments are atomic and only immediate statements of the two top-level blocks count.
-const tokens = /\/\*[\s\S]*?(?:\*\/|$)|\/\/[^\r\n]*|"""[\s\S]*?(?:"""|$)|'''[\s\S]*?(?:'''|$)|"(?:\\[\s\S]|[^"\\\r\n])*"|'(?:\\[\s\S]|[^'\\\r\n])*'|[\w.$-]+|\r?\n|[^\s]/g;
-const configuration = /^(?:(?:\w+(?:Api|Implementation|CompileOnly|RuntimeOnly|AnnotationProcessor))|api|implementation|compileOnly|compileOnlyApi|runtimeOnly|annotationProcessor|kapt\w*|ksp\w*|compile|runtime|testCompile|testRuntime)$/;
+const tokens =
+  /\/\*[\s\S]*?(?:\*\/|$)|\/\/[^\r\n]*|"""[\s\S]*?(?:"""|$)|'''[\s\S]*?(?:'''|$)|"(?:\\[\s\S]|[^"\\\r\n])*"|'(?:\\[\s\S]|[^'\\\r\n])*'|[\w.$-]+|\r?\n|[^\s]/g;
+const configuration =
+  /^(?:(?:\w+(?:Api|Implementation|CompileOnly|RuntimeOnly|AnnotationProcessor))|api|implementation|compileOnly|compileOnlyApi|runtimeOnly|annotationProcessor|kapt\w*|ksp\w*|compile|runtime|testCompile|testRuntime)$/;
 
 function literal(value?: string): string | undefined {
-  if (!value || !["'", '"'].includes(value[0]!) || value.length < 2 || value.at(-1) !== value[0]) return;
+  if (!value || !["'", '"'].includes(value[0]!) || value.length < 2 || value.at(-1) !== value[0])
+    return;
   return value.slice(1, -1);
 }
 
@@ -73,7 +85,12 @@ function moduleArguments(args: string[], catalog: Catalog): Dependency[] {
     const fields = new Map<string, string>();
     for (let i = 0; i < args.length; i += 4) {
       const value = literal(args[i + 2]);
-      if (value === undefined || ![':', '='].includes(args[i + 1]!) || (args[i + 3] && args[i + 3] !== ',')) return [];
+      if (
+        value === undefined ||
+        ![':', '='].includes(args[i + 1]!) ||
+        (args[i + 3] && args[i + 3] !== ',')
+      )
+        return [];
       fields.set(args[i]!, value);
     }
     const group = fields.get('group');
@@ -82,14 +99,18 @@ function moduleArguments(args: string[], catalog: Catalog): Dependency[] {
     return dep ? [dep] : [];
   }
   if (args.some((v, i) => i % 2 === 1 && v !== ',')) return [];
-  return args.filter((_, i) => i % 2 === 0).flatMap((value) => {
-    const name = literal(value);
-    if (name !== undefined) {
-      const dep = coordinate(name);
-      return dep ? [dep] : [];
-    }
-    return value.startsWith('libs.') && !value.startsWith('libs.plugins.') ? catalog.get(value) ?? [] : [];
-  });
+  return args
+    .filter((_, i) => i % 2 === 0)
+    .flatMap((value) => {
+      const name = literal(value);
+      if (name !== undefined) {
+        const dep = coordinate(name);
+        return dep ? [dep] : [];
+      }
+      return value.startsWith('libs.') && !value.startsWith('libs.plugins.')
+        ? (catalog.get(value) ?? [])
+        : [];
+    });
 }
 
 // Gradle shares Java's unbraced control flow. A newline after "if (condition)" (or "else")
@@ -119,44 +140,62 @@ export function gradleDependencies(source: string, catalog: Catalog): Dependency
   function read() {
     // A branch of `if`/`else` in the top-level block declares a possible build target, braced or not: its guard goes.
     let tokens = statement;
-    while (blocks[0] === 'dependencies' && (tokens[0] === 'else' || (tokens[0] === 'if' && tokens[1] === '('))) {
+    while (
+      blocks[0] === 'dependencies' &&
+      (tokens[0] === 'else' || (tokens[0] === 'if' && tokens[1] === '('))
+    ) {
       if (tokens[0] === 'else') {
         tokens = tokens.slice(1);
         continue;
       }
       let depth = 0;
-      const end = tokens.findIndex((token) => (depth += token === '(' ? 1 : token === ')' ? -1 : 0) === 0 && token === ')');
+      const end = tokens.findIndex(
+        (token) => (depth += token === '(' ? 1 : token === ')' ? -1 : 0) === 0 && token === ')'
+      );
       if (end < 0) return;
       tokens = tokens.slice(end + 1);
     }
     const [call, ...rest] = tokens;
     if (!call) return;
     const args = rest.filter((t) => t !== '(' && t !== ')');
-    if (blocks.length === 0 && call === 'apply' && args.length === 3 && args[0] === 'plugin' && [':', '='].includes(args[1]!)) {
+    if (
+      blocks.length === 0 &&
+      call === 'apply' &&
+      args.length === 3 &&
+      args[0] === 'plugin' &&
+      [':', '='].includes(args[1]!)
+    ) {
       const id = literal(args[2]);
       const dep = id && marker(id, '');
       if (dep) result.push(dep);
       return;
     }
-    if (blocks.length === 1 && blocks[0] === 'plugins' && ['id', 'alias', 'kotlin'].includes(call)) {
+    if (
+      blocks.length === 1 &&
+      blocks[0] === 'plugins' &&
+      ['id', 'alias', 'kotlin'].includes(call)
+    ) {
       if (args.length > 1 && !['version', '.version', 'apply', '.apply'].includes(args[1])) return;
       const applyAt = args.findIndex((arg) => arg === 'apply' || arg === '.apply');
       if (applyAt >= 0 && args[applyAt + 1] !== 'true') return;
       if (call === 'alias') {
-        if (args[0]?.startsWith('libs.plugins.')) result.push(...catalog.get(args[0]) ?? []);
+        if (args[0]?.startsWith('libs.plugins.')) result.push(...(catalog.get(args[0]) ?? []));
       } else {
         const id = literal(args[0]);
         const versionAt = args.findIndex((arg) => arg === 'version' || arg === '.version');
         const version = versionAt >= 0 ? literal(args[versionAt + 1]) : '';
-        const entry = id && marker(call === 'kotlin' ? `org.jetbrains.kotlin.${id}` : id, version ?? '');
+        const entry =
+          id && marker(call === 'kotlin' ? `org.jetbrains.kotlin.${id}` : id, version ?? '');
         if (entry) result.push(entry);
       }
     } else if (configuration.test(call) || call === 'add') {
-      const topLevel = blocks[0] === 'dependencies' && blocks.slice(1).every((block) => block === 'branch');
-      const kotlinSet = blocks[0] === 'kotlin' && blocks[1] === 'sourceSets' && (
-        (blocks.length === 3 && /^\w+\.dependencies$/.test(blocks[2])) ||
-        (blocks.length === 4 && blocks[2] === 'source set' && blocks[3] === 'dependencies')
-      );
+      const topLevel =
+        blocks[0] === 'dependencies' && blocks.slice(1).every((block) => block === 'branch');
+      const kotlinSet =
+        blocks[0] === 'kotlin' &&
+        blocks[1] === 'sourceSets' &&
+        ((blocks.length === 3 && /^\w+\.dependencies$/.test(blocks[2])) ||
+          (blocks.length === 4 && blocks[2] === 'source set' && blocks[3] === 'dependencies'));
       if (!topLevel && !kotlinSet) return;
       if (call === 'add' && (literal(args[0]) === undefined || args[1] !== ',')) return;
       result.push(...moduleArguments(call === 'add' ? args.slice(2) : args, catalog));
@@ -170,8 +209,10 @@ export function gradleDependencies(source: string, catalog: Catalog): Dependency
     }
     if (lineBreak) {
       // A plugin declaration can continue on the next line with .version(...) or .apply(false).
-      const pluginContinuation = blocks.length === 1 && blocks[0] === 'plugins'
-        && ['.version', 'version', '.apply', 'apply'].includes(token);
+      const pluginContinuation =
+        blocks.length === 1 &&
+        blocks[0] === 'plugins' &&
+        ['.version', 'version', '.apply', 'apply'].includes(token);
       if (!pluginContinuation && !awaitsBody(statement)) {
         read();
         statement = [];
@@ -183,7 +224,10 @@ export function gradleDependencies(source: string, catalog: Catalog): Dependency
       let block = statement.length === 1 ? statement[0] : '';
       if (blocks[0] === 'dependencies' && ['if', 'else'].includes(statement[0]!)) block = 'branch';
       if (blocks.length === 2 && blocks[0] === 'kotlin' && blocks[1] === 'sourceSets') {
-        const delegate = statement.length === 4 && statement[0] === 'val' && statement[2] === 'by' &&
+        const delegate =
+          statement.length === 4 &&
+          statement[0] === 'val' &&
+          statement[2] === 'by' &&
           ['getting', 'creating'].includes(statement[3]);
         if (delegate || /^\w+(?:Main|Test)$/.test(block)) block = 'source set';
       }

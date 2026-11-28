@@ -4,7 +4,5 @@ register({
   tech: 'yew',
   name: 'Yew',
   type: 'framework',
-  dependencies: [
-    { type: 'rust', name: 'yew' },
-  ],
+  dependencies: [{ type: 'rust', name: 'yew' }],
 });

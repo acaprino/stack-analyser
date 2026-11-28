@@ -23,7 +23,11 @@ export function sbtDependencies(source: string): Dependency[] {
     if (items[j + 1]?.value !== '%' || items[j + 2]?.value === '%' || !items[j + 2]) continue;
     const group = items[i].value;
     if (!name.test(group) || !name.test(artifact.value)) continue;
-    result.push(['maven', `${group}:${artifact.value}`, items[j + 2].kind === 'string' ? items[j + 2].value : '']);
+    result.push([
+      'maven',
+      `${group}:${artifact.value}`,
+      items[j + 2].kind === 'string' ? items[j + 2].value : '',
+    ]);
     i = j + 2;
   }
   return result;

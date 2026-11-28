@@ -4,7 +4,5 @@ register({
   tech: 'robolectric',
   name: 'Robolectric',
   type: 'test',
-  dependencies: [
-    { type: 'maven', name: 'org.robolectric:robolectric' },
-  ],
+  dependencies: [{ type: 'maven', name: 'org.robolectric:robolectric' }],
 });

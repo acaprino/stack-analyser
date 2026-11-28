@@ -12,9 +12,17 @@ export class FakeProvider implements BaseProvider {
   private paths;
   private files;
 
-  constructor(opts: { paths: Record<string, string[]>; files: Record<string, string>; skipDirs?: string[] }) {
-    this.paths = Object.fromEntries(Object.entries(opts.paths).map(([key, value]) => [fixturePath(key), value]));
-    this.files = Object.fromEntries(Object.entries(opts.files).map(([key, value]) => [fixturePath(key), value]));
+  constructor(opts: {
+    paths: Record<string, string[]>;
+    files: Record<string, string>;
+    skipDirs?: string[];
+  }) {
+    this.paths = Object.fromEntries(
+      Object.entries(opts.paths).map(([key, value]) => [fixturePath(key), value])
+    );
+    this.files = Object.fromEntries(
+      Object.entries(opts.files).map(([key, value]) => [fixturePath(key), value])
+    );
     this.basePath = '/';
     this.skipDirs = opts.skipDirs && [...opts.skipDirs];
   }

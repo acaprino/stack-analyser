@@ -4,7 +4,5 @@ register({
   tech: 'sqlx-rust',
   name: 'SQLx',
   type: 'orm',
-  dependencies: [
-    { type: 'rust', name: 'sqlx' },
-  ],
+  dependencies: [{ type: 'rust', name: 'sqlx' }],
 });

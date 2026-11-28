@@ -4,7 +4,5 @@ register({
   tech: 'fscheck',
   name: 'FsCheck',
   type: 'test',
-  dependencies: [
-    { type: 'nuget', name: 'FsCheck.Xunit.v3' },
-  ],
+  dependencies: [{ type: 'nuget', name: 'FsCheck.Xunit.v3' }],
 });

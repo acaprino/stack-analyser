@@ -4,7 +4,5 @@ register({
   tech: 'proptest',
   name: 'proptest',
   type: 'test',
-  dependencies: [
-    { type: 'rust', name: 'proptest' },
-  ],
+  dependencies: [{ type: 'rust', name: 'proptest' }],
 });

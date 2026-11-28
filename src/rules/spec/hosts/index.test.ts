@@ -22,7 +22,8 @@ describe('service endpoint mentions', () => {
 
   it('preserves source evidence through analysis and flattening without declaring a service edge', async () => {
     const provider = fixture({
-      'transport.py': '# endpoint\nurl = f"https://API.TELEGRAM.ORG:443/bot{token}/sendMessage?a=private"\n',
+      'transport.py':
+        '# endpoint\nurl = f"https://API.TELEGRAM.ORG:443/bot{token}/sendMessage?a=private"\n',
       'config.yml': 'services:\n  api: https://api.telegram.org/path?q=private\n',
       '.env.example': 'ENDPOINT="https://api.telegram.org:443/bot"\n',
       'service.json': '{"endpoint":"https://api.telegram.org"}',
@@ -74,21 +75,31 @@ describe('service endpoint mentions', () => {
     const provider = fixture({
       'deployment.yaml': '---\nkind: Service\n---\nurl: https://api.telegram.org/v1\n',
       'client.py': 'n = count // 2; url = "https://api.telegram.org"\n',
-      'client.swift': '// example: "https://api.telegram.org"\nlet base = "https://api.telegram.org"\n',
+      'client.swift':
+        '// example: "https://api.telegram.org"\nlet base = "https://api.telegram.org"\n',
       'client.dart': 'const base = "https://api.telegram.org";\n',
       'broken.json': 'url: https://api.telegram.org',
     });
     const pinned = await findHostMentions(await provider.listDir('/'), provider);
     expect(pinned.map(({ path, line }) => [path, line])).toEqual([
-      ['client.dart', 1], ['client.py', 1], ['client.swift', 2], ['deployment.yaml', 4],
+      ['client.dart', 1],
+      ['client.py', 1],
+      ['client.swift', 2],
+      ['deployment.yaml', 4],
     ]);
   });
 
   it('continues after provider errors while obtaining a source size or text', async () => {
-    const provider = fixture({ 'a.ts': '', 'b.ts': '', 'c.ts': 'fetch("https://api.telegram.org")' });
+    const provider = fixture({
+      'a.ts': '',
+      'b.ts': '',
+      'c.ts': 'fetch("https://api.telegram.org")',
+    });
     vi.spyOn(provider, 'stat').mockRejectedValueOnce(new Error('metadata unavailable'));
     vi.spyOn(provider, 'open').mockRejectedValueOnce(new Error('content unavailable'));
     const result = await analyser({ provider });
-    expect(result.toJson().mentions).toStrictEqual([{ tech: 'telegram', host, path: 'c.ts', line: 1 }]);
+    expect(result.toJson().mentions).toStrictEqual([
+      { tech: 'telegram', host, path: 'c.ts', line: 1 },
+    ]);
   });
 });

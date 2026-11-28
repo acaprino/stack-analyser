@@ -4,7 +4,5 @@ register({
   tech: 'serde-json',
   name: 'serde_json',
   type: 'tool',
-  dependencies: [
-    { type: 'rust', name: 'serde_json' },
-  ],
+  dependencies: [{ type: 'rust', name: 'serde_json' }],
 });

@@ -11,7 +11,8 @@ const keyOrder = ['tech', 'name', 'type', 'hosts', 'dependencies', 'files', 'dot
 /** A rule the registry does not hold, frozen all the way down, so that writing to it anywhere throws. */
 function frozen(rule: object): Rule {
   for (const value of Object.values(rule)) {
-    if (typeof value === 'object' && value !== null && !(value instanceof RegExp)) Object.freeze(value);
+    if (typeof value === 'object' && value !== null && !(value instanceof RegExp))
+      Object.freeze(value);
   }
   return Object.freeze(rule) as Rule;
 }
@@ -67,9 +68,12 @@ describe('catalogue', () => {
 
   it('writes a pattern as its source, and it round-trips through JSON', () => {
     const entry = entryOf('spring-boot');
-    const pattern = rules.list.find((rule) => rule.tech === 'spring-boot')!.dependencies!
-      .map((dep) => dep.name)
-      .find((name): name is RegExp => name instanceof RegExp && name.source.includes('spring-boot(?:'))!;
+    const pattern = rules.list
+      .find((rule) => rule.tech === 'spring-boot')!
+      .dependencies!.map((dep) => dep.name)
+      .find(
+        (name): name is RegExp => name instanceof RegExp && name.source.includes('spring-boot(?:')
+      )!;
 
     expect(entry.dependencies).toContainEqual({
       type: 'maven',
@@ -77,22 +81,31 @@ describe('catalogue', () => {
     });
     const back = JSON.parse(JSON.stringify(entry)) as typeof entry;
     expect(back).toEqual(entry);
-    const written = (back.dependencies as { pattern?: string; flags?: string }[]).find((dep) => dep.pattern?.includes('spring-boot(?:'))!;
+    const written = (back.dependencies as { pattern?: string; flags?: string }[]).find((dep) =>
+      dep.pattern?.includes('spring-boot(?:')
+    )!;
     expect(new RegExp(written.pattern!, written.flags).source).toBe(pattern.source);
     // The example of a pattern is not written, and a string name has no pattern.
     expect(JSON.stringify(entry)).not.toContain('example');
-    expect(entry.dependencies).toContainEqual({ type: 'maven', name: 'org.springframework.boot:spring-boot-starter' });
+    expect(entry.dependencies).toContainEqual({
+      type: 'maven',
+      name: 'org.springframework.boot:spring-boot-starter',
+    });
   });
 
   it('writes the flags of a pattern only when it has some', () => {
-    expect(entryOf('aspnetcore').dependencies).toEqual([{ type: 'nuget', pattern: String.raw`^Microsoft\.AspNetCore\.`, flags: 'i' }]);
+    expect(entryOf('aspnetcore').dependencies).toEqual([
+      { type: 'nuget', pattern: String.raw`^Microsoft\.AspNetCore\.`, flags: 'i' },
+    ]);
     const spring = entryOf('spring-boot').dependencies as object[];
     expect(spring.filter((dep) => 'pattern' in dep)).toHaveLength(2);
     expect(spring.some((dep) => 'flags' in dep)).toBe(false);
   });
 
   it('writes the files of a rule as a list or as the source of a pattern', () => {
-    expect(entryOf('typescript').files).toEqual({ pattern: String.raw`^tsconfig(?:\.[\w-]+)*\.json$` });
+    expect(entryOf('typescript').files).toEqual({
+      pattern: String.raw`^tsconfig(?:\.[\w-]+)*\.json$`,
+    });
     const withList = rules.list.find((rule) => Array.isArray(rule.files) && rule.files.length > 0)!;
     expect(entryOf(withList.tech).files).toEqual(withList.files);
     const withoutFiles = rules.list.find((rule) => rule.files === undefined)!;
@@ -100,7 +113,10 @@ describe('catalogue', () => {
   });
 
   it('spring-mvc lists the Spring web starter', () => {
-    expect(entryOf('spring-mvc').dependencies).toContainEqual({ type: 'maven', name: 'org.springframework.boot:spring-boot-starter-web' });
+    expect(entryOf('spring-mvc').dependencies).toContainEqual({
+      type: 'maven',
+      name: 'org.springframework.boot:spring-boot-starter-web',
+    });
   });
 
   it('gives hosts to a rule that has them and none to a rule that has not', () => {
@@ -127,16 +143,35 @@ describe('catalogue', () => {
 
   it('does not write what is empty, and marks a files that is not a list or a pattern as computed', () => {
     const [entry] = catalogue([
-      frozen({ tech: 'one', name: 'One', type: 'tool', hosts: [], dotenv: [], extensions: [], dependencies: [], files: [] }),
+      frozen({
+        tech: 'one',
+        name: 'One',
+        type: 'tool',
+        hosts: [],
+        dotenv: [],
+        extensions: [],
+        dependencies: [],
+        files: [],
+      }),
     ]);
     expect(entry).toEqual({ tech: 'one', name: 'One', type: 'tool' });
 
-    const [computed] = catalogue([frozen({ tech: 'two', name: 'Two', type: 'tool', files: () => [] })]);
+    const [computed] = catalogue([
+      frozen({ tech: 'two', name: 'Two', type: 'tool', files: () => [] }),
+    ]);
     expect(computed).toEqual({ tech: 'two', name: 'Two', type: 'tool', files: { computed: true } });
   });
 
   it('copies the lists, so that an entry can be changed without touching the rule', () => {
-    const rule = { tech: 'one', name: 'One', type: 'tool', hosts: ['a.example'], files: ['one.cfg'], dotenv: ['ONE_'], extensions: ['.one'] } as unknown as Rule;
+    const rule = {
+      tech: 'one',
+      name: 'One',
+      type: 'tool',
+      hosts: ['a.example'],
+      files: ['one.cfg'],
+      dotenv: ['ONE_'],
+      extensions: ['.one'],
+    } as unknown as Rule;
     const [entry] = catalogue([rule]);
     (entry.hosts as string[]).push('b.example');
     (entry.files as string[]).push('two.cfg');

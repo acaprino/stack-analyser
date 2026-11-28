@@ -4,7 +4,5 @@ register({
   tech: 'hatchling',
   name: 'Hatchling',
   type: 'builder',
-  dependencies: [
-    { type: 'python', name: 'hatchling' },
-  ],
+  dependencies: [{ type: 'python', name: 'hatchling' }],
 });

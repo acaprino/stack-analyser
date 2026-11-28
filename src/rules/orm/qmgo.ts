@@ -4,7 +4,5 @@ register({
   tech: 'qmgo',
   name: 'Qmgo',
   type: 'orm',
-  dependencies: [
-    { type: 'golang', name: 'github.com/qiniu/qmgo' },
-  ],
+  dependencies: [{ type: 'golang', name: 'github.com/qiniu/qmgo' }],
 });

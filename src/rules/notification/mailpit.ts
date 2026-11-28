@@ -4,7 +4,5 @@ register({
   tech: 'mailpit',
   name: 'Mailpit',
   type: 'notification',
-  dependencies: [
-    { type: 'docker', name: 'axllent/mailpit' },
-  ],
+  dependencies: [{ type: 'docker', name: 'axllent/mailpit' }],
 });

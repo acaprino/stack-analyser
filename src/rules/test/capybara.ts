@@ -4,7 +4,5 @@ register({
   tech: 'capybara',
   name: 'Capybara',
   type: 'test',
-  dependencies: [
-    { type: 'ruby', name: 'capybara' },
-  ],
+  dependencies: [{ type: 'ruby', name: 'capybara' }],
 });

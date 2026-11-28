@@ -4,7 +4,5 @@ register({
   tech: 'sphinx',
   name: 'Sphinx',
   type: 'framework',
-  dependencies: [
-    { type: 'python', name: 'sphinx' },
-  ],
+  dependencies: [{ type: 'python', name: 'sphinx' }],
 });

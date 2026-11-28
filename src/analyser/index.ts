@@ -17,7 +17,8 @@ export interface AnalyserOptions {
 function insideRoot(value: string): string | null {
   // Either kind of separator, and either kind of absolute path, whatever the platform running the analysis.
   const posix = value.replaceAll('\\', '/');
-  if (path.posix.isAbsolute(posix) || path.win32.isAbsolute(value) || /^[A-Za-z]:/.test(value)) return null;
+  if (path.posix.isAbsolute(posix) || path.win32.isAbsolute(value) || /^[A-Za-z]:/.test(value))
+    return null;
   const normalized = path.posix.normalize(posix);
   if (normalized === '.' || normalized === '..' || normalized.startsWith('../')) return null;
   return normalized;
@@ -25,14 +26,18 @@ function insideRoot(value: string): string | null {
 
 /** The declaration an entry stands for, or what is wrong with it. */
 function readDeclaration(entry: unknown): Declaration | string {
-  if (typeof entry !== 'object' || entry === null || Array.isArray(entry)) return 'expected an object';
+  if (typeof entry !== 'object' || entry === null || Array.isArray(entry))
+    return 'expected an object';
   const fields = entry as Record<string, unknown>;
 
   for (const field of ['type', 'name', 'path', 'source']) {
     if (fields[field] === undefined) return `missing "${field}"`;
-    if (typeof fields[field] !== 'string' || fields[field] === '') return `"${field}" must be a non-empty string`;
+    if (typeof fields[field] !== 'string' || fields[field] === '')
+      return `"${field}" must be a non-empty string`;
   }
-  const [type, name, file, source] = ['type', 'name', 'path', 'source'].map((field) => fields[field] as string);
+  const [type, name, file, source] = ['type', 'name', 'path', 'source'].map(
+    (field) => fields[field] as string
+  );
   const { version, line } = fields;
   if (!Object.hasOwn(dependencies, type)) {
     return `"type" must be one of ${Object.keys(dependencies).join(', ')}, got "${type}"`;
@@ -40,7 +45,8 @@ function readDeclaration(entry: unknown): Declaration | string {
   const inside = insideRoot(file);
   if (inside === null) return `"path" must be a file relative to the analysed root, got "${file}"`;
   if (version !== undefined && typeof version !== 'string') return '"version" must be a string';
-  if (line !== undefined && !(Number.isInteger(line) && (line as number) > 0)) return '"line" must be a positive integer';
+  if (line !== undefined && !(Number.isInteger(line) && (line as number) > 0))
+    return '"line" must be a positive integer';
 
   return {
     type: type as SupportedDeps,
@@ -61,7 +67,8 @@ export function parseDeclarations(value: unknown): Declaration[] {
 
   return value.map((entry: unknown, index) => {
     const declaration = readDeclaration(entry);
-    if (typeof declaration === 'string') throw new TypeError(`declaration ${index}: ${declaration}`);
+    if (typeof declaration === 'string')
+      throw new TypeError(`declaration ${index}: ${declaration}`);
     return declaration;
   });
 }

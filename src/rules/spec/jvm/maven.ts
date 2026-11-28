@@ -6,16 +6,24 @@ type XmlElement = Record<string, unknown>;
 
 function element(value: unknown): XmlElement | undefined {
   return value !== null && typeof value === 'object' && !Array.isArray(value)
-    ? value as XmlElement : undefined;
+    ? (value as XmlElement)
+    : undefined;
 }
 
 function children(parent: XmlElement | undefined, key: string): XmlElement[] {
   const value = parent?.[key];
-  return (Array.isArray(value) ? value : [value]).map(element).filter((item): item is XmlElement => !!item);
+  return (Array.isArray(value) ? value : [value])
+    .map(element)
+    .filter((item): item is XmlElement => !!item);
 }
 
 export function mavenProject(content: string): { name: string; dependencies: Dependency[] } | null {
-  const root = element(parseProjectXml(content, ['http://maven.apache.org/POM/4.0.0', 'http://maven.apache.org/POM/4.1.0'])?.project);
+  const root = element(
+    parseProjectXml(content, [
+      'http://maven.apache.org/POM/4.0.0',
+      'http://maven.apache.org/POM/4.1.0',
+    ])?.project
+  );
   if (!root || typeof root.artifactId !== 'string') return null;
   const parent = element(root.parent);
   const properties: XmlElement = {
@@ -45,7 +53,8 @@ export function mavenProject(content: string): { name: string; dependencies: Dep
   function add(entry: XmlElement, defaultGroup?: string) {
     const group = resolve(entry.groupId ?? defaultGroup);
     const artifact = resolve(entry.artifactId);
-    if (group && artifact) dependencies.push(['maven', `${group}:${artifact}`, resolve(entry.version)]);
+    if (group && artifact)
+      dependencies.push(['maven', `${group}:${artifact}`, resolve(entry.version)]);
   }
   if (parent) add(parent);
   for (const dependency of children(element(root.dependencies), 'dependency')) add(dependency);
