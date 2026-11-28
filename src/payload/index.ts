@@ -133,7 +133,10 @@ export class Payload implements Analyser {
     }
 
     // Detect Tech
-    const matched = matchAllFilesWithEvidence(files, provider.basePath, filePath);
+    const matched = matchAllFilesWithEvidence(files, {
+      basePath: provider.basePath,
+      folder: filePath,
+    });
     ctx.addTechs(matched);
     if (modules.size === 1 || (modules.size === 0 && filePath === provider.basePath))
       findHosting(ctx, matched);

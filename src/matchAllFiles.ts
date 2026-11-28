@@ -19,8 +19,7 @@ export interface TechMatch {
  */
 export function matchAllFilesWithEvidence(
   files: ProviderFile[],
-  basePath: string,
-  folder: string
+  { basePath, folder }: { basePath: string; folder: string }
 ): Map<AllowedKeys, TechMatch> {
   const matched = new Map<AllowedKeys, TechMatch>();
 
@@ -69,7 +68,7 @@ export function matchAllFilesWithEvidence(
 
 export function matchAllFiles(files: ProviderFile[], basePath: string): Map<AllowedKeys, string[]> {
   const matched = new Map<AllowedKeys, string[]>();
-  for (const [tech, match] of matchAllFilesWithEvidence(files, basePath, basePath)) {
+  for (const [tech, match] of matchAllFilesWithEvidence(files, { basePath, folder: basePath })) {
     matched.set(tech, match.reason);
   }
 

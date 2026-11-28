@@ -1,6 +1,7 @@
 import { tokens } from '../manifestTokens.js';
 
 import type { Dependency } from '../../../types/index.js';
+import type { Token } from '../manifestTokens.js';
 
 const name = /^[\w.-]+$/;
 
@@ -18,15 +19,22 @@ export function sbtDependencies(source: string): Dependency[] {
     let j = i + 1;
     while (j < items.length && items[j].kind === 'symbol' && items[j].value === '%') j++;
     const operators = j - i - 1;
-    const artifact = items[j];
+    // Past the last token these are missing: the types say so.
+    const artifact = items[j] as Token | undefined;
+    const version = items[j + 2] as Token | undefined;
     if (operators < 1 || operators > 3 || artifact?.kind !== 'string') continue;
-    if (items[j + 1]?.value !== '%' || items[j + 2]?.value === '%' || !items[j + 2]) continue;
+    if (
+      (items[j + 1] as Token | undefined)?.value !== '%' ||
+      version === undefined ||
+      version.value === '%'
+    )
+      continue;
     const group = items[i].value;
     if (!name.test(group) || !name.test(artifact.value)) continue;
     result.push([
       'maven',
       `${group}:${artifact.value}`,
-      items[j + 2].kind === 'string' ? items[j + 2].value : '',
+      version.kind === 'string' ? version.value : '',
     ]);
     i = j + 2;
   }

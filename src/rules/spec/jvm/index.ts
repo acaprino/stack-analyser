@@ -12,9 +12,7 @@ import type { ComponentMatcher } from '../../../types/rule.js';
 
 function component(
   tool: 'gradle' | 'maven' | 'sbt',
-  name: string,
-  file: string,
-  deps: Dependency[]
+  { name, file, deps }: { name: string; file: string; deps: Dependency[] }
 ): Payload {
   const dependencies = [...new Map(deps.map((d) => [JSON.stringify(d), d])).values()];
   const pl = new Payload({ name, folderPath: file, dependencies });
@@ -24,7 +22,7 @@ function component(
   });
   pl.addDependencyTechs(
     dependencies.map(([, key]) => key),
-    { type: 'maven', file: file }
+    { type: 'maven', file }
   );
   return pl;
 }
@@ -33,15 +31,21 @@ export const detectMaven: ComponentMatcher = async (files, provider) => {
   const pom = files.find((f) => f.type === 'file' && !f.isSymbolicLink && f.name === 'pom.xml');
   if (!pom) return false;
   const source = await provider.open(pom.fp);
-  const project = source && mavenProject(source);
-  return project ? component('maven', project.name, pom.fp, project.dependencies) : false;
+  const project = source === null ? null : mavenProject(source);
+  return project
+    ? component('maven', { name: project.name, file: pom.fp, deps: project.dependencies })
+    : false;
 };
 
-async function catalogFile(provider: BaseProvider, folder: string, files: ProviderFile[]) {
+/** The version catalog of the Gradle build that `folder` belongs to, or `null`. */
+async function catalogFile(
+  provider: BaseProvider,
+  { folder, files }: { folder: string; files: ProviderFile[] }
+): Promise<null | string> {
   const base = path.resolve(provider.basePath);
   let current = path.resolve(folder);
   let children = files;
-  while (true) {
+  for (;;) {
     const relative = path.relative(base, current);
     if (relative === '..' || relative.startsWith(`..${path.sep}`) || path.isAbsolute(relative))
       return null;
@@ -53,7 +57,8 @@ async function catalogFile(provider: BaseProvider, folder: string, files: Provid
         (f) => f.type === 'dir' && !f.isSymbolicLink && f.name === 'gradle'
       );
       if (!gradleDir) return null;
-      const catalog = (await provider.listDir(gradleDir.fp)).find(
+      const gradleFiles = await provider.listDir(gradleDir.fp);
+      const catalog = gradleFiles.find(
         (f) => f.type === 'file' && !f.isSymbolicLink && f.name === 'libs.versions.toml'
       );
       return catalog ? provider.open(catalog.fp) : null;
@@ -76,9 +81,16 @@ export const detectGradle: ComponentMatcher = async (files, provider) => {
   const source = await provider.open(build.fp);
   if (source === null) return false;
   const folder = path.dirname(build.fp);
-  const catalog = source.includes('libs.') ? await catalogFile(provider, folder, files) : null;
-  const deps = gradleDependencies(source, catalog ? gradleCatalog(catalog) : new Map());
-  return component('gradle', path.basename(folder) || 'Gradle project', build.fp, deps);
+  const catalog = source.includes('libs.') ? await catalogFile(provider, { folder, files }) : null;
+  const deps = gradleDependencies(
+    source,
+    catalog ? gradleCatalog(catalog) : new Map<string, Dependency[]>()
+  );
+  return component('gradle', {
+    name: path.basename(folder) || 'Gradle project',
+    file: build.fp,
+    deps,
+  });
 };
 
 // `build.sbt` is the project; the other `.sbt` files of its folder and of `project/` (plugins) add their module IDs.
@@ -94,7 +106,11 @@ export const detectSbt: ComponentMatcher = async (files, provider) => {
     const deps = sbtDependencies(source);
     if (file.name === 'build.sbt') {
       payloads.push(
-        component('sbt', path.basename(path.dirname(file.fp)) || 'sbt project', file.fp, deps)
+        component('sbt', {
+          name: path.basename(path.dirname(file.fp)) || 'sbt project',
+          file: file.fp,
+          deps,
+        })
       );
     } else if (deps.length > 0) {
       const pl = new Payload({ name: 'virtual', folderPath: file.fp, dependencies: deps });

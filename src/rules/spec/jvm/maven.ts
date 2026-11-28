@@ -13,16 +13,15 @@ function element(value: unknown): undefined | XmlElement {
 function children(parent: undefined | XmlElement, key: string): XmlElement[] {
   const value = parent?.[key];
   return (Array.isArray(value) ? value : [value])
-    .map(element)
+    .map((item) => element(item))
     .filter((item): item is XmlElement => !!item);
 }
 
 export function mavenProject(content: string): { name: string; dependencies: Dependency[] } | null {
   const root = element(
-    parseProjectXml(content, [
-      'http://maven.apache.org/POM/4.0.0',
-      'http://maven.apache.org/POM/4.1.0',
-    ])?.project
+    parseProjectXml(content, {
+      namespaces: ['http://maven.apache.org/POM/4.0.0', 'http://maven.apache.org/POM/4.1.0'],
+    })?.project
   );
   if (!root || typeof root.artifactId !== 'string') return null;
   const parent = element(root.parent);
@@ -37,7 +36,8 @@ export function mavenProject(content: string): { name: string; dependencies: Dep
     let result = value;
     for (let depth = 0; result.includes('${') && depth < 16; depth++) {
       if (result.length > 1024) return '';
-      let unresolved = false;
+      // Set inside the callback, which TypeScript does not follow: typed wide on purpose.
+      let unresolved = false as boolean;
       result = result.replaceAll(/\$\{([^}]+)\}/g, (_, key: string) => {
         const property = Object.hasOwn(properties, key) ? properties[key] : undefined;
         if (typeof property === 'string' && property.length <= 1024) return property;
@@ -50,7 +50,7 @@ export function mavenProject(content: string): { name: string; dependencies: Dep
   }
 
   const dependencies: Dependency[] = [];
-  function add(entry: XmlElement, defaultGroup?: string) {
+  function add(entry: XmlElement, defaultGroup?: string): void {
     const group = resolve(entry.groupId ?? defaultGroup);
     const artifact = resolve(entry.artifactId);
     if (group && artifact)

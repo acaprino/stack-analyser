@@ -34,7 +34,7 @@ describe('matchAllFiles', () => {
       { fp: '/app/package.json', name: 'package.json', type: 'file' as const },
       { fp: '/app/index.tsx', name: 'index.tsx', type: 'file' as const },
     ];
-    const withEvidence = matchAllFilesWithEvidence(files, '/', '/app');
+    const withEvidence = matchAllFilesWithEvidence(files, { basePath: '/', folder: '/app' });
 
     expect([...withEvidence].map(([tech, match]) => [tech, match.reason])).toStrictEqual([
       ...matchAllFiles(files, '/'),
@@ -44,8 +44,7 @@ describe('matchAllFiles', () => {
   it('should give the file found as evidence of a file rule', () => {
     const res = matchAllFilesWithEvidence(
       [{ fp: '/app/package.json', name: 'package.json', type: 'file' }],
-      '/',
-      '/app'
+      { basePath: '/', folder: '/app' }
     );
 
     expect(res.get('nodejs')).toStrictEqual({
@@ -57,8 +56,7 @@ describe('matchAllFiles', () => {
   it('should give the analysed folder as evidence of an extension rule', () => {
     const res = matchAllFilesWithEvidence(
       [{ fp: '/app/index.tsx', name: 'index.tsx', type: 'file' }],
-      '/',
-      '/app'
+      { basePath: '/', folder: '/app' }
     );
 
     expect(res.get('typescript')).toStrictEqual({

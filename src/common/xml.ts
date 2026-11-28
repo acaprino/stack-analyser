@@ -15,12 +15,19 @@ interface Frame {
   ignored: boolean;
 }
 
+/** A dictionary with no prototype, so that a key such as `constructor` is only ever what the file says. */
+function emptyRecord(): Record<string, unknown> {
+  return Object.create(null) as Record<string, unknown>;
+}
+
 export function parseProjectXml(
   content: string,
-  namespaces: readonly string[] = [],
-  preserveOrder = false
+  {
+    namespaces = [],
+    preserveOrder = false,
+  }: { namespaces?: readonly string[]; preserveOrder?: boolean } = {}
 ): null | Record<string, unknown> {
-  const root: Record<string, unknown> = Object.create(null);
+  const root = emptyRecord();
   const stack: Frame[] = [];
   const parser = new SaxesParser({ xmlns: true });
   let namespace = '';
@@ -35,20 +42,23 @@ export function parseProjectXml(
         throw new Error('Unrecognized project namespace');
     }
     const ignored = tag.uri !== namespace || stack.at(-1)?.ignored === true;
-    const fields: Record<string, unknown> = Object.create(null);
+    const fields = emptyRecord();
     for (const attr of Object.values(tag.attributes)) {
       if (!attr.uri) fields[`@_${attr.local}`] = attr.value;
     }
     stack.push({ name: tag.local, fields, text: '', ignored });
   });
-  function text(value: string) {
+  function text(value: string): void {
     const frame = stack.at(-1);
     if (frame && !frame.ignored) frame.text += value;
   }
   parser.on('text', text);
   parser.on('cdata', text);
   parser.on('closetag', () => {
-    const { name, fields, text: raw, ignored } = stack.pop()!;
+    const frame = stack.pop();
+    // saxes reports a closing tag only after its opening one, so the stack is never empty here.
+    if (frame === undefined) return;
+    const { name, fields, text: raw, ignored } = frame;
     if (ignored) return;
     const parent: Element = stack.at(-1)?.fields ?? root;
     const value = Object.keys(fields).length > 0 ? fields : raw.trim();

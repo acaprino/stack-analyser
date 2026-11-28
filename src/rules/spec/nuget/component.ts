@@ -153,11 +153,10 @@ async function centralVersions(
       (item) => item.type === 'file' && item.name === 'Directory.Packages.props'
     );
     if (props) {
-      const root = parseProjectXml(
-        (await provider.open(props.fp)) || '',
-        msbuildNamespaces,
-        true
-      )?.Project;
+      const root = parseProjectXml((await provider.open(props.fp)) || '', {
+        namespaces: msbuildNamespaces,
+        preserveOrder: true,
+      })?.Project;
       if (isRecord(root)) {
         const versions = packageVersions(itemGroups(root), 'PackageVersion');
         return new Map([...versions].map(([name, version]) => [name.toLowerCase(), version]));
@@ -198,11 +197,10 @@ export const detectNugetComponent: ComponentMatcher = async (files, provider) =>
   }
   const payloads = [];
   for (const file of manifests) {
-    const project = parseProjectXml(
-      (await provider.open(file.fp)) || '',
-      msbuildNamespaces,
-      true
-    )?.Project;
+    const project = parseProjectXml((await provider.open(file.fp)) || '', {
+      namespaces: msbuildNamespaces,
+      preserveOrder: true,
+    })?.Project;
     if (!isRecord(project)) continue;
     const groups = [...itemGroups(project)];
     const requirements = packageVersions(groups, 'PackageReference');
