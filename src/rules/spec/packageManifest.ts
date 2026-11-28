@@ -34,8 +34,7 @@ export function packageComponent(
   payload.dependencies = [...requirements].map(([pkg, version]) => [ecosystem, pkg, version]);
   payload.addDependencyTechs(
     [...requirements.keys()].filter((pkg) => !local.has(pkg)),
-    ecosystem,
-    file
+    { type: ecosystem, file: file }
   );
   return payload;
 }

@@ -140,12 +140,11 @@ export const detectSwiftComponent: ComponentMatcher = async (files, provider) =>
     if (manifest || packages.size > 0) {
       const file = manifest || resolved!;
       const pl = packageComponent(name, file.fp, 'swiftpm', packages, file.fp);
-      pl.addDependencyTechs([...remotes.values()], 'swiftpm', file.fp);
-      pl.addTech(
-        'swift',
-        ['Swift package: ' + projectPath(provider.basePath, file.fp)],
-        [{ kind: 'file', value: file.name, path: file.fp }]
-      );
+      pl.addDependencyTechs([...remotes.values()], { type: 'swiftpm', file: file.fp });
+      pl.addTech('swift', {
+        reason: ['Swift package: ' + projectPath(provider.basePath, file.fp)],
+        evidence: [{ kind: 'file', value: file.name, path: file.fp }],
+      });
       payloads.push(pl);
     }
   }
@@ -161,9 +160,8 @@ export const detectSwiftComponent: ComponentMatcher = async (files, provider) =>
       const id = module?.kind === 'word' ? SDK_MODULES.get(module.value) : undefined;
       if (id) {
         pl.path.add(file.fp);
-        pl.addTech(
-          id,
-          [
+        pl.addTech(id, {
+          reason: [
             'Swift import ' +
               module.value +
               ' at ' +
@@ -171,8 +169,8 @@ export const detectSwiftComponent: ComponentMatcher = async (files, provider) =>
               ':' +
               module.line,
           ],
-          [{ kind: 'source', value: module.value, path: file.fp, line: module.line }]
-        );
+          evidence: [{ kind: 'source', value: module.value, path: file.fp, line: module.line }],
+        });
       }
     }
     if (pl.techs.size > 0 && payloads.length === 0) payloads.push(pl);

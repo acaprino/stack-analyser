@@ -103,8 +103,7 @@ export const detectPythonLockfile: ComponentMatcher = async (files, provider) =>
       pl.dependencies = read;
       pl.addDependencyTechs(
         read.map(([, name]) => name),
-        'python',
-        file.fp
+        { type: 'python', file: file.fp }
       );
       manifests.push(pl);
     } else {
@@ -239,8 +238,7 @@ export function parseRequirementsTxt(content: string, pl: Payload, file: string)
   pl.dependencies = requirements(lines);
   pl.addDependencyTechs(
     pl.dependencies.map(([, name]) => name),
-    'python',
-    file
+    { type: 'python', file: file }
   );
 }
 
@@ -319,8 +317,7 @@ export function parsePyproject({
   pl.dependencies = [...new Map(dependencies.map((dep) => [JSON.stringify(dep), dep])).values()];
   pl.addDependencyTechs(
     pl.dependencies.map(([, name]) => name),
-    'python',
-    file.fp
+    { type: 'python', file: file.fp }
   );
   return true;
 }

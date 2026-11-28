@@ -228,17 +228,15 @@ export const detectNugetComponent: ComponentMatcher = async (files, provider) =>
       requirements,
       file.fp
     );
-    payload.addTech(
-      'nuget',
-      [`MSBuild project: ${projectPath(provider.basePath, file.fp)}`],
-      [{ kind: 'file', value: file.name, path: file.fp }]
-    );
+    payload.addTech('nuget', {
+      reason: [`MSBuild project: ${projectPath(provider.basePath, file.fp)}`],
+      evidence: [{ kind: 'file', value: file.name, path: file.fp }],
+    });
     if (enablesWinUI(project)) {
-      payload.addTech(
-        'winui',
-        [`MSBuild UseWinUI=true in ${projectPath(provider.basePath, file.fp)}`],
-        [{ kind: 'file', value: file.name, path: file.fp }]
-      );
+      payload.addTech('winui', {
+        reason: [`MSBuild UseWinUI=true in ${projectPath(provider.basePath, file.fp)}`],
+        evidence: [{ kind: 'file', value: file.name, path: file.fp }],
+      });
     }
     const frameworks = packageVersions(groups, 'FrameworkReference');
     if (
@@ -249,7 +247,10 @@ export const detectNugetComponent: ComponentMatcher = async (files, provider) =>
     ) {
       frameworks.set('Microsoft.AspNetCore.App', '');
     }
-    payload.addDependencyTechs([...frameworks.keys(), ...projectSdks(project)], 'nuget', file.fp);
+    payload.addDependencyTechs([...frameworks.keys(), ...projectSdks(project)], {
+      type: 'nuget',
+      file: file.fp,
+    });
     payloads.push(payload);
   }
   if (payloads.length > 0) return payloads;

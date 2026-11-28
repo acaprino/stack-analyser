@@ -64,11 +64,10 @@ describe('payload', () => {
 
       test.mockClear();
 
-      new Payload({ name: 'root', folderPath: '/' }).addDependencyTechs(
-        ['pg', 'left-pad'],
-        'npm',
-        '/package.json'
-      );
+      new Payload({ name: 'root', folderPath: '/' }).addDependencyTechs(['pg', 'left-pad'], {
+        type: 'npm',
+        file: '/package.json',
+      });
 
       expect(once).toBeGreaterThan(0);
       expect(test.mock.calls.length).toBeLessThanOrEqual(once);

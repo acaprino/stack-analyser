@@ -15,7 +15,7 @@ function addImage(pl: Payload, value: unknown, file: string): void {
   const { name, version } = imageReference(image);
   if (!name || /[\s$]/.test(name)) return;
   pl.dependencies.push(['docker', name, version]);
-  pl.addDependencyTechs([imageRepository(image)], 'docker', file);
+  pl.addDependencyTechs([imageRepository(image)], { type: 'docker', file: file });
 }
 
 function addAction(pl: Payload, uses: unknown, file: string): void {
@@ -32,7 +32,7 @@ function addAction(pl: Payload, uses: unknown, file: string): void {
   if (!action) return;
   const [, name, version] = action;
   pl.dependencies.push(['githubAction', name, version]);
-  pl.addDependencyTechs([name], 'githubAction', file);
+  pl.addDependencyTechs([name], { type: 'githubAction', file: file });
 }
 
 export const detectGithubActionsComponent: ComponentMatcher = async (files, provider) => {
@@ -53,11 +53,10 @@ export const detectGithubActionsComponent: ComponentMatcher = async (files, prov
     const jobs = Object.values(parsed.jobs).filter(isRecord);
     if (jobs.length === 0) continue;
     const pl = new Payload({ name: 'virtual', folderPath: file.fp });
-    pl.addTech(
-      'github.actions',
-      [`GitHub Actions workflow: ${relative}`],
-      [{ kind: 'file', value: file.name, path: file.fp }]
-    );
+    pl.addTech('github.actions', {
+      reason: [`GitHub Actions workflow: ${relative}`],
+      evidence: [{ kind: 'file', value: file.name, path: file.fp }],
+    });
     for (const job of jobs) {
       addAction(pl, job.uses, file.fp);
       if (Array.isArray(job.steps)) {

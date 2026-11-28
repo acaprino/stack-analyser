@@ -32,11 +32,10 @@ export const detectDockerfile: ComponentMatcher = async (files, provider) => {
     }
 
     const component = new Payload({ name: file.name, folderPath: file.fp });
-    component.addTech(
-      'docker',
-      [`FROM in ${file.name}`],
-      [{ kind: 'file', value: file.name, path: file.fp }]
-    );
+    component.addTech('docker', {
+      reason: [`FROM in ${file.name}`],
+      evidence: [{ kind: 'file', value: file.name, path: file.fp }],
+    });
     // The evidence names an image as the file writes it; the dependency, as the rules compare it.
     const declared: string[] = [];
     for (const reference of images) {
@@ -45,7 +44,7 @@ export const detectDockerfile: ComponentMatcher = async (files, provider) => {
       component.dependencies.push(['docker', name, version]);
       declared.push(imageRepository(reference));
     }
-    component.addDependencyTechs(declared, 'docker', file.fp);
+    component.addDependencyTechs(declared, { type: 'docker', file: file.fp });
     group.addChild(component);
     group.path.add(file.fp);
   }

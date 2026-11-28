@@ -70,10 +70,9 @@ export const detectPubComponent: ComponentMatcher = async (files, provider) => {
   if (name === 'virtual' && requirements.size === 0) return false;
   const source = manifest || lock!;
   const payload = packageComponent(name, source.fp, 'pub', requirements, source.fp);
-  payload.addTech(
-    'dart',
-    [`Dart package: ${projectPath(provider.basePath, source.fp)}`],
-    [{ kind: 'file', value: source.name, path: source.fp }]
-  );
+  payload.addTech('dart', {
+    reason: [`Dart package: ${projectPath(provider.basePath, source.fp)}`],
+    evidence: [{ kind: 'file', value: source.name, path: source.fp }],
+  });
   return payload;
 };

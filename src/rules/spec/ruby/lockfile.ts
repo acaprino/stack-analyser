@@ -156,8 +156,12 @@ export const detectRubyLockfile: ComponentMatcher = async (files, provider) => {
     }
     const pl = packageComponent('virtual', file.fp, 'ruby', packages, file.fp);
     const found = [{ kind: 'file' as const, value: file.name, path: file.fp }];
-    if (gemspec) pl.addTech('ruby', ['gemspec: ' + projectPath(provider.basePath, file.fp)], found);
-    else pl.addTech('bundler', ['matched file: ' + file.name], found);
+    if (gemspec)
+      pl.addTech('ruby', {
+        reason: ['gemspec: ' + projectPath(provider.basePath, file.fp)],
+        evidence: found,
+      });
+    else pl.addTech('bundler', { reason: ['matched file: ' + file.name], evidence: found });
     components.push(pl);
   }
   // When a manifest exists it is authoritative. A stale lock cannot create a new
@@ -168,8 +172,11 @@ export const detectRubyLockfile: ComponentMatcher = async (files, provider) => {
       if (packages.size === 0) continue;
       const pl = packageComponent('virtual', file.fp, 'ruby', packages, file.fp);
       const found = [{ kind: 'file' as const, value: file.name, path: file.fp }];
-      pl.addTech('bundler', ['matched file: ' + file.name], found);
-      pl.addTech('ruby', ['Bundler lock: ' + projectPath(provider.basePath, file.fp)], found);
+      pl.addTech('bundler', { reason: ['matched file: ' + file.name], evidence: found });
+      pl.addTech('ruby', {
+        reason: ['Bundler lock: ' + projectPath(provider.basePath, file.fp)],
+        evidence: found,
+      });
       components.push(pl);
     }
   }

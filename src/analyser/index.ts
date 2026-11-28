@@ -91,7 +91,7 @@ export async function analyser(opts: AnalyserOptions): Promise<Payload> {
 
   // They go on the root component: nothing says which module of the project another tool meant.
   for (const { type, name, path: file, line, source } of declarations) {
-    pl.addDependencyTechs([name], type, underBase(provider.basePath, file), { line, source });
+    pl.addDependencyTechs([name], { type, file: underBase(provider.basePath, file), line, source });
   }
 
   return pl;

@@ -18,15 +18,13 @@ function component(
 ): Payload {
   const dependencies = [...new Map(deps.map((d) => [JSON.stringify(d), d])).values()];
   const pl = new Payload({ name, folderPath: file, dependencies });
-  pl.addTech(
-    tool,
-    [`build manifest: ${path.basename(file)}`],
-    [{ kind: 'file', value: path.basename(file), path: file }]
-  );
+  pl.addTech(tool, {
+    reason: [`build manifest: ${path.basename(file)}`],
+    evidence: [{ kind: 'file', value: path.basename(file), path: file }],
+  });
   pl.addDependencyTechs(
     dependencies.map(([, key]) => key),
-    'maven',
-    file
+    { type: 'maven', file: file }
   );
   return pl;
 }
@@ -102,8 +100,7 @@ export const detectSbt: ComponentMatcher = async (files, provider) => {
       const pl = new Payload({ name: 'virtual', folderPath: file.fp, dependencies: deps });
       pl.addDependencyTechs(
         deps.map(([, key]) => key),
-        'maven',
-        file.fp
+        { type: 'maven', file: file.fp }
       );
       payloads.push(pl);
     }

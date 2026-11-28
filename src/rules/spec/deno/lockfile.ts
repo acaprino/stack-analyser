@@ -47,7 +47,7 @@ export const detectDenoLockfile: ComponentMatcher = async (files, provider) => {
       folderPath: file.fp,
       dependencies: depsFlatten,
     });
-    pl.addDependencyTechs(Object.keys(deps), 'deno', file.fp);
+    pl.addDependencyTechs(Object.keys(deps), { type: 'deno', file: file.fp });
 
     return pl;
   }

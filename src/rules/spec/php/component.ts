@@ -114,11 +114,10 @@ export const detectPhpComponent: ComponentMatcher = async (files, provider) => {
     file.fp,
     local
   );
-  component.addTech(
-    'phpcomposer',
-    ['matched file: composer.json'],
-    [{ kind: 'file', value: file.name, path: file.fp }]
-  );
+  component.addTech('phpcomposer', {
+    reason: ['matched file: composer.json'],
+    evidence: [{ kind: 'file', value: file.name, path: file.fp }],
+  });
   const licenses = Array.isArray(json.license) ? json.license : [json.license];
   for (const license of licenses) {
     if (typeof license !== 'string') continue;

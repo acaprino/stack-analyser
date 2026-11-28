@@ -26,8 +26,8 @@ test('flatten can be repeated without changing the source graph or double-counti
 
 test('connects repeated service evidence to a real component and keeps technologies with colliding names', () => {
   const root = new Payload({ name: 'main', folderPath: '/' });
-  root.addTech('redis', ['redis client']);
-  root.addTech('redis', ['redis build']);
+  root.addTech('redis', { reason: ['redis client'] });
+  root.addTech('redis', { reason: ['redis build'] });
 
   expect(root.edges).toHaveLength(1);
   expect(root.edges[0].target).toBe(root.childs[0]);
@@ -77,11 +77,10 @@ test('keeps unowned folder evidence visible when multiple manifests share a dire
 test('toJson makes evidence paths relative and portable', () => {
   const base = path.resolve('repo'); // a path of the platform: with the Windows separator on Windows
   const root = new Payload({ name: 'main', folderPath: base });
-  root.addTech(
-    'react',
-    ['react matched: /^react$/'],
-    [{ kind: 'package', value: 'react', path: path.join(base, 'web', 'package.json') }]
-  );
+  root.addTech('react', {
+    reason: ['react matched: /^react$/'],
+    evidence: [{ kind: 'package', value: 'react', path: path.join(base, 'web', 'package.json') }],
+  });
   root.addEvidence('react', [{ kind: 'extension', value: '.tsx', path: base }]);
 
   expect(root.toJson(base).evidence).toStrictEqual([
@@ -98,11 +97,10 @@ test('toJson makes evidence paths relative and portable', () => {
 
 test('gives the deduced component the evidence of the technology that implied it', () => {
   const root = new Payload({ name: 'api', folderPath: '/api' });
-  root.addTech(
-    'postgresql',
-    ['postgresql matched: /^pg$/'],
-    [{ kind: 'package', value: 'pg', path: '/api/package.json' }]
-  );
+  root.addTech('postgresql', {
+    reason: ['postgresql matched: /^pg$/'],
+    evidence: [{ kind: 'package', value: 'pg', path: '/api/package.json' }],
+  });
 
   expect(root.childs[0].tech).toBe('postgresql');
   expect(root.childs[0].evidence).toStrictEqual([
@@ -120,11 +118,10 @@ test('flatten keeps the union of evidence', () => {
   const root = new Payload({ name: 'main', folderPath: '/' });
   for (const folder of ['/a', '/b', '/a']) {
     const child = root.addChild(new Payload({ name: folder, folderPath: folder }));
-    child.addTech(
-      'redis',
-      ['redis client'],
-      [{ kind: 'package', value: 'redis', path: `${folder}/package.json` }]
-    );
+    child.addTech('redis', {
+      reason: ['redis client'],
+      evidence: [{ kind: 'package', value: 'redis', path: `${folder}/package.json` }],
+    });
   }
   const before = structuredClone(root.toJson());
   const redis = flatten(root, { merge: true }).childs.find((c) => c.tech === 'redis')!;
@@ -164,16 +161,14 @@ test('does not repeat evidence, keeps a declared source and ignores evidence of 
 
 test('gives the host component of a dotted technology the evidence of the service and merges it on the next one', () => {
   const root = new Payload({ name: 'main', folderPath: '/' });
-  root.addTech(
-    'aws.s3',
-    ['aws.s3 matched'],
-    [{ kind: 'package', value: '@aws-sdk/client-s3', path: '/package.json' }]
-  );
-  root.addTech(
-    'aws.athena',
-    ['aws.athena matched'],
-    [{ kind: 'package', value: '@aws-sdk/client-athena', path: '/package.json' }]
-  );
+  root.addTech('aws.s3', {
+    reason: ['aws.s3 matched'],
+    evidence: [{ kind: 'package', value: '@aws-sdk/client-s3', path: '/package.json' }],
+  });
+  root.addTech('aws.athena', {
+    reason: ['aws.athena matched'],
+    evidence: [{ kind: 'package', value: '@aws-sdk/client-athena', path: '/package.json' }],
+  });
   const aws = root.childs.find((c) => c.tech === 'aws')!;
 
   expect([...aws.reason]).toStrictEqual(['implicit: aws.s3', 'implicit: aws.athena']);

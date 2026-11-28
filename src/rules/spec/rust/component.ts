@@ -42,8 +42,7 @@ interface RustCargo extends Dependencies {
 
 async function inheritedDependencies(
   member: RustCargo,
-  folder: string,
-  provider: BaseProvider
+  { folder, provider }: { folder: string; provider: BaseProvider }
 ): Promise<Record<string, unknown>> {
   if (member.workspace) return member.workspace.dependencies ?? {};
   const root = path.resolve(provider.basePath);
@@ -58,7 +57,8 @@ async function inheritedDependencies(
     if (relative === '..' || relative.startsWith('..' + path.sep) || path.isAbsolute(relative))
       break;
     if (explicit && explicit !== path.resolve(dir)) continue;
-    const manifest = (await provider.listDir(dir)).find(
+    const items = await provider.listDir(dir);
+    const manifest = items.find(
       (item) => item.type === 'file' && !item.isSymbolicLink && item.name === 'Cargo.toml'
     );
     if (!manifest) continue;
@@ -121,7 +121,10 @@ export const detectRustComponent: ComponentMatcher = async (files, provider) => 
         for (const [alias, initial] of Object.entries(group)) {
           let value = initial;
           if (isRecord(value) && value.workspace === true) {
-            inherited ??= await inheritedDependencies(json, path.dirname(file.fp), provider);
+            inherited ??= await inheritedDependencies(json, {
+              folder: path.dirname(file.fp),
+              provider,
+            });
             value = Object.hasOwn(inherited, alias) ? inherited[alias] : undefined;
             if (value === undefined) {
               dependencies.push(['rust', alias, 'workspace']);
@@ -131,23 +134,29 @@ export const detectRustComponent: ComponentMatcher = async (files, provider) => 
           if (typeof value !== 'string' && !isRecord(value)) continue;
           const spec = typeof value === 'string' ? { version: value } : value;
           const name = typeof spec.package === 'string' ? spec.package : alias;
+          const pinned = typeof spec.version === 'string' ? spec.version : '';
           let version = typeof spec.version === 'string' ? spec.version : 'latest';
           if (typeof spec.path === 'string') {
-            version = `path:${spec.path}${spec.version ? `:${spec.version}` : ''}`;
+            version = `path:${spec.path}${pinned === '' ? '' : `:${pinned}`}`;
           } else {
             external.add(name);
-            if (spec.git) version = `git:${spec.git}#${spec.branch || spec.rev || 'latest'}`;
+            // Cargo writes git, branch and rev as strings; the first non-empty reference wins.
+            const git = typeof spec.git === 'string' ? spec.git : '';
+            const reference = [spec.branch, spec.rev].find(
+              (ref) => typeof ref === 'string' && ref !== ''
+            );
+            if (git !== '')
+              version = `git:${git}#${typeof reference === 'string' ? reference : 'latest'}`;
           }
           dependencies.push(['rust', name, version]);
         }
       }
     }
-    pl.addDependencyTechs([...external], 'rust', file.fp);
-    pl.addTech(
-      'cargo',
-      ['matched file: Cargo.toml'],
-      [{ kind: 'file', value: file.name, path: file.fp }]
-    );
+    pl.addDependencyTechs([...external], { type: 'rust', file: file.fp });
+    pl.addTech('cargo', {
+      reason: ['matched file: Cargo.toml'],
+      evidence: [{ kind: 'file', value: file.name, path: file.fp }],
+    });
     pl.dependencies = dependencies;
 
     if (typeof json.package?.license === 'string') {

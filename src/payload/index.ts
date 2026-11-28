@@ -30,7 +30,7 @@ import type {
   HostMention,
 } from '../types/index.js';
 import type { AllowedLicenses } from '../types/licenses.js';
-import type { SupportedDeps } from '../types/rule.js';
+import type { Rule, SupportedDeps } from '../types/rule.js';
 import type { AllowedKeys } from '../types/techs.js';
 
 export class Payload implements Analyser {
@@ -48,9 +48,9 @@ export class Payload implements Analyser {
   public parent?: null | Payload;
   public reason: Set<string>;
   public evidence: Analyser['evidence'] = [];
+  public mentions: HostMention[] = [];
   /** The key of every item in `evidence`: it is kept with the array, so that a merge does not have to build it again. */
   #evidenceKeys = new Set<string>();
-  public mentions: HostMention[] = [];
 
   constructor({
     id,
@@ -166,7 +166,7 @@ export class Payload implements Analyser {
 
     if (service.tech?.includes('.')) {
       const [host] = service.tech.split('.');
-      const tech = listIndexed[host as AllowedKeys];
+      const tech = listIndexed[host as AllowedKeys] as Rule | undefined;
       if (tech?.type === 'hosting' || tech?.type === 'cloud') {
         const pl = new Payload({
           name: tech.name,
@@ -216,9 +216,9 @@ export class Payload implements Analyser {
   addTechs(tech: Map<AllowedKeys, string[] | TechMatch>): void {
     for (const [key, match] of tech.entries()) {
       if (Array.isArray(match)) {
-        this.addTech(key, match);
+        this.addTech(key, { reason: match });
       } else {
-        this.addTech(key, match.reason, match.evidence);
+        this.addTech(key, { reason: match.reason, evidence: match.evidence });
       }
     }
   }
@@ -226,35 +226,40 @@ export class Payload implements Analyser {
   /**
    * Register the techs that declared packages, images, actions or Terraform resources point to.
    * Every name that matched is recorded as evidence, with the file that declares it.
-   * `origin` is for names another tool already read: its `line` and `source` go in the evidence.
+   * `line` and `source` are for names another tool already read: they go in the evidence.
    */
   addDependencyTechs(
     names: string[],
-    type: SupportedDeps,
-    file: string,
-    origin: { line?: number; source?: string } = {}
+    {
+      type,
+      file,
+      line,
+      source,
+    }: { type: SupportedDeps; file: string; line?: number; source?: string }
   ): void {
     const kind = evidenceKind(type);
     const { reasons, names: matched } = matchDependenciesWithNames(names, type);
     for (const [tech, reason] of reasons) {
-      this.addTech(
-        tech,
-        reason,
-        (matched.get(tech) ?? []).map((value) => ({
+      this.addTech(tech, {
+        reason: reason,
+        evidence: (matched.get(tech) ?? []).map((value) => ({
           kind,
           value,
           path: file,
-          line: origin.line,
-          source: origin.source,
-        }))
-      );
+          line,
+          source,
+        })),
+      });
     }
   }
 
   /**
    * Declare this Payload has built with this tech.
    */
-  addTech(tech: AllowedKeys, reason: string[], evidence?: EvidenceItem[]): void {
+  addTech(
+    tech: AllowedKeys,
+    { reason, evidence }: { reason: string[]; evidence?: EvidenceItem[] }
+  ): void {
     this.techs.add(tech);
     for (const r of reason) {
       this.reason.add(r);
@@ -271,18 +276,6 @@ export class Payload implements Analyser {
    */
   addEvidence(tech: AllowedKeys, items: EvidenceItem[]): void {
     this.mergeEvidence(items.map((item) => toEvidence(tech, item)));
-  }
-
-  /**
-   * Add evidence that already has its tech and source, skipping the ones this Payload already has.
-   */
-  private mergeEvidence(items: Evidence[]): void {
-    for (const item of items) {
-      const key = evidenceKey(item);
-      if (this.#evidenceKeys.has(key)) continue;
-      this.#evidenceKeys.add(key);
-      this.evidence.push({ ...item });
-    }
   }
 
   /**
@@ -452,5 +445,17 @@ export class Payload implements Analyser {
         mentions: this.mentions.map((mention) => ({ ...mention })),
       }),
     };
+  }
+
+  /**
+   * Add evidence that already has its tech and source, skipping the ones this Payload already has.
+   */
+  private mergeEvidence(items: Evidence[]): void {
+    for (const item of items) {
+      const key = evidenceKey(item);
+      if (this.#evidenceKeys.has(key)) continue;
+      this.#evidenceKeys.add(key);
+      this.evidence.push({ ...item });
+    }
   }
 }

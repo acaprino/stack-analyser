@@ -49,7 +49,10 @@ export const detectMaestroFlow: ComponentMatcher = async (files, provider) => {
     const text = await sourceText(provider, file.fp);
     if (!text || !isFlow(text)) continue;
     const payload = new Payload({ name: 'virtual', folderPath: file.fp });
-    payload.addTech('maestro', [relative], [{ kind: 'file', value: file.name, path: file.fp }]);
+    payload.addTech('maestro', {
+      reason: [relative],
+      evidence: [{ kind: 'file', value: file.name, path: file.fp }],
+    });
     return payload;
   }
   return false;

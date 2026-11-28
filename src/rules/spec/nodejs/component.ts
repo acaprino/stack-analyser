@@ -62,7 +62,7 @@ export const detectNodeComponent: ComponentMatcher = async (files, provider) => 
       folderPath: file.fp,
       dependencies: declared,
     });
-    pl.addDependencyTechs([...external], 'npm', file.fp);
+    pl.addDependencyTechs([...external], { type: 'npm', file: file.fp });
 
     if (json.license && typeof json.license === 'string') {
       const lic = detectLicense(json.license);
