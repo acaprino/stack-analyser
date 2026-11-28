@@ -11,13 +11,13 @@ export default [
     rules: {
       'import-x/extensions': 'off', // does not work for some reason
       'import-x/no-extraneous-dependencies': 'off', // does not work for some reason
-      // Vitest takes a message as the second argument of expect(): it says which entry failed.
-      'vitest/valid-expect': ['error', { maxArgs: 2 }],
     },
   },
   {
     files: ['**/**.test.ts'],
     rules: {
+      // Vitest takes a message as the second argument of expect(): it says which entry failed.
+      'vitest/valid-expect': ['error', { maxArgs: 2 }],
       '@typescript-eslint/no-unsafe-assignment': 'off',
       '@typescript-eslint/no-non-null-assertion': 'off',
     },
