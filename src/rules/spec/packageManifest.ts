@@ -13,7 +13,10 @@ export function isRecord(value: unknown): value is Record<string, unknown> {
 }
 
 /** Whether `target` (absolute, or relative to `from`, a folder) stays inside the analysed copy of the project. */
-export function insideProject(base: string, from: string, target: string): boolean {
+export function insideProject(
+  base: string,
+  { from, target }: { from: string; target: string }
+): boolean {
   const relative = path.relative(path.resolve(base), path.resolve(from, target));
   return !(relative === '..' || relative.startsWith(`..${path.sep}`) || path.isAbsolute(relative));
 }
@@ -24,17 +27,25 @@ export function insideProject(base: string, from: string, target: string): boole
  */
 export function packageComponent(
   name: string,
-  folderPath: string,
-  ecosystem: SupportedDeps,
-  requirements: Map<string, string>,
-  file: string,
-  local: ReadonlySet<string> = new Set()
+  {
+    folderPath,
+    ecosystem,
+    requirements,
+    file,
+    local = new Set(),
+  }: {
+    folderPath: string;
+    ecosystem: SupportedDeps;
+    requirements: Map<string, string>;
+    file: string;
+    local?: ReadonlySet<string>;
+  }
 ): Payload {
   const payload = new Payload({ name, folderPath });
   payload.dependencies = [...requirements].map(([pkg, version]) => [ecosystem, pkg, version]);
   payload.addDependencyTechs(
     [...requirements.keys()].filter((pkg) => !local.has(pkg)),
-    { type: ecosystem, file: file }
+    { type: ecosystem, file }
   );
   return payload;
 }

@@ -139,7 +139,12 @@ export const detectSwiftComponent: ComponentMatcher = async (files, provider) =>
     }
     if (manifest || packages.size > 0) {
       const file = manifest || resolved!;
-      const pl = packageComponent(name, file.fp, 'swiftpm', packages, file.fp);
+      const pl = packageComponent(name, {
+        folderPath: file.fp,
+        ecosystem: 'swiftpm',
+        requirements: packages,
+        file: file.fp,
+      });
       pl.addDependencyTechs([...remotes.values()], { type: 'swiftpm', file: file.fp });
       pl.addTech('swift', {
         reason: ['Swift package: ' + projectPath(provider.basePath, file.fp)],

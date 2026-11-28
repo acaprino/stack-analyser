@@ -219,13 +219,12 @@ export const detectNugetComponent: ComponentMatcher = async (files, provider) =>
         if (!version && supplied) requirements.set(id, supplied);
       }
     }
-    const payload = packageComponent(
-      path.parse(file.name).name,
-      file.fp,
-      'nuget',
+    const payload = packageComponent(path.parse(file.name).name, {
+      folderPath: file.fp,
+      ecosystem: 'nuget',
       requirements,
-      file.fp
-    );
+      file: file.fp,
+    });
     payload.addTech('nuget', {
       reason: [`MSBuild project: ${projectPath(provider.basePath, file.fp)}`],
       evidence: [{ kind: 'file', value: file.name, path: file.fp }],
@@ -254,11 +253,10 @@ export const detectNugetComponent: ComponentMatcher = async (files, provider) =>
   if (payloads.length > 0) return payloads;
   const source = legacy || lock;
   if (!source || (installed.size === 0 && pinned.size === 0)) return false;
-  return packageComponent(
-    'virtual',
-    source.fp,
-    'nuget',
-    new Map([...installed, ...pinned]),
-    source.fp
-  );
+  return packageComponent('virtual', {
+    folderPath: source.fp,
+    ecosystem: 'nuget',
+    requirements: new Map([...installed, ...pinned]),
+    file: source.fp,
+  });
 };

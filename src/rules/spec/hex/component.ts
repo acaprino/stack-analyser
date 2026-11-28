@@ -107,7 +107,12 @@ export const detectHexComponent: ComponentMatcher = async (files, provider) => {
     }
     if (manifest || packages.size > 0) {
       const file = manifest || lock!;
-      const pl = packageComponent(name, file.fp, 'hex', packages, file.fp);
+      const pl = packageComponent(name, {
+        folderPath: file.fp,
+        ecosystem: 'hex',
+        requirements: packages,
+        file: file.fp,
+      });
       pl.addTech('elixir', {
         reason: ['Mix package: ' + projectPath(provider.basePath, file.fp)],
         evidence: [{ kind: 'file', value: file.name, path: file.fp }],

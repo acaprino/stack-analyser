@@ -68,9 +68,15 @@ export const detectGolangLockfile: ComponentMatcher = async (files, provider) =>
   for (const { module, version, target } of replacements) {
     if (!/^\.\.?[\\/]/.test(target) || !modules.has(module)) continue;
     if (version && modules.get(module) !== version) continue;
-    if (!insideProject(provider.basePath, path.dirname(file.fp), target)) continue;
+    if (!insideProject(provider.basePath, { from: path.dirname(file.fp), target })) continue;
     modules.set(module, target);
     local.add(module);
   }
-  return packageComponent('virtual', file.fp, 'golang', modules, file.fp, local);
+  return packageComponent('virtual', {
+    folderPath: file.fp,
+    ecosystem: 'golang',
+    requirements: modules,
+    file: file.fp,
+    local,
+  });
 };

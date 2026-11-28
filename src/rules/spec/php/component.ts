@@ -60,7 +60,8 @@ async function localPackages(
   for (const repository of repositories) {
     if (!isRecord(repository) || repository.type !== 'path' || typeof repository.url !== 'string')
       continue;
-    if (!insideProject(provider.basePath, path.dirname(file), repository.url)) continue;
+    if (!insideProject(provider.basePath, { from: path.dirname(file), target: repository.url }))
+      continue;
     for (const folder of await folders(
       provider,
       path.resolve(path.dirname(file), repository.url)
@@ -106,14 +107,13 @@ export const detectPhpComponent: ComponentMatcher = async (files, provider) => {
   }
   const fromFolders = await localPackages(json, file.fp, provider);
   const local = new Set([...requirements.keys()].filter((id) => fromFolders.has(id.toLowerCase())));
-  const component = packageComponent(
-    name ?? (path.basename(path.dirname(file.fp)) || 'virtual'),
-    file.fp,
-    'php',
+  const component = packageComponent(name ?? (path.basename(path.dirname(file.fp)) || 'virtual'), {
+    folderPath: file.fp,
+    ecosystem: 'php',
     requirements,
-    file.fp,
-    local
-  );
+    file: file.fp,
+    local,
+  });
   component.addTech('phpcomposer', {
     reason: ['matched file: composer.json'],
     evidence: [{ kind: 'file', value: file.name, path: file.fp }],
