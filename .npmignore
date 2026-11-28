@@ -14,3 +14,4 @@ __snapshots__/
 __fixtures__/
 *.ts.map
 .superpowers/
+effectiveness-metrics.json
