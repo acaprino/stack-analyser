@@ -4,7 +4,7 @@ import type { SupportedDeps } from '../types/rule.js';
 export function imageRepository(image: string): string {
   const [tagged] = image.split('@', 1);
   const colon = tagged.indexOf(':', tagged.lastIndexOf('/') + 1);
-  return colon !== -1 ? tagged.slice(0, colon) : tagged;
+  return colon === -1 ? tagged : tagged.slice(0, colon);
 }
 
 /** The repository as the rules compare it, in lower case and without Docker Hub's registry and `library/`, and the tag or digest. */
@@ -19,8 +19,12 @@ export function imageReference(image: string): { name: string; version: string }
   return { name, version: digest ? (tag ? `${tag}@${digest}` : digest) : tag || 'latest' };
 }
 
+/** `part` with every character that means something in a regular expression escaped. */
+function escape(part: string): string {
+  return part.replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
+}
+
 export function packagePattern(name: string, type: SupportedDeps): RegExp {
-  const escape = (part: string): string => part.replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
   if (type === 'githubAction') {
     const [owner, repo, ...subpath] = name.split('/');
     if (subpath.length === 0) return new RegExp(`^${escape(name)}$`, 'i');
@@ -35,7 +39,7 @@ export function packagePattern(name: string, type: SupportedDeps): RegExp {
     type === 'python'
       ? name
           .split(/[-_.]+/)
-          .map(escape)
+          .map((part) => escape(part))
           .join('[-_.]+')
       : escape(type === 'docker' ? imageReference(name).name : name);
   const end = type === 'golang' ? '(?:/|$)' : '$';

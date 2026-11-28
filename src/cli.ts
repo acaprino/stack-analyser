@@ -21,7 +21,8 @@ import type { Declaration } from './types/index.js';
 
 import './autoload.js';
 
-const program = new Command();
+// Typed explicitly: TypeScript only narrows after a `never` call such as program.error() on an annotated name.
+const program: Command = new Command();
 
 /** Splits a comma-separated option value. Entries are trimmed and empty ones dropped, so `""` is an empty list. */
 function parseList(value: string): string[] {
@@ -169,8 +170,7 @@ program
         skipDirs?: string;
         ignore?: string;
         perimeter?: string;
-      },
-      command: Command
+      }
     ) => {
       const pathAtExecution = process.cwd();
 
@@ -181,7 +181,7 @@ program
         const given = [
           ...(arg === undefined ? [] : ['the project']),
           ...Object.entries(analysisOptions)
-            .filter(([name]) => command.getOptionValueSource(name) === 'cli')
+            .filter(([name]) => program.getOptionValueSource(name) === 'cli')
             .map(([, flag]) => flag),
         ];
         if (given.length > 0) {
@@ -202,7 +202,7 @@ program
       }
 
       if (arg === undefined)
-        command.error("error: missing required argument 'path'", {
+        program.error("error: missing required argument 'path'", {
           code: 'commander.missingArgument',
         });
       // Resolved once, so that a trailing separator or a `..` does not change what the provider and the output call the root.
@@ -244,7 +244,8 @@ program
         names = { skipDirs: '"skipDirs"', ignore: '"ignore"' };
         try {
           // A byte order mark, which some editors put first, is not part of the JSON.
-          const text = (await fs.readFile(perimeterFile, 'utf8')).replace(/^\uFEFF/, '');
+          const raw = await fs.readFile(perimeterFile, 'utf8');
+          const text = raw.replace(/^\uFEFF/, '');
           perimeter = parsePerimeter(JSON.parse(text));
         } catch (err) {
           fail(label + (err as Error).message);
@@ -267,7 +268,8 @@ program
         const declarationsFile = path.resolve(pathAtExecution, options.declarations);
         try {
           // A byte order mark, which some editors put first, is not part of the JSON.
-          const text = (await fs.readFile(declarationsFile, 'utf8')).replace(/^\uFEFF/, '');
+          const raw = await fs.readFile(declarationsFile, 'utf8');
+          const text = raw.replace(/^\uFEFF/, '');
           declarations = parseDeclarations(JSON.parse(text));
         } catch (err) {
           fail(`Declarations "${declarationsFile}":`, (err as Error).message);

@@ -32,8 +32,9 @@ type Hits = ReturnType<typeof matchRules>;
 function reasonsOf(hits: Hits): Map<AllowedKeys, string[]> {
   const matched = new Map<AllowedKeys, string[]>();
   for (const { ref } of hits) {
-    if (matched.has(ref.tech)) {
-      matched.set(ref.tech, [...matched.get(ref.tech)!, `matched: ${ref.tech}`]);
+    const prior = matched.get(ref.tech);
+    if (prior) {
+      matched.set(ref.tech, [...prior, `matched: ${ref.tech}`]);
     } else {
       matched.set(ref.tech, [`${ref.tech} matched: ${ref.match}`]);
     }

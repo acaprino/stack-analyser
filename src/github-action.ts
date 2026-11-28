@@ -12,10 +12,10 @@ try {
   l.log('Starting Stack Analyser');
 
   // Because we exec the GitHub Action in a docker env the repo path is in the env var
-  const workspace = process.env.GITHUB_WORKSPACE!;
+  const workspace = process.env.GITHUB_WORKSPACE ?? '';
   l.log('workspace', workspace);
 
-  if (!workspace) {
+  if (workspace === '') {
     throw new Error('No workspace env specified');
   }
 

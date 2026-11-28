@@ -14,7 +14,8 @@ async function ensureIndexFiles(rulesFolder: string): Promise<void> {
     }
 
     const folderPath = path.join(rulesFolder, folder.name);
-    const files = (await fs.readdir(folderPath)).sort();
+    const entries = await fs.readdir(folderPath);
+    const files = entries.sort();
     let imports = '';
 
     for (const file of files) {

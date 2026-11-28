@@ -107,18 +107,19 @@ export function loadOne(rule: Rule): void {
     rulesTechs.push(matcher);
   }
 
-  if (rule.extensions !== undefined) {
+  const { extensions, dotenv } = rule;
+  if (extensions !== undefined) {
     const matcher: ExtensionMatcher = (list) => {
-      return matchExtensions({ key: rule.tech, list: rule.extensions!, extensions: list });
+      return matchExtensions({ key: rule.tech, list: extensions, extensions: list });
     };
 
     rawList.push({ type: 'ext', ref: rule });
     rulesExtensions.push(matcher);
   }
 
-  if (Array.isArray(rule.dotenv) && rule.dotenv.length > 0) {
+  if (Array.isArray(dotenv) && dotenv.length > 0) {
     const matcher: DotEnvMatcher = (variables) => {
-      return matchDotEnv({ key: rule.tech, list: rule.dotenv!, variables });
+      return matchDotEnv({ key: rule.tech, list: dotenv, variables });
     };
 
     rawList.push({ type: 'dotenv', ref: rule as RuleWithDotEnv });

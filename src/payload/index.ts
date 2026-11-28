@@ -122,7 +122,8 @@ export class Payload implements Analyser {
 
     // When several manifests share a directory, a generic source or endpoint cannot be
     // assigned to one of them by detector registration order. Keep the evidence at their parent.
-    const ctx = modules.size === 1 ? modules.values().next().value! : this;
+    const [only] = modules;
+    const ctx = modules.size === 1 ? only : this;
     const dotenv = await detectInDotEnv(files, provider);
     if (dotenv !== false) {
       for (const child of dotenv.childs) {
