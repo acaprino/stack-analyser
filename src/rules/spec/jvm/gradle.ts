@@ -10,8 +10,20 @@ function record(value: unknown): Record<string, unknown> {
     : {};
 }
 
+/** A text that is there and not empty. */
+function filled(text?: string): text is string {
+  return text !== undefined && text !== '';
+}
+
+/** Turns `alias-name` or `alias_name` into the `alias.name` accessor Gradle generates for it. */
+function accessor(alias: string): string {
+  return alias.replaceAll(/[-_]/g, '.');
+}
+
 function coordinate(value: string, version = ''): Dependency | undefined {
-  const [group, artifact, pinned] = value.split('@')[0]!.split(':');
+  const [coordinates = ''] = value.split('@');
+  // A coordinate can stop before its version: the third part may be missing.
+  const [group = '', artifact = '', pinned] = coordinates.split(':') as (string | undefined)[];
   if (!group || !artifact || !/^[\w.-]+$/.test(group) || !/^[\w.-]+$/.test(artifact)) return;
   return ['maven', `${group}:${artifact}`, pinned?.includes('$') ? '' : (pinned ?? version)];
 }
@@ -29,7 +41,6 @@ export function gradleCatalog(source: string): Catalog {
     return entries;
   }
   const versions = record(data['versions']);
-  const accessor = (alias: string) => alias.replaceAll(/[-_]/g, '.');
   for (const section of ['libraries', 'plugins']) {
     for (const [alias, item] of Object.entries(record(data[section]))) {
       const entry = record(item);
@@ -38,7 +49,10 @@ export function gradleCatalog(source: string): Catalog {
       const pinned = typeof version === 'string' ? version : '';
       let dep: Dependency | undefined;
       if (section === 'plugins') {
-        const [id, shorthandVersion] = typeof item === 'string' ? item.split(':') : [];
+        const [id, shorthandVersion] = (typeof item === 'string' ? item.split(':') : []) as (
+          | string
+          | undefined
+        )[];
         const name = id ?? entry['id'];
         if (typeof name === 'string') dep = marker(name, shorthandVersion ?? pinned);
       } else {
@@ -74,7 +88,14 @@ const configuration =
   /^(?:(?:\w+(?:Api|Implementation|CompileOnly|RuntimeOnly|AnnotationProcessor))|api|implementation|compileOnly|compileOnlyApi|runtimeOnly|annotationProcessor|kapt\w*|ksp\w*|compile|runtime|testCompile|testRuntime)$/;
 
 function literal(value?: string): string | undefined {
-  if (!value || !["'", '"'].includes(value[0]!) || value.length < 2 || value.at(-1) !== value[0])
+  const quote = value?.at(0);
+  if (
+    value === undefined ||
+    quote === undefined ||
+    !["'", '"'].includes(quote) ||
+    value.length < 2 ||
+    value.at(-1) !== quote
+  )
     return;
   return value.slice(1, -1);
 }
@@ -87,15 +108,18 @@ function moduleArguments(args: string[], catalog: Catalog): Dependency[] {
       const value = literal(args[i + 2]);
       if (
         value === undefined ||
-        ![':', '='].includes(args[i + 1]!) ||
+        ![':', '='].includes(args[i + 1]) ||
         (args[i + 3] && args[i + 3] !== ',')
       )
         return [];
-      fields.set(args[i]!, value);
+      fields.set(args[i], value);
     }
     const group = fields.get('group');
     const name = fields.get('name');
-    const dep = group && name && coordinate(`${group}:${name}`, fields.get('version'));
+    const dep =
+      filled(group) && filled(name)
+        ? coordinate(`${group}:${name}`, fields.get('version'))
+        : undefined;
     return dep ? [dep] : [];
   }
   if (args.some((v, i) => i % 2 === 1 && v !== ',')) return [];
@@ -137,25 +161,25 @@ export function gradleDependencies(source: string, catalog: Catalog): Dependency
   let statement: string[] = [];
   let parens = 0;
   let lineBreak = false;
-  function read() {
+  function read(): void {
     // A branch of `if`/`else` in the top-level block declares a possible build target, braced or not: its guard goes.
-    let tokens = statement;
+    let parts = statement;
     while (
       blocks[0] === 'dependencies' &&
-      (tokens[0] === 'else' || (tokens[0] === 'if' && tokens[1] === '('))
+      (parts[0] === 'else' || (parts[0] === 'if' && parts[1] === '('))
     ) {
-      if (tokens[0] === 'else') {
-        tokens = tokens.slice(1);
+      if (parts[0] === 'else') {
+        parts = parts.slice(1);
         continue;
       }
       let depth = 0;
-      const end = tokens.findIndex(
+      const end = parts.findIndex(
         (token) => (depth += token === '(' ? 1 : token === ')' ? -1 : 0) === 0 && token === ')'
       );
       if (end === -1) return;
-      tokens = tokens.slice(end + 1);
+      parts = parts.slice(end + 1);
     }
-    const [call, ...rest] = tokens;
+    const [call, ...rest] = parts;
     if (!call) return;
     const args = rest.filter((t) => t !== '(' && t !== ')');
     if (
@@ -163,10 +187,10 @@ export function gradleDependencies(source: string, catalog: Catalog): Dependency
       call === 'apply' &&
       args.length === 3 &&
       args[0] === 'plugin' &&
-      [':', '='].includes(args[1]!)
+      [':', '='].includes(args[1])
     ) {
       const id = literal(args[2]);
-      const dep = id && marker(id, '');
+      const dep = filled(id) ? marker(id, '') : undefined;
       if (dep) result.push(dep);
       return;
     }
@@ -183,9 +207,10 @@ export function gradleDependencies(source: string, catalog: Catalog): Dependency
       } else {
         const id = literal(args[0]);
         const versionAt = args.findIndex((arg) => arg === 'version' || arg === '.version');
-        const version = versionAt !== -1 ? literal(args[versionAt + 1]) : '';
-        const entry =
-          id && marker(call === 'kotlin' ? `org.jetbrains.kotlin.${id}` : id, version ?? '');
+        const version = versionAt === -1 ? '' : literal(args[versionAt + 1]);
+        const entry = filled(id)
+          ? marker(call === 'kotlin' ? `org.jetbrains.kotlin.${id}` : id, version ?? '')
+          : undefined;
         if (entry) result.push(entry);
       }
     } else if (configuration.test(call) || call === 'add') {
@@ -222,7 +247,7 @@ export function gradleDependencies(source: string, catalog: Catalog): Dependency
     if (token === '{') {
       read();
       let block = statement.length === 1 ? statement[0] : '';
-      if (blocks[0] === 'dependencies' && ['if', 'else'].includes(statement[0]!)) block = 'branch';
+      if (blocks[0] === 'dependencies' && ['if', 'else'].includes(statement[0])) block = 'branch';
       if (blocks.length === 2 && blocks[0] === 'kotlin' && blocks[1] === 'sourceSets') {
         const delegate =
           statement.length === 4 &&
