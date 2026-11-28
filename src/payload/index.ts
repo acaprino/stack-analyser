@@ -51,6 +51,11 @@ export class Payload implements Analyser {
   public mentions: HostMention[] = [];
   /** The key of every item in `evidence`: it is kept with the array, so that a merge does not have to build it again. */
   #evidenceKeys = new Set<string>();
+  /**
+   * The keys of `dependencies` as they were after the last merge. The array is public and readers assign it, so the
+   * keys are only trusted while it is still that array at that length.
+   */
+  #dependencyKeys?: { list: Dependency[]; size: number; keys: Set<string> };
 
   constructor({
     id,
@@ -334,11 +339,17 @@ export class Payload implements Analyser {
   }
 
   combineDependencies(pl: Payload): void {
-    // Merge dependencies
-    const dedup = new Map<string, Dependency>();
-    for (const dep of this.dependencies) dedup.set(JSON.stringify(dep), dep);
-    for (const dep of pl.dependencies) dedup.set(JSON.stringify(dep), dep);
-    this.dependencies = [...dedup.values()];
+    if (pl.dependencies.length === 0) return;
+    let state = this.#dependencyKeys;
+    if (state?.list !== this.dependencies || state.size !== this.dependencies.length) {
+      // A new array: `copy()` shares this one with the Payload it was copied from.
+      state = { list: [], size: 0, keys: new Set() };
+      this.#addDependencies(state, this.dependencies);
+    }
+    this.#addDependencies(state, pl.dependencies);
+    state.size = state.list.length;
+    this.dependencies = state.list;
+    this.#dependencyKeys = state;
   }
 
   /**
@@ -349,16 +360,18 @@ export class Payload implements Analyser {
   combine(pl: Payload): void {
     for (const reason of pl.reason) this.reason.add(reason);
     this.mergeEvidence(pl.evidence);
-    // Equal by value, not by reference: the same mention can reach a payload as two objects.
-    const seen = new Set(this.mentions.map((mention) => mentionKey(mention)));
-    for (const mention of pl.mentions) {
-      const key = mentionKey(mention);
-      if (seen.has(key)) continue;
-      seen.add(key);
-      this.mentions.push({ ...mention });
+    if (pl.mentions.length > 0) {
+      // Equal by value, not by reference: the same mention can reach a payload as two objects.
+      const seen = new Set(this.mentions.map((mention) => mentionKey(mention)));
+      for (const mention of pl.mentions) {
+        const key = mentionKey(mention);
+        if (seen.has(key)) continue;
+        seen.add(key);
+        this.mentions.push({ ...mention });
+      }
     }
     // Log all paths were it was found
-    this.path = new Set([...this.path, ...pl.path]);
+    for (const found of pl.path) this.path.add(found);
 
     // Merge dependencies
     this.combineDependencies(pl);
@@ -462,6 +475,16 @@ export class Payload implements Analyser {
       if (this.#evidenceKeys.has(key)) continue;
       this.#evidenceKeys.add(key);
       this.evidence.push({ ...item });
+    }
+  }
+
+  /** Adds the dependencies that `state` does not hold yet. */
+  #addDependencies(state: { list: Dependency[]; keys: Set<string> }, added: Dependency[]): void {
+    for (const dep of added) {
+      const key = JSON.stringify(dep);
+      if (state.keys.has(key)) continue;
+      state.keys.add(key);
+      state.list.push(dep);
     }
   }
 }

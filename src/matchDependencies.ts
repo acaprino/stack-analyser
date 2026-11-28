@@ -15,15 +15,38 @@ function matchRules(pkgs: string[], type: SupportedDeps): { name: string; ref: D
   for (const dep of pkgs) {
     const name = type === 'docker' ? imageRepository(dep) : dep;
     const compared = type === 'docker' ? imageReference(dep).name : dep;
-    for (const ref of dependencies[type]) {
-      // Third-party rules may use a global or sticky expression.
-      ref.match.lastIndex = 0;
-      if (ref.match.test(compared)) {
-        hits.push({ name, ref });
-      }
-    }
+    for (const ref of rulesMatching(compared, type)) hits.push({ name, ref });
   }
 
+  return hits;
+}
+
+/** The rules each name matched, per ecosystem, for as long as that ecosystem keeps the same number of rules. */
+const matchesByType = new Map<
+  SupportedDeps,
+  { rules: number; byName: Map<string, DependencyRule[]> }
+>();
+
+/**
+ * The rules of `type` that match `compared`, in rule order. A project names the same packages in many manifests,
+ * and every name would otherwise be tested against every rule each time.
+ */
+function rulesMatching(compared: string, type: SupportedDeps): DependencyRule[] {
+  const rules = dependencies[type];
+  let known = matchesByType.get(type);
+  if (known?.rules !== rules.length) {
+    known = { rules: rules.length, byName: new Map() };
+    matchesByType.set(type, known);
+  }
+  let hits = known.byName.get(compared);
+  if (!hits) {
+    hits = rules.filter((ref) => {
+      // Third-party rules may use a global or sticky expression.
+      ref.match.lastIndex = 0;
+      return ref.match.test(compared);
+    });
+    known.byName.set(compared, hits);
+  }
   return hits;
 }
 
