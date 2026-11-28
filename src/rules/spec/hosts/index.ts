@@ -16,7 +16,10 @@ const maxFileSize = 500_000;
 
 // Consume comments and complete strings so that a quoted URL in a comment, docstring or
 // another string cannot become a standalone endpoint. Hash comments depend on the language.
-function sourceValues(content: string, name: string, emit: (value: string, line: number) => void) {
+/** Receives each candidate value with the line it starts on. */
+type Emit = (value: string, line: number) => void;
+
+function sourceValues(content: string, { name, emit }: { name: string; emit: Emit }): void {
   const hash = /\.(?:py|rb|php|exs?)$/i.test(name);
   const slashComments = !/\.(?:py|rb|exs?)$/i.test(name);
   const literals =
@@ -40,7 +43,7 @@ function sourceValues(content: string, name: string, emit: (value: string, line:
   }
 }
 
-function configValues(content: string, name: string, emit: (value: string, line: number) => void) {
+function configValues(content: string, { name, emit }: { name: string; emit: Emit }): void {
   if (name.toLowerCase().endsWith('.json')) {
     try {
       JSON.parse(content);
@@ -52,7 +55,8 @@ function configValues(content: string, name: string, emit: (value: string, line:
   for (const doc of parseAllDocuments(content, { lineCounter, logLevel: 'silent' })) {
     if (doc.errors.length > 0) continue;
     visit(doc, {
-      Scalar(key, node) {
+      // eslint-disable-next-line @typescript-eslint/naming-convention -- the node type name the yaml visitor expects
+      Scalar: (key, node) => {
         if (key !== 'key' && typeof node.value === 'string' && node.range) {
           emit(node.value, lineCounter.linePos(node.range[0]).line);
         }
@@ -61,10 +65,13 @@ function configValues(content: string, name: string, emit: (value: string, line:
   }
 }
 
-function envValues(content: string, emit: (value: string, line: number) => void) {
+function envValues(content: string, emit: Emit): void {
   for (const [index, line] of content.split('\n').entries()) {
     const match = /^\s*(?:export\s+)?[\w.-]+\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s#]+))/.exec(line);
-    if (match) emit(match[1] ?? match[2] ?? match[3], index + 1);
+    if (!match) continue;
+    // Only the group of the quoting that matched is set.
+    const [, double, single, bare] = match as (string | undefined)[];
+    emit(double ?? single ?? bare ?? '', index + 1);
   }
 }
 
@@ -105,7 +112,7 @@ function scanContent(
   if (!possible) return results;
 
   const seen = new Set<string>();
-  const emit = (value: string, line: number) => {
+  const emit: Emit = (value, line) => {
     // Inspect only the literal authority. Reject escaped or computed hosts, userinfo and
     // lookalike suffixes. Never put paths, queries, fragments or credentials in the output.
     const authority = /^https?:\/\/([a-z\d.-]+)(?::(\d{1,5}))?(?:[/?#]|$)/i.exec(value);
@@ -119,8 +126,8 @@ function scanContent(
   };
 
   if (env) envValues(content, emit);
-  else if (config) configValues(content, name, emit);
-  else sourceValues(content, name, emit);
+  else if (config) configValues(content, { name, emit });
+  else sourceValues(content, { name, emit });
   return results;
 }
 

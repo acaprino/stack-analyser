@@ -31,7 +31,10 @@ function blockCommentEnd(source: string, start: number): number {
   return i;
 }
 
-function interpolationEnd(source: string, start: number, isSwift: boolean, level: number): number {
+function interpolationEnd(
+  source: string,
+  { start, isSwift, level }: { start: number; isSwift: boolean; level: number }
+): number {
   if (level > 32) return source.length;
   const open = isSwift ? '(' : '{';
   const close = isSwift ? ')' : '}';
@@ -42,14 +45,13 @@ function interpolationEnd(source: string, start: number, isSwift: boolean, level
     innerString.lastIndex = i;
     const quote = innerString.exec(source);
     if (quote) {
-      i = stringEnd(
-        source,
-        innerString.lastIndex,
-        quote[2] + quote[1],
-        '\\' + quote[1],
+      i = stringEnd(source, {
+        start: innerString.lastIndex,
+        close: quote[2] + quote[1],
+        escape: '\\' + quote[1],
         isSwift,
-        level
-      );
+        level,
+      });
     } else if (isSwift && source.startsWith('/*', i)) {
       i = blockCommentEnd(source, i);
     } else if (isSwift ? source.startsWith('//', i) : source[i] === '#') {
@@ -64,15 +66,22 @@ function interpolationEnd(source: string, start: number, isSwift: boolean, level
   return i;
 }
 
+/** Where a string literal that started before `start` ends, given its closing quote and escape. */
+interface StringScan {
+  start: number;
+  close: string;
+  escape: string;
+  isSwift: boolean;
+  /** Nesting depth of interpolations, bounded so that a hostile file cannot recurse without end. */
+  level?: number;
+  interpolate?: boolean;
+  /** For a paired delimiter such as `%(...)`: its opening character, which nests. */
+  pairedOpen?: string;
+}
+
 function stringEnd(
   source: string,
-  start: number,
-  close: string,
-  escape: string,
-  isSwift: boolean,
-  level = 0,
-  interpolate = true,
-  pairedOpen?: string
+  { start, close, escape, isSwift, level = 0, interpolate = true, pairedOpen }: StringScan
 ): number {
   let i = start;
   let depth = 1;
@@ -84,7 +93,7 @@ function stringEnd(
       continue;
     }
     if (interpolate && source.startsWith(interpolation, i)) {
-      i = interpolationEnd(source, i + interpolation.length, isSwift, level + 1);
+      i = interpolationEnd(source, { start: i + interpolation.length, isSwift, level: level + 1 });
       continue;
     }
     if (pairedOpen && source.startsWith(pairedOpen, i)) depth++;
@@ -135,7 +144,7 @@ export function tokens(source: string, language: Language): Token[] {
     ) {
       const end = /^=end(?:[^\S\n].*)?\r?$/gm;
       end.lastIndex = i + 6;
-      i = end.exec(source) ? end.lastIndex : source.length;
+      i = end.test(source) ? end.lastIndex : source.length;
     } else if (isRuby && char === '\n' && pendingHeredocs.length > 0) {
       i++;
       for (const { label, indented } of pendingHeredocs) {
@@ -159,21 +168,20 @@ export function tokens(source: string, language: Language): Token[] {
           out.at(-1)!.value
         ))
     ) {
-      i = stringEnd(source, i + 1, '/', '\\', false);
+      i = stringEnd(source, { start: i + 1, close: '/', escape: '\\', isSwift: false });
       out.push({ kind: 'opaque', value: '', line });
     } else if (isRuby && char === '%' && (match = percentLiteral.exec(source))) {
       const open = match[1];
       const end = closes[open] || open;
-      i = stringEnd(
-        source,
-        percentLiteral.lastIndex,
-        end,
-        '\\',
-        false,
-        0,
-        !['q', 'w', 'i', 's'].includes(source[start + 1]),
-        closes[open] ? open : undefined
-      );
+      i = stringEnd(source, {
+        start: percentLiteral.lastIndex,
+        close: end,
+        escape: '\\',
+        isSwift: false,
+        level: 0,
+        interpolate: !['q', 'w', 'i', 's'].includes(source[start + 1]),
+        pairedOpen: closes[open] ? open : undefined,
+      });
       const value = source.slice(percentLiteral.lastIndex, i - end.length);
       const literal =
         (match[0].length === 2 || ['q', 'Q'].includes(source[start + 1])) &&
@@ -190,30 +198,28 @@ export function tokens(source: string, language: Language): Token[] {
       i = blockCommentEnd(source, i);
     } else if (language === 'elixir' && (match = sigil.exec(source))) {
       const open = match[1];
-      i = stringEnd(
-        source,
-        sigil.lastIndex,
-        closes[open] || open,
-        '\\',
-        false,
-        0,
-        /[a-z]/.test(source[start + 1]),
-        closes[open] ? open : undefined
-      );
+      i = stringEnd(source, {
+        start: sigil.lastIndex,
+        close: closes[open] || open,
+        escape: '\\',
+        isSwift: false,
+        level: 0,
+        interpolate: /[a-z]/.test(source[start + 1]),
+        pairedOpen: closes[open] ? open : undefined,
+      });
       out.push({ kind: 'opaque', value: '', line });
     } else if ((match = quote.exec(source))) {
       const delimiter = isSwift ? match[2] : match[1];
       const marks = isSwift ? match[1] : '';
       const close = delimiter + marks;
-      i = stringEnd(
-        source,
-        quote.lastIndex,
+      i = stringEnd(source, {
+        start: quote.lastIndex,
         close,
-        '\\' + marks,
+        escape: '\\' + marks,
         isSwift,
-        0,
-        !isPython && (!isRuby || delimiter !== "'")
-      );
+        level: 0,
+        interpolate: !isPython && (!isRuby || delimiter !== "'"),
+      });
       const value = source.slice(quote.lastIndex, i - close.length);
       const literal =
         (delimiter === '"' || ((isRuby || isPython) && delimiter === "'")) &&
