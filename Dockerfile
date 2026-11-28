@@ -1,7 +1,7 @@
 # ------------------
 # New tmp image
 # ------------------
-FROM node:20.19.3-bullseye-slim@sha256:de73dedd586ed3ec0784acdbf8b5bda52bbd34707dfe9ed7bd1fc65faee9de8b AS tmp
+FROM node:22.22.0-bookworm-slim@sha256:dd9d21971ec4395903fa6143c2b9267d048ae01ca6d3ea96f16cb30df6187d94 AS tmp
 
 # Setup the app WORKDIR
 WORKDIR /app/tmp
@@ -40,7 +40,7 @@ RUN true \
 # ---- Web ----
 # Resulting new, minimal image
 # This image must have the minimum amount of layers
-FROM node:20.19.3-bullseye-slim@sha256:de73dedd586ed3ec0784acdbf8b5bda52bbd34707dfe9ed7bd1fc65faee9de8b as web
+FROM node:22.22.0-bookworm-slim@sha256:dd9d21971ec4395903fa6143c2b9267d048ae01ca6d3ea96f16cb30df6187d94 as web
 
 ENV PORT=8080
 ENV NODE_ENV=production
