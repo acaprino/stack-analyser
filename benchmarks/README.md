@@ -151,6 +151,12 @@ This rule decides which frameworks of an ecosystem the fork must recognise. It w
 3. **Threshold.** Every framework of the list is widespread and must have a rule: the fork's dependency matcher (`dependencies.detect`, as in the replay) gives a technology for its name in its ecosystem. One it misses gets a rule, under the id of Daodan's registry when the registry has the technology. Nothing outside the 1,000 gets a rule from this measurement.
 4. **Before and after.** `replay-declarations.mjs` and a full stack run on Daodan's corpus show the names each build finds and loses.
 
+**Amendment of 28 November 2026, before the table.** The lists fetched at 16:31 UTC show two faults of the rule as written. The rank misplaces the threshold: ecosyste.ms counts the dependencies of lockfiles, so in npm the 1,000th package (`type-detect`) has 1,341,557 dependent repositories and no framework reaches it (`jquery` 998,742, `vue` 902,397, `bootstrap` 874,564, `@angular/core` 768,558), while in NuGet the 1,000th has 53. And the words of the first pass miss frameworks whose description does not use them: `starlette` ("The little ASGI library that shines."), `sinatra`, `jekyll`, `spring-webmvc`, `jersey-server`, `axum`, `warp`. So the rule changes in three points, and nothing else:
+
+- The threshold is no longer the 1,000th package: it is 1% of the dependent repositories of the ecosystem's most depended-on package, and the list goes down to it.
+- The first pass also takes the words `web`, `app`, `application`, `server`, `http`, `mvc`, `rest`, `api`, `router`, `routing`, `site`, `static`, `asgi`, `wsgi`, `rack`, `sass`, `less`, `theme`, `style`, `desktop`, `mobile`, `native`, `react`, `vue`, `angular`, `flutter` and `bootstrap`. A package whose description says none of them (`Vert.x 5 Parent pom`, `Apache Struts`) still escapes it.
+- Only the candidates that the fork's matcher does not recognise are decided by hand: the others are covered whatever the decision.
+
 ## Startup
 
 `startup.mjs` runs one CLI five times on one project and prints the five times and their median, in milliseconds, each measured from spawn to exit of the whole process. It exits with 1 when the median is above `--max-ms`. Every run happens in an empty temporary folder, so the CLI's output file never lands in the repository, and a run that fails or writes no output is an error (exit 2), never a fast time.
