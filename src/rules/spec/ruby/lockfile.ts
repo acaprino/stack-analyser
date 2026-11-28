@@ -11,7 +11,7 @@ const locks = new Map([
   ['gems.rb', 'gems.locked'],
 ]);
 
-function* statements(source: string) {
+function* statements(source: string): Generator<Token[]> {
   let row: Token[] = [],
     nesting = 0;
   for (const token of tokens(source, 'ruby')) {
@@ -43,14 +43,15 @@ function declaredGems(source: string, gemspec: boolean): Map<string, string> {
       scopes.pop();
       continue;
     }
-    if (first === 'else' && scopes.at(-1)?.condition !== undefined) {
-      const scope = scopes.at(-1)!;
+    const current = scopes.at(-1);
+    if (first === 'else' && current?.condition !== undefined) {
+      const scope = current;
       scope.disabled = !!scopes.at(-2)?.disabled || scope.condition === true;
       continue;
     }
     const block = words.indexOf('do');
     const brace = words.indexOf('{');
-    const opener = block !== -1 ? block : brace !== -1 && words[brace + 1] === '|' ? brace : -1;
+    const opener = block === -1 ? (brace !== -1 && words[brace + 1] === '|' ? brace : -1) : block;
     const parent = scopes.at(-1);
     if (opener >= 0 || /^(?:module|class|def|if|unless|case|begin|until|while|for)$/.test(first)) {
       const parameter =
@@ -89,7 +90,8 @@ function declaredGems(source: string, gemspec: boolean): Map<string, string> {
       arg = 3;
     } else if (first !== 'gem') continue;
     if (words[arg] === '(') arg++;
-    const name = row[arg];
+    // The gem name may be missing when the statement ends early.
+    const name = row.at(arg);
     if (name?.kind !== 'string' || !gemName.test(name.value)) continue;
     const tail = words.slice(arg + 1);
     if (tail.length > 0 && ![',', ')', 'if', 'unless'].includes(tail[0])) continue;
@@ -148,11 +150,15 @@ export const detectRubyLockfile: ComponentMatcher = async (files, provider) => {
     if (source === null) continue;
     const gemspec = !gemfiles.has(file.name);
     const packages = declaredGems(source, gemspec);
-    const lock = !gemspec && available.find((entry) => entry.name === locks.get(file.name));
+    const lock = gemspec
+      ? undefined
+      : available.find((entry) => entry.name === locks.get(file.name));
     if (lock) {
       const pinned = lockedDirectGems((await sourceText(provider, lock.fp)) || '');
-      for (const [name, version] of packages)
-        if (version === 'latest' && pinned.has(name)) packages.set(name, pinned.get(name)!);
+      for (const [name, version] of packages) {
+        const locked = pinned.get(name);
+        if (version === 'latest' && locked !== undefined) packages.set(name, locked);
+      }
     }
     const pl = packageComponent('virtual', {
       folderPath: file.fp,

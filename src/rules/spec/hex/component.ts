@@ -7,9 +7,7 @@ import type { Token } from '../manifestTokens.js';
 
 function dependency(
   items: Token[],
-  start: number,
-  stop: number,
-  packages: Map<string, string>
+  { start, stop, packages }: { start: number; stop: number; packages: Map<string, string> }
 ): void {
   if (
     items[start + 1]?.value !== ':' ||
@@ -18,7 +16,8 @@ function dependency(
   )
     return;
   let name = items[start + 2].value;
-  const requirement = items[start + 4];
+  // The requirement may be missing: `{:dep, ...}` can end after its options.
+  const requirement = items.at(start + 4);
   let version = requirement?.kind === 'string' ? requirement.value : '';
   for (let i = start + 4; i + 2 < stop; i++) {
     if (items[i].kind !== 'word' || items[i + 1].value !== ':') continue;
@@ -32,14 +31,17 @@ function dependency(
   packages.set(name, version);
 }
 
-function readList(items: Token[], start: number, packages: Map<string, string>): number {
+function readList(
+  items: Token[],
+  { start, packages }: { start: number; packages: Map<string, string> }
+): number {
   const stop = closing(items, start);
   if (stop < 0) return start;
   for (let i = start + 1; i < stop; i++) {
     if (items[i].value !== '{' || items[i].kind !== 'symbol') continue;
     const end = closing(items, i);
     if (end < 0 || end >= stop) break;
-    dependency(items, i, end, packages);
+    dependency(items, { start: i, stop: end, packages });
     i = end;
   }
   return stop;
@@ -59,11 +61,12 @@ function readManifest(content: string): { name: string; packages: Map<string, st
     )
       name = items[i + 3].value;
     if (items[i].value === 'deps' && items[i + 1]?.value === ':' && items[i + 2]?.value === '[') {
-      i = readList(items, i + 2, packages);
+      i = readList(items, { start: i + 2, packages });
     } else if (['defp', 'def'].includes(items[i].value) && items[i + 1]?.value === 'deps') {
       for (let j = i + 2; j < items.length; j++) {
         if (items[j].kind === 'word' && ['end', 'def', 'defp'].includes(items[j].value)) break;
-        if (items[j].value === '[' && items[j].kind === 'symbol') j = readList(items, j, packages);
+        if (items[j].value === '[' && items[j].kind === 'symbol')
+          j = readList(items, { start: j, packages });
       }
     }
   }
@@ -105,8 +108,8 @@ export const detectHexComponent: ComponentMatcher = async (files, provider) => {
         if (!manifest || packages.has(id)) packages.set(id, version);
       }
     }
-    if (manifest || packages.size > 0) {
-      const file = manifest || lock!;
+    const file = manifest ?? lock;
+    if (file !== undefined && (manifest !== undefined || packages.size > 0)) {
       const pl = packageComponent(name, {
         folderPath: file.fp,
         ecosystem: 'hex',
@@ -125,7 +128,7 @@ export const detectHexComponent: ComponentMatcher = async (files, provider) => {
     const content = await sourceText(provider, file.fp);
     if (!content?.includes('ExUnit')) continue;
     const items = tokens(content, 'elixir');
-    const pl = payloads[0] || new Payload({ name: 'virtual', folderPath: file.fp });
+    const pl = payloads.at(0) ?? new Payload({ name: 'virtual', folderPath: file.fp });
     for (let i = 0; i + 2 < items.length; i++) {
       if (items[i].kind !== 'word' || items[i].value !== 'ExUnit' || items[i - 1]?.value === '.')
         continue;

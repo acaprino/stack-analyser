@@ -48,7 +48,7 @@ function uvLocalSources(tool: unknown): Set<string> {
     isRecord(source) && (source.workspace === true || typeof source.path === 'string');
   for (const [name, value] of Object.entries(sources)) {
     const entries: unknown[] = Array.isArray(value) ? value : [value];
-    if (entries.length > 0 && entries.every(isLocal)) local.add(normalized(name));
+    if (entries.length > 0 && entries.every((entry) => isLocal(entry))) local.add(normalized(name));
   }
   return local;
 }
@@ -86,7 +86,7 @@ export const detectPythonLockfile: ComponentMatcher = async (files, provider) =>
         name: 'virtual',
         folderPath: path.dirname(file.fp),
       });
-      parseRequirementsTxt(content, pl, file.fp);
+      parseRequirementsTxt(content, { pl, file: file.fp });
 
       manifests.push(pl);
     } else if (file.type === 'file' && ['Pipfile', 'setup.cfg', 'setup.py'].includes(file.name)) {
@@ -183,7 +183,8 @@ function setupCfg(content: string): Dependency[] {
         ((section === 'options' && key === 'install_requires') ||
           section === 'options.extras_require')
     );
-    if (wanted && entry![2].trim()) lines.push(entry![2].trim());
+    const value = wanted && entry ? entry[2].trim() : '';
+    if (value) lines.push(value);
   }
   return requirements(lines);
 }
@@ -230,7 +231,10 @@ function setupPy(content: string): Dependency[] {
   return requirements(lines);
 }
 
-export function parseRequirementsTxt(content: string, pl: Payload, file: string): void {
+export function parseRequirementsTxt(
+  content: string,
+  { pl, file }: { pl: Payload; file: string }
+): void {
   const lines = content
     .replaceAll(/\\\r?\n/g, ' ')
     .split(/\r?\n/)
@@ -276,7 +280,7 @@ export function parsePyproject({
   }
   if (isRecord(tool.uv)) groups.push(tool.uv['dev-dependencies']);
   const local = uvLocalSources(json.tool);
-  const dependencies = requirements(groups.filter(Array.isArray).flat()).filter(
+  const dependencies = requirements(groups.filter((group) => Array.isArray(group)).flat()).filter(
     ([, name]) => !local.has(normalized(name))
   );
   const poetry = isRecord(json.tool) ? json.tool.poetry : undefined;
