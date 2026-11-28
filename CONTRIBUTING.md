@@ -3,7 +3,7 @@
 ## Installation
 
 ```sh
-git clone https://github.com/acaprino/stack-analyser-daodan.git
+git clone https://github.com/acaprino/stack-analyzer-daodan.git
 ```
 
 ```sh

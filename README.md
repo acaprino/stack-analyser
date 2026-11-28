@@ -1,6 +1,6 @@
-# stack-analyser-daodan
+# stack-analyzer-daodan
 
-A fork of [specfy/stack-analyser](https://github.com/specfy/stack-analyser), published as `stack-analyser-daodan`, with its own additions: more rules and readers, `--declarations`, `--perimeter` and `--catalogue` for the CLI, and evidence on every technology. The original project is the work of Specfy and its contributors, under the MIT license kept in [LICENSE](./LICENSE). The two badges below are the upstream project's.
+A fork of [specfy/stack-analyser](https://github.com/specfy/stack-analyser), published as `stack-analyzer-daodan`, with its own additions: more rules and readers, `--declarations`, `--perimeter` and `--catalogue` for the CLI, and evidence on every technology. The original project is the work of Specfy and its contributors, under the MIT license kept in [LICENSE](./LICENSE). The two badges below are the upstream project's.
 
 [![Main](https://github.com/specfy/stack-analyser/actions/workflows/ci.yaml/badge.svg)](https://github.com/specfy/stack-analyser/actions/workflows/ci.yaml)
 [![codecov](https://codecov.io/gh/specfy/stack-analyser/branch/main/graph/badge.svg?token=6L5O79P9UI)](https://codecov.io/gh/specfy/stack-analyser)
@@ -26,22 +26,22 @@ It can be helpful for other to get all dependencies or SaaS used in a given git 
 The CLI and the library need Node.js 20 or later.
 
 The package is not on the npm registry: each version is a `.tgz` attached to a
-[GitHub Release](https://github.com/acaprino/stack-analyser-daodan/releases). Install the CLI from it, replacing
+[GitHub Release](https://github.com/acaprino/stack-analyzer-daodan/releases). Install the CLI from it, replacing
 `<version>` (for example `1.27.6-daodan.5`):
 
 ```sh
-npm install -g https://github.com/acaprino/stack-analyser-daodan/releases/download/v<version>/stack-analyser-daodan-<version>.tgz
+npm install -g https://github.com/acaprino/stack-analyzer-daodan/releases/download/v<version>/stack-analyzer-daodan-<version>.tgz
 ```
 
 The `.tgz` holds every dependency, so it installs without reaching the npm registry. Once installed:
 
 ```bash
-npx stack-analyser-daodan <PATH> [--output=<filename>] [--flat] [--declarations=<file>] [--skip-dirs=<names>] [--ignore=<paths>] [--perimeter=<file>]
-npx stack-analyser-daodan --catalogue=<file>
+npx stack-analyzer-daodan <PATH> [--output=<filename>] [--flat] [--declarations=<file>] [--skip-dirs=<names>] [--ignore=<paths>] [--perimeter=<file>]
+npx stack-analyzer-daodan --catalogue=<file>
 ```
 
 ```sh
-npx stack-analyser-daodan /my/folder
+npx stack-analyzer-daodan /my/folder
 ```
 
 To run the rules from this checkout, build the package and invoke its CLI directly.
@@ -187,15 +187,15 @@ A program gets the same list from `catalogue(rules.list)`, both exported from th
 ## Programmatic Usage
 
 ```sh
-npm install -E https://github.com/acaprino/stack-analyser-daodan/releases/download/v<version>/stack-analyser-daodan-<version>.tgz
+npm install -E https://github.com/acaprino/stack-analyzer-daodan/releases/download/v<version>/stack-analyzer-daodan-<version>.tgz
 ```
 
 ```ts
-import { analyser, FSProvider, flatten, rules } from "stack-analyser-daodan"
+import { analyser, FSProvider, flatten, rules } from "stack-analyzer-daodan"
 
 // /!\ Load default rules
 // without this no rules will be enabled by default
-import 'stack-analyser-daodan/dist/autoload';
+import 'stack-analyzer-daodan/dist/autoload';
 
 // Analyze a folder
 const result = await analyser({
@@ -219,7 +219,7 @@ Its root keeps what `result` itself holds, including the technologies of `declar
 project (see [Declarations read by other tools](#declarations-read-by-other-tools)). The `Declaration` type is exported.
 
 ```ts
-import { analyser, FSProvider, type Declaration } from "stack-analyser-daodan"
+import { analyser, FSProvider, type Declaration } from "stack-analyzer-daodan"
 
 const declarations: Declaration[] = [
   { type: 'npm', name: 'react', path: 'package.json', line: 12, source: 'renovate' },
@@ -287,7 +287,7 @@ for a repository with an unusually large lockfile.
 
 ```yaml
 - name: Stack Analyser
-  uses: acaprino/stack-analyser-daodan@v__VERSION__
+  uses: acaprino/stack-analyzer-daodan@v__VERSION__
 ```
 
 ## Output

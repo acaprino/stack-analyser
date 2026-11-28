@@ -1,20 +1,20 @@
 {
-  "name": "stack-analyser-daodan",
+  "name": "stack-analyzer-daodan",
   "version": "1.27.6-daodan.6",
   "description": "Static detection of the technologies a repository uses, with evidence for each one. Fork of @specfy/stack-analyser.",
   "main": "./dist/index.js",
   "bin": {
-    "stack-analyser-daodan": "./dist/cli.mjs"
+    "stack-analyzer-daodan": "./dist/cli.mjs"
   },
   "typings": "./dist/index.d.ts",
   "type": "module",
-  "homepage": "https://github.com/acaprino/stack-analyser-daodan#readme",
+  "homepage": "https://github.com/acaprino/stack-analyzer-daodan#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/acaprino/stack-analyser-daodan.git"
+    "url": "https://github.com/acaprino/stack-analyzer-daodan.git"
   },
   "bugs": {
-    "url": "https://github.com/acaprino/stack-analyser-daodan/issues"
+    "url": "https://github.com/acaprino/stack-analyzer-daodan/issues"
   },
   "scripts": {
     "prebuild": "tsx src/scripts/prebuild.ts",
