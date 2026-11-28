@@ -23,7 +23,7 @@ function scan(files: Record<string, string>) {
 }
 
 describe('GitHub workflow evidence', () => {
-  it('keeps each active workflow, reusable workflow and Docker image intact', async () => {
+  it('should keep each active workflow, reusable workflow and Docker image intact', async () => {
     const result = await scan({
       '/.github/workflows/build.yml':
         'on: push\njobs:\n  build:\n    container: {image: "docker.io/library/redis:7"}\n    services:\n      db: {image: "registry.example:5000/acme/postgres:4@sha256:abc"}\n',
@@ -46,7 +46,7 @@ describe('GitHub workflow evidence', () => {
     );
   });
 
-  it('does not count example workflows, backups, nested directories or unrelated YAML', async () => {
+  it('should not count example workflows, backups, nested directories or unrelated YAML', async () => {
     const workflow = 'on: push\njobs:\n  deploy:\n    container: redis:7\n';
     const result = await scan({
       '/template/.github/workflows/main.yml': workflow,
@@ -60,7 +60,7 @@ describe('GitHub workflow evidence', () => {
     expect(result.techs.has('github.actions')).toBe(false);
   });
 
-  it('continues across incomplete jobs, steps and services', async () => {
+  it('should continue across incomplete jobs, steps and services', async () => {
     const result = await scan({
       '/.github/workflows/main.yaml':
         'on: push\njobs:\n  disabled:\n  good:\n    steps: [null, {uses: 3}, {uses: "actions/setup-node@v4"}]\n    services: {unused: null}\n',

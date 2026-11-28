@@ -20,7 +20,7 @@ function fixture(files: Record<string, string>) {
 describe('service endpoint mentions', () => {
   loadOne({ tech: 'telegram', name: 'Telegram', type: 'communication', hosts: [host] });
 
-  it('preserves source evidence through analysis and flattening without declaring a service edge', async () => {
+  it('should preserve source evidence through analysis and flattening without declaring a service edge', async () => {
     const provider = fixture({
       'transport.py':
         '# endpoint\nurl = f"https://API.TELEGRAM.ORG:443/bot{token}/sendMessage?a=private"\n',
@@ -43,7 +43,7 @@ describe('service endpoint mentions', () => {
     expect(result.edges).toStrictEqual([]);
   });
 
-  it('ignores documentation, package metadata, lookalike URLs, comments and credentials', async () => {
+  it('should ignore documentation, package metadata, lookalike URLs, comments and credentials', async () => {
     const provider = fixture({
       'guide.md': 'https://api.telegram.org',
       'package.json': '{"homepage":"https://api.telegram.org"}',
@@ -62,7 +62,7 @@ describe('service endpoint mentions', () => {
     expect(await findHostMentions(await provider.listDir('/'), provider)).toStrictEqual([]);
   });
 
-  it('does not read excluded paths, symlinks or oversized files', async () => {
+  it('should not read excluded paths, symlinks or oversized files', async () => {
     const provider = fixture({ 'docs/help.ts': '', 'large.ts': '', 'linked.py': '' });
     vi.spyOn(provider, 'stat').mockResolvedValue({ size: 600_000 });
     const open = vi.spyOn(provider, 'open');
@@ -74,7 +74,7 @@ describe('service endpoint mentions', () => {
     expect(provider.stat).toHaveBeenCalledOnce();
   });
 
-  it('recognizes literal mobile and multi-document configuration endpoints while respecting the source syntax', async () => {
+  it('should recognize literal mobile and multi-document configuration endpoints while respecting the source syntax', async () => {
     const provider = fixture({
       'deployment.yaml': '---\nkind: Service\n---\nurl: https://api.telegram.org/v1\n',
       'client.py': 'n = count // 2; url = "https://api.telegram.org"\n',
@@ -93,7 +93,7 @@ describe('service endpoint mentions', () => {
     ]);
   });
 
-  it('continues after provider errors while obtaining a source size or text', async () => {
+  it('should continue after provider errors while obtaining a source size or text', async () => {
     const provider = fixture({
       'a.ts': '',
       'b.ts': '',

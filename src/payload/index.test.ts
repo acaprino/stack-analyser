@@ -56,7 +56,7 @@ describe('payload', () => {
     expect(root.reason).toStrictEqual(new Set(['matched extension: .ts']));
   });
 
-  it('runs the dependency rules once for the names it is given', () => {
+  it('should run the dependency rules once for the names it is given', () => {
     const test = vi.spyOn(RegExp.prototype, 'test');
     try {
       matchDependencies(['pg', 'left-pad'], 'npm');
@@ -77,7 +77,7 @@ describe('payload', () => {
     }
   });
 
-  it('keeps one mention per tech, host, path and line when payloads are combined', () => {
+  it('should keep one mention per tech, host, path and line when payloads are combined', () => {
     const mention = (line: number) => ({
       tech: 'telegram' as const,
       host: 'api.telegram.org',

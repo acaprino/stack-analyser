@@ -29,7 +29,7 @@ describe('matchAllFiles', () => {
     expect(res).toStrictEqual(exp);
   });
 
-  it('keeps the reasons of matchAllFiles when it adds the evidence', () => {
+  it('should keep the reasons of matchAllFiles when it adds the evidence', () => {
     const files = [
       { fp: '/app/package.json', name: 'package.json', type: 'file' as const },
       { fp: '/app/index.tsx', name: 'index.tsx', type: 'file' as const },

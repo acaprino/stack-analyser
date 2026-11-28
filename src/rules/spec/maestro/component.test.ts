@@ -18,7 +18,7 @@ describe('Maestro mobile flows', () => {
     ['.maestro/unrelated.yml', 'appId: com.example\n---\n- build: release\n', false],
     ['.maestro/comment.yml', 'appId: sample\n---\n- note: tapOn\n# - launchApp\n', false],
     ['.maestro/broken.yml', 'appId: [\n---\n- launchApp\n', false],
-  ] as const)('%s', async (file, content, found) => {
+  ] as const)('should %', async (file, content, found) => {
     const provider = new FakeProvider({ paths: { '/': [file] }, files: { ['/' + file]: content } });
     const result = await analyser({ provider });
 

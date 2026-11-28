@@ -33,11 +33,11 @@ const differences = (wanted: (kind: string) => boolean) =>
   report.differences.filter((d) => wanted(parse(d)[0]));
 
 describe('the report of the registry port', () => {
-  it('records the registry it was made from', () => {
+  it('should record the registry it was made from', () => {
     expect(report.registry).toMatch(/^[0-9a-f]{64}$/);
   });
 
-  it('names only rules the fork has', () => {
+  it('should name only rules the fork has', () => {
     const named = [
       ...report.new,
       ...Object.keys(report.extended),
@@ -48,12 +48,12 @@ describe('the report of the registry port', () => {
     expect(named.filter((id) => !registeredTech.has(id as AllowedKeys))).toEqual([]);
   });
 
-  it('keeps a registry id and a rule id apart', () => {
+  it('should keep a registry id and a rule id apart', () => {
     for (const id of Object.keys(report.renamed))
       expect(registeredTech.has(id as AllowedKeys), id).toBe(false);
   });
 
-  it('gives every difference a reason of its own', () => {
+  it('should give every difference a reason of its own', () => {
     const reasons = report.differences.map((d) => d.reason);
     for (const reason of reasons) expect(reason.length).toBeGreaterThan(40);
 
@@ -63,7 +63,7 @@ describe('the report of the registry port', () => {
   });
 
   it.each(differences((kind) => !kinds.has(kind)).map((d) => [d.id, d.sign, d] as const))(
-    '%s does not take the package %s',
+    'should % does not take the package %s',
     (id, _sign, difference) => {
       const [type, name] = parse(difference);
 
@@ -72,7 +72,7 @@ describe('the report of the registry port', () => {
   );
 
   it.each(differences((kind) => kind === 'file').map((d) => [d.id, d.sign, d] as const))(
-    '%s does not list the file %s in a rule',
+    'should % does not list the file %s in a rule',
     (id, _sign, difference) => {
       const name = parse(difference)[1];
       const found = matchAllFiles([{ fp: `/repo/${name}`, name, type: 'file' }], '/repo');
@@ -82,7 +82,7 @@ describe('the report of the registry port', () => {
   );
 
   it.each(differences((kind) => kind === 'env').map((d) => [d.id, d.sign, d] as const))(
-    '%s does not list the variable %s',
+    'should % does not list the variable %s',
     (id, _sign, difference) => {
       const rule = registeredRules.find((r) => r.tech === id);
 

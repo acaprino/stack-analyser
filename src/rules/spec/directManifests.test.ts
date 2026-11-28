@@ -11,7 +11,7 @@ async function scan(name: string, content: string) {
 }
 
 describe('direct manifest dependencies', () => {
-  it('reads single-line and grouped Go requirements and ignores other blocks', async () => {
+  it('should read single-line and grouped Go requirements and ignore other blocks', async () => {
     const result = await scan(
       'go.mod',
       [
@@ -36,7 +36,7 @@ describe('direct manifest dependencies', () => {
     expect(result.techs.has('sentry')).toBe(false);
   });
 
-  it('reads unnamed Composer root requirements and ignores suggestions, replacements and malformed requirements', async () => {
+  it('should read unnamed Composer root requirements and ignore suggestions, replacements and malformed requirements', async () => {
     const result = await scan(
       'composer.json',
       JSON.stringify({
@@ -57,7 +57,7 @@ describe('direct manifest dependencies', () => {
     expect([...result.licenses].sort()).toEqual(['Apache-2.0', 'MIT']);
   });
 
-  it('isolates an invalid Composer root from the other detectors', async () => {
+  it('should isolate an invalid Composer root from the other detectors', async () => {
     expect((await scan('composer.json', 'null')).dependencies).toEqual([]);
   });
 });

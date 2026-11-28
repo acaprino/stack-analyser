@@ -18,7 +18,7 @@ async function scan(files: Record<string, string>) {
 }
 
 describe('native package manifests', () => {
-  it('reads SDK and hosted Pub dependencies and their direct locked versions', async () => {
+  it('should read SDK and hosted Pub dependencies and their direct locked versions', async () => {
     const result = await scan({
       'pubspec.yaml': [
         'name: reader',
@@ -50,7 +50,7 @@ describe('native package manifests', () => {
     expect(result.techs).toContain('flutter-test');
   });
 
-  it('reads explicit NuGet references, SDKs and direct pins, excluding central-only and local references', async () => {
+  it('should read explicit NuGet references, SDKs and direct pins, excluding central-only and local references', async () => {
     const result = await scan({
       'Service.csproj':
         '<Project Sdk="Microsoft.NET.Sdk.Web"><ItemGroup>' +
@@ -80,7 +80,7 @@ describe('native package manifests', () => {
     expect(result.techs).toContain('xunit');
   });
 
-  it('attributes an unconditional WinUI opt-in to its own project', async () => {
+  it('should attribute an unconditional WinUI opt-in to its own project', async () => {
     const windowsSdk =
       '<ItemGroup><PackageReference Include="Microsoft.WindowsAppSDK" Version="2.6.5"/></ItemGroup>';
     const on = '<PropertyGroup><UseWinUI>true</UseWinUI></PropertyGroup>';
@@ -112,7 +112,7 @@ describe('native package manifests', () => {
     ]);
   });
 
-  it('reads Hex aliases and locked versions, keeping examples and local packages out', async () => {
+  it('should read Hex aliases and locked versions, keeping examples and local packages out', async () => {
     const result = await scan({
       'mix.exs': [
         'defmodule Demo.MixProject do',
@@ -139,7 +139,7 @@ describe('native package manifests', () => {
     expect(result.techs).toContain('ecto');
   });
 
-  it('reads SwiftPM remote identities and source SDK imports, leaving package and module names distinct', async () => {
+  it('should read SwiftPM remote identities and source SDK imports, leaving package and module names distinct', async () => {
     const result = await scan({
       'Package.swift': [
         'import PackageDescription',
@@ -175,7 +175,7 @@ describe('native package manifests', () => {
     ]);
   });
 
-  it('does not interpret strings, comments or similarly named modules as SDK use', async () => {
+  it('should not interpret strings, comments or similarly named modules as SDK use', async () => {
     const result = await scan({
       'App.swift':
         '// import UIKit\nlet note = "import SwiftUI"\nlet demo = "\\(render("import UIKit"))"\nimport SwiftUIExtras\n',

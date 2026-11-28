@@ -24,7 +24,7 @@ for (const item of rawList) {
 }
 
 describe('docker', () => {
-  it('recognizes modern Compose build services and images inherited from extension anchors', async () => {
+  it('should recognize modern Compose build services and images inherited from extension anchors', async () => {
     const provider = new FakeProvider({
       paths: { '/': ['compose.yaml', 'docker-compose.override.yml'] },
       files: {

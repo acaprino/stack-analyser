@@ -37,7 +37,7 @@ describe('dotenv', () => {
     expect([...merged.dependencies].sort()).toMatchSnapshot();
   });
 
-  it('only reads assigned keys, including public client prefixes and multiple templates', async () => {
+  it('should only read assigned keys, including public client prefixes and multiple templates', async () => {
     const provider = new FakeProvider({
       paths: { '/': ['.env.example', '.env.production.sample'] },
       files: {
@@ -55,7 +55,7 @@ describe('dotenv', () => {
       expect(hits.has(other)).toBe(false);
   });
 
-  it('does not read a misspelt Rollbar variable', async () => {
+  it('should not read a misspelt Rollbar variable', async () => {
     const provider = new FakeProvider({
       paths: { '/': ['.env.example'] },
       files: { '/.env.example': 'ROOLBAR_TOKEN=x' },

@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { imageReference, imageRepository, packagePattern } from './packageIdentity.js';
 
 describe('declared package identity', () => {
-  it('honors ecosystem rules for literal coordinates', () => {
+  it('should honor ecosystem rules for literal coordinates', () => {
     expect(packagePattern('hyperscript.org', 'npm').test('hyperscriptXorg')).toBe(false);
     expect(packagePattern('django-rest.example', 'python').test('Django_REST-example')).toBe(true);
     expect(packagePattern('Mono.Cecil', 'nuget').test('mono.cecil')).toBe(true);
@@ -11,7 +11,7 @@ describe('declared package identity', () => {
     expect(packagePattern('github.com/test/go', 'golang').test('github.com/test/go/v3')).toBe(true);
   });
 
-  it('distinguishes a registry port, tag, digest and official Docker Hub names', () => {
+  it('should distinguish a registry port, tag, digest and official Docker Hub names', () => {
     expect(imageReference('localhost:5000/library/redis:7@sha256:abcd')).toEqual({
       name: 'localhost:5000/library/redis',
       version: '7@sha256:abcd',
@@ -24,7 +24,7 @@ describe('declared package identity', () => {
     });
   });
 
-  it('gives the repository of an image as it is written, without its tag or digest', () => {
+  it('should give the repository of an image as it is written, without its tag or digest', () => {
     expect(imageRepository('docker.io/apache/tika')).toBe('docker.io/apache/tika');
     expect(imageRepository('index.docker.io/library/postgres:15@sha256:abcd')).toBe(
       'index.docker.io/library/postgres'

@@ -151,7 +151,7 @@ test('writes the output where an absolute --output says', async () => {
 
 const manifest = JSON.stringify({ name: 'app', dependencies: { react: '18' } });
 
-test('reads declarations from a file and keeps their source', async () => {
+test('reads declarations from a file and keep their source', async () => {
   const declarations = JSON.stringify([
     {
       type: 'python',
@@ -647,7 +647,7 @@ async function runBuilt(file: string): Promise<FlatNode> {
 // The build is not committed, so a fresh checkout has nothing to compare: the title says why the test is skipped.
 test.skipIf(!hasBuild)(
   hasBuild
-    ? 'gives the same output from the one-file bundle as from the compiled modules'
+    ? 'should give the same output from the one-file bundle as from the compiled modules'
     : 'gives the same output from the bundle as from the compiled modules (skipped: dist/cli.js or dist/cli.mjs is missing, run npm run build)',
   async () => {
     const [modules, bundle] = await Promise.all([runBuilt('cli.js'), runBuilt('cli.mjs')]);
@@ -674,7 +674,7 @@ async function catalogueBuilt(file: string): Promise<Buffer> {
 
 test.skipIf(!hasBuild)(
   hasBuild
-    ? 'gives the same catalogue from the bundle as from the modules'
+    ? 'should give the same catalogue from the bundle as from the modules'
     : 'gives the same catalogue from the bundle as from the modules (skipped: dist/cli.js or dist/cli.mjs is missing, run npm run build)',
   async () => {
     const [modules, bundle] = await Promise.all([

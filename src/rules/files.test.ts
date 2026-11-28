@@ -9,7 +9,7 @@ import { registeredRules } from '../register.js';
 import '../autoload.js';
 
 describe('all', () => {
-  it('recognizes actual filenames, directory markers and repository-root configuration', () => {
+  it('should recognize actual filenames, directory markers and repository-root configuration', () => {
     const cases: [string, 'dir' | 'file', string, boolean][] = [
       ['Jenkinsfile', 'file', 'jenkins', true],
       ['Caddyfile', 'file', 'caddy', true],
@@ -59,7 +59,7 @@ describe('all', () => {
     ['.vercel', 'vercel'],
     ['.vitepress', 'vitepress'],
     ['.vuepress', 'vuepress'],
-  ] as const)('recognizes the directory %s as %s and not a file of that name', (name, tech) => {
+  ] as const)('should recognize the directory %s as %s and not a file of that name', (name, tech) => {
     const found = (type: 'dir' | 'file') => [
       ...matchAllFiles([{ fp: '/repo/' + name, name, type }], '/repo').keys(),
     ];

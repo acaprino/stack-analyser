@@ -15,7 +15,7 @@ const project = () =>
   });
 
 describe('declarations', () => {
-  it('recognises external declarations and keeps their source', async () => {
+  it('should recognise external declarations and keep their source', async () => {
     const result = await analyser({
       provider: project(),
       declarations: [
@@ -41,7 +41,7 @@ describe('declarations', () => {
     });
   });
 
-  it('keeps both proofs when the fork and a declaration agree', async () => {
+  it('should keep both proofs when the fork and a declaration agree', async () => {
     const result = flatten(
       await analyser({
         provider: project(),
@@ -60,7 +60,7 @@ describe('declarations', () => {
     expect(sources).toEqual(['renovate', 'stack-analyser']);
   });
 
-  it('rejects a declaration outside the project or of an unknown type', async () => {
+  it('should reject a declaration outside the project or of an unknown type', async () => {
     const bad = (declaration: object) =>
       analyser({ provider: project(), declarations: [declaration as never] });
 
@@ -75,7 +75,7 @@ describe('declarations', () => {
     );
   });
 
-  it('keeps an unknown name out of the result', async () => {
+  it('should keep an unknown name out of the result', async () => {
     const result = await analyser({
       provider: project(),
       declarations: [
@@ -93,7 +93,7 @@ describe('declarations', () => {
     expect(result.techs.size).toBe(0);
   });
 
-  it('puts the technologies and their evidence on the root component', async () => {
+  it('should put the technologies and their evidence on the root component', async () => {
     const result = await analyser({
       provider: project(),
       declarations: [
@@ -115,7 +115,7 @@ describe('declarations', () => {
     ).toBe(false);
   });
 
-  it('keeps the root technologies of a declaration when flattening without merge', async () => {
+  it('should keep the root technologies of a declaration when flattening without merge', async () => {
     const flat = flatten(
       await analyser({
         provider: project(),
@@ -138,7 +138,7 @@ describe('declarations', () => {
     });
   });
 
-  it('gives each ecosystem its own evidence kind and reduces an image to its repository', async () => {
+  it('should give each ecosystem its own evidence kind and reduce an image to its repository', async () => {
     const result = await analyser({
       provider: project(),
       declarations: [
@@ -179,7 +179,7 @@ describe('declarations', () => {
     });
   });
 
-  it('reports a declared image by the name that was sent, not by the repository it is matched as', async () => {
+  it('should report a declared image by the name that was sent, not by the repository it is matched as', async () => {
     const result = await analyser({
       provider: project(),
       declarations: [
@@ -234,7 +234,7 @@ describe('declarations', () => {
     });
   });
 
-  it('writes the path of a declaration the way the readers write theirs', async () => {
+  it('should write the path of a declaration the way the readers write theirs', async () => {
     // The same file, the same name and the same source as the fork's own evidence: they are one item.
     const result = flatten(
       await analyser({
@@ -257,7 +257,7 @@ describe('declarations', () => {
     ]);
   });
 
-  it('does not change anything when the list is empty', async () => {
+  it('should not change anything when the list is empty', async () => {
     const withList = await analyser({ provider: project(), declarations: [] });
     const without = await analyser({ provider: project() });
 
@@ -294,12 +294,12 @@ describe('declarations', () => {
       ['a line that is not a number', { ...valid, line: '4' }, /"line"/],
       ['an entry that is not an object', 'react', /expected an object/],
       ['a null entry', null, /expected an object/],
-    ])('rejects %s, naming the entry', async (_label, entry, message) => {
+    ])('should reject %s, naming the entry', async (_label, entry, message) => {
       await expect(run(entry)).rejects.toThrow(message);
       await expect(run(valid, entry)).rejects.toThrow(/declaration 1/);
     });
 
-    it('rejects a value that is not an array', async () => {
+    it('should reject a value that is not an array', async () => {
       const bad = (declarations: unknown) =>
         analyser({ provider: project(), declarations: declarations as never });
 
@@ -307,7 +307,7 @@ describe('declarations', () => {
       await expect(bad('react')).rejects.toThrow(/must be an array/);
     });
 
-    it('accepts every supported type', async () => {
+    it('should accept every supported type', async () => {
       const types = [
         'deno',
         'docker',

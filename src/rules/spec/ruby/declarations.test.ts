@@ -28,7 +28,7 @@ DEPENDENCIES
 `;
 
 describe('Ruby package evidence', () => {
-  it('reads literal Bundler declarations, versions and nested groups', async () => {
+  it('should read literal Bundler declarations, versions and nested groups', async () => {
     const data = await scan({
       Gemfile: `gem 'rails'
 group :development do
@@ -49,7 +49,7 @@ gem %q[pg]
     expect(data.techs.has('rails')).toBe(true);
   });
 
-  it('does not read quoted examples, comments, non-registry overrides or known inactive declarations', async () => {
+  it('should not read quoted examples, comments, non-registry overrides or known inactive declarations', async () => {
     const data = await scan({
       Gemfile: [
         '# gem "rails", "8"',
@@ -81,7 +81,7 @@ gem %q[pg]
     expect(data.dependencies).toEqual([['ruby', 'pg', 'latest']]);
   });
 
-  it('reads development and runtime dependencies from the gemspec receiver', async () => {
+  it('should read development and runtime dependencies from the gemspec receiver', async () => {
     const data = await scan({
       Gemfile: 'gemspec',
       'example.gemspec': `Gem::Specification.new do |spec|
@@ -99,14 +99,14 @@ spec.add_dependency 'after_block'
     expect(data.techs.has('rails')).toBe(true);
   });
 
-  it('ignores stale and transitive lock entries when a manifest is present', async () => {
+  it('should ignore stale and transitive lock entries when a manifest is present', async () => {
     const data = await scan({ Gemfile: "gem 'pg'", 'Gemfile.lock': lock });
 
     expect(data.dependencies).toEqual([['ruby', 'pg', 'latest']]);
     expect(data.techs.has('rails')).toBe(false);
   });
 
-  it('limits a standalone lock to direct registry dependencies', async () => {
+  it('should limit a standalone lock to direct registry dependencies', async () => {
     const data = await scan({ 'Gemfile.lock': lock });
 
     expect(data.dependencies).toEqual([

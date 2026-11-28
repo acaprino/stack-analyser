@@ -26,7 +26,7 @@ function entryOf(tech: string): Record<string, unknown> {
 }
 
 describe('catalogue', () => {
-  it('lists every registered rule once, sorted by tech in code unit order', () => {
+  it('should list every registered rule once, sorted by tech in code unit order', () => {
     const before = [...rules.list];
     const entries = catalogue(rules.list);
 
@@ -51,7 +51,7 @@ describe('catalogue', () => {
     for (const [index, rule] of before.entries()) expect(rules.list[index]).toBe(rule);
   });
 
-  it('sorts by code unit, not by locale', () => {
+  it('should sort by code unit, not by locale', () => {
     const entries = catalogue([
       { tech: 'b', name: 'B', type: 'tool' },
       { tech: 'a', name: 'A', type: 'tool' },
@@ -62,7 +62,7 @@ describe('catalogue', () => {
     expect(entries.map((entry) => entry.tech)).toEqual(['Z', 'a', 'b']);
   });
 
-  it('gives each entry only the known keys, in order, and none that is empty', () => {
+  it('should give each entry only the known keys, in order, and none that is empty', () => {
     const entries = catalogue(rules.list);
 
     expect(entries).toHaveLength(rules.list.length);
@@ -79,7 +79,7 @@ describe('catalogue', () => {
     }
   });
 
-  it('writes a pattern as its source, and it round-trips through JSON', () => {
+  it('should write a pattern as its source, and it round-trips through JSON', () => {
     const entry = entryOf('spring-boot');
     const pattern = rules.list
       .find((rule) => rule.tech === 'spring-boot')!
@@ -110,7 +110,7 @@ describe('catalogue', () => {
     });
   });
 
-  it('writes the flags of a pattern only when it has some', () => {
+  it('should write the flags of a pattern only when it has some', () => {
     expect(entryOf('aspnetcore').dependencies).toEqual([
       { type: 'nuget', pattern: String.raw`^Microsoft\.AspNetCore\.`, flags: 'i' },
     ]);
@@ -121,7 +121,7 @@ describe('catalogue', () => {
     expect(spring.some((dep) => 'flags' in dep)).toBe(false);
   });
 
-  it('writes the files of a rule as a list or as the source of a pattern', () => {
+  it('should write the files of a rule as a list or as the source of a pattern', () => {
     expect(entryOf('typescript').files).toEqual({
       pattern: String.raw`^tsconfig(?:\.[\w-]+)*\.json$`,
     });
@@ -135,14 +135,14 @@ describe('catalogue', () => {
     expect(entryOf(withoutFiles.tech)).not.toHaveProperty('files');
   });
 
-  it('spring-mvc lists the Spring web starter', () => {
+  it('should list the Spring web starter for spring-mvc', () => {
     expect(entryOf('spring-mvc').dependencies).toContainEqual({
       type: 'maven',
       name: 'org.springframework.boot:spring-boot-starter-web',
     });
   });
 
-  it('gives hosts to a rule that has them and none to a rule that has not', () => {
+  it('should give hosts to a rule that has them and none to a rule that has not', () => {
     expect(entryOf('openai')).toMatchObject({ hosts: ['api.openai.com'], dotenv: ['OPENAI_'] });
     expect(entryOf('typescript')).toMatchObject({ extensions: ['.ts', '.tsx', '.mts', '.cts'] });
     expect(entryOf('spring-mvc')).not.toHaveProperty('hosts');
@@ -155,7 +155,7 @@ describe('catalogue', () => {
     }
   });
 
-  it('leaves out what a rule carries beyond the eight keys', () => {
+  it('should leave out what a rule carries beyond the eight keys', () => {
     const leaves = ['example', 'matchFullPath', 'deploymentConfig', 'detect'];
 
     expect(rules.list.some((rule) => leaves.some((key) => key in rule))).toBe(true);
@@ -169,7 +169,7 @@ describe('catalogue', () => {
     }
   });
 
-  it('does not write what is empty, and marks a files that is not a list or a pattern as computed', () => {
+  it('should not write what is empty, and mark a files that is not a list or a pattern as computed', () => {
     const [entry] = catalogue([
       frozen({
         tech: 'one',
@@ -192,7 +192,7 @@ describe('catalogue', () => {
     expect(computed).toEqual({ tech: 'two', name: 'Two', type: 'tool', files: { computed: true } });
   });
 
-  it('copies the lists, so that an entry can be changed without touching the rule', () => {
+  it('should copy the lists, so that an entry can be changed without touching the rule', () => {
     const rule = {
       tech: 'one',
       name: 'One',

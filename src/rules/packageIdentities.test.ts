@@ -201,15 +201,15 @@ const wrongSigns: [string, SupportedDeps, string][] = [
 ];
 
 describe('package identities', () => {
-  it.each(cases)('%s %s', (type, name, expected) => {
+  it.each(cases)('should % %s', (type, name, expected) => {
     expect([...matchDependencies([name], type).keys()].sort()).toEqual(expected);
   });
 
-  it.each(wrongSigns)('%s is not identified by the wrong sign %s %s', (tech, type, name) => {
+  it.each(wrongSigns)('should % is not identified by the wrong sign %s %s', (tech, type, name) => {
     expect([...matchDependencies([name], type).keys()]).not.toContain(tech);
   });
 
-  it('loading the default catalog again preserves matcher and component counts', () => {
+  it('should preserve matcher and component counts when the default catalog is loaded again', () => {
     const counts = () => [dependencies.npm.length, rawList.length, rulesComponents.length];
     const before = counts();
     loadAllRules();
@@ -217,7 +217,7 @@ describe('package identities', () => {
     expect(counts()).toEqual(before);
   });
 
-  it('no package identifies two technologies', () => {
+  it('should not let one package identify two technologies', () => {
     const owners = new Map<string, Set<string>>();
     for (const rule of registeredRules) {
       for (const dep of rule.dependencies ?? []) {

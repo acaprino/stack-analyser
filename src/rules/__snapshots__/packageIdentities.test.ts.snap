@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`package identities > no package identifies two technologies 1`] = `
+exports[`package identities > should not let one package identify two technologies 1`] = `
 [
   "php:socialiteproviders/okta → okta, okta.oauth",
   "npm:@netlify/plugin-nextjs → netlify, nextjs",
