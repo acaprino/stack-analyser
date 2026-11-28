@@ -23,7 +23,9 @@ test('keeps filesystem reads inside the selected root and respects ignored relat
     const provider = new FSProvider({ path: project, ignorePaths: ['generated'] });
 
     expect(await provider.open(path.join(project, 'visible.json'))).toBe('{}');
-    expect((await provider.listDir(project)).map((file) => file.name)).toStrictEqual(['visible.json']);
+    expect((await provider.listDir(project)).map((file) => file.name)).toStrictEqual([
+      'visible.json',
+    ]);
     expect(await provider.open(path.join(sibling, 'sample.json'))).toBeNull();
     expect(await provider.open(path.join(project, 'generated/data.json'))).toBeNull();
     expect(await provider.stat(path.join(sibling, 'sample.json'))).toBeNull();
@@ -70,7 +72,9 @@ test.each(['generated', '/generated', './generated', 'generated/', '/generated/'
       const provider = new FSProvider({ path: temp, ignorePaths: [rule] });
 
       // Only that folder: a folder whose name merely starts the same way is still read.
-      expect((await provider.listDir(temp)).map((file) => file.name)).toStrictEqual(['generated-docs']);
+      expect((await provider.listDir(temp)).map((file) => file.name)).toStrictEqual([
+        'generated-docs',
+      ]);
       expect(await provider.open(path.join(temp, 'generated/data.json'))).toBeNull();
     } finally {
       await fs.rm(temp, { recursive: true, force: true });

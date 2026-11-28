@@ -129,7 +129,10 @@ test('flatten keeps the union of evidence', () => {
   const before = structuredClone(root.toJson());
   const redis = flatten(root, { merge: true }).childs.find((c) => c.tech === 'redis')!;
 
-  expect(redis.evidence.map((e) => e.path).sort()).toStrictEqual(['/a/package.json', '/b/package.json']);
+  expect(redis.evidence.map((e) => e.path).sort()).toStrictEqual([
+    '/a/package.json',
+    '/b/package.json',
+  ]);
   expect(root.toJson()).toStrictEqual(before);
 });
 
@@ -154,7 +157,9 @@ test('does not repeat evidence, keeps a declared source and ignores evidence of 
       source: 'stack-analyser',
     },
   ]);
-  expect(new Payload({ name: 'plain', folderPath: '/', evidence: [found] }).evidence).toStrictEqual([]);
+  expect(new Payload({ name: 'plain', folderPath: '/', evidence: [found] }).evidence).toStrictEqual(
+    []
+  );
 });
 
 test('gives the host component of a dotted technology the evidence of the service and merges it on the next one', () => {

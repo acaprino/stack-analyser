@@ -43,7 +43,9 @@ test('matches the npm registry target of an alias, retaining local declarations 
     }),
   });
 
-  expect([...result.techs]).toStrictEqual(expect.arrayContaining(['preactjs', 'vite', 'playwright']));
+  expect([...result.techs]).toStrictEqual(
+    expect.arrayContaining(['preactjs', 'vite', 'playwright'])
+  );
 
   for (const id of ['react', 'vuejs', 'angular', 'zod'])
     expect([...result.techs]).not.toContain(id);

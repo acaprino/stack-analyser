@@ -95,7 +95,11 @@ spec.add_dependency 'after_block'
 `,
     });
 
-    expect(data.dependencies.map(([, name]) => name).sort()).toStrictEqual(['rails', 'redis', 'rspec']);
+    expect(data.dependencies.map(([, name]) => name).sort()).toStrictEqual([
+      'rails',
+      'redis',
+      'rspec',
+    ]);
     expect(data.techs.has('rails')).toBe(true);
   });
 

@@ -12,6 +12,16 @@ import { rules } from './index.js';
 import { tsxImport } from './tests/tsx.js';
 import './autoload.js';
 
+import type { AnalyserJson } from './types/index.js';
+
+/** What a CLI run printed, its exit code and the output file it wrote, if any. */
+interface CliRun {
+  code: number;
+  out: string;
+  err: string;
+  output: AnalyserJson | null;
+}
+
 test('writes a stack for a Maven project using the normal CLI', async () => {
   const cwd = await fs.mkdtemp(path.join(os.tmpdir(), 'stack-analyser-cli-'));
   try {
@@ -31,7 +41,9 @@ test('writes a stack for a Maven project using the normal CLI', async () => {
 
     expect(stdout).toContain('Output');
 
-    const output = JSON.parse(await fs.readFile(path.join(cwd, 'output.json'), 'utf8'));
+    const output = JSON.parse(
+      await fs.readFile(path.join(cwd, 'output.json'), 'utf8')
+    ) as AnalyserJson;
 
     expect(output.techs).toContain('spring-boot');
     expect(output.dependencies).toContainEqual([
@@ -44,7 +56,7 @@ test('writes a stack for a Maven project using the normal CLI', async () => {
   }
 }, 20_000);
 
-async function runCli(files: Record<string, string>, args: string[]) {
+async function runCli(files: Record<string, string>, args: string[]): Promise<CliRun> {
   const cwd = await fs.mkdtemp(path.join(os.tmpdir(), 'stack-analyser-cli-'));
   try {
     for (const [name, content] of Object.entries(files)) {
@@ -65,7 +77,7 @@ async function runCli(files: Record<string, string>, args: string[]) {
       })
     );
     const output = await fs.readFile(path.join(cwd, 'output.json'), 'utf8').then(
-      (json) => JSON.parse(json),
+      (json) => JSON.parse(json) as AnalyserJson,
       () => null
     );
     return { ...result, output };
@@ -78,7 +90,10 @@ async function runCli(files: Record<string, string>, args: string[]) {
  * Runs the CLI from source with the project in `<tmp>/proj`, the working folder in `<tmp>/work` and `<tmp>/out` free for an output.
  * `args` gets the temporary folder, so that a test can write the root and the output the way it needs to.
  */
-async function runCliOver(args: (tmp: string) => string[], outputFile: (tmp: string) => string) {
+async function runCliOver(
+  args: (tmp: string) => string[],
+  outputFile: (tmp: string) => string
+): Promise<CliRun> {
   const tmp = await fs.mkdtemp(path.join(os.tmpdir(), 'stack-analyser-cli-'));
   try {
     for (const [name, content] of Object.entries({
@@ -96,14 +111,15 @@ async function runCliOver(args: (tmp: string) => string[], outputFile: (tmp: str
       ['--import', tsxImport, file, ...args(tmp)],
       { cwd: path.join(tmp, 'work'), env: { ...process.env, LOG_LEVEL: 'info' } }
     ).then(
-      (done) => ({ code: 0, out: done.stdout + done.stderr }),
+      (done) => ({ code: 0, out: done.stdout + done.stderr, err: done.stderr }),
       (err: { code: number; stdout: string; stderr: string }) => ({
         code: err.code,
         out: err.stdout + err.stderr,
+        err: err.stderr,
       })
     );
     const output = await fs.readFile(outputFile(tmp), 'utf8').then(
-      (json) => JSON.parse(json),
+      (json) => JSON.parse(json) as AnalyserJson,
       () => null
     );
     return { ...result, output };
@@ -126,7 +142,7 @@ test('writes evidence paths relative to the root when the root ends with a separ
   );
 
   expect(code).toBe(0);
-  expect(evidencePaths(output)).toStrictEqual(evidenceOfProj);
+  expect(evidencePaths(output!)).toStrictEqual(evidenceOfProj);
 }, 20_000);
 
 test('writes evidence paths relative to the root when an absolute root goes through ..', async () => {
@@ -136,7 +152,7 @@ test('writes evidence paths relative to the root when an absolute root goes thro
   );
 
   expect(code).toBe(0);
-  expect(evidencePaths(output)).toStrictEqual(evidenceOfProj);
+  expect(evidencePaths(output!)).toStrictEqual(evidenceOfProj);
 }, 20_000);
 
 test('writes the output where an absolute --output says', async () => {
@@ -146,7 +162,7 @@ test('writes the output where an absolute --output says', async () => {
   );
 
   expect(code).toBe(0);
-  expect(evidencePaths(output)).toStrictEqual(evidenceOfProj);
+  expect(evidencePaths(output!)).toStrictEqual(evidenceOfProj);
 }, 20_000);
 
 const manifest = JSON.stringify({ name: 'app', dependencies: { react: '18' } });
@@ -168,7 +184,7 @@ test('reads declarations from a file and keep their source', async () => {
   );
 
   expect(code).toBe(0);
-  expect(output.evidence).toContainEqual({
+  expect(output!.evidence).toContainEqual({
     tech: 'requests',
     kind: 'package',
     value: 'requests',
@@ -196,7 +212,7 @@ test.each([
   ],
 ])(
   'exits with 1 and writes nothing for %s',
-  async (_label, content, message) => {
+  async (...[, content, message]) => {
     const { code, out, output } = await runCli(
       { 'package.json': manifest, 'declarations.json': content },
       ['--declarations', 'declarations.json']
@@ -239,7 +255,7 @@ test('reads a declarations file that starts with a UTF-8 byte order mark', async
   );
 
   expect(code).toBe(0);
-  expect(output.evidence).toContainEqual({
+  expect(output!.evidence).toContainEqual({
     tech: 'requests',
     kind: 'package',
     value: 'requests',
@@ -268,14 +284,16 @@ test.each([
   ['both options together', ['--skip-dirs', '', '--ignore', 'generated'], ['react', 'vitest']],
 ])(
   '%s',
-  async (_label, args, expected) => {
+  async (...[, args, expected]) => {
     const { code, output } = await runCli(tree, ['--flat', ...args]);
 
     expect(code).toBe(0);
 
-    const found = new Set<string>(output.techs);
+    const found = new Set<string>(output!.techs);
 
-    expect(['react', 'express', 'vitest'].filter((tech) => found.has(tech))).toStrictEqual(expected);
+    expect(['react', 'express', 'vitest'].filter((tech) => found.has(tech))).toStrictEqual(
+      expected
+    );
   },
   20_000
 );
@@ -295,9 +313,11 @@ test('leaves out a folder to --ignore however its path is written', async () => 
 
   expect(code).toBe(0);
 
-  const found = new Set<string>(output.techs);
+  const found = new Set<string>(output!.techs);
 
-  expect(['react', ...Object.values(folders)].filter((tech) => found.has(tech))).toStrictEqual(['react']);
+  expect(['react', ...Object.values(folders)].filter((tech) => found.has(tech))).toStrictEqual([
+    'react',
+  ]);
 }, 20_000);
 
 test.each([
@@ -305,7 +325,7 @@ test.each([
   ['a path with a backslash', String.raw`tests,generated\sub`, String.raw`generated\sub`],
 ])(
   'exits with 1 and writes nothing when --skip-dirs is given %s',
-  async (_label, value, entry) => {
+  async (...[, value, entry]) => {
     const { code, out, output } = await runCli(tree, ['--skip-dirs', value]);
 
     expect(code).toBe(1);
@@ -322,7 +342,7 @@ test.each([
   ['a parent folder', 'generated,tests/../..', 'tests/../..'],
 ])(
   'exits with 1 and writes nothing when --ignore is given %s',
-  async (_label, value, entry) => {
+  async (...[, value, entry]) => {
     const { code, err, output } = await runCli(tree, ['--ignore', value]);
 
     expect(code).toBe(1);
@@ -374,8 +394,8 @@ test('gives the same output from --perimeter as from --skip-dirs and --ignore', 
 
   expect(options.code).toBe(0);
   expect(file.code).toBe(0);
-  expect(techsOfTree(options.output)).toStrictEqual(['react', 'vitest', 'fastify']);
-  expect(withoutIds(file.output)).toStrictEqual(withoutIds(options.output));
+  expect(techsOfTree(options.output!)).toStrictEqual(['react', 'vitest', 'fastify']);
+  expect(withoutIds(file.output!)).toStrictEqual(withoutIds(options.output!));
 }, 40_000);
 
 test('keeps what an absent key means, and reads a perimeter that starts with a byte order mark', async () => {
@@ -395,9 +415,9 @@ test('keeps what an absent key means, and reads a perimeter that starts with a b
   ]);
 
   expect(withoutSkipDirs.code).toBe(0);
-  expect(techsOfTree(withoutSkipDirs.output)).toStrictEqual(['react', 'vue', 'fastify']);
+  expect(techsOfTree(withoutSkipDirs.output!)).toStrictEqual(['react', 'vue', 'fastify']);
   expect(withoutIgnore.code).toBe(0);
-  expect(techsOfTree(withoutIgnore.output)).toStrictEqual([
+  expect(techsOfTree(withoutIgnore.output!)).toStrictEqual([
     'react',
     'express',
     'vitest',
@@ -452,7 +472,7 @@ test.each([
   ['no file at all', undefined, /Perimeter ".*perimeter\.json":.*ENOENT/],
 ])(
   'exits with 1 and writes nothing when the perimeter file is not the expected JSON: %s',
-  async (_label, content, message) => {
+  async (...[, content, message]) => {
     const files = content === undefined ? tree : { ...tree, 'perimeter.json': content };
     const { code, out, output } = await runCli(files, ['--perimeter', 'perimeter.json']);
 
@@ -480,7 +500,10 @@ async function listFiles(dir: string, prefix = ''): Promise<string[]> {
  * Runs the CLI from source in a folder holding `files`, with `args` and no project argument unless `args` holds one.
  * `written` is the file, relative to the folder, whose bytes to read once it has run; `files` is what the folder holds after.
  */
-async function runCatalogueCli(args: string[], inputs: Record<string, string>, written?: string) {
+async function runCatalogueCli(
+  args: string[],
+  { inputs, written }: { inputs: Record<string, string>; written?: string }
+): Promise<{ code: number; out: string; bytes: Buffer | null; files: string[] }> {
   const cwd = await fs.mkdtemp(path.join(os.tmpdir(), 'stack-analyser-cli-'));
   try {
     for (const [name, content] of Object.entries(inputs)) {
@@ -508,11 +531,10 @@ async function runCatalogueCli(args: string[], inputs: Record<string, string>, w
 
 test('writes the catalogue of the rules without a project, and leaves nothing else behind', async () => {
   // A project in the folder it runs in, which must not be read, and a folder that already holds a file.
-  const { code, out, bytes, files } = await runCatalogueCli(
-    ['--catalogue', 'out/rules.json'],
-    { 'package.json': manifest, 'out/keep.txt': 'keep' },
-    'out/rules.json'
-  );
+  const { code, out, bytes, files } = await runCatalogueCli(['--catalogue', 'out/rules.json'], {
+    inputs: { 'package.json': manifest, 'out/keep.txt': 'keep' },
+    written: 'out/rules.json',
+  });
 
   expect(code).toBe(0);
   expect(out).toContain('rules.json');
@@ -557,12 +579,14 @@ test('exits with 1 and writes nothing when --catalogue is given with a project o
         '--ignore',
         'gen',
       ],
-      inputs,
-      'rules.json'
+      { inputs, written: 'rules.json' }
     ),
-    runCatalogueCli(['.', '--catalogue', 'rules.json'], inputs, 'rules.json'),
+    runCatalogueCli(['.', '--catalogue', 'rules.json'], { inputs, written: 'rules.json' }),
     // `--output` has a default value, so only an `--output` that was typed is a conflict, even one that says the default.
-    runCatalogueCli(['--catalogue', 'rules.json', '--output', 'output.json'], inputs, 'rules.json'),
+    runCatalogueCli(['--catalogue', 'rules.json', '--output', 'output.json'], {
+      inputs,
+      written: 'rules.json',
+    }),
   ]);
   for (const result of [all, project, output]) {
     expect(result.code).toBe(1);
@@ -588,13 +612,15 @@ test('exits with 1 and writes nothing when --catalogue is given with a project o
 
 test('exits with 1 and names the file when the catalogue cannot be written, and when nothing is asked; --help names the package', async () => {
   const [missingFolder, aFolder, nothing, help] = await Promise.all([
-    runCatalogueCli(['--catalogue', 'no/such/folder/rules.json'], { 'package.json': manifest }),
+    runCatalogueCli(['--catalogue', 'no/such/folder/rules.json'], {
+      inputs: { 'package.json': manifest },
+    }),
     // The target is a folder: the rename fails, and the temporary file is removed.
-    runCatalogueCli(['--catalogue', 'out'], { 'out/keep.txt': 'keep' }),
+    runCatalogueCli(['--catalogue', 'out'], { inputs: { 'out/keep.txt': 'keep' } }),
     // Making the project optional leaves it required when there is no `--catalogue`.
-    runCatalogueCli([], { 'package.json': manifest }),
+    runCatalogueCli([], { inputs: { 'package.json': manifest } }),
     // The program is named after the package, not after the original project.
-    runCatalogueCli(['--help'], {}),
+    runCatalogueCli(['--help'], { inputs: {} }),
   ]);
 
   expect(missingFolder.code).toBe(1);

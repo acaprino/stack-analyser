@@ -42,7 +42,11 @@ test('recognizes Spring Boot in the Maven and Gradle modules that declare it', a
       .flatMap((pl) => [...pl.path])
       .map((p) => path.relative(root, p).split(path.sep).join('/'));
 
-    expect(paths.sort()).toStrictEqual(['api/pom.xml', 'web/build.gradle', 'worker/build.gradle.kts']);
+    expect(paths.sort()).toStrictEqual([
+      'api/pom.xml',
+      'web/build.gradle',
+      'worker/build.gradle.kts',
+    ]);
     expect(components.find((pl) => pl.name === 'other')?.techs.has('maven')).toBe(true);
     expect(spring.find((pl) => pl.name === 'worker')?.techs.has('gradle')).toBe(true);
     expect(spring.find((pl) => pl.name === 'api')?.dependencies).toContainEqual([

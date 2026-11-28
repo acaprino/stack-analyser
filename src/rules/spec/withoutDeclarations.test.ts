@@ -169,7 +169,9 @@ describe('python manifests', () => {
       ].join('\n'),
     });
 
-    expect([...result.techs]).toStrictEqual(expect.arrayContaining(['pytest', 'ruff', 'click', 'numpy']));
+    expect([...result.techs]).toStrictEqual(
+      expect.arrayContaining(['pytest', 'ruff', 'click', 'numpy'])
+    );
   });
 
   it('should read requirements files by the names pip users give them, and no other text file', async () => {
@@ -180,7 +182,9 @@ describe('python manifests', () => {
       'notes.txt': 'django==5.0\n',
     });
 
-    expect([...result.techs]).toStrictEqual(expect.arrayContaining(['ruff', 'pytest', 'click', 'numpy']));
+    expect([...result.techs]).toStrictEqual(
+      expect.arrayContaining(['ruff', 'pytest', 'click', 'numpy'])
+    );
     expect(result.techs.has('django')).toBe(false);
   });
 
@@ -222,7 +226,9 @@ describe('python manifests', () => {
       ].join('\n'),
     });
 
-    expect([...result.techs]).toStrictEqual(expect.arrayContaining(['requests', 'click', 'sphinx']));
+    expect([...result.techs]).toStrictEqual(
+      expect.arrayContaining(['requests', 'click', 'sphinx'])
+    );
   });
 
   it('should read the literal requirements of setup.py and never a computed list', async () => {

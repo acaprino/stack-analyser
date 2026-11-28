@@ -189,7 +189,12 @@ describe('catalogue', () => {
       frozen({ tech: 'two', name: 'Two', type: 'tool', files: () => [] }),
     ]);
 
-    expect(computed).toStrictEqual({ tech: 'two', name: 'Two', type: 'tool', files: { computed: true } });
+    expect(computed).toStrictEqual({
+      tech: 'two',
+      name: 'Two',
+      type: 'tool',
+      files: { computed: true },
+    });
   });
 
   it('should copy the lists, so that an entry can be changed without touching the rule', () => {
