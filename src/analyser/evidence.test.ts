@@ -1,6 +1,6 @@
 import path from 'node:path';
 
-import { expect, it } from 'vitest';
+import { expect, test } from 'vitest';
 
 import { analyser } from './index.js';
 import { FakeProvider } from '../provider/fake.js';
@@ -32,13 +32,13 @@ function allEvidence(graph: AnalyserJson): AnalyserJson['evidence'] {
   return [...graph.evidence, ...graph.childs.flatMap(allEvidence)];
 }
 
-it('every technology carries evidence', async () => {
+test('every technology carries evidence', async () => {
   const graph = (await analyser({ provider: new FSProvider({ path: root }) })).toJson(root);
 
   expect(withoutEvidence(graph)).toEqual([]);
 });
 
-it('records the file, extension, variable or source behind a hand-written reason', async () => {
+test('records the file, extension, variable or source behind a hand-written reason', async () => {
   const files: Record<string, string> = {
     '/elixir/mix.exs':
       'defmodule Demo.MixProject do\n  def project, do: [app: :demo, deps: []]\nend\n',

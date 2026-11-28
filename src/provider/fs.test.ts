@@ -2,14 +2,14 @@ import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 
-import { expect, it, vi } from 'vitest';
+import { expect, test, vi } from 'vitest';
 
 import { FSProvider } from './fs.js';
 import { analyser } from '../analyser/index.js';
 import { flatten } from '../payload/helpers.js';
 import '../autoload.js';
 
-it('keeps filesystem reads inside the selected root and respects ignored relative paths', async () => {
+test('keeps filesystem reads inside the selected root and respects ignored relative paths', async () => {
   const temp = await fs.mkdtemp(path.join(os.tmpdir(), 'specfy-provider-'));
   try {
     const project = path.join(temp, 'app');
@@ -59,7 +59,7 @@ it('keeps filesystem reads inside the selected root and respects ignored relativ
   }
 });
 
-it.each(['generated', '/generated', './generated', 'generated/', '/generated/'])(
+test.each(['generated', '/generated', './generated', 'generated/', '/generated/'])(
   'ignores a folder written as %s',
   async (rule) => {
     const temp = await fs.mkdtemp(path.join(os.tmpdir(), 'specfy-provider-'));
@@ -78,7 +78,7 @@ it.each(['generated', '/generated', './generated', 'generated/', '/generated/'])
   }
 );
 
-it('reads a perimeter of five thousand paths', async () => {
+test('reads a perimeter of five thousand paths', async () => {
   const temp = await fs.mkdtemp(path.join(os.tmpdir(), 'specfy-provider-'));
   try {
     // 20 packages of 10 files each, 200 files in all.
@@ -120,7 +120,7 @@ it('reads a perimeter of five thousand paths', async () => {
   }
 }, 60_000);
 
-it('applies a regular expression beside string paths, whatever its flags', async () => {
+test('applies a regular expression beside string paths, whatever its flags', async () => {
   const temp = await fs.mkdtemp(path.join(os.tmpdir(), 'specfy-provider-'));
   try {
     for (const folder of ['docs', 'generated', 'generated-docs', 'src']) {
@@ -142,7 +142,7 @@ it('applies a regular expression beside string paths, whatever its flags', async
   }
 });
 
-it('lets the caller replace the list of skipped folders, and keeps the default list without it', async () => {
+test('lets the caller replace the list of skipped folders, and keeps the default list without it', async () => {
   const temp = await fs.mkdtemp(path.join(os.tmpdir(), 'specfy-provider-'));
   try {
     await fs.mkdir(path.join(temp, 'tests'));

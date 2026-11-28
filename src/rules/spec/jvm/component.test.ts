@@ -2,7 +2,7 @@ import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 
-import { expect, it } from 'vitest';
+import { expect, test } from 'vitest';
 
 import '../../../autoload.js';
 import { gradleDependencies } from './gradle.js';
@@ -12,7 +12,7 @@ import { analyser } from '../../../analyser/index.js';
 import { Payload } from '../../../payload/index.js';
 import { FSProvider } from '../../../provider/fs.js';
 
-it('recognizes Spring Boot in the Maven and Gradle modules that declare it', async () => {
+test('recognizes Spring Boot in the Maven and Gradle modules that declare it', async () => {
   const root = await mkdtemp(path.join(os.tmpdir(), 'specfy-jvm-'));
   try {
     const pom = (id: string, group: string) => `<project xmlns="http://maven.apache.org/POM/4.0.0">
@@ -60,7 +60,7 @@ it('recognizes Spring Boot in the Maven and Gradle modules that declare it', asy
   }
 });
 
-it('reads local declarations and those of profiles without promoting POM defaults or examples', () => {
+test('reads local declarations and those of profiles without promoting POM defaults or examples', () => {
   expect(
     mavenProject(`<project><artifactId>app</artifactId>
     <parent><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-parent</artifactId><version>3</version></parent>
@@ -78,7 +78,7 @@ it('reads local declarations and those of profiles without promoting POM default
   expect(mavenProject('<project><artifactId>broken</artifactId>')).toBeNull();
 });
 
-it('reads literal Gradle dependencies and skips unapplied plugins and non-dependency strings', () => {
+test('reads literal Gradle dependencies and skips unapplied plugins and non-dependency strings', () => {
   expect(
     gradleDependencies(
       `plugins {
@@ -115,7 +115,7 @@ it('reads literal Gradle dependencies and skips unapplied plugins and non-depend
   ]);
 });
 
-it('does not read a linked catalog as the declaring project’s version catalog', async () => {
+test('does not read a linked catalog as the declaring project’s version catalog', async () => {
   const root = path.resolve('sample');
   const build = path.join(root, 'build.gradle');
   const dir = path.join(root, 'gradle');

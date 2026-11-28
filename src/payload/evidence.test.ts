@@ -1,6 +1,6 @@
 import path from 'node:path';
 
-import { expect, it } from 'vitest';
+import { expect, test } from 'vitest';
 
 import { flatten } from './helpers.js';
 import { Payload } from './index.js';
@@ -8,7 +8,7 @@ import { analyser } from '../analyser/index.js';
 import { FakeProvider } from '../provider/fake.js';
 import '../autoload.js';
 
-it('flatten can be repeated without changing the source graph or double-counting languages', () => {
+test('flatten can be repeated without changing the source graph or double-counting languages', () => {
   const root = new Payload({ name: 'main', folderPath: '/' });
   root.addLang('JavaScript');
   const child = root.addChild(new Payload({ name: 'api', folderPath: '/api' }));
@@ -24,7 +24,7 @@ it('flatten can be repeated without changing the source graph or double-counting
   expect(root.toJson()).toEqual(original);
 });
 
-it('connects repeated service evidence to a real component and keeps technologies with colliding names', () => {
+test('connects repeated service evidence to a real component and keeps technologies with colliding names', () => {
   const root = new Payload({ name: 'main', folderPath: '/' });
   root.addTech('redis', ['redis client']);
   root.addTech('redis', ['redis build']);
@@ -40,7 +40,7 @@ it('connects repeated service evidence to a real component and keeps technologie
   );
 });
 
-it('keeps cloud SDK recognition while assigning hosting only from deployment configuration', async () => {
+test('keeps cloud SDK recognition while assigning hosting only from deployment configuration', async () => {
   const manifest = JSON.stringify({ name: 'api', dependencies: { 'aws-sdk': '2', vercel: '36' } });
   async function application(files: Record<string, string>) {
     const provider = new FakeProvider({
@@ -59,7 +59,7 @@ it('keeps cloud SDK recognition while assigning hosting only from deployment con
   expect(configured.inComponent?.tech).toBe('vercel');
 });
 
-it('keeps unowned folder evidence visible when multiple manifests share a directory', async () => {
+test('keeps unowned folder evidence visible when multiple manifests share a directory', async () => {
   const provider = new FakeProvider({
     paths: { '/': ['package.json', 'Cargo.toml', 'adapter.py'] },
     files: {
@@ -74,7 +74,7 @@ it('keeps unowned folder evidence visible when multiple manifests share a direct
   expect(result.childs.flatMap((c) => c.mentions)).toEqual([]);
 });
 
-it('toJson makes evidence paths relative and portable', () => {
+test('toJson makes evidence paths relative and portable', () => {
   const base = path.resolve('repo'); // a path of the platform: with the Windows separator on Windows
   const root = new Payload({ name: 'main', folderPath: base });
   root.addTech(
@@ -96,7 +96,7 @@ it('toJson makes evidence paths relative and portable', () => {
   ]);
 });
 
-it('gives the deduced component the evidence of the technology that implied it', () => {
+test('gives the deduced component the evidence of the technology that implied it', () => {
   const root = new Payload({ name: 'api', folderPath: '/api' });
   root.addTech(
     'postgresql',
@@ -116,7 +116,7 @@ it('gives the deduced component the evidence of the technology that implied it',
   ]);
 });
 
-it('flatten keeps the union of evidence', () => {
+test('flatten keeps the union of evidence', () => {
   const root = new Payload({ name: 'main', folderPath: '/' });
   for (const folder of ['/a', '/b', '/a']) {
     const child = root.addChild(new Payload({ name: folder, folderPath: folder }));
@@ -133,7 +133,7 @@ it('flatten keeps the union of evidence', () => {
   expect(root.toJson()).toEqual(before);
 });
 
-it('does not repeat evidence, keeps a declared source and ignores evidence of a Payload without tech', () => {
+test('does not repeat evidence, keeps a declared source and ignores evidence of a Payload without tech', () => {
   const found = { kind: 'package', value: 'redis', path: '/package.json' } as const;
   const root = new Payload({ name: 'main', folderPath: '/', tech: 'redis', evidence: [found] });
   root.addEvidence('redis', [
@@ -157,7 +157,7 @@ it('does not repeat evidence, keeps a declared source and ignores evidence of a 
   expect(new Payload({ name: 'plain', folderPath: '/', evidence: [found] }).evidence).toEqual([]);
 });
 
-it('gives the host component of a dotted technology the evidence of the service and merges it on the next one', () => {
+test('gives the host component of a dotted technology the evidence of the service and merges it on the next one', () => {
   const root = new Payload({ name: 'main', folderPath: '/' });
   root.addTech(
     'aws.s3',
@@ -201,7 +201,7 @@ it('gives the host component of a dotted technology the evidence of the service 
   expect(aws.evidence).toHaveLength(2);
 });
 
-it('dives into a folder the default list skips when the caller says so', async () => {
+test('dives into a folder the default list skips when the caller says so', async () => {
   const paths = { '/': ['tests/'], '/tests': ['package.json'] };
   const files = {
     '/tests/package.json': JSON.stringify({ name: 't', dependencies: { vitest: '1' } }),
@@ -277,7 +277,7 @@ const knownNpmPackages = [
 // Now they take 1 to 3 seconds, and up to 7 with the whole suite running, so the bound leaves room for a loaded machine.
 const bound = 10_000;
 
-it('analyses 800 Python manifests with 20 known packages each without the time growing with the square', async () => {
+test('analyses 800 Python manifests with 20 known packages each without the time growing with the square', async () => {
   const provider = manyManifests(
     'requirements.txt',
     () => knownPythonPackages.map((name) => `${name}>=1`).join('\n'),
@@ -291,7 +291,7 @@ it('analyses 800 Python manifests with 20 known packages each without the time g
   expect(elapsed).toBeLessThan(bound);
 }, 60_000);
 
-it('flattens 400 npm packages with 20 known dependencies each without the time growing with the square', async () => {
+test('flattens 400 npm packages with 20 known dependencies each without the time growing with the square', async () => {
   const provider = manyManifests(
     'package.json',
     (i) =>
@@ -309,7 +309,7 @@ it('flattens 400 npm packages with 20 known dependencies each without the time g
   expect(elapsed).toBeLessThan(bound);
 }, 60_000);
 
-it('keeps what a copy has already seen apart from the original', () => {
+test('keeps what a copy has already seen apart from the original', () => {
   const found = { kind: 'package', value: 'redis', path: '/package.json' } as const;
   const other = { kind: 'package', value: 'ioredis', path: '/package.json' } as const;
   const root = new Payload({ name: 'main', folderPath: '/' });

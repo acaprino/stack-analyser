@@ -4,11 +4,11 @@ import os from 'node:os';
 import path from 'node:path';
 import { promisify } from 'node:util';
 
-import { expect, it } from 'vitest';
+import { expect, test } from 'vitest';
 
 import { tsxImport } from '../../../tests/tsx.js';
 
-it('reads literal FROM repositories through the CLI and skips stages, comments and heredoc bodies', async () => {
+test('reads literal FROM repositories through the CLI and skips stages, comments and heredoc bodies', async () => {
   const cwd = await fs.mkdtemp(path.join(os.tmpdir(), 'specfy-dockerfile-'));
   try {
     await fs.writeFile(

@@ -1,6 +1,6 @@
 import path from 'node:path';
 
-import { expect, it } from 'vitest';
+import { expect, test } from 'vitest';
 
 import '../../autoload.js';
 import { gradleDependencies } from './jvm/gradle.js';
@@ -28,7 +28,7 @@ async function scan(files: Record<string, string>) {
   return flatten(await analyser({ provider }), { merge: true });
 }
 
-it('matches the npm registry target of an alias, retaining local declarations without classifying their names', async () => {
+test('matches the npm registry target of an alias, retaining local declarations without classifying their names', async () => {
   const result = await scan({
     'package.json': JSON.stringify({
       name: 'demo',
@@ -51,7 +51,7 @@ it('matches the npm registry target of an alias, retaining local declarations wi
   expect(result.dependencies).toContainEqual(['npm', 'vue', 'file:../vue']);
 });
 
-it('reads dependencies from an unnamed private npm project and tolerates non-object manifests', async () => {
+test('reads dependencies from an unnamed private npm project and tolerates non-object manifests', async () => {
   const result = await scan({
     'package.json': 'null',
     'app/package.json': '{"private":true,"dependencies":{"react":"^19"}}',
@@ -60,7 +60,7 @@ it('reads dependencies from an unnamed private npm project and tolerates non-obj
   expect([...result.techs]).toContain('react');
 });
 
-it('reads Python dependency groups and Poetry tables, retaining extras and ignoring local Poetry projects', async () => {
+test('reads Python dependency groups and Poetry tables, retaining extras and ignoring local Poetry projects', async () => {
   const result = await scan({
     'pyproject.toml': `[dependency-groups]\ntest = ["pytest>=7", {include-group="web"}]\nweb = ["fastapi[standard] (>=0.100)"]\n[tool.poetry.dependencies]\npython="^3.11"\nflask="^3"\ndjango={path="../django"}\n[tool.poetry.group.optional.dependencies]\npydantic={version="^2",optional=true}\n`,
   });
@@ -72,7 +72,7 @@ it('reads Python dependency groups and Poetry tables, retaining extras and ignor
   expect(result.dependencies).toContainEqual(['python', 'fastapi', '0.100']);
 });
 
-it('leaves out the Python distributions that uv takes from the workspace or a local path', async () => {
+test('leaves out the Python distributions that uv takes from the workspace or a local path', async () => {
   const result = await scan({
     'pyproject.toml': `[project]
 name = "app"
@@ -96,7 +96,7 @@ pytest = [{ path = "../pytest", marker = "sys_platform == 'linux'" }, { index = 
   for (const id of ['sentry', 'django']) expect([...result.techs]).not.toContain(id);
 });
 
-it('leaves out a Python distribution referenced by a file URL, as PDM writes a path', async () => {
+test('leaves out a Python distribution referenced by a file URL, as PDM writes a path', async () => {
   const result = await scan({
     'pyproject.toml':
       '[project]\nname = "app"\ndependencies = ["requests @ file:///${PROJECT_ROOT}/../requests", "fastapi"]\n',
@@ -108,7 +108,7 @@ it('leaves out a Python distribution referenced by a file URL, as PDM writes a p
   for (const id of ['requests', 'httpx']) expect([...result.techs]).not.toContain(id);
 });
 
-it('invalid pyproject metadata cannot abort analysis of independent projects', async () => {
+test('invalid pyproject metadata cannot abort analysis of independent projects', async () => {
   const result = await scan({
     'pyproject.toml': 'project = "invalid"',
     'app/requirements.txt': 'pytest==8',
@@ -117,7 +117,7 @@ it('invalid pyproject metadata cannot abort analysis of independent projects', a
   expect([...result.techs]).toContain('pytest');
 });
 
-it('resolves Cargo workspace aliases and avoids reporting a same-name local workspace dependency', async () => {
+test('resolves Cargo workspace aliases and avoids reporting a same-name local workspace dependency', async () => {
   const result = await scan({
     'Cargo.toml':
       '[workspace]\nmembers=["app"]\n[workspace.dependencies]\ntokio={path="local/tokio"}\nx={package="serde",version="1"}\naxum="0.8"',
@@ -130,7 +130,7 @@ it('resolves Cargo workspace aliases and avoids reporting a same-name local work
   expect([...result.techs]).not.toContain('axum');
 });
 
-it('keeps foreign XML out of a Maven POM and resolves nested local properties', () => {
+test('keeps foreign XML out of a Maven POM and resolves nested local properties', () => {
   const pom =
     '<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:doc="urn:example"><artifactId>app</artifactId>' +
     '<properties><base>org.springframework</base><group>${base}.boot</group></properties><dependencies>' +
@@ -146,7 +146,7 @@ it('keeps foreign XML out of a Maven POM and resolves nested local properties', 
   ).toBeNull();
 });
 
-it('ignores statically inactive NuGet declarations and removed entries, retaining target-specific declarations', async () => {
+test('ignores statically inactive NuGet declarations and removed entries, retaining target-specific declarations', async () => {
   const result = await scan({
     'App.csproj':
       '<Project><ItemGroup Condition="false"><PackageReference Include="MudBlazor"/></ItemGroup>' +
@@ -160,7 +160,7 @@ it('ignores statically inactive NuGet declarations and removed entries, retainin
   expect(result.dependencies.map((d) => d[1]).sort()).toEqual(['OptionalTarget', 'xunit']);
 });
 
-it('reads dependencies declared in a Kotlin source set and ignores conditional or sibling blocks', () => {
+test('reads dependencies declared in a Kotlin source set and ignores conditional or sibling blocks', () => {
   const source = `kotlin { sourceSets {
     commonMain.dependencies { implementation("com.example:shared:1") }
     val jvmTest by getting { dependencies { implementation("com.example:tests:2") } }
@@ -176,7 +176,7 @@ it('reads dependencies declared in a Kotlin source set and ignores conditional o
   ]);
 });
 
-it('records where each package, image, action and resource was declared', async () => {
+test('records where each package, image, action and resource was declared', async () => {
   const result = await scan({
     'package.json': JSON.stringify({ name: 'api', dependencies: { react: '18', pg: '8' } }),
     'docker-compose.yml': 'services:\n  cache:\n    image: redis:7\n',
@@ -227,7 +227,7 @@ it('records where each package, image, action and resource was declared', async 
   );
 });
 
-it('records the manifest of every other ecosystem that declares packages or images', async () => {
+test('records the manifest of every other ecosystem that declares packages or images', async () => {
   const result = await scan({
     'requirements.txt': 'pytest==8\n',
     'py/pyproject.toml': '[project]\nname = "svc"\ndependencies = ["fastapi>=0.100"]\n',
@@ -287,7 +287,7 @@ it('records the manifest of every other ecosystem that declares packages or imag
   );
 });
 
-it('records an image as the file writes it, and its dependency as the rules compare it', async () => {
+test('records an image as the file writes it, and its dependency as the rules compare it', async () => {
   const result = await scan({
     Dockerfile: 'FROM docker.io/library/node:20\n',
     'docker-compose.yml':
@@ -335,7 +335,7 @@ it('records an image as the file writes it, and its dependency as the rules comp
 // without a rule that names them.
 const compose = 'services:\n  cache:\n    image: redis:7\n';
 
-it.each([
+test.each([
   ['Dockerfile', 'FROM node:20\n'],
   ['docker-compose.yml', compose],
   ['docker-compose.yaml', compose],
@@ -353,7 +353,7 @@ it.each([
   });
 });
 
-it('reads docker from a Compose file that only includes other Compose files', async () => {
+test('reads docker from a Compose file that only includes other Compose files', async () => {
   const result = await scan({
     'docker-compose.yml': 'include:\n  - db/compose.yaml\n  - path: web/compose.yaml\n',
   });
@@ -370,7 +370,7 @@ it('reads docker from a Compose file that only includes other Compose files', as
   expect((await scan({ 'docker-compose.yml': 'include: []\n' })).techs.has('docker')).toBe(false);
 });
 
-it.each([
+test.each([
   ['exunit', 'ExUnit.start', 'test_helper.exs', 'ExUnit.start()\n'],
   ['exunit', 'ExUnit.configuration', 'test_helper.exs', 'ExUnit.configuration(trace: true)\n'],
   ['swiftui', 'SwiftUI', 'View.swift', 'import SwiftUI\n'],

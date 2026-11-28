@@ -5,14 +5,14 @@ import os from 'node:os';
 import path from 'node:path';
 import { promisify } from 'node:util';
 
-import { expect, it } from 'vitest';
+import { expect, test } from 'vitest';
 
 import { catalogue } from './catalogue.js';
 import { rules } from './index.js';
 import { tsxImport } from './tests/tsx.js';
 import './autoload.js';
 
-it('writes a stack for a Maven project using the normal CLI', async () => {
+test('writes a stack for a Maven project using the normal CLI', async () => {
   const cwd = await fs.mkdtemp(path.join(os.tmpdir(), 'stack-analyser-cli-'));
   try {
     await fs.writeFile(
@@ -119,7 +119,7 @@ function evidencePaths(output: { evidence: { path: string }[] }): string[] {
 
 const evidenceOfProj = ['/package.json', '/web/package.json'];
 
-it('writes evidence paths relative to the root when the root ends with a separator', async () => {
+test('writes evidence paths relative to the root when the root ends with a separator', async () => {
   const { code, output } = await runCliOver(
     () => ['..' + path.sep + 'proj' + path.sep, '--flat'],
     (tmp) => path.join(tmp, 'work', 'output.json')
@@ -129,7 +129,7 @@ it('writes evidence paths relative to the root when the root ends with a separat
   expect(evidencePaths(output)).toEqual(evidenceOfProj);
 }, 20_000);
 
-it('writes evidence paths relative to the root when an absolute root goes through ..', async () => {
+test('writes evidence paths relative to the root when an absolute root goes through ..', async () => {
   const { code, output } = await runCliOver(
     (tmp) => [[tmp, 'work', '..', 'proj'].join(path.sep), '--flat'],
     (tmp) => path.join(tmp, 'work', 'output.json')
@@ -139,7 +139,7 @@ it('writes evidence paths relative to the root when an absolute root goes throug
   expect(evidencePaths(output)).toEqual(evidenceOfProj);
 }, 20_000);
 
-it('writes the output where an absolute --output says', async () => {
+test('writes the output where an absolute --output says', async () => {
   const { code, output } = await runCliOver(
     (tmp) => ['..' + path.sep + 'proj', '--flat', '--output', path.join(tmp, 'out', 'result.json')],
     (tmp) => path.join(tmp, 'out', 'result.json')
@@ -151,7 +151,7 @@ it('writes the output where an absolute --output says', async () => {
 
 const manifest = JSON.stringify({ name: 'app', dependencies: { react: '18' } });
 
-it('reads declarations from a file and keeps their source', async () => {
+test('reads declarations from a file and keeps their source', async () => {
   const declarations = JSON.stringify([
     {
       type: 'python',
@@ -178,7 +178,7 @@ it('reads declarations from a file and keeps their source', async () => {
   });
 }, 20_000);
 
-it.each([
+test.each([
   ['a file that is not an array', '{"type":"npm"}', /must be an array/],
   ['a file that is not JSON', 'type: npm', /Declarations/],
   [
@@ -209,7 +209,7 @@ it.each([
   20_000
 );
 
-it('exits with 1 and writes nothing when the declarations file does not exist', async () => {
+test('exits with 1 and writes nothing when the declarations file does not exist', async () => {
   const { code, output } = await runCli({ 'package.json': manifest }, [
     '--declarations',
     'missing.json',
@@ -219,7 +219,7 @@ it('exits with 1 and writes nothing when the declarations file does not exist', 
   expect(output).toBeNull();
 }, 20_000);
 
-it('exits with 1 and writes nothing when --declarations is given an empty value', async () => {
+test('exits with 1 and writes nothing when --declarations is given an empty value', async () => {
   const { code, out, output } = await runCli({ 'package.json': manifest }, ['--declarations', '']);
 
   expect(code).toBe(1);
@@ -227,7 +227,7 @@ it('exits with 1 and writes nothing when --declarations is given an empty value'
   expect(output).toBeNull();
 }, 20_000);
 
-it('reads a declarations file that starts with a UTF-8 byte order mark', async () => {
+test('reads a declarations file that starts with a UTF-8 byte order mark', async () => {
   const declarations =
     '\uFEFF' +
     JSON.stringify([
@@ -254,7 +254,7 @@ const tree = {
   'generated/package.json': JSON.stringify({ name: 'g', dependencies: { express: '4' } }),
 };
 
-it.each([
+test.each([
   ['no option keeps the default list', [], ['react', 'express']],
   ['an empty list skips nothing', ['--skip-dirs', ''], ['react', 'express', 'vitest']],
   [
@@ -280,7 +280,7 @@ it.each([
   20_000
 );
 
-it('leaves out a folder to --ignore however its path is written', async () => {
+test('leaves out a folder to --ignore however its path is written', async () => {
   const folders = { a: 'express', b: 'vue', c: 'fastify', d: 'mongoose' };
   const files = {
     'package.json': manifest,
@@ -300,7 +300,7 @@ it('leaves out a folder to --ignore however its path is written', async () => {
   expect(['react', ...Object.values(folders)].filter((tech) => found.has(tech))).toEqual(['react']);
 }, 20_000);
 
-it.each([
+test.each([
   ['a path with a slash', 'tests,generated/sub', 'generated/sub'],
   ['a path with a backslash', String.raw`tests,generated\sub`, String.raw`generated\sub`],
 ])(
@@ -316,7 +316,7 @@ it.each([
   20_000
 );
 
-it.each([
+test.each([
   ['a drive letter', 'generated, C:/generated', 'C:/generated'],
   ['a drive-relative path', 'generated, C:generated', 'C:generated'],
   ['a parent folder', 'generated,tests/../..', 'tests/../..'],
@@ -334,7 +334,7 @@ it.each([
   20_000
 );
 
-it('exits with 1 and writes nothing when --output is empty', async () => {
+test('exits with 1 and writes nothing when --output is empty', async () => {
   const { code, err, output } = await runCli(tree, ['--output', '']);
 
   expect(code).toBe(1);
@@ -342,7 +342,7 @@ it('exits with 1 and writes nothing when --output is empty', async () => {
   expect(output).toBeNull();
 }, 20_000);
 
-it('exits with 1 before analysing when the folder of --output does not exist', async () => {
+test('exits with 1 before analysing when the folder of --output does not exist', async () => {
   const { code, out, err } = await runCli(tree, ['--output', path.join('missing', 'out.json')]);
 
   expect(code).toBe(1);
@@ -362,7 +362,7 @@ const perimeterTree = {
   'docs/new/package.json': JSON.stringify({ name: 'new', dependencies: { fastify: '4' } }),
 };
 
-it('gives the same output from --perimeter as from --skip-dirs and --ignore', async () => {
+test('gives the same output from --perimeter as from --skip-dirs and --ignore', async () => {
   // `generated` is skipped by name, so `tests` is entered; `docs/old` is left out by path.
   const perimeter = JSON.stringify({ skipDirs: ['generated'], ignore: ['docs/old'] });
   // Both runs see the same project, the file included: it is a JSON file of the project like another.
@@ -378,7 +378,7 @@ it('gives the same output from --perimeter as from --skip-dirs and --ignore', as
   expect(withoutIds(file.output)).toEqual(withoutIds(options.output));
 }, 40_000);
 
-it('keeps what an absent key means, and reads a perimeter that starts with a byte order mark', async () => {
+test('keeps what an absent key means, and reads a perimeter that starts with a byte order mark', async () => {
   const [withoutSkipDirs, withoutIgnore] = await Promise.all([
     // No `skipDirs`: the default list, which holds `tests`.
     runCli({ ...perimeterTree, 'perimeter.json': JSON.stringify({ ignore: ['generated'] }) }, [
@@ -406,7 +406,7 @@ it('keeps what an absent key means, and reads a perimeter that starts with a byt
   ]);
 }, 40_000);
 
-it.each([
+test.each([
   ['--ignore', 'generated'],
   ['--skip-dirs', 'tests'],
 ])(
@@ -424,7 +424,7 @@ it.each([
   20_000
 );
 
-it.each([
+test.each([
   ['a file that is not JSON', 'skipDirs: tests', /Perimeter ".*perimeter\.json":/],
   ['a file that is an array', '["tests"]', /must be an object/],
   ['a key that is not known', '{"skipdirs": ["tests"]}', /unknown key "skipdirs"/],
@@ -506,7 +506,7 @@ async function runCatalogueCli(args: string[], inputs: Record<string, string>, w
   }
 }
 
-it('writes the catalogue of the rules without a project, and leaves nothing else behind', async () => {
+test('writes the catalogue of the rules without a project, and leaves nothing else behind', async () => {
   // A project in the folder it runs in, which must not be read, and a folder that already holds a file.
   const { code, out, bytes, files } = await runCatalogueCli(
     ['--catalogue', 'out/rules.json'],
@@ -536,7 +536,7 @@ it('writes the catalogue of the rules without a project, and leaves nothing else
   });
 }, 20_000);
 
-it('exits with 1 and writes nothing when --catalogue is given with a project or with another option', async () => {
+test('exits with 1 and writes nothing when --catalogue is given with a project or with another option', async () => {
   const inputs = { 'package.json': manifest };
   const [all, project, output] = await Promise.all([
     // Every option at once: the message names each of them, and none of the files they point at is read.
@@ -586,7 +586,7 @@ it('exits with 1 and writes nothing when --catalogue is given with a project or 
   expect(output.out).toContain('--output');
 }, 40_000);
 
-it('exits with 1 and names the file when the catalogue cannot be written, and when nothing is asked; --help names the package', async () => {
+test('exits with 1 and names the file when the catalogue cannot be written, and when nothing is asked; --help names the package', async () => {
   const [missingFolder, aFolder, nothing, help] = await Promise.all([
     runCatalogueCli(['--catalogue', 'no/such/folder/rules.json'], { 'package.json': manifest }),
     // The target is a folder: the rename fails, and the temporary file is removed.
@@ -645,7 +645,7 @@ async function runBuilt(file: string): Promise<FlatNode> {
 }
 
 // The build is not committed, so a fresh checkout has nothing to compare: the title says why the test is skipped.
-it.skipIf(!hasBuild)(
+test.skipIf(!hasBuild)(
   hasBuild
     ? 'gives the same output from the one-file bundle as from the compiled modules'
     : 'gives the same output from the bundle as from the compiled modules (skipped: dist/cli.js or dist/cli.mjs is missing, run npm run build)',
@@ -672,7 +672,7 @@ async function catalogueBuilt(file: string): Promise<Buffer> {
   }
 }
 
-it.skipIf(!hasBuild)(
+test.skipIf(!hasBuild)(
   hasBuild
     ? 'gives the same catalogue from the bundle as from the modules'
     : 'gives the same catalogue from the bundle as from the modules (skipped: dist/cli.js or dist/cli.mjs is missing, run npm run build)',
