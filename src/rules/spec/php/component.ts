@@ -59,8 +59,7 @@ async function folders(provider: BaseProvider, pattern: string): Promise<string[
     const next: string[] = [];
     for (const folder of found) {
       for (const item of await provider.listDir(folder)) {
-        if (item.type === 'dir' && !item.isSymbolicLink && matchesGlob(part, item.name))
-          next.push(item.fp);
+        if (item.type === 'dir' && matchesGlob(part, item.name)) next.push(item.fp);
       }
     }
     found = next;
@@ -104,9 +103,7 @@ async function localPackages(
 }
 
 export const detectPhpComponent: ComponentMatcher = async (files, provider) => {
-  const file = files.find(
-    (item) => item.name === 'composer.json' && item.type === 'file' && !item.isSymbolicLink
-  );
+  const file = files.find((item) => item.name === 'composer.json' && item.type === 'file');
   if (!file) return false;
   const content = await provider.open(file.fp);
   if (!content) return false;

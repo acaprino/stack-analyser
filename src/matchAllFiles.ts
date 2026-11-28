@@ -40,7 +40,7 @@ export function matchAllFilesWithEvidence(
   // Match extensions
   const exts = new Set<string>();
   for (const file of files) {
-    if (file.type !== 'file' || file.isSymbolicLink) continue;
+    if (file.type !== 'file') continue;
     const { ext, name } = path.parse(file.name);
     if (!ext) continue;
     exts.add(ext);

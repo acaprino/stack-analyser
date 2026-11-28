@@ -16,7 +16,7 @@ export const detectInDotEnv = async (
 ): Promise<false | Payload> => {
   let payload: Payload | undefined;
   for (const file of files) {
-    if (file.type !== 'file' || file.isSymbolicLink || !template.test(file.name)) {
+    if (file.type !== 'file' || !template.test(file.name)) {
       continue;
     }
 

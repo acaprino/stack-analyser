@@ -58,9 +58,7 @@ function goMod(source: string): { modules: Map<string, string>; replacements: Re
 }
 
 export const detectGolangLockfile: ComponentMatcher = async (files, provider) => {
-  const file = files.find(
-    (item) => item.type === 'file' && !item.isSymbolicLink && item.name === 'go.mod'
-  );
+  const file = files.find((item) => item.type === 'file' && item.name === 'go.mod');
   if (!file) return false;
   const content = await provider.open(file.fp);
   if (!content) return false;

@@ -6,7 +6,7 @@ import type { ComponentMatcher } from '../../../types/rule.js';
 
 export const detectGolangComponent: ComponentMatcher = (files) => {
   for (const file of files) {
-    if (file.name !== 'main.go' || file.type !== 'file' || file.isSymbolicLink) {
+    if (file.name !== 'main.go' || file.type !== 'file') {
       continue;
     }
 

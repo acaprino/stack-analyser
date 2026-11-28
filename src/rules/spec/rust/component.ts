@@ -58,9 +58,7 @@ async function inheritedDependencies(
       break;
     if (explicit && explicit !== path.resolve(dir)) continue;
     const items = await provider.listDir(dir);
-    const manifest = items.find(
-      (item) => item.type === 'file' && !item.isSymbolicLink && item.name === 'Cargo.toml'
-    );
+    const manifest = items.find((item) => item.type === 'file' && item.name === 'Cargo.toml');
     if (!manifest) continue;
     const content = await provider.open(manifest.fp);
     if (!content) continue;

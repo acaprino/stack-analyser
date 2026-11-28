@@ -57,13 +57,9 @@ export class FSProvider implements BaseProvider {
       for (const entry of entries) {
         const fp = path.join(directory, entry.name);
         if (!this.allowed(this.basePath, fp)) continue;
+        // A symbolic link is never listed: its target is read where it really is, or lies outside the project.
         if (entry.isFile() || entry.isDirectory()) {
           files.push({ name: entry.name, type: entry.isFile() ? 'file' : 'dir', fp });
-        } else if (entry.isSymbolicLink()) {
-          // File aliases inside the repository are valid manifests. Do not recurse into directory aliases.
-          const info = await this.stat(fp);
-          if (info?.isFile())
-            files.push({ name: entry.name, type: 'file', fp, isSymbolicLink: true });
         }
       }
       return files;

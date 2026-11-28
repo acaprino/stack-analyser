@@ -150,8 +150,7 @@ export async function findHostMentions(
     const { name } = file;
     const env = exampleEnv.test(name);
     const config = configFile.test(name);
-    if (file.type !== 'file' || file.isSymbolicLink || (!env && !config && !sourceFile.test(name)))
-      continue;
+    if (file.type !== 'file' || (!env && !config && !sourceFile.test(name))) continue;
     const relative = path.relative(provider.basePath, file.fp).split(path.sep).join('/');
     if (relative.startsWith('../') || path.isAbsolute(relative) || excluded.test(relative))
       continue;

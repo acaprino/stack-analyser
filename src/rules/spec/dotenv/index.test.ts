@@ -63,4 +63,21 @@ describe('dotenv', () => {
 
     expect(flatten(await analyser({ provider }), { merge: true }).techs.has('rollbar')).toBe(false);
   });
+
+  it('should give the technologies of a folder with one manifest to that module', async () => {
+    const provider = new FakeProvider({
+      paths: { '/': ['app/'], '/app': ['package.json', '.env.example'] },
+      files: {
+        '/app/package.json': JSON.stringify({ name: 'api', dependencies: {} }),
+        '/app/.env.example': 'STRIPE_SECRET_KEY=',
+      },
+    });
+    const result = await analyser({ provider });
+    const api = result.childs.find((child) => child.name === 'api')!;
+
+    expect(api.techs.has('stripe')).toBe(true);
+    expect(result.techs.has('stripe')).toBe(false);
+    // The service the variable names is a component the module is linked to.
+    expect(api.edges.map((edge) => edge.target.tech)).toStrictEqual(['stripe']);
+  });
 });

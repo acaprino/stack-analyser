@@ -4,5 +4,5 @@ register({
   tech: 'coffeescript',
   name: 'CoffeeScript',
   type: 'language',
-  extensions: ['.coffee', '._coffee', '.cake', '.cjsx', '.iced'],
+  extensions: ['.coffee', '._coffee', '.cjsx', '.iced'],
 });

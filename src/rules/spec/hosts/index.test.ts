@@ -62,12 +62,11 @@ describe('service endpoint mentions', () => {
     expect(await findHostMentions(await provider.listDir('/'), provider)).toStrictEqual([]);
   });
 
-  it('should not read excluded paths, symlinks or oversized files', async () => {
-    const provider = fixture({ 'docs/help.ts': '', 'large.ts': '', 'linked.py': '' });
+  it('should not read excluded paths or oversized files', async () => {
+    const provider = fixture({ 'docs/help.ts': '', 'large.ts': '' });
     vi.spyOn(provider, 'stat').mockResolvedValue({ size: 600_000 });
     const open = vi.spyOn(provider, 'open');
     const files = await provider.listDir('/');
-    for (const file of files) file.isSymbolicLink = file.name === 'linked.py';
 
     expect(await findHostMentions(files, provider)).toStrictEqual([]);
     expect(open).not.toHaveBeenCalled();

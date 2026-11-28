@@ -182,3 +182,30 @@ test('lets the caller replace the list of skipped folders, and keeps the default
     await fs.rm(temp, { recursive: true, force: true });
   }
 });
+
+test('never lists a symbolic link, to a file, to a folder or back to its own parent', async () => {
+  const temp = await fs.mkdtemp(path.join(os.tmpdir(), 'stack-analyser-links-'));
+  try {
+    const root = path.join(temp, 'root');
+    await fs.mkdir(path.join(root, 'a'), { recursive: true });
+    await fs.mkdir(path.join(temp, 'sibling'));
+    await fs.writeFile(path.join(root, 'visible.json'), '{}');
+    try {
+      await fs.symlink(path.join(root, 'visible.json'), path.join(root, 'alias.json'), 'file');
+      await fs.symlink(path.join(temp, 'sibling'), path.join(root, 'out'), 'junction');
+      await fs.symlink(root, path.join(root, 'a', 'loop'), 'junction');
+    } catch (err) {
+      // A host without the privilege to make links cannot show the case.
+      if ((err as NodeJS.ErrnoException).code === 'EPERM') return;
+      throw err;
+    }
+    const provider = new FSProvider({ path: root });
+    const top = await provider.listDir(root);
+    const inner = await provider.listDir(path.join(root, 'a'));
+
+    expect(top.map((file) => file.name).sort()).toStrictEqual(['a', 'visible.json']);
+    expect(inner).toStrictEqual([]);
+  } finally {
+    await fs.rm(temp, { recursive: true, force: true });
+  }
+});

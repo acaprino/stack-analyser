@@ -268,8 +268,8 @@ names you give are skipped, so add `.github` there if you want it left out. `Fak
 setting.
 
 The provider reads only inside `path`. A path that resolves outside it, directly or through a symbolic link,
-is reported as missing. A symbolic link to a file inside the repository is read as a file. A symbolic link to
-a directory is not followed. A file larger than `maxFileBytes` is skipped with a warning, so raise the limit
+is reported as missing. A symbolic link is never listed, whether it points to a file or to a directory: a file
+inside the repository is read where it really is. A file larger than `maxFileBytes` is skipped with a warning, so raise the limit
 for a repository with an unusually large lockfile.
 
 ### How evidence is assigned

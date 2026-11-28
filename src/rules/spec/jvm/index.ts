@@ -28,7 +28,7 @@ function component(
 }
 
 export const detectMaven: ComponentMatcher = async (files, provider) => {
-  const pom = files.find((f) => f.type === 'file' && !f.isSymbolicLink && f.name === 'pom.xml');
+  const pom = files.find((f) => f.type === 'file' && f.name === 'pom.xml');
   if (!pom) return false;
   const source = await provider.open(pom.fp);
   const project = source === null ? null : mavenProject(source);
@@ -53,14 +53,10 @@ async function catalogFile(
       !relative ||
       children.some((f) => ['settings.gradle', 'settings.gradle.kts'].includes(f.name))
     ) {
-      const gradleDir = children.find(
-        (f) => f.type === 'dir' && !f.isSymbolicLink && f.name === 'gradle'
-      );
+      const gradleDir = children.find((f) => f.type === 'dir' && f.name === 'gradle');
       if (!gradleDir) return null;
       const gradleFiles = await provider.listDir(gradleDir.fp);
-      const catalog = gradleFiles.find(
-        (f) => f.type === 'file' && !f.isSymbolicLink && f.name === 'libs.versions.toml'
-      );
+      const catalog = gradleFiles.find((f) => f.type === 'file' && f.name === 'libs.versions.toml');
       return catalog ? provider.open(catalog.fp) : null;
     }
     const parent = path.dirname(current);
@@ -72,10 +68,7 @@ async function catalogFile(
 
 export const detectGradle: ComponentMatcher = async (files, provider) => {
   const build = files.find(
-    (f) =>
-      f.type === 'file' &&
-      !f.isSymbolicLink &&
-      ['build.gradle', 'build.gradle.kts'].includes(f.name)
+    (f) => f.type === 'file' && ['build.gradle', 'build.gradle.kts'].includes(f.name)
   );
   if (!build) return false;
   const source = await provider.open(build.fp);
@@ -95,9 +88,7 @@ export const detectGradle: ComponentMatcher = async (files, provider) => {
 
 // `build.sbt` is the project; the other `.sbt` files of its folder and of `project/` (plugins) add their module IDs.
 export const detectSbt: ComponentMatcher = async (files, provider) => {
-  const builds = files.filter(
-    (f) => f.type === 'file' && !f.isSymbolicLink && f.name.endsWith('.sbt')
-  );
+  const builds = files.filter((f) => f.type === 'file' && f.name.endsWith('.sbt'));
   if (builds.length === 0) return false;
   const payloads: Payload[] = [];
   for (const file of builds) {

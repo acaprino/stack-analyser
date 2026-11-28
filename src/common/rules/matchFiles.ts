@@ -21,7 +21,6 @@ export function matchFiles({
   basePath?: string;
 }): [Rule, string, string] | false {
   for (const file of files) {
-    if (file.isSymbolicLink) continue;
     const name = matchFullPath
       ? portablePath(basePath ? path.relative(basePath, file.fp) : file.fp)
       : file.name;
@@ -47,7 +46,7 @@ export function matchFilesRegex({
   basePath?: string;
 }): [Rule, string, string] | false {
   for (const file of files) {
-    if (file.type !== 'file' || file.isSymbolicLink) continue;
+    if (file.type !== 'file') continue;
     const name = matchFullPath
       ? portablePath(basePath ? path.relative(basePath, file.fp) : file.fp)
       : file.name;

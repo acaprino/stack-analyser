@@ -6,10 +6,8 @@ import { expect, test } from 'vitest';
 
 import '../../../autoload.js';
 import { gradleDependencies } from './gradle.js';
-import { detectGradle } from './index.js';
 import { mavenProject } from './maven.js';
 import { analyser } from '../../../analyser/index.js';
-import { Payload } from '../../../payload/index.js';
 import { FSProvider } from '../../../provider/fs.js';
 
 test('recognizes Spring Boot in the Maven and Gradle modules that declare it', async () => {
@@ -120,41 +118,4 @@ test('reads literal Gradle dependencies and skips unapplied plugins and non-depe
     ['maven', 'group:alternative', '4'],
     ['maven', 'another.group:test', '1'],
   ]);
-});
-
-test('does not read a linked catalog as the declaring project’s version catalog', async () => {
-  const root = path.resolve('sample');
-  const build = path.join(root, 'build.gradle');
-  const dir = path.join(root, 'gradle');
-  const opened: string[] = [];
-  const result = await detectGradle(
-    [
-      { name: 'build.gradle', type: 'file', fp: build },
-      { name: 'gradle', type: 'dir', fp: dir },
-    ],
-    {
-      basePath: root,
-      listDir: () =>
-        Promise.resolve([
-          {
-            name: 'libs.versions.toml',
-            fp: path.join(dir, 'libs.versions.toml'),
-            type: 'file',
-            isSymbolicLink: true,
-          },
-        ]),
-      stat: () => Promise.resolve(null),
-      open: (file) => {
-        opened.push(file);
-        return Promise.resolve(
-          file === build
-            ? 'dependencies { implementation(libs.web) }'
-            : '[libraries]\nweb="org.springframework.boot:spring-boot-starter-web:3"'
-        );
-      },
-    }
-  );
-
-  expect(opened).toStrictEqual([build]);
-  expect(result instanceof Payload && result.dependencies).toStrictEqual([]);
 });

@@ -126,10 +126,12 @@ export class Payload implements Analyser {
     const ctx = modules.size === 1 ? only : this;
     const dotenv = await detectInDotEnv(files, provider);
     if (dotenv !== false) {
+      // As for files and mentions: the single module of the folder owns them, and keeps the link to each service.
       for (const child of dotenv.childs) {
-        this.addChild(child);
+        const kept = ctx.addChild(child);
+        if (dotenv.edges.some((edge) => edge.target === child)) ctx.addEdges(kept);
       }
-      this.combine(dotenv);
+      ctx.combine(dotenv);
     }
 
     // Detect Tech

@@ -2,7 +2,6 @@ export interface ProviderFile {
   name: string;
   type: 'dir' | 'file';
   fp: string;
-  isSymbolicLink?: boolean;
 }
 
 export interface BaseProvider {

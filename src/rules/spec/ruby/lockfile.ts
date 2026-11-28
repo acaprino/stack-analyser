@@ -140,7 +140,7 @@ function lockedDirectGems(source: string): Map<string, string> {
 }
 
 export const detectRubyLockfile: ComponentMatcher = async (files, provider) => {
-  const available = files.filter((file) => file.type === 'file' && !file.isSymbolicLink);
+  const available = files.filter((file) => file.type === 'file');
   const manifests = available.filter(
     (file) => gemfiles.has(file.name) || file.name.endsWith('.gemspec')
   );

@@ -49,7 +49,7 @@ function isFlow(source: string): boolean {
 
 export const detectMaestroFlow: ComponentMatcher = async (files, provider) => {
   for (const file of files) {
-    if (file.type !== 'file' || file.isSymbolicLink) continue;
+    if (file.type !== 'file') continue;
     const relative = projectPath(provider.basePath, file.fp);
     if (!flowPath.test(relative)) continue;
     const text = await sourceText(provider, file.fp);
