@@ -121,3 +121,4 @@ output.json
 dontcommit.*
 action/
 *.generated.ts
+.jcode/local/
