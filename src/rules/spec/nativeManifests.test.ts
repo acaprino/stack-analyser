@@ -7,14 +7,17 @@ import { flatten } from '../../payload/helpers.js';
 import { FakeProvider } from '../../provider/fake.js';
 import '../../autoload.js';
 
-async function scan(files: Record<string, string>) {
+import type { Payload } from '../../payload/index.js';
+
+async function scan(files: Record<string, string>): Promise<Payload> {
   const provider = new FakeProvider({
     paths: { '/': Object.keys(files) },
     files: Object.fromEntries(
       Object.entries(files).map(([name, text]) => [path.join('/', name), text])
     ),
   });
-  return flatten(await analyser({ provider }), { merge: true });
+  const result = await analyser({ provider });
+  return flatten(result, { merge: true });
 }
 
 describe('native package manifests', () => {

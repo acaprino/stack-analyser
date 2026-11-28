@@ -3,13 +3,16 @@ import path from 'node:path';
 import { expect, test } from 'vitest';
 
 import '../../autoload.js';
+
 import { gradleDependencies } from './jvm/gradle.js';
 import { mavenProject } from './jvm/maven.js';
 import { analyser } from '../../analyser/index.js';
 import { flatten } from '../../payload/helpers.js';
 import { FakeProvider } from '../../provider/fake.js';
 
-async function scan(files: Record<string, string>) {
+import type { Payload } from '../../payload/index.js';
+
+async function scan(files: Record<string, string>): Promise<Payload> {
   const dirs = new Map<string, Set<string>>();
   for (const file of Object.keys(files)) {
     let folder = '/';
@@ -25,7 +28,8 @@ async function scan(files: Record<string, string>) {
     paths: Object.fromEntries([...dirs].map(([dir, entries]) => [dir, [...entries]])),
     files: Object.fromEntries(Object.entries(files).map(([name, text]) => ['/' + name, text])),
   });
-  return flatten(await analyser({ provider }), { merge: true });
+  const result = await analyser({ provider });
+  return flatten(result, { merge: true });
 }
 
 test('matches the npm registry target of an alias, retaining local declarations without classifying their names', async () => {
@@ -369,7 +373,10 @@ test('reads docker from a Compose file that only includes other Compose files', 
     path: '/docker-compose.yml',
     source: 'stack-analyser',
   });
-  expect((await scan({ 'docker-compose.yml': 'include: []\n' })).techs.has('docker')).toBe(false);
+
+  const included = await scan({ 'docker-compose.yml': 'include: []\n' });
+
+  expect(included.techs.has('docker')).toBe(false);
 });
 
 test.each([
@@ -381,7 +388,7 @@ test.each([
   ['flutter', 'Flutter', 'View.swift', 'import Flutter\n'],
   ['firebase', 'FirebaseCore', 'View.swift', 'import FirebaseCore\n'],
   ['firebase', 'FirebaseMessaging', 'View.swift', 'import FirebaseMessaging\n'],
-] as const)('reads %s from %s in a source file', async (tech, value, name, content) => {
+] as const)('reads %s from %s in a source file', async (...[tech, value, name, content]) => {
   const result = await scan({ [name]: content });
   const all = [result, ...result.childs].flatMap((c) => c.toJson('').evidence);
 

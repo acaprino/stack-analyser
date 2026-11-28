@@ -5,9 +5,12 @@ import { flatten } from '../../payload/helpers.js';
 import { FakeProvider } from '../../provider/fake.js';
 import '../../autoload.js';
 
-async function scan(name: string, content: string) {
+import type { Payload } from '../../payload/index.js';
+
+async function scan(name: string, content: string): Promise<Payload> {
   const provider = new FakeProvider({ paths: { '/': [name] }, files: { ['/' + name]: content } });
-  return flatten(await analyser({ provider }), { merge: true });
+  const result = await analyser({ provider });
+  return flatten(result, { merge: true });
 }
 
 describe('direct manifest dependencies', () => {
@@ -58,6 +61,8 @@ describe('direct manifest dependencies', () => {
   });
 
   it('should isolate an invalid Composer root from the other detectors', async () => {
-    expect((await scan('composer.json', 'null')).dependencies).toStrictEqual([]);
+    const result = await scan('composer.json', 'null');
+
+    expect(result.dependencies).toStrictEqual([]);
   });
 });

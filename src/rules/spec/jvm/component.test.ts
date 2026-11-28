@@ -15,7 +15,10 @@ import { FSProvider } from '../../../provider/fs.js';
 test('recognizes Spring Boot in the Maven and Gradle modules that declare it', async () => {
   const root = await mkdtemp(path.join(os.tmpdir(), 'specfy-jvm-'));
   try {
-    const pom = (id: string, group: string) => `<project xmlns="http://maven.apache.org/POM/4.0.0">
+    const pom = (
+      id: string,
+      group: string
+    ): string => `<project xmlns="http://maven.apache.org/POM/4.0.0">
       <artifactId>${id}</artifactId><properties><boot.version>3.4.0</boot.version></properties>
       <dependencies><dependency><groupId>${group}</groupId><artifactId>spring-boot-starter-web</artifactId>
       <version>\${boot.version}</version></dependency></dependencies></project>`;
@@ -131,20 +134,23 @@ test('does not read a linked catalog as the declaring project’s version catalo
     ],
     {
       basePath: root,
-      listDir: async () => [
-        {
-          name: 'libs.versions.toml',
-          fp: path.join(dir, 'libs.versions.toml'),
-          type: 'file',
-          isSymbolicLink: true,
-        },
-      ],
-      stat: async () => null,
-      open: async (file) => {
+      listDir: () =>
+        Promise.resolve([
+          {
+            name: 'libs.versions.toml',
+            fp: path.join(dir, 'libs.versions.toml'),
+            type: 'file',
+            isSymbolicLink: true,
+          },
+        ]),
+      stat: () => Promise.resolve(null),
+      open: (file) => {
         opened.push(file);
-        return file === build
-          ? 'dependencies { implementation(libs.web) }'
-          : '[libraries]\nweb="org.springframework.boot:spring-boot-starter-web:3"';
+        return Promise.resolve(
+          file === build
+            ? 'dependencies { implementation(libs.web) }'
+            : '[libraries]\nweb="org.springframework.boot:spring-boot-starter-web:3"'
+        );
       },
     }
   );

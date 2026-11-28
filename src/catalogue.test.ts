@@ -93,7 +93,9 @@ describe('catalogue', () => {
       pattern: String.raw`^org\.springframework\.boot:spring-boot(?:-[a-z0-9]+)*$`,
     });
 
-    const back = JSON.parse(JSON.stringify(entry)) as typeof entry;
+    // Through JSON on purpose: the entry must survive being written and read back.
+    const json = JSON.stringify(entry);
+    const back = JSON.parse(json) as typeof entry;
 
     expect(back).toStrictEqual(entry);
 

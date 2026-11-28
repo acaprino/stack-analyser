@@ -8,6 +8,8 @@ import { expect, test } from 'vitest';
 
 import { tsxImport } from '../../../tests/tsx.js';
 
+import type { AnalyserJson } from '../../../types/index.js';
+
 test('reads literal FROM repositories through the CLI and skips stages, comments and heredoc bodies', async () => {
   const cwd = await fs.mkdtemp(path.join(os.tmpdir(), 'specfy-dockerfile-'));
   try {
@@ -32,7 +34,9 @@ test('reads literal FROM repositories through the CLI and skips stages, comments
     await promisify(execFile)(process.execPath, ['--import', tsxImport, cli, '.', '--flat'], {
       cwd,
     });
-    const result = JSON.parse(await fs.readFile(path.join(cwd, 'output.json'), 'utf8'));
+    const result = JSON.parse(
+      await fs.readFile(path.join(cwd, 'output.json'), 'utf8')
+    ) as AnalyserJson;
 
     expect(result.dependencies).toHaveLength(3);
     expect(result.dependencies).toStrictEqual(

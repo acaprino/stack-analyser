@@ -1,16 +1,20 @@
 import { describe, expect, it } from 'vitest';
 
 import '../../../autoload.js';
+
 import { analyser } from '../../../analyser/index.js';
 import { flatten } from '../../../payload/helpers.js';
 import { FakeProvider } from '../../../provider/fake.js';
 
-async function scan(files: Record<string, string>) {
+import type { Payload } from '../../../payload/index.js';
+
+async function scan(files: Record<string, string>): Promise<Payload> {
   const provider = new FakeProvider({
     paths: { '/': Object.keys(files) },
     files: Object.fromEntries(Object.entries(files).map(([name, source]) => ['/' + name, source])),
   });
-  return flatten(await analyser({ provider }), { merge: true });
+  const result = await analyser({ provider });
+  return flatten(result, { merge: true });
 }
 
 const lock = `GEM

@@ -5,7 +5,9 @@ import { flatten } from '../../../payload/helpers.js';
 import { FakeProvider } from '../../../provider/fake.js';
 import '../../../autoload.js';
 
-function scan(files: Record<string, string>) {
+import type { Payload } from '../../../payload/index.js';
+
+function scan(files: Record<string, string>): Promise<Payload> {
   const paths: Record<string, string[]> = { '/': [] };
   for (const pathname of Object.keys(files)) {
     const parts = pathname.slice(1).split('/');

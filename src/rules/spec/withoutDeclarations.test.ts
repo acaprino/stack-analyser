@@ -254,30 +254,33 @@ describe('python manifests', () => {
   });
 });
 
-describe('local dependencies inside and outside the copy', () => {
-  async function project(files: Record<string, string>): Promise<Payload> {
-    const root = await fs.mkdtemp(path.join(os.tmpdir(), 'stack-local-'));
-    for (const [name, text] of Object.entries(files)) {
-      await fs.mkdir(path.dirname(path.join(root, name)), { recursive: true });
-      await fs.writeFile(path.join(root, name), text);
-    }
-    try {
-      return flatten(
-        await analyser({ provider: new FSProvider({ path: path.join(root, 'copy') }) }),
-        { merge: true }
-      );
-    } finally {
-      await fs.rm(root, { recursive: true, force: true });
-    }
+/** Analyses the `copy` folder of a temporary tree holding `files`. */
+async function project(files: Record<string, string>): Promise<Payload> {
+  const root = await fs.mkdtemp(path.join(os.tmpdir(), 'stack-local-'));
+  for (const [name, text] of Object.entries(files)) {
+    await fs.mkdir(path.dirname(path.join(root, name)), { recursive: true });
+    await fs.writeFile(path.join(root, name), text);
   }
-  const goMod = (target: string): string =>
-    [
-      'module example.com/app',
-      'go 1.22',
-      'require github.com/getsentry/sentry-go v0.30.0',
-      `replace github.com/getsentry/sentry-go => ${target}`,
-    ].join('\n');
+  try {
+    return flatten(
+      await analyser({ provider: new FSProvider({ path: path.join(root, 'copy') }) }),
+      { merge: true }
+    );
+  } finally {
+    await fs.rm(root, { recursive: true, force: true });
+  }
+}
 
+/** A go.mod that replaces sentry-go with `target`. */
+const goMod = (target: string): string =>
+  [
+    'module example.com/app',
+    'go 1.22',
+    'require github.com/getsentry/sentry-go v0.30.0',
+    `replace github.com/getsentry/sentry-go => ${target}`,
+  ].join('\n');
+
+describe('local dependencies inside and outside the copy', () => {
   it('should not take a Go module replaced by a folder of the copy as external', async () => {
     const result = await project({
       'copy/go.mod': goMod('./third_party/sentry'),

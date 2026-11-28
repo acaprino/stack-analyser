@@ -10,7 +10,7 @@ import { FakeProvider } from '../../../provider/fake.js';
 
 const host = 'api.telegram.org';
 
-function fixture(files: Record<string, string>) {
+function fixture(files: Record<string, string>): FakeProvider {
   return new FakeProvider({
     paths: { '/': Object.keys(files) },
     files: Object.fromEntries(Object.entries(files).map(([k, v]) => [path.join('/', k), v])),
@@ -85,7 +85,7 @@ describe('service endpoint mentions', () => {
     });
     const pinned = await findHostMentions(await provider.listDir('/'), provider);
 
-    expect(pinned.map(({ path, line }) => [path, line])).toStrictEqual([
+    expect(pinned.map(({ path: file, line }) => [file, line])).toStrictEqual([
       ['client.dart', 1],
       ['client.py', 1],
       ['client.swift', 2],
