@@ -27,7 +27,7 @@ DEPENDENCIES
   private_name!
 `;
 
-describe('Ruby package evidence', () => {
+describe('ruby package evidence', () => {
   it('should read literal Bundler declarations, versions and nested groups', async () => {
     const data = await scan({
       Gemfile: `gem 'rails'

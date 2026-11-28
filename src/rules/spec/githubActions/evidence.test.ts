@@ -22,7 +22,7 @@ function scan(files: Record<string, string>) {
   );
 }
 
-describe('GitHub workflow evidence', () => {
+describe('github workflow evidence', () => {
   it('should keep each active workflow, reusable workflow and Docker image intact', async () => {
     const result = await scan({
       '/.github/workflows/build.yml':

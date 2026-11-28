@@ -73,8 +73,8 @@ describe('catalogue', () => {
       expect(keys, entry.tech).toStrictEqual(keyOrder.filter((key) => keys.includes(key)));
       expect(keys.slice(0, 3)).toStrictEqual(['tech', 'name', 'type']);
 
-      for (const value of Object.values(entry)) {
-        if (Array.isArray(value)) expect(value.length, entry.tech).toBeGreaterThan(0);
+      for (const value of Object.values(entry).filter((field) => Array.isArray(field))) {
+        expect(value.length, entry.tech).toBeGreaterThan(0);
       }
     }
   });

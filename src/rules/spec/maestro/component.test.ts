@@ -7,7 +7,7 @@ import { FakeProvider } from '../../../provider/fake.js';
 const flow =
   'tags: [mobile]\nappId: ${MAESTRO_APP_ID}\n---\n- runFlow: ../login.yml\n- tapOn:\n    id: settings\n';
 
-describe('Maestro mobile flows', () => {
+describe('maestro mobile flows', () => {
   it.each([
     ['detox/maestro/flows/account/attach_logs.yml', flow, true],
     ['.maestro/smoke.yaml', 'appId: com.example\n---\n- launchApp\n', true],
