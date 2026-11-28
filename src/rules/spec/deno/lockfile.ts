@@ -1,5 +1,6 @@
 import { l } from '../../../common/log.js';
 import { Payload } from '../../../payload/index.js';
+import { isRecord } from '../packageManifest.js';
 
 import type { Analyser } from '../../../types/index.js';
 import type { ComponentMatcher } from '../../../types/rule.js';
@@ -22,17 +23,22 @@ export const detectDenoLockfile: ComponentMatcher = async (files, provider) => {
       continue;
     }
 
-    let json: Lockfile;
+    let parsed: unknown;
     try {
-      json = JSON.parse(content) as Lockfile;
+      parsed = JSON.parse(content);
     } catch (err) {
       l.warn('Failed to parse deno.lock', file.fp, err);
       continue;
     }
 
-    if (!json.version) {
+    // Valid JSON is not yet a lockfile: `null` or a list parses too.
+    if (
+      !isRecord(parsed) ||
+      [undefined, null, ''].includes(parsed.version as null | string | undefined)
+    ) {
       continue;
     }
+    const json = parsed as unknown as Lockfile;
 
     const deps = {
       ...json.remote,

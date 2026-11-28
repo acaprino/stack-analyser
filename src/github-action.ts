@@ -1,10 +1,10 @@
 /* eslint-disable unicorn/filename-case */
-import fs from 'node:fs/promises';
 import path from 'node:path';
 
 import { setFailed } from '@actions/core';
 
 import { l } from './common/log.js';
+import { writeAtomically } from './common/write.js';
 import { FSProvider, analyser } from './index.js';
 import './autoload.js';
 
@@ -30,7 +30,7 @@ try {
   const file = path.join(workspace, 'stack-output.json');
   l.log('Output to file', file);
 
-  await fs.writeFile(file, JSON.stringify(res.toJson(workspace), undefined, 2));
+  await writeAtomically(file, JSON.stringify(res.toJson(workspace), undefined, 2));
 
   l.log('Done');
 } catch (err: unknown) {

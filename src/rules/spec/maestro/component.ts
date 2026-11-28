@@ -21,7 +21,13 @@ const commands = new Set([
 ]);
 
 function isFlow(source: string): boolean {
-  const docs = parseAllDocuments(source);
+  let docs: ReturnType<typeof parseAllDocuments>;
+  try {
+    docs = parseAllDocuments(source);
+  } catch {
+    // The parser recurses: a file nested deep enough overflows its stack. Such a file is not a flow.
+    return false;
+  }
   if (docs.length !== 2 || docs.some((doc) => doc.errors.length > 0)) return false;
   const [header, steps] = docs.map((doc) => doc.contents);
   if (!isMap(header) || !isSeq(steps)) return false;

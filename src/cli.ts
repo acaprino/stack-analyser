@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-import { randomBytes } from 'node:crypto';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -13,6 +12,7 @@ import ora from 'ora';
 import { analyser, parseDeclarations } from './analyser/index.js';
 import { catalogue } from './catalogue.js';
 import { l } from './common/log.js';
+import { writeAtomically } from './common/write.js';
 import { flatten } from './payload/helpers.js';
 import { FSProvider } from './provider/fs.js';
 import { registeredRules } from './register.js';
@@ -99,27 +99,6 @@ const pkg = JSON.parse((await fs.readFile(path.join(dirname, './../package.json'
 function fail(...message: string[]): never {
   process.stderr.write(`${[kleur.bold().red(figureSet.cross), ...message].join(' ')}\n`);
   process.exit(1);
-}
-
-/** Writes `text` to `file` by way of a temporary file in the same folder, so that a reader never finds half of it. */
-async function writeAtomically(file: string, text: string): Promise<void> {
-  // A symlink, a device such as /dev/stdout or a FIFO cannot be replaced by a rename: write through it.
-  const existing = await fs.lstat(file).catch(() => null);
-  if (existing && !existing.isFile()) {
-    await fs.writeFile(file, text, 'utf8');
-    return;
-  }
-  const temporary = path.join(
-    path.dirname(file),
-    `.${path.basename(file)}.${randomBytes(4).toString('hex')}.tmp`
-  );
-  try {
-    await fs.writeFile(temporary, text, { encoding: 'utf8', flag: 'wx' });
-    await fs.rename(temporary, file);
-  } catch (err) {
-    await fs.rm(temporary, { force: true });
-    throw err;
-  }
 }
 
 /** The options an analysis takes, by the name commander gives them and the way a person types them. */

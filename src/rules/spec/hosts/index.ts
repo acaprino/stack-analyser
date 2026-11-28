@@ -52,7 +52,14 @@ function configValues(content: string, { name, emit }: { name: string; emit: Emi
     }
   }
   const lineCounter = new LineCounter();
-  for (const doc of parseAllDocuments(content, { lineCounter, logLevel: 'silent' })) {
+  let docs: ReturnType<typeof parseAllDocuments>;
+  try {
+    docs = parseAllDocuments(content, { lineCounter, logLevel: 'silent' });
+  } catch {
+    // The parser recurses: a file nested deep enough overflows its stack. Such a file names no endpoint.
+    return;
+  }
+  for (const doc of docs) {
     if (doc.errors.length > 0) continue;
     visit(doc, {
       // eslint-disable-next-line @typescript-eslint/naming-convention -- the node type name the yaml visitor expects

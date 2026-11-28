@@ -28,7 +28,8 @@ function addAction(pl: Payload, { uses, file }: { uses: unknown; file: string })
     pl.dependencies.push(['githubAction', uses, '']);
     return;
   }
-  const action = /^([\w.-]+\/[\w.-]+(?:\/[\w./-]+)*)@([^\s$@]+)$/.exec(uses);
+  // One path segment per repetition: a class that also held `/` could split a path in 2^n ways.
+  const action = /^([\w.-]+\/[\w.-]+(?:\/[\w.-]+)*)@([^\s$@]+)$/.exec(uses);
   if (!action) return;
   const [, name, version] = action;
   pl.dependencies.push(['githubAction', name, version]);

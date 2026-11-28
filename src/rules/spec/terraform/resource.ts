@@ -5,6 +5,7 @@ import { l } from '../../../common/log.js';
 import { matchDependencies } from '../../../matchDependencies.js';
 import { Payload } from '../../../payload/index.js';
 import { listIndexed } from '../../../register.js';
+import { isRecord } from '../packageManifest.js';
 
 import type { ComponentMatcher } from '../../../types/rule.js';
 
@@ -40,7 +41,8 @@ export const detectTerraformResource: ComponentMatcher = async (files, provider)
       continue;
     }
 
-    if (!('resource' in json)) {
+    // HCL that parses is not yet a set of resources: `resource = null` parses too.
+    if (!isRecord(json) || !isRecord(json.resource)) {
       continue;
     }
 

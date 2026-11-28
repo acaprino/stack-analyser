@@ -14,28 +14,53 @@ export interface ComposerJson {
   'require-dev'?: Record<string, string>;
 }
 
+/**
+ * Whether `name` matches a glob of `*` and `?`. It steps through both texts once and goes back only to the last `*`,
+ * so a pattern written by the analysed project cannot make it backtrack the way a regular expression would.
+ */
+export function matchesGlob(pattern: string, name: string): boolean {
+  let p = 0;
+  let n = 0;
+  let star = -1;
+  let resume = 0;
+  while (n < name.length) {
+    if (p < pattern.length && (pattern[p] === '?' || pattern[p] === name[n])) {
+      p++;
+      n++;
+    } else if (pattern[p] === '*') {
+      star = p++;
+      resume = n;
+    } else if (star === -1) {
+      return false;
+    } else {
+      p = star + 1;
+      n = ++resume;
+    }
+  }
+  while (pattern[p] === '*') p++;
+  return p === pattern.length;
+}
+
+/** More wildcard folder levels than a real path repository uses would list the whole tree. */
+const MAX_WILDCARD_LEVELS = 3;
+
 async function folders(provider: BaseProvider, pattern: string): Promise<string[]> {
   // Composer expands a path repository's `url` with PHP's glob(): `*` and `?` within one folder name. A folder name is
   // text without grammar.
   const root = path.parse(pattern).root;
+  const parts = pattern.slice(root.length).split(/[\\/]/).filter(Boolean);
+  if (parts.filter((part) => /[*?]/.test(part)).length > MAX_WILDCARD_LEVELS) return [];
   let found = [root];
-  for (const part of pattern.slice(root.length).split(/[\\/]/).filter(Boolean)) {
+  for (const part of parts) {
     if (!/[*?]/.test(part)) {
       found = found.map((folder) => path.join(folder, part));
       continue;
     }
-    const name = new RegExp(
-      '^' +
-        part
-          .replaceAll(/[.+^${}()|[\]\\]/g, String.raw`\$&`)
-          .replaceAll('*', '.*')
-          .replaceAll('?', '.') +
-        '$'
-    );
     const next: string[] = [];
     for (const folder of found) {
       for (const item of await provider.listDir(folder)) {
-        if (item.type === 'dir' && !item.isSymbolicLink && name.test(item.name)) next.push(item.fp);
+        if (item.type === 'dir' && !item.isSymbolicLink && matchesGlob(part, item.name))
+          next.push(item.fp);
       }
     }
     found = next;

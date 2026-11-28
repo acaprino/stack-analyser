@@ -1,5 +1,6 @@
 import { Payload } from '../../payload/index.js';
 import { register } from '../../register.js';
+import { isRecord } from '../spec/packageManifest.js';
 
 import type { ComponentMatcher } from '../../types/rule.js';
 
@@ -18,18 +19,15 @@ const detectShadcn: ComponentMatcher = async (files, provider) => {
       continue;
     }
 
-    let parsed: Record<string, unknown>;
+    let parsed: unknown;
     try {
-      parsed = JSON.parse(content) as Record<string, unknown>;
+      parsed = JSON.parse(content);
     } catch {
       continue;
     }
 
-    if (!('$schema' in parsed)) {
-      continue;
-    }
-
-    if (parsed.$schema !== 'https://ui.shadcn.com/schema.json') {
+    // Valid JSON is not yet an object: `null` or a number parses too.
+    if (!isRecord(parsed) || parsed.$schema !== 'https://ui.shadcn.com/schema.json') {
       continue;
     }
 

@@ -5,9 +5,16 @@ import { l } from '../../../common/log.js';
 import { matchDependencies } from '../../../matchDependencies.js';
 import { Payload } from '../../../payload/index.js';
 import { listIndexed } from '../../../register.js';
+import { isRecord } from '../packageManifest.js';
 
 import type { Dependency } from '../../../types/index.js';
 import type { ComponentMatcher } from '../../../types/rule.js';
+
+/** The version of a provider's blocks, when they are written the way Terraform writes them. */
+function providerVersion(blocks: unknown): string {
+  const first: unknown = Array.isArray(blocks) ? blocks[0] : undefined;
+  return (isRecord(first) && typeof first.version === 'string' && first.version) || 'latest';
+}
 
 const LOCKFILE = '.terraform.lock.hcl';
 interface TerraformLockfile {
@@ -35,7 +42,9 @@ export const detectTerraformLockfile: ComponentMatcher = async (files, provider)
       continue;
     }
 
-    if (!('provider' in json)) {
+    // HCL that parses is not yet a lockfile: `provider` can be missing or anything else.
+    const providers: unknown = isRecord(json) ? json.provider : undefined;
+    if (!isRecord(providers)) {
       continue;
     }
 
@@ -46,9 +55,9 @@ export const detectTerraformLockfile: ComponentMatcher = async (files, provider)
     const dependencies: Dependency[] = [];
 
     // We only register docker service with image and that we know
-    for (const name of Object.keys(json.provider)) {
+    for (const name of Object.keys(providers)) {
       const matched = [...matchDependencies([name], 'terraform')];
-      dependencies.push(['terraform', name, json.provider[name][0].version || 'latest']);
+      dependencies.push(['terraform', name, providerVersion(providers[name])]);
 
       if (matched.length === 0) {
         continue;
@@ -62,7 +71,7 @@ export const detectTerraformLockfile: ComponentMatcher = async (files, provider)
           folderPath: file.fp,
           tech: tech[0],
           parent: pl,
-          dependencies: [['terraform', name, json.provider[name][0].version || 'latest']],
+          dependencies: [['terraform', name, providerVersion(providers[name])]],
           reason: tech[1][0],
           evidence: [{ kind: 'terraform', value: name, path: file.fp }],
         })
