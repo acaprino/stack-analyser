@@ -2,6 +2,7 @@ import path from 'node:path';
 
 import { Payload } from '../../payload/index.js';
 
+import type { BaseProvider } from '../../provider/base.js';
 import type { SupportedDeps } from '../../types/rule.js';
 
 export function projectPath(base: string, file: string): string {
@@ -10,6 +11,29 @@ export function projectPath(base: string, file: string): string {
 
 export function isRecord(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === 'object' && !Array.isArray(value);
+}
+
+const shared = new WeakMap<BaseProvider, Map<string, Promise<unknown>>>();
+
+/**
+ * What `read` gives, computed once for each `key` of an analysis. A file shared by many modules (a version catalog, a
+ * workspace root) is asked for by each of them: it is opened and parsed for the first only. The result is not to be changed.
+ */
+export function oncePerRun<T>(
+  provider: BaseProvider,
+  { key, read }: { key: string; read: () => Promise<T> }
+): Promise<T> {
+  let known = shared.get(provider);
+  if (!known) {
+    known = new Map<string, Promise<unknown>>();
+    shared.set(provider, known);
+  }
+  let result = known.get(key) as Promise<T> | undefined;
+  if (!result) {
+    result = read();
+    known.set(key, result);
+  }
+  return result;
 }
 
 /** Whether `target` (absolute, or relative to `from`, a folder) stays inside the analysed copy of the project. */

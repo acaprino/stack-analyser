@@ -5,6 +5,7 @@ import { mavenProject } from './maven.js';
 import { sbtDependencies } from './sbt.js';
 import { Payload } from '../../../payload/index.js';
 import { sourceText } from '../manifestTokens.js';
+import { oncePerRun } from '../packageManifest.js';
 
 import type { BaseProvider, ProviderFile } from '../../../provider/base.js';
 import type { Dependency } from '../../../types/index.js';
@@ -41,7 +42,7 @@ export const detectMaven: ComponentMatcher = async (files, provider) => {
 async function catalogFile(
   provider: BaseProvider,
   { folder, files }: { folder: string; files: ProviderFile[] }
-): Promise<null | string> {
+): Promise<null | ReturnType<typeof gradleCatalog>> {
   const base = path.resolve(provider.basePath);
   let current = path.resolve(folder);
   let children = files;
@@ -57,7 +58,15 @@ async function catalogFile(
       if (!gradleDir) return null;
       const gradleFiles = await provider.listDir(gradleDir.fp);
       const catalog = gradleFiles.find((f) => f.type === 'file' && f.name === 'libs.versions.toml');
-      return catalog ? provider.open(catalog.fp) : null;
+      if (!catalog) return null;
+      // Every module of the build asks for the same catalog.
+      return oncePerRun(provider, {
+        key: `gradle:${catalog.fp}`,
+        read: async () => {
+          const text = await provider.open(catalog.fp);
+          return gradleCatalog(text ?? '');
+        },
+      });
     }
     const parent = path.dirname(current);
     if (parent === current) return null;
@@ -75,10 +84,7 @@ export const detectGradle: ComponentMatcher = async (files, provider) => {
   if (source === null) return false;
   const folder = path.dirname(build.fp);
   const catalog = source.includes('libs.') ? await catalogFile(provider, { folder, files }) : null;
-  const deps = gradleDependencies(
-    source,
-    catalog ? gradleCatalog(catalog) : new Map<string, Dependency[]>()
-  );
+  const deps = gradleDependencies(source, catalog ?? new Map<string, Dependency[]>());
   return component('gradle', {
     name: path.basename(folder) || 'Gradle project',
     file: build.fp,

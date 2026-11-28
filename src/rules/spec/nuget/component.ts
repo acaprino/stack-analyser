@@ -1,7 +1,13 @@
 import path from 'node:path';
 
 import { parseProjectXml, xmlChildren } from '../../../common/xml.js';
-import { insideProject, isRecord, packageComponent, projectPath } from '../packageManifest.js';
+import {
+  insideProject,
+  isRecord,
+  oncePerRun,
+  packageComponent,
+  projectPath,
+} from '../packageManifest.js';
 
 import type { BaseProvider, ProviderFile } from '../../../provider/base.js';
 import type { ComponentMatcher } from '../../../types/rule.js';
@@ -157,15 +163,19 @@ async function centralVersions(
       (item) => item.type === 'file' && item.name === 'Directory.Packages.props'
     );
     if (props) {
-      const root = parseProjectXml((await provider.open(props.fp)) || '', {
-        namespaces: msbuildNamespaces,
-        preserveOrder: true,
-      })?.Project;
-      if (isRecord(root)) {
-        const versions = packageVersions(itemGroups(root), 'PackageVersion');
-        return new Map([...versions].map(([name, version]) => [name.toLowerCase(), version]));
-      }
-      break;
+      // Every project below this folder asks for the same file.
+      return oncePerRun(provider, {
+        key: `nuget:${props.fp}`,
+        read: async () => {
+          const root = parseProjectXml((await provider.open(props.fp)) || '', {
+            namespaces: msbuildNamespaces,
+            preserveOrder: true,
+          })?.Project;
+          if (!isRecord(root)) return new Map<string, string>();
+          const versions = packageVersions(itemGroups(root), 'PackageVersion');
+          return new Map([...versions].map(([name, version]) => [name.toLowerCase(), version]));
+        },
+      });
     }
     if (path.resolve(dir) === base || path.dirname(dir) === dir) break;
     dir = path.dirname(dir);

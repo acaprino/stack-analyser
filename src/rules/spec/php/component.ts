@@ -2,7 +2,7 @@ import path from 'node:path';
 
 import { l } from '../../../common/log.js';
 import { detectLicense } from '../licenses/index.js';
-import { insideProject, isRecord, packageComponent } from '../packageManifest.js';
+import { insideProject, isRecord, oncePerRun, packageComponent } from '../packageManifest.js';
 
 import type { BaseProvider } from '../../../provider/base.js';
 import type { ComponentMatcher } from '../../../types/rule.js';
@@ -89,14 +89,23 @@ async function localPackages(
       provider,
       path.resolve(path.dirname(file), repository.url)
     )) {
-      let manifest: unknown;
-      try {
-        manifest = JSON.parse((await provider.open(path.join(folder, 'composer.json'))) ?? '');
-      } catch {
-        continue;
-      }
-      if (isRecord(manifest) && typeof manifest.name === 'string')
-        names.add(manifest.name.toLowerCase());
+      // Every package of a monorepo names the same sibling folders.
+      const name = await oncePerRun(provider, {
+        key: `composer-name:${folder}`,
+        read: async () => {
+          try {
+            const manifest: unknown = JSON.parse(
+              (await provider.open(path.join(folder, 'composer.json'))) ?? ''
+            );
+            return isRecord(manifest) && typeof manifest.name === 'string'
+              ? manifest.name.toLowerCase()
+              : null;
+          } catch {
+            return null;
+          }
+        },
+      });
+      if (name !== null) names.add(name);
     }
   }
   return names;
