@@ -11,14 +11,24 @@ const msbuildNamespaces = ['http://schemas.microsoft.com/developer/msbuild/2003'
 function rows(parent: unknown, key: string): Record<string, unknown>[] {
   if (!isRecord(parent)) return [];
   const values = parent[key];
-  return (Array.isArray(values) ? values : [values]).filter(isRecord);
+  return (Array.isArray(values) ? (values as unknown[]) : [values]).filter((value) =>
+    isRecord(value)
+  );
+}
+
+/** Whether an XML element carries no `Condition`, so that it applies whatever the build. */
+function unguarded(node: Record<string, unknown>): boolean {
+  const guard = node['@_Condition'];
+  return guard === undefined || guard === '';
 }
 
 // Keep declarations for possible build targets. Only a literal guard can exclude an entire branch.
 function condition(item: Record<string, unknown>): boolean | undefined {
   const raw = item['@_Condition'];
   if (raw === undefined || raw === '') return true;
-  const value = String(raw).trim().toLowerCase();
+  // An attribute is always text; anything else is not a literal guard.
+  if (typeof raw !== 'string') return undefined;
+  const value = raw.trim().toLowerCase();
   if (value === 'false' || value === "'false'") return false;
   if (value === 'true' || value === "'true'") return true;
   return undefined;
@@ -54,19 +64,14 @@ function* itemGroups(project: Record<string, unknown>, certain = true): Generato
 function enablesWinUI(project: Record<string, unknown>): boolean {
   const pending = [project];
   let declared = false;
-  while (pending.length > 0) {
-    const container = pending.pop()!;
+  for (let container = pending.pop(); container !== undefined; container = pending.pop()) {
     for (const group of rows(container, 'PropertyGroup')) {
       for (const [name, values] of Object.entries(group)) {
         if (name.toLowerCase() !== 'usewinui') continue;
-        for (const value of Array.isArray(values) ? values : [values]) {
+        for (const value of Array.isArray(values) ? (values as unknown[]) : [values]) {
           const literal = isRecord(value) ? value['#text'] : value;
           if (typeof literal !== 'string' || literal.toLowerCase() !== 'true') return false;
-          if (
-            container === project &&
-            !group['@_Condition'] &&
-            !(isRecord(value) && value['@_Condition'])
-          )
+          if (container === project && unguarded(group) && !(isRecord(value) && !unguarded(value)))
             declared = true;
         }
       }
@@ -142,8 +147,7 @@ function lockedPackages(content: string): Map<string, string> {
 // for an actual PackageReference in the consuming project.
 async function centralVersions(
   file: ProviderFile,
-  files: ProviderFile[],
-  provider: BaseProvider
+  { files, provider }: { files: ProviderFile[]; provider: BaseProvider }
 ): Promise<Map<string, string>> {
   let dir = path.dirname(file.fp);
   const base = path.resolve(provider.basePath);
@@ -213,7 +217,7 @@ export const detectNugetComponent: ComponentMatcher = async (files, provider) =>
       }
     }
     if ([...requirements.values()].includes('')) {
-      const versions = await centralVersions(file, files, provider);
+      const versions = await centralVersions(file, { files, provider });
       for (const [id, version] of requirements) {
         const supplied = versions.get(id.toLowerCase());
         if (!version && supplied) requirements.set(id, supplied);

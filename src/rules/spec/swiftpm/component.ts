@@ -37,7 +37,10 @@ function repository(location: string): string | undefined {
   }
 }
 
-function literalArguments(items: Token[], start: number, end: number): Map<string, string> {
+function literalArguments(
+  items: Token[],
+  { start, end }: { start: number; end: number }
+): Map<string, string> {
   const args = new Map<string, string>();
   for (let i = start; i + 2 < end; i++) {
     if (items[i].kind === 'symbol' && ['(', '[', '{'].includes(items[i].value)) {
@@ -76,7 +79,7 @@ function requirements(
     ) {
       const end = closing(items, i + 1);
       if (end < 0) continue;
-      const args = literalArguments(items, i + 2, end);
+      const args = literalArguments(items, { start: i + 2, end });
       const repo = repository(args.get('url') || '');
       const identity = args.get('id')?.toLowerCase() || repo?.split('/').at(-1)?.toLowerCase();
       if (identity) {
@@ -107,13 +110,15 @@ function pins(content: string): Map<string, { version: string; repo?: string }> 
     if (!isRecord(pin) || !isRecord(pin.state)) continue;
     if (pin.kind !== undefined && pin.kind !== 'remoteSourceControl' && pin.kind !== 'registry')
       continue;
-    const location = pin.location || pin.repositoryURL;
+    const location =
+      typeof pin.location === 'string' && pin.location !== '' ? pin.location : pin.repositoryURL;
     const repo = typeof location === 'string' ? repository(location) : undefined;
     const id =
       typeof pin.identity === 'string'
         ? pin.identity.toLowerCase()
         : repo?.split('/').at(-1)?.toLowerCase();
-    const version = pin.state.version || pin.state.branch || pin.state.revision;
+    // The first of the three that is set, as `||` would pick it.
+    const version = [pin.state.version, pin.state.branch, pin.state.revision].find(Boolean);
     if (id && typeof version === 'string') packages.set(id, { version, repo });
   }
   return packages;
@@ -137,8 +142,8 @@ export const detectSwiftComponent: ComponentMatcher = async (files, provider) =>
         if (pin.repo) remotes.set(id, pin.repo);
       }
     }
-    if (manifest || packages.size > 0) {
-      const file = manifest || resolved!;
+    const file = manifest ?? resolved;
+    if (file !== undefined && (manifest !== undefined || packages.size > 0)) {
       const pl = packageComponent(name, {
         folderPath: file.fp,
         ecosystem: 'swiftpm',
@@ -158,11 +163,13 @@ export const detectSwiftComponent: ComponentMatcher = async (files, provider) =>
     const content = await sourceText(provider, file.fp);
     if (!content?.includes('import')) continue;
     const items = tokens(content, 'swift');
-    const pl = payloads[0] || new Payload({ name: 'virtual', folderPath: file.fp });
+    const pl = payloads.at(0) ?? new Payload({ name: 'virtual', folderPath: file.fp });
     for (let i = 0; i + 1 < items.length; i++) {
       if (items[i].kind !== 'word' || items[i].value !== 'import') continue;
-      const module = items[i + (IMPORT_KINDS.has(items[i + 1].value) ? 2 : 1)];
-      const id = module?.kind === 'word' ? SDK_MODULES.get(module.value) : undefined;
+      // `import struct` names the module one token later, which may be past the end.
+      const module = items.at(i + (IMPORT_KINDS.has(items[i + 1].value) ? 2 : 1));
+      if (module?.kind !== 'word') continue;
+      const id = SDK_MODULES.get(module.value);
       if (id) {
         pl.path.add(file.fp);
         pl.addTech(id, {
