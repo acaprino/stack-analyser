@@ -33,7 +33,7 @@ const parse = ({ sign }: Difference): [string, string] => {
   const colon = sign.indexOf(':');
   return [sign.slice(0, colon), sign.slice(colon + 1)];
 };
-const differences = (wanted: (kind: string) => boolean) =>
+const differences = (wanted: (kind: string) => boolean): Difference[] =>
   report.differences.filter((d) => wanted(parse(d)[0]));
 
 describe('the report of the registry port', () => {
@@ -67,8 +67,8 @@ describe('the report of the registry port', () => {
   });
 
   it.each(differences((kind) => !kinds.has(kind)).map((d) => [d.id, d.sign, d] as const))(
-    'should % does not take the package %s',
-    (id, _sign, difference) => {
+    'should not let %s take the package %s',
+    (...[id, , difference]) => {
       const [type, name] = parse(difference);
 
       expect([...matchDependencies([name], type as SupportedDeps).keys()]).not.toContain(id);
@@ -76,8 +76,8 @@ describe('the report of the registry port', () => {
   );
 
   it.each(differences((kind) => kind === 'file').map((d) => [d.id, d.sign, d] as const))(
-    'should % does not list the file %s in a rule',
-    (id, _sign, difference) => {
+    'should not let %s list the file %s',
+    (...[id, , difference]) => {
       const name = parse(difference)[1];
       const found = matchAllFiles([{ fp: `/repo/${name}`, name, type: 'file' }], '/repo');
 
@@ -86,8 +86,8 @@ describe('the report of the registry port', () => {
   );
 
   it.each(differences((kind) => kind === 'env').map((d) => [d.id, d.sign, d] as const))(
-    'should % does not list the variable %s',
-    (id, _sign, difference) => {
+    'should not let %s list the variable %s',
+    (...[id, , difference]) => {
       const rule = registeredRules.find((r) => r.tech === id);
 
       expect(rule?.dotenv ?? []).not.toContain(parse(difference)[1]);

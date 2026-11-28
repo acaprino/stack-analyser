@@ -203,8 +203,9 @@ describe('no duplicate', () => {
       }
 
       for (const ex of examples) {
-        const expected = integrations[`${name}:${ex}`];
-        if (expected) {
+        // Only some examples have an expected integration.
+        const expected = integrations[`${name}:${ex}`] as string[] | undefined;
+        if (expected !== undefined) {
           const hits = matchers
             .filter((matcher) => matcher.match.test(ex))
             .map((matcher) => matcher.tech);
@@ -274,14 +275,11 @@ const indirect = new Set([...sharedReaderIds, ...parentIds, ...catalogueOnly]);
 describe('rule completeness', () => {
   for (const rule of registeredRules) {
     it(`${rule.tech} has working examples or an explicit indirect status`, () => {
-      const direct = Boolean(
-        rule.detect ||
-          rule.files ||
-          rule.extensions?.length ||
-          rule.dotenv?.length ||
-          rule.hosts?.length ||
-          rule.dependencies?.length
-      );
+      const direct =
+        Boolean(rule.detect ?? rule.files) ||
+        [rule.extensions, rule.dotenv, rule.hosts, rule.dependencies].some(
+          (list) => (list?.length ?? 0) > 0
+        );
 
       expect(direct, rule.tech).toBe(!indirect.has(rule.tech));
 

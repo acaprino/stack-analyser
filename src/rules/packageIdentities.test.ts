@@ -200,21 +200,25 @@ const wrongSigns: [string, SupportedDeps, string][] = [
   ['postman', 'npm', 'postman-collection'],
 ];
 
+/** How many npm matchers, rules and component detectors the catalog holds. */
+function catalogCounts(): number[] {
+  return [dependencies.npm.length, rawList.length, rulesComponents.length];
+}
+
 describe('package identities', () => {
-  it.each(cases)('should % %s', (type, name, expected) => {
+  it.each(cases)('should identify the %s package %s', (...[type, name, expected]) => {
     expect([...matchDependencies([name], type).keys()].sort()).toStrictEqual(expected);
   });
 
-  it.each(wrongSigns)('should % is not identified by the wrong sign %s %s', (tech, type, name) => {
+  it.each(wrongSigns)('should not identify %s by the wrong sign %s %s', (...[tech, type, name]) => {
     expect([...matchDependencies([name], type).keys()]).not.toContain(tech);
   });
 
   it('should preserve matcher and component counts when the default catalog is loaded again', () => {
-    const counts = () => [dependencies.npm.length, rawList.length, rulesComponents.length];
-    const before = counts();
+    const before = catalogCounts();
     loadAllRules();
 
-    expect(counts()).toStrictEqual(before);
+    expect(catalogCounts()).toStrictEqual(before);
   });
 
   it('should not let one package identify two technologies', () => {

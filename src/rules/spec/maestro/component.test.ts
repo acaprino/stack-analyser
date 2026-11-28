@@ -18,10 +18,16 @@ describe('maestro mobile flows', () => {
     ['.maestro/unrelated.yml', 'appId: com.example\n---\n- build: release\n', false],
     ['.maestro/comment.yml', 'appId: sample\n---\n- note: tapOn\n# - launchApp\n', false],
     ['.maestro/broken.yml', 'appId: [\n---\n- launchApp\n', false],
-  ] as const)('should %', async (file, content, found) => {
-    const provider = new FakeProvider({ paths: { '/': [file] }, files: { ['/' + file]: content } });
-    const result = await analyser({ provider });
+  ] as const)(
+    'should read %s as a Maestro flow only when it is one',
+    async (...[file, content, found]) => {
+      const provider = new FakeProvider({
+        paths: { '/': [file] },
+        files: { ['/' + file]: content },
+      });
+      const result = await analyser({ provider });
 
-    expect(result.techs.has('maestro')).toBe(found);
-  });
+      expect(result.techs.has('maestro')).toBe(found);
+    }
+  );
 });

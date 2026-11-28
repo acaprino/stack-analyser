@@ -62,7 +62,7 @@ describe('all', () => {
   ] as const)(
     'should recognize the directory %s as %s and not a file of that name',
     (name, tech) => {
-      const found = (type: 'dir' | 'file') => [
+      const found = (type: 'dir' | 'file'): string[] => [
         ...matchAllFiles([{ fp: '/repo/' + name, name, type }], '/repo').keys(),
       ];
 
