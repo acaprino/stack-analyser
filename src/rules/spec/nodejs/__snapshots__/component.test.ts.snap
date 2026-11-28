@@ -141,6 +141,7 @@ exports[`npm > should match everything 1`] = `
   "browserstack",
   "bugsnag",
   "bullmq",
+  "bulma",
   "calcom",
   "calendly",
   "campaign-monitor",
@@ -167,6 +168,7 @@ exports[`npm > should match everything 1`] = `
   "commercetools",
   "composio",
   "conekta",
+  "connect-node",
   "contentful",
   "contentstack",
   "convexdb",
@@ -206,6 +208,7 @@ exports[`npm > should match everything 1`] = `
   "elasticsearch",
   "electron",
   "element-plus",
+  "element-ui",
   "elevenlabs",
   "eleventy",
   "elkjs",
@@ -318,6 +321,7 @@ exports[`npm > should match everything 1`] = `
   "infernojs",
   "infisical",
   "influxdb",
+  "ink",
   "inngest",
   "instana",
   "integrationapp",
@@ -332,6 +336,7 @@ exports[`npm > should match everything 1`] = `
   "jira-software",
   "jitsi",
   "joijs",
+  "jquery-ui",
   "jsonschema",
   "k6",
   "keeper",
@@ -339,6 +344,7 @@ exports[`npm > should match everything 1`] = `
   "keycloak",
   "kinde",
   "knex",
+  "knockout",
   "koa",
   "koalaanalytics",
   "koyeb",
@@ -422,6 +428,7 @@ exports[`npm > should match everything 1`] = `
   "netlify",
   "newrelic",
   "nextjs",
+  "ng-bootstrap",
   "nhost",
   "nodejs",
   "notion",
@@ -498,6 +505,7 @@ exports[`npm > should match everything 1`] = `
   "rarible",
   "razorpay",
   "react",
+  "react-bootstrap",
   "react-dom",
   "react-flow",
   "react-native",
@@ -506,6 +514,7 @@ exports[`npm > should match everything 1`] = `
   "reactemail",
   "reacticons",
   "reactrouterdom",
+  "reactstrap",
   "readme",
   "reddit",
   "redis",
@@ -524,6 +533,7 @@ exports[`npm > should match everything 1`] = `
   "replit.database",
   "resend",
   "rethinkdb",
+  "revealjs",
   "revenuecat",
   "rocket-chat",
   "rollbar",
@@ -2564,6 +2574,11 @@ exports[`npm > should match everything 2`] = `
   ],
   [
     "npm",
+    "@material-ui/core",
+    "0.0.0",
+  ],
+  [
+    "npm",
     "@materializecss/materialize",
     "0.0.0",
   ],
@@ -2689,6 +2704,16 @@ exports[`npm > should match everything 2`] = `
   ],
   [
     "npm",
+    "@nestjs/common",
+    "0.0.0",
+  ],
+  [
+    "npm",
+    "@nestjs/core",
+    "0.0.0",
+  ],
+  [
+    "npm",
     "@nestjs/mongoose",
     "0.0.0",
   ],
@@ -2735,6 +2760,11 @@ exports[`npm > should match everything 2`] = `
   [
     "npm",
     "@netlify/run-utils",
+    "0.0.0",
+  ],
+  [
+    "npm",
+    "@ng-bootstrap/ng-bootstrap",
     "0.0.0",
   ],
   [
@@ -4414,6 +4444,11 @@ exports[`npm > should match everything 2`] = `
   ],
   [
     "npm",
+    "bootstrap-sass",
+    "0.0.0",
+  ],
+  [
+    "npm",
     "box-node-sdk",
     "0.0.0",
   ],
@@ -4440,6 +4475,11 @@ exports[`npm > should match everything 2`] = `
   [
     "npm",
     "bullmq",
+    "0.0.0",
+  ],
+  [
+    "npm",
+    "bulma",
     "0.0.0",
   ],
   [
@@ -4525,6 +4565,11 @@ exports[`npm > should match everything 2`] = `
   [
     "npm",
     "confluence.js",
+    "0.0.0",
+  ],
+  [
+    "npm",
+    "connect",
     "0.0.0",
   ],
   [
@@ -4750,6 +4795,11 @@ exports[`npm > should match everything 2`] = `
   [
     "npm",
     "element-plus",
+    "0.0.0",
+  ],
+  [
+    "npm",
+    "element-ui",
     "0.0.0",
   ],
   [
@@ -5094,6 +5144,11 @@ exports[`npm > should match everything 2`] = `
   ],
   [
     "npm",
+    "ink",
+    "0.0.0",
+  ],
+  [
+    "npm",
     "inngest",
     "0.0.0",
   ],
@@ -5159,6 +5214,11 @@ exports[`npm > should match everything 2`] = `
   ],
   [
     "npm",
+    "jquery-ui",
+    "0.0.0",
+  ],
+  [
+    "npm",
     "jsforce",
     "0.0.0",
   ],
@@ -5205,6 +5265,11 @@ exports[`npm > should match everything 2`] = `
   [
     "npm",
     "knex",
+    "0.0.0",
+  ],
+  [
+    "npm",
+    "knockout",
     "0.0.0",
   ],
   [
@@ -5939,6 +6004,11 @@ exports[`npm > should match everything 2`] = `
   ],
   [
     "npm",
+    "react-bootstrap",
+    "0.0.0",
+  ],
+  [
+    "npm",
     "react-bootstrap-icons",
     "0.0.0",
   ],
@@ -6034,6 +6104,11 @@ exports[`npm > should match everything 2`] = `
   ],
   [
     "npm",
+    "reactstrap",
+    "0.0.0",
+  ],
+  [
+    "npm",
     "readmeio",
     "0.0.0",
   ],
@@ -6085,6 +6160,11 @@ exports[`npm > should match everything 2`] = `
   [
     "npm",
     "rethinkdb",
+    "0.0.0",
+  ],
+  [
+    "npm",
+    "reveal.js",
     "0.0.0",
   ],
   [

@@ -7,5 +7,6 @@ register({
   dependencies: [
     { type: 'php', name: 'symfony/stimulus-bundle' },
     { type: 'npm', name: '@hotwired/stimulus' },
+    { type: 'ruby', name: 'stimulus-rails' },
   ],
 });

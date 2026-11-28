@@ -157,6 +157,53 @@ This rule decides which frameworks of an ecosystem the fork must recognise. It w
 - The first pass also takes the words `web`, `app`, `application`, `server`, `http`, `mvc`, `rest`, `api`, `router`, `routing`, `site`, `static`, `asgi`, `wsgi`, `rack`, `sass`, `less`, `theme`, `style`, `desktop`, `mobile`, `native`, `react`, `vue`, `angular`, `flutter` and `bootstrap`. A package whose description says none of them (`Vert.x 5 Parent pom`, `Apache Struts`) still escapes it.
 - Only the candidates that the fork's matcher does not recognise are decided by hand: the others are covered whatever the decision.
 
+```sh
+node benchmarks/ecosystem-coverage.mjs fetch lists.json
+node benchmarks/ecosystem-coverage.mjs candidates lists.json
+node benchmarks/ecosystem-coverage.mjs check lists.json benchmarks/ecosystem-frameworks.json ../stack-analyser-baseline
+node benchmarks/ecosystem-coverage.mjs check lists.json benchmarks/ecosystem-frameworks.json .
+```
+
+`ecosystem-frameworks.json` holds the decisions: each framework the matcher of release 1.27.6-daodan.6 missed, with the candidates that came closest to being one and why they are not. `check` refuses a framework that is not in the list or that the first pass did not keep.
+
+### Results of 28 November 2026
+
+The lists were fetched at 16:40:30 UTC. Recognised counts the candidates of the first pass for which release 1.27.6-daodan.6 gives a technology, whatever they are; the last column names, by rank, the frameworks of the list it missed.
+
+| Ecosystem | Threshold (dependent repositories) | Packages | Candidates | Recognised | Frameworks missed |
+| --- | ---: | ---: | ---: | ---: | --- |
+| npm | 57,652 | 4,775 | 931 | 96 | `connect`, `react-bootstrap`, `@material-ui/core`, `reveal.js`, `reactstrap`, `bootstrap-sass`, `element-ui`, `@nestjs/core`, `ink`, `bulma`, `@ng-bootstrap/ng-bootstrap` |
+| PyPI | 6,799 | 616 | 115 | 23 | `tornado`, `starlette`, `dash`, `bottle`, `twisted` |
+| Go modules | 2,989 | 1,522 | 160 | 19 | `github.com/emicklei/go-restful` and `/v3`, `github.com/zenazn/goji`, `github.com/labstack/echo` (before `/v4`), `github.com/go-martini/martini`, `github.com/kataras/iris/v12` |
+| crates.io | 1,244 | 1,601 | 170 | 11 | `rocket`, `warp`, `bevy`, `egui`, `tui` |
+| NuGet | 1,404 | 46 | 26 | 2 | `bootstrap`, `knockoutjs`, `angularjs` |
+| Maven Central | 15,837 | 279 | 83 | 19 | `org.springframework:spring-web`, `io.netty:netty-all`, `com.sun.jersey:jersey-server` |
+| Packagist | 7,775 | 415 | 114 | 10 | `livewire/livewire`, `components/bootstrap`, `silex/silex`, `zendframework/zendframework` |
+| RubyGems | 14,128 | 525 | 178 | 15 | `bootstrap-sass`, `compass`, `jquery-ui-rails`, `bootstrap`, `twitter-bootstrap-rails`, `stimulus-rails`, `middleman`, `middleman-core` |
+| pub.dev | 2,401 | 294 | 127 | 1 | `shelf` |
+
+All 46 have a rule now. Eleven join a rule that already existed (bootstrap, angularjs, nestjs, materialui, echo, stimulus); the other 35 are 33 new technologies, none of which Daodan's registry has yet: `connect-node`, `revealjs`, `element-ui`, `bulma`, `reactstrap`, `react-bootstrap`, `ng-bootstrap`, `ink`, `knockout`, `jquery-ui`, `tornado`, `starlette`, `dash`, `bottle`, `twisted`, `goji`, `martini`, `iris`, `go-restful`, `rocket`, `warp`, `bevy`, `egui`, `tui-rs`, `spring-framework`, `netty`, `jersey`, `livewire`, `silex`, `zend-framework`, `compass`, `middleman` and `shelf`. Reactstrap, React Bootstrap and ng-bootstrap give Bootstrap as well, since they need its CSS.
+
+The first pass still misses what its words do not name: `jquery` (998,742 dependent repositories, "JavaScript library for DOM operations") is not a candidate, and under rule 2 a DOM library is no framework anyway. Release 1.27.6-daodan.6 has no rule for jQuery.
+
+### Before and after on Daodan's corpus
+
+Both measures ran on Daodan's `develop` checkout of 28 November 2026 (`1f3934f`), release 1.27.6-daodan.6 against this branch. `stack-corpus.py` approximates Daodan's `stack` step on the 186 projects with the pinned checkouts: it reproduces Daodan's own record of the release within one name (585 against 586 of 645: Daodan also finds Cypress on `real-bank-of-anthos`).
+
+| Measure | 1.27.6-daodan.6 | This branch | Gained | Lost |
+| --- | ---: | ---: | ---: | ---: |
+| Replay of the recorded declarations, frameworks, libraries and tools | 478 / 569 | 479 / 569 | 1 | 0 |
+| Replay of the recorded declarations, services | 219 / 518 | 219 / 518 | 0 | 0 |
+| Full stack, frameworks by name (186 projects) | 585 / 645 | 606 / 645 | 21 | 0 |
+
+The replay sees only what Renovate recorded: no Maven dependency without a version, no page, no Gradle test task. On the full stack the 21 names are JUnit Jupiter (6), Hibernate (5), Bootstrap (3), Mockito (2), and one each of TestNG, kotlin.test, Starlette, AngularJS and Ionicons, on 15 projects; no id that the release gave is lost, and the branch gives 38 more pairs of project and id. Of the 39 names still missed, Firebase (3) and Inngest are found and classed as services by Daodan's registry; Bootstrap on two projects and AngularJS on one are a vendored or minified file that Daodan's snapshot leaves out; Docus, VitePress, Vue.js and Roq are declared under `docs/`, which the snapshot also leaves out; Bootstrap and Font Awesome on `real-auth0-go` come from BootstrapCDN's old hosts, which no documentation gives any more; jQuery (2) has no rule; the rest, Cypress on `real-bank-of-anthos` among them, are names of one project each.
+
+```sh
+python3 benchmarks/stack-corpus.py fetch ../daodan/benchmarks/project-model ../trees
+python3 benchmarks/stack-corpus.py compare ../daodan/benchmarks/project-model ../trees ../stack-analyser-baseline,. stack-corpus.json
+node benchmarks/replay-declarations.mjs ../stack-analyser-baseline . ../daodan/benchmarks/project-model coverage.json
+```
+
 ## Startup
 
 `startup.mjs` runs one CLI five times on one project and prints the five times and their median, in milliseconds, each measured from spawn to exit of the whole process. It exits with 1 when the median is above `--max-ms`. Every run happens in an empty temporary folder, so the CLI's output file never lands in the repository, and a run that fails or writes no output is an error (exit 2), never a fast time.

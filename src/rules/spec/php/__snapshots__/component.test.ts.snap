@@ -115,6 +115,7 @@ exports[`php > should match everything 1`] = `
   "launchdarkly",
   "lemonsqueezy",
   "libsql",
+  "livewire",
   "logtoio",
   "magento",
   "mailchimp",
@@ -170,6 +171,7 @@ exports[`php > should match everything 1`] = `
   "sendgrid",
   "sentry",
   "shopify",
+  "silex",
   "slack",
   "slim",
   "spotify",
@@ -193,6 +195,7 @@ exports[`php > should match everything 1`] = `
   "workos",
   "yii2",
   "yousign",
+  "zend-framework",
   "zendesk",
   "zipkin",
   "zookeeper",
@@ -424,6 +427,11 @@ exports[`php > should match everything 2`] = `
   [
     "php",
     "colinmollenhour/cache-backend-redis",
+    "0.0.0",
+  ],
+  [
+    "php",
+    "components/bootstrap",
     "0.0.0",
   ],
   [
@@ -933,6 +941,11 @@ exports[`php > should match everything 2`] = `
   ],
   [
     "php",
+    "livewire/livewire",
+    "0.0.0",
+  ],
+  [
+    "php",
     "lkdevelopment/hetzner-cloud-php-sdk",
     "0.0.0",
   ],
@@ -1348,6 +1361,11 @@ exports[`php > should match everything 2`] = `
   ],
   [
     "php",
+    "silex/silex",
+    "0.0.0",
+  ],
+  [
+    "php",
     "sleiman/airtable-php",
     "0.0.0",
   ],
@@ -1569,6 +1587,16 @@ exports[`php > should match everything 2`] = `
   [
     "php",
     "zendesk/zendesk_api_client_php",
+    "0.0.0",
+  ],
+  [
+    "php",
+    "zendframework/zend-mvc",
+    "0.0.0",
+  ],
+  [
+    "php",
+    "zendframework/zendframework",
     "0.0.0",
   ],
   [

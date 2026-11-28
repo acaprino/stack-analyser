@@ -1,0 +1,417 @@
+{
+ "rule": "benchmarks/README.md, Ecosystem coverage, as amended on 28 November 2026",
+ "lists": {
+  "source": "packages.ecosyste.ms",
+  "fetched": "2026-11-28T16:40:30.071Z",
+  "share": 0.01,
+  "thresholds": {
+   "npm": {
+    "dependentRepos": 57652,
+    "packages": 4775
+   },
+   "python": {
+    "dependentRepos": 6799,
+    "packages": 616
+   },
+   "golang": {
+    "dependentRepos": 2989,
+    "packages": 1522
+   },
+   "rust": {
+    "dependentRepos": 1244,
+    "packages": 1601
+   },
+   "nuget": {
+    "dependentRepos": 1404,
+    "packages": 46
+   },
+   "maven": {
+    "dependentRepos": 15837,
+    "packages": 279
+   },
+   "php": {
+    "dependentRepos": 7775,
+    "packages": 415
+   },
+   "ruby": {
+    "dependentRepos": 14128,
+    "packages": 525
+   },
+   "pub": {
+    "dependentRepos": 2401,
+    "packages": 294
+   }
+  }
+ },
+ "note": "Every candidate of the first pass that the fork's matcher did not recognise was read; the frameworks are listed here, with the candidates that came closest to being one. Every other one is a library for one concern, a tool, a test or type package, or a plugin, adapter or internal package of a framework.",
+ "npm": {
+  "connect": {
+   "framework": true,
+   "kind": "HTTP server framework (senchalabs, 'High performance middleware framework')"
+  },
+  "reveal.js": {
+   "framework": true,
+   "kind": "framework for HTML presentations"
+  },
+  "element-ui": {
+   "framework": true,
+   "kind": "UI component library for Vue 2"
+  },
+  "bulma": {
+   "framework": true,
+   "kind": "CSS framework"
+  },
+  "reactstrap": {
+   "framework": true,
+   "kind": "Bootstrap components for React"
+  },
+  "react-bootstrap": {
+   "framework": true,
+   "kind": "Bootstrap components for React"
+  },
+  "@ng-bootstrap/ng-bootstrap": {
+   "framework": true,
+   "kind": "Bootstrap widgets for Angular"
+  },
+  "bootstrap-sass": {
+   "framework": true,
+   "kind": "Bootstrap 3 in Sass"
+  },
+  "@material-ui/core": {
+   "framework": true,
+   "kind": "Material UI 4 and earlier"
+  },
+  "ink": {
+   "framework": true,
+   "kind": "React for command-line interfaces"
+  },
+  "@nestjs/core": {
+   "framework": true,
+   "kind": "NestJS"
+  },
+  "socket.io-client": {
+   "framework": false,
+   "why": "real-time transport client, one concern"
+  },
+  "@nestjs/platform-express": {
+   "framework": false,
+   "why": "NestJS's HTTP adapter for Express"
+  },
+  "react-native-web": {
+   "framework": false,
+   "why": "adapter of React Native to the web"
+  },
+  "styled-components": {
+   "framework": false,
+   "why": "styling library, not a CSS framework"
+  },
+  "turbolinks": {
+   "framework": false,
+   "why": "page navigation library"
+  },
+  "swiper": {
+   "framework": false,
+   "why": "one component, a slider"
+  },
+  "jquery": {
+   "framework": false,
+   "why": "not a candidate: its description says none of the words; a DOM library, one concern"
+  }
+ },
+ "python": {
+  "tornado": {
+   "framework": true,
+   "kind": "web framework"
+  },
+  "starlette": {
+   "framework": true,
+   "kind": "ASGI framework"
+  },
+  "dash": {
+   "framework": true,
+   "kind": "framework for analytic web applications"
+  },
+  "bottle": {
+   "framework": true,
+   "kind": "WSGI micro-framework"
+  },
+  "twisted": {
+   "framework": true,
+   "kind": "networking framework for servers"
+  },
+  "werkzeug": {
+   "framework": false,
+   "why": "WSGI toolkit beneath Flask, a library"
+  },
+  "ipywidgets": {
+   "framework": false,
+   "why": "Jupyter's notebook widgets"
+  },
+  "uvicorn": {
+   "framework": false,
+   "why": "ASGI server"
+  },
+  "anyio": {
+   "framework": false,
+   "why": "concurrency library"
+  },
+  "dash-core-components": {
+   "framework": false,
+   "why": "Dash's own components"
+  }
+ },
+ "golang": {
+  "github.com/zenazn/goji": {
+   "framework": true,
+   "kind": "web framework"
+  },
+  "github.com/go-martini/martini": {
+   "framework": true,
+   "kind": "web framework"
+  },
+  "github.com/kataras/iris/v12": {
+   "framework": true,
+   "kind": "web framework"
+  },
+  "github.com/emicklei/go-restful": {
+   "framework": true,
+   "kind": "framework for REST web services"
+  },
+  "github.com/emicklei/go-restful/v3": {
+   "framework": true,
+   "kind": "framework for REST web services"
+  },
+  "github.com/labstack/echo": {
+   "framework": true,
+   "kind": "Echo before /v4"
+  },
+  "github.com/gorilla/mux": {
+   "framework": false,
+   "why": "router"
+  },
+  "github.com/julienschmidt/httprouter": {
+   "framework": false,
+   "why": "router"
+  },
+  "github.com/valyala/fasthttp": {
+   "framework": false,
+   "why": "HTTP server and client library"
+  },
+  "github.com/urfave/negroni": {
+   "framework": false,
+   "why": "middleware library"
+  },
+  "github.com/gdamore/tcell": {
+   "framework": false,
+   "why": "terminal cell library, no widgets"
+  }
+ },
+ "rust": {
+  "rocket": {
+   "framework": true,
+   "kind": "web framework"
+  },
+  "warp": {
+   "framework": true,
+   "kind": "web framework"
+  },
+  "bevy": {
+   "framework": true,
+   "kind": "game engine and app framework"
+  },
+  "egui": {
+   "framework": true,
+   "kind": "immediate mode GUI"
+  },
+  "tui": {
+   "framework": true,
+   "kind": "terminal UI library, the original of Ratatui"
+  },
+  "actix": {
+   "framework": false,
+   "why": "actor framework, concurrency"
+  },
+  "tower": {
+   "framework": false,
+   "why": "middleware abstraction"
+  },
+  "actix-http": {
+   "framework": false,
+   "why": "Actix Web's own crate"
+  },
+  "rocket_codegen": {
+   "framework": false,
+   "why": "Rocket's own crate"
+  },
+  "bevy_ui": {
+   "framework": false,
+   "why": "Bevy's own crate"
+  }
+ },
+ "nuget": {
+  "bootstrap": {
+   "framework": true,
+   "kind": "Bootstrap"
+  },
+  "knockoutjs": {
+   "framework": true,
+   "kind": "MVVM UI framework"
+  },
+  "angularjs": {
+   "framework": true,
+   "kind": "AngularJS"
+  },
+  "cef.redist.x64": {
+   "framework": false,
+   "why": "embedded browser runtime"
+  },
+  "toastr": {
+   "framework": false,
+   "why": "one component, notifications"
+  }
+ },
+ "maven": {
+  "org.springframework:spring-web": {
+   "framework": true,
+   "kind": "Spring Framework's web module"
+  },
+  "io.netty:netty-all": {
+   "framework": true,
+   "kind": "network application framework"
+  },
+  "com.sun.jersey:jersey-server": {
+   "framework": true,
+   "kind": "JAX-RS framework"
+  },
+  "org.eclipse.jetty:jetty-server": {
+   "framework": false,
+   "why": "web server"
+  },
+  "org.hibernate:hibernate-entitymanager": {
+   "framework": false,
+   "why": "ORM"
+  },
+  "com.google.inject:guice": {
+   "framework": false,
+   "why": "dependency injection"
+  },
+  "org.apache.shiro:shiro-core": {
+   "framework": false,
+   "why": "security"
+  }
+ },
+ "php": {
+  "livewire/livewire": {
+   "framework": true,
+   "kind": "front-end framework for Laravel"
+  },
+  "components/bootstrap": {
+   "framework": true,
+   "kind": "Bootstrap"
+  },
+  "silex/silex": {
+   "framework": true,
+   "kind": "micro-framework"
+  },
+  "zendframework/zendframework": {
+   "framework": true,
+   "kind": "Zend Framework"
+  },
+  "symfony/http-foundation": {
+   "framework": false,
+   "why": "Symfony component used alone"
+  },
+  "illuminate/http": {
+   "framework": false,
+   "why": "Laravel component used alone"
+  },
+  "nikic/fast-route": {
+   "framework": false,
+   "why": "router"
+  },
+  "laravel/ui": {
+   "framework": false,
+   "why": "Laravel's scaffolding"
+  }
+ },
+ "ruby": {
+  "bootstrap": {
+   "framework": true,
+   "kind": "Bootstrap"
+  },
+  "bootstrap-sass": {
+   "framework": true,
+   "kind": "Bootstrap 3 in Sass"
+  },
+  "twitter-bootstrap-rails": {
+   "framework": true,
+   "kind": "Bootstrap for Rails"
+  },
+  "compass": {
+   "framework": true,
+   "kind": "Sass stylesheet framework"
+  },
+  "middleman": {
+   "framework": true,
+   "kind": "static site generator"
+  },
+  "middleman-core": {
+   "framework": true,
+   "kind": "static site generator"
+  },
+  "stimulus-rails": {
+   "framework": true,
+   "kind": "Stimulus for Rails"
+  },
+  "jquery-ui-rails": {
+   "framework": true,
+   "kind": "jQuery UI for Rails"
+  },
+  "rack": {
+   "framework": false,
+   "why": "web server interface"
+  },
+  "puma": {
+   "framework": false,
+   "why": "web server"
+  },
+  "railties": {
+   "framework": false,
+   "why": "Rails's own gem"
+  },
+  "eventmachine": {
+   "framework": false,
+   "why": "event loop library"
+  },
+  "padrino-support": {
+   "framework": false,
+   "why": "Padrino's own gem; Padrino is below the threshold"
+  },
+  "activeadmin": {
+   "framework": false,
+   "why": "Rails engine"
+  },
+  "bourbon": {
+   "framework": false,
+   "why": "Sass mixin library"
+  }
+ },
+ "pub": {
+  "shelf": {
+   "framework": true,
+   "kind": "web server framework"
+  },
+  "firebase_core": {
+   "framework": false,
+   "why": "Firebase SDK, a service"
+  },
+  "flutter_bloc": {
+   "framework": false,
+   "why": "state management"
+  },
+  "go_router": {
+   "framework": false,
+   "why": "router"
+  }
+ }
+}

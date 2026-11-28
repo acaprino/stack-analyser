@@ -4,5 +4,8 @@ register({
   tech: 'angularjs',
   name: 'AngularJS',
   type: 'ui_framework',
-  dependencies: [{ type: 'npm', name: 'angular' }],
+  dependencies: [
+    { type: 'npm', name: 'angular' },
+    { type: 'nuget', name: 'angularjs' },
+  ],
 });

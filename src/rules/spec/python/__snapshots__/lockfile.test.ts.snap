@@ -64,6 +64,7 @@ exports[`python lockfile: pyproject.toml > should match everything 1`] = `
   "bigcommerce",
   "binance",
   "boto3",
+  "bottle",
   "box",
   "braintrust",
   "browerbase",
@@ -88,6 +89,7 @@ exports[`python lockfile: pyproject.toml > should match everything 1`] = `
   "crawl4ai",
   "d-wave-systems",
   "dapr",
+  "dash",
   "dask",
   "databricks",
   "datadog",
@@ -309,6 +311,7 @@ exports[`python lockfile: pyproject.toml > should match everything 1`] = `
   "sqlalchemy",
   "sqlglot",
   "sqlmodel",
+  "starlette",
   "storyblok",
   "strawberry-graphql",
   "streamlit",
@@ -325,10 +328,12 @@ exports[`python lockfile: pyproject.toml > should match everything 1`] = `
   "terraform",
   "testcontainers",
   "todoist",
+  "tornado",
   "tree-sitter",
   "tree-sitter-language-pack",
   "trino",
   "twilio",
+  "twisted",
   "twitter",
   "typer",
   "typesense",
@@ -709,6 +714,11 @@ exports[`python lockfile: pyproject.toml > should match everything 2`] = `
   ],
   [
     "python",
+    "bottle",
+    "1.0.0",
+  ],
+  [
+    "python",
     "boxsdk",
     "1.0.0",
   ],
@@ -835,6 +845,11 @@ exports[`python lockfile: pyproject.toml > should match everything 2`] = `
   [
     "python",
     "dapr",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "dash",
     "1.0.0",
   ],
   [
@@ -2064,6 +2079,11 @@ exports[`python lockfile: pyproject.toml > should match everything 2`] = `
   ],
   [
     "python",
+    "starlette",
+    "1.0.0",
+  ],
+  [
+    "python",
     "storyblok",
     "1.0.0",
   ],
@@ -2144,6 +2164,11 @@ exports[`python lockfile: pyproject.toml > should match everything 2`] = `
   ],
   [
     "python",
+    "tornado",
+    "1.0.0",
+  ],
+  [
+    "python",
     "tree-sitter",
     "1.0.0",
   ],
@@ -2165,6 +2190,11 @@ exports[`python lockfile: pyproject.toml > should match everything 2`] = `
   [
     "python",
     "twilio",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "twisted",
     "1.0.0",
   ],
   [
@@ -2339,6 +2369,7 @@ exports[`python lockfile: requirements.txt > should match everything 1`] = `
   "bigcommerce",
   "binance",
   "boto3",
+  "bottle",
   "box",
   "braintrust",
   "browerbase",
@@ -2363,6 +2394,7 @@ exports[`python lockfile: requirements.txt > should match everything 1`] = `
   "crawl4ai",
   "d-wave-systems",
   "dapr",
+  "dash",
   "dask",
   "databricks",
   "datadog",
@@ -2585,6 +2617,7 @@ exports[`python lockfile: requirements.txt > should match everything 1`] = `
   "sqlalchemy",
   "sqlglot",
   "sqlmodel",
+  "starlette",
   "storyblok",
   "strawberry-graphql",
   "streamlit",
@@ -2601,10 +2634,12 @@ exports[`python lockfile: requirements.txt > should match everything 1`] = `
   "terraform",
   "testcontainers",
   "todoist",
+  "tornado",
   "tree-sitter",
   "tree-sitter-language-pack",
   "trino",
   "twilio",
+  "twisted",
   "twitter",
   "typer",
   "typesense",
@@ -2985,6 +3020,11 @@ exports[`python lockfile: requirements.txt > should match everything 2`] = `
   ],
   [
     "python",
+    "bottle",
+    "1.0.0",
+  ],
+  [
+    "python",
     "boxsdk",
     "1.0.0",
   ],
@@ -3111,6 +3151,11 @@ exports[`python lockfile: requirements.txt > should match everything 2`] = `
   [
     "python",
     "dapr",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "dash",
     "1.0.0",
   ],
   [
@@ -4335,6 +4380,11 @@ exports[`python lockfile: requirements.txt > should match everything 2`] = `
   ],
   [
     "python",
+    "starlette",
+    "1.0.0",
+  ],
+  [
+    "python",
     "storyblok",
     "1.0.0",
   ],
@@ -4415,6 +4465,11 @@ exports[`python lockfile: requirements.txt > should match everything 2`] = `
   ],
   [
     "python",
+    "tornado",
+    "1.0.0",
+  ],
+  [
+    "python",
     "tree-sitter",
     "1.0.0",
   ],
@@ -4436,6 +4491,11 @@ exports[`python lockfile: requirements.txt > should match everything 2`] = `
   [
     "python",
     "twilio",
+    "1.0.0",
+  ],
+  [
+    "python",
+    "twisted",
     "1.0.0",
   ],
   [

@@ -15,9 +15,13 @@ const RULES_DIR = import.meta.dirname;
 const integrations: Record<string, string[]> = {
   'golang:github.com/getsentry/sentry-go/otel': ['opentelemetry', 'sentry'],
   'golang:go.opentelemetry.io/otel/exporters/zipkin': ['opentelemetry', 'zipkin'],
+  // Bootstrap components for React and Angular need Bootstrap's CSS.
+  'npm:@ng-bootstrap/ng-bootstrap': ['bootstrap', 'ng-bootstrap'],
   'npm:@netlify/plugin-nextjs': ['netlify', 'nextjs'],
   // Mongoose is a technology of its own and works only with MongoDB.
   'npm:mongoose': ['mongodb', 'mongoose'],
+  'npm:react-bootstrap': ['bootstrap', 'react-bootstrap'],
+  'npm:reactstrap': ['bootstrap', 'reactstrap'],
   // Sign-in with Okta runs against an Okta organisation.
   'php:socialiteproviders/okta': ['okta', 'okta.oauth'],
   // Every artifact of the group io.quarkus is also quarkus.

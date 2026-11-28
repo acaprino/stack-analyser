@@ -101,6 +101,8 @@ async function check(lists, decisions, root) {
       if (decision.framework !== true) continue;
       const row = rank.get(name);
       if (!row) throw new Error(`${type} ${name} is not in the list`);
+      if (!firstPass.test(`${row.description} ${row.keywords.join(' ')}`))
+        throw new Error(`${type} ${name} is not a candidate of the first pass`);
       const techs = [...dependencies.detect([name], type).keys()].sort();
       report[type].push({ rank: row.rank, name, dependentRepos: row.dependentRepos, techs,
                           names: techs.map((tech) => names.get(tech)), covered: techs.length > 0 });

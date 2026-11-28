@@ -23,5 +23,8 @@ exports[`package identities > should not let one package identify two technologi
   "maven:org.testcontainers:junit-jupiter → junit-jupiter, testcontainers",
   "maven:org.testcontainers:testcontainers-junit-jupiter → junit-jupiter, testcontainers",
   "maven:org.jetbrains.kotlin:kotlin-test-testng → kotlin-test, testng",
+  "npm:@ng-bootstrap/ng-bootstrap → bootstrap, ng-bootstrap",
+  "npm:react-bootstrap → bootstrap, react-bootstrap",
+  "npm:reactstrap → bootstrap, reactstrap",
 ]
 `;

@@ -66,6 +66,7 @@ exports[`ruby (component) > should match everything 1`] = `
   "azure.sql",
   "azure.storage",
   "betterstack",
+  "bootstrap",
   "brevo",
   "browserstack",
   "bugsnag",
@@ -77,6 +78,7 @@ exports[`ruby (component) > should match everything 1`] = `
   "clickhouse",
   "cloudflare",
   "cloudinary",
+  "compass",
   "couchbase",
   "coveralls",
   "cypressci",
@@ -144,6 +146,7 @@ exports[`ruby (component) > should match everything 1`] = `
   "intercom",
   "jekyll",
   "jenkins",
+  "jquery-ui",
   "jsonschema",
   "kentico",
   "kinde",
@@ -164,6 +167,7 @@ exports[`ruby (component) > should match everything 1`] = `
   "meilisearch",
   "memcached",
   "mergedev",
+  "middleman",
   "mixpanel",
   "mongodb",
   "mssql",
@@ -211,6 +215,7 @@ exports[`ruby (component) > should match everything 1`] = `
   "splitio",
   "sqlite",
   "sqreen",
+  "stimulus",
   "storyblok",
   "stripe",
   "stytch",
@@ -586,6 +591,16 @@ exports[`ruby (component) > should match everything 2`] = `
   ],
   [
     "ruby",
+    "bootstrap",
+    "1.0.0",
+  ],
+  [
+    "ruby",
+    "bootstrap-sass",
+    "1.0.0",
+  ],
+  [
+    "ruby",
     "browserstack-local",
     "1.0.0",
   ],
@@ -647,6 +662,11 @@ exports[`ruby (component) > should match everything 2`] = `
   [
     "ruby",
     "cloudinary",
+    "1.0.0",
+  ],
+  [
+    "ruby",
+    "compass",
     "1.0.0",
   ],
   [
@@ -1071,6 +1091,11 @@ exports[`ruby (component) > should match everything 2`] = `
   ],
   [
     "ruby",
+    "jquery-ui-rails",
+    "1.0.0",
+  ],
+  [
+    "ruby",
     "json-schema",
     "1.0.0",
   ],
@@ -1222,6 +1247,16 @@ exports[`ruby (component) > should match everything 2`] = `
   [
     "ruby",
     "merge_ruby_client",
+    "1.0.0",
+  ],
+  [
+    "ruby",
+    "middleman",
+    "1.0.0",
+  ],
+  [
+    "ruby",
+    "middleman-core",
     "1.0.0",
   ],
   [
@@ -1606,6 +1641,11 @@ exports[`ruby (component) > should match everything 2`] = `
   ],
   [
     "ruby",
+    "stimulus-rails",
+    "1.0.0",
+  ],
+  [
+    "ruby",
     "storyblok",
     "1.0.0",
   ],
@@ -1667,6 +1707,11 @@ exports[`ruby (component) > should match everything 2`] = `
   [
     "ruby",
     "twilio-ruby",
+    "1.0.0",
+  ],
+  [
+    "ruby",
+    "twitter-bootstrap-rails",
     "1.0.0",
   ],
   [

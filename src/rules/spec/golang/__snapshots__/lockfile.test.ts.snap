@@ -132,8 +132,10 @@ exports[`golang (lockfile) > should match everything 1`] = `
   "gin",
   "gitea",
   "gitguardian",
+  "go-restful",
   "goacmelego",
   "goent",
+  "goji",
   "golang",
   "golangcilint",
   "gorm",
@@ -150,6 +152,7 @@ exports[`golang (lockfile) > should match everything 1`] = `
   "influxdb",
   "inngest",
   "ionos",
+  "iris",
   "jaeger",
   "jfrog",
   "jsonschema",
@@ -163,6 +166,7 @@ exports[`golang (lockfile) > should match everything 1`] = `
   "logtoio",
   "mailgun",
   "mailhog",
+  "martini",
   "meilisearch",
   "mercado-pago",
   "mergedev",
@@ -876,6 +880,11 @@ exports[`golang (lockfile) > should match everything 2`] = `
   ],
   [
     "golang",
+    "github.com/emicklei/go-restful",
+    "v1.0.0",
+  ],
+  [
+    "golang",
     "github.com/envoyproxy/go-control-plane",
     "v1.0.0",
   ],
@@ -957,6 +966,11 @@ exports[`golang (lockfile) > should match everything 2`] = `
   [
     "golang",
     "github.com/go-kit/kit/tracing/zipkin",
+    "v1.0.0",
+  ],
+  [
+    "golang",
+    "github.com/go-martini/martini",
     "v1.0.0",
   ],
   [
@@ -1101,7 +1115,12 @@ exports[`golang (lockfile) > should match everything 2`] = `
   ],
   [
     "golang",
-    "github.com/labstack/echo/v4",
+    "github.com/kataras/iris",
+    "v1.0.0",
+  ],
+  [
+    "golang",
+    "github.com/labstack/echo",
     "v1.0.0",
   ],
   [
@@ -1502,6 +1521,11 @@ exports[`golang (lockfile) > should match everything 2`] = `
   [
     "golang",
     "github.com/workos/workos-go",
+    "v1.0.0",
+  ],
+  [
+    "golang",
+    "github.com/zenazn/goji",
     "v1.0.0",
   ],
   [
